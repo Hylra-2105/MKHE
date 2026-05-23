@@ -1,0 +1,17 @@
+{
+  "title": "Đăng nhập hệ thống",
+  "email_placeholder": "Email của bạn",
+  "password_placeholder": "Mật khẩu",
+  "submit_btn": "Đăng nhập",
+  "forgot_password": "Quên mật khẩu?",
+  "no_account": "Bạn chưa có tài khoản?",
+  "register_now": "Đăng ký ngay",
+  "or_continue_with": "Hoặc đăng nhập với",
+
+  "slogan": "Nơi tinh hoa di sản hội tụ",
+  "hero_quote_1": "Gìn giữ hồn cốt",
+  "hero_quote_2": "dân tộc trong từng",
+  "hero_quote_3": "tác phẩm.",
+  "google": "Google",
+  "facebook": "Facebook"
+}

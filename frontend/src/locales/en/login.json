@@ -1,0 +1,17 @@
+{
+  "title": "System Login",
+  "email_placeholder": "Your email address",
+  "password_placeholder": "Password",
+  "submit_btn": "Login",
+  "forgot_password": "Forgot password?",
+  "no_account": "Don't have an account?",
+  "register_now": "Register now",
+  "or_continue_with": "Or continue with",
+
+  "slogan": "Where the essence of heritage converges",
+  "hero_quote_1": "Preserving the nation's",
+  "hero_quote_2": "soul in every",
+  "hero_quote_3": "masterpiece.",
+  "google": "Google",
+  "facebook": "Facebook"
+}

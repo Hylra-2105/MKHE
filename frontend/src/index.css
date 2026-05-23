@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
+
+@theme {
+  --color-mkhe-primary: #c5a059;
+  --color-mkhe-primary-hover: #b38f4d;
+  --color-mkhe-bg: #1a0f0a;
+  --color-mkhe-text: #d9c5b2;
+  --color-mkhe-input: #2a1c14;
+  --color-mkhe-border: #4a3525;
+
+  --font-logo: "Lora", serif;
+  --font-sans: "Inter", sans-serif;
+}
+
+body.light-mode {
+  --color-mkhe-bg: #f5f0ea;
+  --color-mkhe-text: #2d1e12;
+  --color-mkhe-input: #e4d5c7;
+  --color-mkhe-border: #c8b6a6;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--color-mkhe-bg);
+    color: var(--color-mkhe-text);
+    @apply transition-colors duration-300;
+  }
+}
