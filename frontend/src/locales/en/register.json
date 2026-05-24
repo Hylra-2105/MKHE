@@ -1,0 +1,22 @@
+{
+  "title": "Get started on MKHE",
+  "subtitle": "Preserve and spread heritage values",
+  "email_placeholder": "Your Email",
+  "password_placeholder": "Password",
+  "confirm_password_placeholder": "Confirm Password",
+  "btn_submit": "REGISTER",
+  "btn_processing": "PROCESSING...",
+  "have_account": "Already have an account?",
+  "login_now": "Login now",
+  "err_invalid_email": "Invalid email format!",
+  "err_password_length": "Password must be at least 6 characters!",
+  "err_password_mismatch": "Passwords do not match!",
+  "err_default": "An error occurred, please try again!",
+  "or_continue_with": "OR CONTINUE WITH",
+  "hero_quote_1": "Begin your journey",
+  "hero_quote_2": "to discover the essence",
+  "hero_quote_3": "of Vietnamese culture.",
+  "err_empty_email": "Please enter your email!",
+  "err_empty_password": "Please enter a password!",
+  "err_empty_confirm_password": "Please confirm your password!"
+}

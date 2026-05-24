@@ -1,0 +1,24 @@
+{
+  "name": "mkhe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hylra-2105/MKHE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Hylra-2105/MKHE/issues"
+  },
+  "homepage": "https://github.com/Hylra-2105/MKHE#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

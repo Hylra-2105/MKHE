@@ -75,7 +75,7 @@ export default function LoginForm() {
       <div className="text-center text-sm mt-4">
         <span className="text-mkhe-text/60">{t("no_account")} </span>
         <a
-          href="#"
+          href="/register"
           className="text-mkhe-primary font-bold hover:underline ml-1"
         >
           {t("register_now")}

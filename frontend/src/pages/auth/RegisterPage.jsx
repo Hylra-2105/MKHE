@@ -1,29 +1,35 @@
 import { useTranslation } from "react-i18next";
-import LoginForm from "@/features/auth/components/LoginForm";
+import RegisterForm from "@/features/auth/components/RegisterForm";
 
+// Tái sử dụng ảnh nền của Login, hoặc bạn có thể import ảnh khác tùy ý
 import authBgDark from "@/assets/images/bg-login-dark-1.png";
 import authBgLight from "@/assets/images/bg-login-light-1.png";
 
-export default function LoginPage() {
-  const { t } = useTranslation("login");
+export default function RegisterPage() {
+  const { t } = useTranslation("register");
 
   return (
     <div className="flex flex-1 overflow-hidden">
+      {/* Nửa bên trái: Hình ảnh và Câu trích dẫn (Chỉ hiện trên màn hình lớn) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-mkhe-bg items-center justify-center border-r border-mkhe-border/30 overflow-hidden">
+        {/* Ảnh Dark Mode */}
         <img
           src={authBgDark}
           alt="MKHE Heritage Dark"
           className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105 block [.light-mode_&]:hidden"
         />
 
+        {/* Ảnh Light Mode */}
         <img
           src={authBgLight}
           alt="MKHE Heritage Light"
           className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105 hidden [.light-mode_&]:block"
         />
 
+        {/* Lớp phủ Gradient tạo chiều sâu */}
         <div className="absolute inset-0 bg-gradient-to-t from-mkhe-bg via-mkhe-bg/60 to-transparent z-10 transition-colors duration-500" />
 
+        {/* Câu Slogan đa ngôn ngữ */}
         <div className="absolute bottom-16 left-16 z-20 max-w-md">
           <h2 className="text-4xl font-logo text-mkhe-primary mb-4 leading-tight transition-colors duration-500">
             {t("hero_quote_1")} <br />
@@ -34,8 +40,9 @@ export default function LoginPage() {
         </div>
       </div>
 
+      {/* Nửa bên phải: Form Đăng ký */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-mkhe-bg transition-colors duration-300">
-        <LoginForm />
+        <RegisterForm />
       </div>
     </div>
   );

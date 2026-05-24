@@ -1,0 +1,22 @@
+{
+  "title": "Bắt đầu với MKHE",
+  "subtitle": "Gìn giữ và lan tỏa giá trị di sản",
+  "email_placeholder": "Email của bạn",
+  "password_placeholder": "Mật khẩu",
+  "confirm_password_placeholder": "Nhập lại mật khẩu",
+  "btn_submit": "ĐĂNG KÝ",
+  "btn_processing": "ĐANG XỬ LÝ...",
+  "have_account": "Đã có tài khoản?",
+  "login_now": "Đăng nhập ngay",
+  "err_invalid_email": "Định dạng email không hợp lệ!",
+  "err_password_length": "Mật khẩu phải có ít nhất 6 ký tự!",
+  "err_password_mismatch": "Mật khẩu xác nhận không khớp!",
+  "err_default": "Đã có lỗi xảy ra, vui lòng thử lại!",
+  "or_continue_with": "HOẶC TIẾP TỤC VỚI",
+  "hero_quote_1": "Khởi đầu hành trình",
+  "hero_quote_2": "khám phá tinh hoa",
+  "hero_quote_3": "văn hóa Việt.",
+  "err_empty_email": "Vui lòng nhập email!",
+  "err_empty_password": "Vui lòng nhập mật khẩu!",
+  "err_empty_confirm_password": "Vui lòng xác nhận mật khẩu!"
+}
