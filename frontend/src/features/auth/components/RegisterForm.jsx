@@ -5,27 +5,68 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { validateRegistration } from "@/utils/validators";
 import toast from "react-hot-toast";
 
+// Bổ sung import Firebase cho nút Google
+import { auth, googleProvider } from "@/config/firebase";
+import { signInWithPopup } from "firebase/auth";
+
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
-import FacebookIcon from "@/components/ui/icons/FacebookIcon";
-
-// Đưa mảng dữ liệu ra ngoài để tối ưu hiệu năng
-const SOCIAL_ACTIONS = [
-  { id: "google", icon: <GoogleIcon />, labelKey: "google" },
-  { id: "facebook", icon: <FacebookIcon />, labelKey: "facebook" },
-];
 
 export default function RegisterForm() {
   const { t } = useTranslation("register");
-  const { registerAction, isLoading } = useAuthStore();
   const navigate = useNavigate();
+
+  // Lấy thêm socialLoginAction từ store để xử lý đăng ký bằng Google
+  const { registerAction, socialLoginAction, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+
+  // Xử lý Đăng ký / Đăng nhập bằng Google
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      if (!result || !result.user) {
+        throw new Error("Không lấy được thông tin từ Google");
+      }
+
+      const user = result.user;
+
+      const socialData = {
+        email: user.email,
+        name: user.displayName || "User",
+        avatar: user.photoURL || "",
+        providerId: "google",
+      };
+
+      // Gọi Backend (Backend của bạn đã cấu hình tự tạo user nếu chưa có)
+      const res = await socialLoginAction(socialData);
+
+      if (res && res.success) {
+        toast.success(t("msg_login_success") || "Thành công!");
+        setTimeout(() => {
+          navigate("/");
+          if (window.opener) window.close();
+        }, 1000);
+      } else {
+        toast.error(t(res?.message) || t("error_default"));
+      }
+    } catch (error) {
+      console.error("Lỗi đăng ký Google:", error);
+      if (
+        error.code === "auth/popup-closed-by-user" ||
+        error.code === "auth/cancelled-popup-request"
+      ) {
+        return;
+      }
+      toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,12 +90,10 @@ export default function RegisterForm() {
       toast.success(t("otp_sent"), { duration: 1500 });
       navigate("/verify-otp", { state: { email: email } });
     } else {
-      // Bắt lỗi trùng email hiển thị đỏ dưới form thay vì toast (chuẩn hóa giống Login)
       const msg = result.message || "";
       if (msg === "EMAIL_ALREADY_EXISTS") {
         setErrors({ email: "err_email_exists" });
       } else {
-        // Bọc msg vào t() để i18n tự dịch các mã lỗi khác (như SERVER_ERROR)
         toast.error(t(msg) || t("error_default"), { duration: 3000 });
       }
     }
@@ -122,21 +161,18 @@ export default function RegisterForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      {/* Render Nút Social bằng vòng lặp .map() */}
-      <div className="flex gap-4 mb-6">
-        {SOCIAL_ACTIONS.map((btn) => (
-          <button
-            key={btn.id}
-            type="button"
-            className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95"
-          >
-            {btn.icon}
-            <span className="text-sm font-semibold text-mkhe-text">
-              {t(btn.labelKey)}
-            </span>
-          </button>
-        ))}
-      </div>
+      {/* Thay thế vòng lặp bằng một nút Google duy nhất */}
+      <button
+        type="button"
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95"
+      >
+        <GoogleIcon />
+        <span className="text-sm font-semibold text-mkhe-text">
+          {t("google") || "Google"}
+        </span>
+      </button>
 
       <div className="text-center text-sm mt-4">
         <span className="text-mkhe-text/60">{t("have_account")} </span>

@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
 
       headers: {
         "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
-        "Cross-Origin-Embedder-Policy": "unsafe-none", // Thêm dòng này để cho phép popup Facebook giao tiếp
+        "Cross-Origin-Embedder-Policy": "unsafe-none",
       },
 
       proxy: {

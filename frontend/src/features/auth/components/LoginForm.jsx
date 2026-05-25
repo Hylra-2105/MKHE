@@ -1,4 +1,4 @@
-import { auth, googleProvider, facebookProvider } from "@/config/firebase";
+import { auth, googleProvider } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,22 +10,6 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
-import FacebookIcon from "@/components/ui/icons/FacebookIcon";
-
-const SOCIAL_ACTIONS = [
-  {
-    id: "google",
-    icon: <GoogleIcon />,
-    labelKey: "google",
-    provider: googleProvider,
-  },
-  {
-    id: "facebook",
-    icon: <FacebookIcon />,
-    labelKey: "facebook",
-    provider: facebookProvider,
-  },
-];
 
 export default function LoginForm() {
   const { t } = useTranslation("login");
@@ -38,49 +22,44 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const handleSocialLogin = async (provider) => {
+  // Hàm xử lý riêng cho Google Login
+  const handleGoogleLogin = async () => {
     try {
-      // 1. Mở Popup xác thực
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, googleProvider);
 
       if (!result || !result.user) {
-        throw new Error("Không lấy được thông tin từ nhà cung cấp");
+        throw new Error("Không lấy được thông tin từ Google");
       }
 
       const user = result.user;
 
-      // 2. Chuẩn bị dữ liệu (xử lý trường hợp Facebook không có email)
       const socialData = {
-        email: user.email || `${user.uid}@facebook.com`,
+        email: user.email,
         name: user.displayName || "User",
         avatar: user.photoURL || "",
-        providerId: user.providerData[0]?.providerId || "unknown",
+        providerId: "google",
       };
 
-      // 3. Gọi Backend
       const res = await socialLoginAction(socialData);
 
-      // 4. Xử lý kết quả
       if (res && res.success) {
         toast.success(t("msg_login_success"));
         setTimeout(() => {
           navigate("/");
-          // Đảm bảo cửa sổ được giải phóng
           if (window.opener) window.close();
         }, 1000);
       } else {
         toast.error(t(res?.message) || t("error_default"));
       }
     } catch (error) {
-      console.error("Lỗi đăng nhập Social:", error);
-      // Bỏ qua nếu user chủ động đóng popup
+      console.error("Lỗi đăng nhập Google:", error);
       if (
         error.code === "auth/popup-closed-by-user" ||
         error.code === "auth/cancelled-popup-request"
       ) {
-        return;
+        return; // Người dùng tự đóng popup
       }
-      toast.error(t("error_social_login") || "Đăng nhập có lỗi xảy ra!");
+      toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
     }
   };
 
@@ -102,8 +81,13 @@ export default function LoginForm() {
     }
 
     const result = await loginAction({ email, password }, rememberMe);
+
     if (result.success) {
-      localStorage.setItem("saved_email", email);
+      if (rememberMe) {
+        localStorage.setItem("saved_email", email);
+      } else {
+        localStorage.removeItem("saved_email");
+      }
       toast.success(t(result.message) || t("msg_login_success"));
       setTimeout(() => navigate("/"), 1000);
     } else {
@@ -180,24 +164,20 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      <div className="flex gap-4 mb-6">
-        {SOCIAL_ACTIONS.map((btn) => (
-          <button
-            key={btn.id}
-            type="button"
-            onClick={() => handleSocialLogin(btn.provider)}
-            disabled={isLoading}
-            className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors"
-          >
-            {btn.icon}
-            <span className="text-sm font-semibold text-mkhe-text">
-              {t(btn.labelKey)}
-            </span>
-          </button>
-        ))}
-      </div>
+      {/* Nút đăng nhập Google */}
+      <button
+        type="button"
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors"
+      >
+        <GoogleIcon />
+        <span className="text-sm font-semibold text-mkhe-text">
+          {t("google")}
+        </span>
+      </button>
 
-      <div className="text-center text-sm mt-4">
+      <div className="text-center text-sm mt-6">
         <span className="text-mkhe-text/60">{t("no_account")} </span>
         <Link
           to="/register"
