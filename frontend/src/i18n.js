@@ -12,16 +12,21 @@ import loginEN from "./locales/en/login.json";
 import registerVI from "./locales/vi/register.json";
 import registerEN from "./locales/en/register.json";
 
+import otpVI from "./locales/vi/otp.json";
+import otpEN from "./locales/en/otp.json";
+
 const resources = {
   vi: {
     common: commonVI,
     login: loginVI,
     register: registerVI,
+    otp: otpVI,
   },
   en: {
     common: commonEN,
     login: loginEN,
     register: registerEN,
+    otp: otpEN,
   },
 };
 
@@ -30,9 +35,9 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "vi", // Mặc định luôn là Tiếng Việt
-    ns: ["common", "login", "register"], // Liệt kê các namespaces đang có
-    defaultNS: "common", // Namespace mặc định nếu không gọi tên cụ thể
+    fallbackLng: "vi",
+    ns: ["common", "login", "register", "otp"], 
+    defaultNS: "common",
     interpolation: {
       escapeValue: false,
     },

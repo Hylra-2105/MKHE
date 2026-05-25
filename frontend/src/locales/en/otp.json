@@ -1,0 +1,18 @@
+{
+  "title": "Account Verification",
+  "description": "Please enter the 6-digit OTP sent to your email:",
+  "btn_submit": "VERIFY OTP",
+  "btn_verifying": "VERIFYING...",
+  "not_received": "Didn't receive the code?",
+  "resend": "Resend code",
+  "back_to_register": "Back to Register",
+  "msg_empty": "Please enter all 6 digits of the OTP!",
+  "msg_success": "Congratulations! Verification successful.",
+  "msg_error_default": "Invalid or expired OTP!",
+  "INVALID_OTP": "Invalid OTP!",
+  "EXPIRED_OTP": "Expired OTP, please request a new one!",
+  "SERVER_ERROR": "Server error, please try again later!",
+  "VERIFY_SUCCESS": "Account verification successful!",
+  "RESEND_SUCCESS": "OTP resent successfully! Please check your email.",
+  "btn_processing": "Processing..."
+}

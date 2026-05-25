@@ -1,0 +1,18 @@
+{
+  "title": "Xác Thực Tài Khoản",
+  "description": "Vui lòng nhập mã OTP 6 số vừa được gửi đến email:",
+  "btn_submit": "XÁC NHẬN OTP",
+  "btn_verifying": "ĐANG XÁC THỰC...",
+  "not_received": "Không nhận được mã?",
+  "resend": "Gửi lại mã",
+  "back_to_register": "Quay lại trang đăng ký",
+  "msg_empty": "Vui lòng nhập đủ 6 chữ số OTP!",
+  "msg_success": "Chúc mừng! Xác thực thành công.",
+  "msg_error_default": "Mã OTP không hợp lệ hoặc đã hết hạn!",
+  "INVALID_OTP": "Mã OTP không chính xác!",
+  "EXPIRED_OTP": "Mã OTP đã hết hạn, vui lòng gửi lại mã mới!",
+  "SERVER_ERROR": "Lỗi máy chủ, vui lòng thử lại sau!",
+  "VERIFY_SUCCESS": "Xác thực tài khoản thành công!",
+  "RESEND_SUCCESS": "Đã gửi lại mã xác thực! Vui lòng kiểm tra Email.",
+  "btn_processing": "Đang gửi..."
+}

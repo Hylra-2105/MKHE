@@ -1,98 +1,71 @@
-// frontend/src/features/auth/components/RegisterForm.jsx
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { validateRegistration } from "@/utils/validators";
+import toast from "react-hot-toast";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
+import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 import FacebookIcon from "@/components/ui/icons/FacebookIcon";
 
-// Component phụ hiển thị lỗi có icon chữ i
-const ErrorText = ({ errorKey, t }) => {
-  if (!errorKey) return null;
-  return (
-    <div className="flex items-center gap-1.5 mt-1.5 text-red-500 text-xs font-medium px-1">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-        className="w-4 h-4 shrink-0"
-      >
-        <path
-          fillRule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-          clipRule="evenodd"
-        />
-      </svg>
-      <span>{t(errorKey)}</span>
-    </div>
-  );
-};
+// Đưa mảng dữ liệu ra ngoài để tối ưu hiệu năng
+const SOCIAL_ACTIONS = [
+  { id: "google", icon: <GoogleIcon />, labelKey: "google" },
+  { id: "facebook", icon: <FacebookIcon />, labelKey: "facebook" },
+];
 
 export default function RegisterForm() {
   const { t } = useTranslation("register");
   const { registerAction, isLoading } = useAuthStore();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Tách riêng: 1 state cho lỗi form (inline), 1 state cho thông báo server (thành công/lỗi mạng)
   const [errors, setErrors] = useState({});
-  const [serverMessage, setServerMessage] = useState({ type: "", text: "" });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
-    setServerMessage({ type: "", text: "" });
 
-    // 1. Kiểm tra validation phía frontend
+    // Kiểm tra validation
     const validationErrors = validateRegistration(
       email,
       password,
       confirmPassword,
     );
 
-    // Nếu object validationErrors có dữ liệu, set state và dừng gọi API
     if (validationErrors) {
       return setErrors(validationErrors);
     }
 
-    // 2. Nếu không có lỗi form, tiến hành gọi API
+    // Gọi API thông qua Store
     const result = await registerAction({ email, password });
 
     if (result.success) {
-      setServerMessage({ type: "success", text: result.message });
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      toast.success(t("otp_sent"), { duration: 1500 });
+      navigate("/verify-otp", { state: { email: email } });
     } else {
-      setServerMessage({ type: "error", text: result.message });
+      // Bắt lỗi trùng email hiển thị đỏ dưới form thay vì toast (chuẩn hóa giống Login)
+      const msg = result.message || "";
+      if (msg === "EMAIL_ALREADY_EXISTS") {
+        setErrors({ email: "err_email_exists" });
+      } else {
+        // Bọc msg vào t() để i18n tự dịch các mã lỗi khác (như SERVER_ERROR)
+        toast.error(t(msg) || t("error_default"), { duration: 3000 });
+      }
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-[360px] mx-auto">
-      <h1 className="text-3xl font-logo font-bold mb-2 text-mkhe-primary">
+      <h1 className="text-3xl font-logo font-bold mb-2 text-gradient-gold">
         {t("title")}
       </h1>
       <p className="text-mkhe-text/60 mb-8 text-sm italic">{t("subtitle")}</p>
-
-      {/* Thông báo chung từ Server (chỉ hiện khi Đăng ký thành công hoặc Backend báo lỗi) */}
-      {serverMessage.text && (
-        <div
-          className={`p-3 mb-6 rounded border text-sm ${
-            serverMessage.type === "success"
-              ? "bg-green-500/10 border-green-500/50 text-green-600"
-              : "bg-red-500/10 border-red-500/50 text-red-600"
-          }`}
-        >
-          {serverMessage.text}
-        </div>
-      )}
 
       <div className="space-y-4 mb-6">
         <div>
@@ -105,7 +78,7 @@ export default function RegisterForm() {
               if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
             }}
           />
-          <ErrorText errorKey={errors.email} t={t} />
+          <ErrorText error={errors.email} t={t} />
         </div>
 
         <div>
@@ -119,7 +92,7 @@ export default function RegisterForm() {
                 setErrors((prev) => ({ ...prev, password: null }));
             }}
           />
-          <ErrorText errorKey={errors.password} t={t} />
+          <ErrorText error={errors.password} t={t} />
         </div>
 
         <div>
@@ -133,7 +106,7 @@ export default function RegisterForm() {
                 setErrors((prev) => ({ ...prev, confirmPassword: null }));
             }}
           />
-          <ErrorText errorKey={errors.confirmPassword} t={t} />
+          <ErrorText error={errors.confirmPassword} t={t} />
         </div>
       </div>
 
@@ -149,22 +122,20 @@ export default function RegisterForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
+      {/* Render Nút Social bằng vòng lặp .map() */}
       <div className="flex gap-4 mb-6">
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300"
-        >
-          <GoogleIcon />
-          <span className="text-sm font-semibold text-mkhe-text">Google</span>
-        </button>
-
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300"
-        >
-          <FacebookIcon />
-          <span className="text-sm font-semibold text-mkhe-text">Facebook</span>
-        </button>
+        {SOCIAL_ACTIONS.map((btn) => (
+          <button
+            key={btn.id}
+            type="button"
+            className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95"
+          >
+            {btn.icon}
+            <span className="text-sm font-semibold text-mkhe-text">
+              {t(btn.labelKey)}
+            </span>
+          </button>
+        ))}
       </div>
 
       <div className="text-center text-sm mt-4">

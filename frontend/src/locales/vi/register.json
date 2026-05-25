@@ -18,5 +18,6 @@
   "hero_quote_3": "văn hóa Việt.",
   "err_empty_email": "Vui lòng nhập email!",
   "err_empty_password": "Vui lòng nhập mật khẩu!",
-  "err_empty_confirm_password": "Vui lòng xác nhận mật khẩu!"
+  "err_empty_confirm_password": "Vui lòng xác nhận mật khẩu!",
+  "otp_sent": "Mã OTP đã được gửi đến email của bạn!"
 }

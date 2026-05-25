@@ -4,7 +4,7 @@
   "email_placeholder": "Your Email",
   "password_placeholder": "Password",
   "confirm_password_placeholder": "Confirm Password",
-  "btn_submit": "REGISTER",
+  "btn_submit": "Create Account",
   "btn_processing": "PROCESSING...",
   "have_account": "Already have an account?",
   "login_now": "Login now",
@@ -18,5 +18,6 @@
   "hero_quote_3": "of Vietnamese culture.",
   "err_empty_email": "Please enter your email!",
   "err_empty_password": "Please enter a password!",
-  "err_empty_confirm_password": "Please confirm your password!"
+  "err_empty_confirm_password": "Please confirm your password!",
+  "otp_sent": "The OTP code has been sent to your email!"
 }
