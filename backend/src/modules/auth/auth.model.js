@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema(
     avatar: { type: String, default: "" },
     provider: {
       type: String,
-      // Đã bỏ facebook đi cho sạch sẽ vì frontend chỉ dùng Google
       enum: ["local", "google"],
       default: "local",
     },

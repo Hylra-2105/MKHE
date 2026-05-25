@@ -1,6 +1,6 @@
 // src/config/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 // Cấu hình Firebase của bạn
 const firebaseConfig = {
@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "mkhe-auth.firebasestorage.app",
   messagingSenderId: "646967991776",
   appId: "1:646967991776:web:8e6229a5e424746ba79f85",
-  measurementId: "G-1TT1R6BJ48"
+  measurementId: "G-1TT1R6BJ48",
 };
 
 // Khởi tạo app Firebase
@@ -19,6 +19,5 @@ const app = initializeApp(firebaseConfig);
 // Lấy bộ công cụ Auth
 export const auth = getAuth(app);
 
-// Khởi tạo 2 nhà cung cấp (Providers)
+// Khởi tạo Google provider
 export const googleProvider = new GoogleAuthProvider();
-export const facebookProvider = new FacebookAuthProvider();

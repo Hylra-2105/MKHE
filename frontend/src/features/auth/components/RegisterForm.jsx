@@ -13,7 +13,6 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
-// Đã xóa FacebookIcon và SOCIAL_ACTIONS
 
 export default function RegisterForm() {
   const { t } = useTranslation("register");

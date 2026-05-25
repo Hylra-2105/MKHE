@@ -10,7 +10,6 @@
   "or_continue_with": "Or continue with",
   "slogan": "Where the essence of heritage converges",
   "google": "Google",
-  "facebook": "Facebook",
 
   "msg_empty_fields": "Please enter both email and password!",
   "msg_login_success": "Login successful!",
@@ -23,5 +22,6 @@
   "err_account_not_found": "Account does not exist!",
   "err_wrong_password": "Password is incorrect!",
   "err_account_not_verified": "Account not verified. Redirecting...",
-  "LOGIN_SUCCESS": "Login successful!"
+  "LOGIN_SUCCESS": "Login successful!",
+  "err_empty_email": "Please enter your email!"
 }

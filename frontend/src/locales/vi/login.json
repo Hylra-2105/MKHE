@@ -10,7 +10,6 @@
   "or_continue_with": "Hoặc tiếp tục với",
   "slogan": "Nơi tinh hoa di sản hội tụ",
   "google": "Google",
-  "facebook": "Facebook",
 
   "msg_empty_fields": "Vui lòng nhập đầy đủ email và mật khẩu!",
   "msg_login_success": "Đăng nhập thành công!",
@@ -23,5 +22,6 @@
   "err_account_not_found": "Tài khoản không tồn tại!",
   "err_wrong_password": "Mật khẩu không đúng!",
   "err_account_not_verified": "Tài khoản chưa được xác minh. Đang chuyển hướng...",
-  "LOGIN_SUCCESS": "Đăng nhập thành công!"
+  "LOGIN_SUCCESS": "Đăng nhập thành công!",
+  "err_empty_email": "Vui lòng nhập email!"
 }
