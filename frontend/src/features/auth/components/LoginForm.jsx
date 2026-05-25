@@ -1,46 +1,160 @@
-import { useState } from "react";
+import { auth, googleProvider } from "@/config/firebase";
+import { signInWithPopup } from "firebase/auth";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
+import { useAuthStore } from "@/stores/useAuthStore";
+
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
+import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
-import FacebookIcon from "@/components/ui/icons/FacebookIcon";
 
 export default function LoginForm() {
   const { t } = useTranslation("login");
+  const navigate = useNavigate();
+
+  const { loginAction, socialLoginAction, isLoading } = useAuthStore();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // Hàm xử lý riêng cho Google Login
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+
+      if (!result || !result.user) {
+        throw new Error("Không lấy được thông tin từ Google");
+      }
+
+      const user = result.user;
+
+      const socialData = {
+        email: user.email,
+        name: user.displayName || "User",
+        avatar: user.photoURL || "",
+        providerId: "google",
+      };
+
+      const res = await socialLoginAction(socialData);
+
+      if (res && res.success) {
+        toast.success(t("msg_login_success"));
+        setTimeout(() => {
+          navigate("/");
+          if (window.opener) window.close();
+        }, 1000);
+      } else {
+        toast.error(t(res?.message) || t("error_default"));
+      }
+    } catch (error) {
+      console.error("Lỗi đăng nhập Google:", error);
+      if (
+        error.code === "auth/popup-closed-by-user" ||
+        error.code === "auth/cancelled-popup-request"
+      ) {
+        return; // Người dùng tự đóng popup
+      }
+      toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+    }
+  };
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("saved_email");
+    if (savedEmail) setEmail(savedEmail);
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    const newErrors = {};
+    if (!email) newErrors.email = "err_empty_email";
+    if (!password) newErrors.password = "err_empty_password";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const result = await loginAction({ email, password }, rememberMe);
+
+    if (result.success) {
+      if (rememberMe) {
+        localStorage.setItem("saved_email", email);
+      } else {
+        localStorage.removeItem("saved_email");
+      }
+      toast.success(t(result.message) || t("msg_login_success"));
+      setTimeout(() => navigate("/"), 1000);
+    } else {
+      const msg = result.message || "";
+      if (msg === "ACCOUNT_NOT_FOUND")
+        setErrors({ email: "err_account_not_found" });
+      else if (msg === "WRONG_PASSWORD")
+        setErrors({ password: "err_wrong_password" });
+      else if (msg === "ACCOUNT_NOT_VERIFIED") {
+        setErrors({ email: "err_account_not_verified" });
+        setTimeout(() => navigate("/verify-otp", { state: { email } }), 1500);
+      } else {
+        toast.error(t(msg) || t("error_default"));
+      }
+    }
+  };
 
   return (
-    <form className="w-full max-w-[360px] mx-auto">
-      <h1 className="text-3xl font-logo font-bold mb-2 text-mkhe-primary">
+    <form onSubmit={handleSubmit} className="w-full max-w-[360px] mx-auto">
+      <h1 className="text-3xl font-logo font-bold mb-2 text-gradient-gold">
         {t("title")}
       </h1>
       <p className="text-mkhe-text/60 mb-8 text-sm italic">{t("slogan")}</p>
 
-      <InputField
-        type="email"
-        placeholder={t("email_placeholder")}
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+      <div className="space-y-4 mb-6">
+        <div>
+          <InputField
+            type="email"
+            placeholder={t("email_placeholder")}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+          <ErrorText error={errors.email} t={t} />
+        </div>
+        <div>
+          <InputField
+            type="password"
+            placeholder={t("password_placeholder")}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <ErrorText error={errors.password} t={t} />
+        </div>
+      </div>
 
-      <InputField
-        type="password"
-        placeholder={t("password_placeholder")}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <div className="flex justify-end mb-6">
-        <a
-          href="#"
-          className="text-sm text-mkhe-primary hover:underline transition-all"
-        >
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <input
+            id="rememberMe"
+            type="checkbox"
+            className="magic-cb-input"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe" className="magic-cb-label text-sm">
+            <span></span> {t("remember_me")}
+          </label>
+        </div>
+        <a href="#" className="text-sm text-mkhe-primary hover:underline">
           {t("forgot_password")}
         </a>
       </div>
 
-      <Button type="submit">{t("submit_btn")}</Button>
+      <Button type="submit" disabled={isLoading}>
+        {isLoading ? t("btn_processing") : t("submit_btn")}
+      </Button>
 
       <div className="flex items-center my-6">
         <div className="flex-1 border-t border-mkhe-border/50"></div>
@@ -50,36 +164,27 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      <div className="flex gap-4 mb-6">
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300"
-        >
-          <GoogleIcon />
-          <span className="text-sm font-semibold text-mkhe-text">
-            {t("google")}
-          </span>
-        </button>
+      {/* Nút đăng nhập Google */}
+      <button
+        type="button"
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors"
+      >
+        <GoogleIcon />
+        <span className="text-sm font-semibold text-mkhe-text">
+          {t("google")}
+        </span>
+      </button>
 
-        <button
-          type="button"
-          className="flex-1 flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300"
-        >
-          <FacebookIcon />
-          <span className="text-sm font-semibold text-mkhe-text">
-            {t("facebook")}
-          </span>
-        </button>
-      </div>
-
-      <div className="text-center text-sm mt-4">
+      <div className="text-center text-sm mt-6">
         <span className="text-mkhe-text/60">{t("no_account")} </span>
-        <a
-          href="#"
-          className="text-mkhe-primary font-bold hover:underline ml-1"
+        <Link
+          to="/register"
+          className="text-mkhe-primary font-bold hover:underline"
         >
           {t("register_now")}
-        </a>
+        </Link>
       </div>
     </form>
   );

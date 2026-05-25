@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 
 @theme {
@@ -9,6 +8,12 @@
   --color-mkhe-text: #d9c5b2;
   --color-mkhe-input: #2a1c14;
   --color-mkhe-border: #4a3525;
+
+  /* Thêm các dải màu Gradient Gold vào hệ thống */
+  --color-mkhe-gold-light: #e5c78b;
+  --color-mkhe-gold-base: #c5a059;
+  --color-mkhe-gold-dark: #9c7935;
+  --color-mkhe-gold-darker: #7a5c22;
 
   --font-logo: "Lora", serif;
   --font-sans: "Inter", sans-serif;
@@ -34,5 +39,105 @@ body.light-mode {
     background-color: var(--color-mkhe-bg);
     color: var(--color-mkhe-text);
     @apply transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-gold {
+    @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark 
+           hover:from-mkhe-gold-base hover:via-mkhe-gold-dark hover:to-mkhe-gold-darker;
+  }
+}
+
+/* ========================================== */
+/* MAGIC CHECKBOX ĐÃ CHIA DARK/LIGHT MODE     */
+/* ========================================== */
+.magic-cb-input {
+  display: none;
+}
+
+.magic-cb-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--color-mkhe-text); /* Tự động đổi theo Dark/Light */
+  transition: color 250ms cubic-bezier(0.4, 0, 0.23, 1);
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Màu chữ khi hover/checked */
+.magic-cb-label > ins > i {
+  position: absolute;
+  bottom: 0;
+  font-style: normal;
+  color: var(--color-mkhe-primary);
+}
+
+.magic-cb-label > span {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.8em;
+  width: 1.2em;
+  height: 1.2em;
+  background: transparent;
+  /* Dùng biến border của theme */
+  border: 2px solid var(--color-mkhe-border);
+  border-radius: 2px;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.23, 1);
+}
+
+.magic-cb-label:hover > span {
+  background: var(--color-mkhe-input);
+}
+
+.magic-cb-input:checked + .magic-cb-label > span {
+  border: 0.6em solid var(--color-mkhe-primary);
+  animation: shrink-bounce 200ms cubic-bezier(0.4, 0, 0.23, 1);
+}
+
+.magic-cb-input:checked + .magic-cb-label > span:before {
+  content: "";
+  position: absolute;
+  top: -0.03em;
+  left: -0.3em;
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  transform: rotate(45deg);
+  transform-origin: 0% 100%;
+  /* Dùng biến màu background làm màu dấu tick để nó "tàng hình" vào nền */
+  border-color: var(--color-mkhe-bg);
+  animation: checkbox-check 125ms 250ms cubic-bezier(0.4, 0, 0.23, 1) forwards;
+}
+
+@keyframes checkbox-check {
+  0% {
+    width: 0;
+    height: 0;
+    border-color: transparent; /* Giấu hoàn toàn ở điểm bắt đầu */
+    transform: translate3d(0, 0, 0) rotate(45deg);
+  }
+  33% {
+    width: 0.2em;
+    height: 0;
+    border-color: transparent; /* Vẫn ẩn border để không hiện chấm đen */
+    transform: translate3d(0, 0, 0) rotate(45deg);
+  }
+  34% {
+    border-color: var(
+      --color-mkhe-bg
+    ); /* Chỉ hiện màu khi bắt đầu vẽ nét thực thụ */
+  }
+  100% {
+    width: 0.35em;
+    height: 0.65em;
+    border-color: var(--color-mkhe-bg);
+    transform: translate3d(0, -0.6em, 0) rotate(45deg);
   }
 }

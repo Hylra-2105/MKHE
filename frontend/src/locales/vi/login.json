@@ -1,17 +1,27 @@
 {
-  "title": "Đăng nhập hệ thống",
-  "email_placeholder": "Email của bạn",
+  "title": "Đăng nhập MKHE",
+  "email_placeholder": "Địa chỉ email của bạn",
   "password_placeholder": "Mật khẩu",
-  "submit_btn": "Đăng nhập",
+  "submit_btn": "ĐĂNG NHẬP",
+  "btn_processing": "ĐANG XỬ LÝ...",
   "forgot_password": "Quên mật khẩu?",
-  "no_account": "Bạn chưa có tài khoản?",
+  "no_account": "Chưa có tài khoản?",
   "register_now": "Đăng ký ngay",
-  "or_continue_with": "Hoặc đăng nhập với",
-
+  "or_continue_with": "Hoặc tiếp tục với",
   "slogan": "Nơi tinh hoa di sản hội tụ",
+  "google": "Google",
+
+  "msg_empty_fields": "Vui lòng nhập đầy đủ email và mật khẩu!",
+  "msg_login_success": "Đăng nhập thành công!",
+  "msg_login_error": "Đăng nhập thất bại! Vui lòng thử lại.",
   "hero_quote_1": "Gìn giữ hồn cốt",
   "hero_quote_2": "dân tộc trong từng",
-  "hero_quote_3": "tác phẩm.",
-  "google": "Google",
-  "facebook": "Facebook"
+  "hero_quote_3": "kiệt tác.",
+  "remember_me": "Ghi nhớ đăng nhập",
+  "err_empty_password": "Vui lòng nhập mật khẩu!",
+  "err_account_not_found": "Tài khoản không tồn tại!",
+  "err_wrong_password": "Mật khẩu không đúng!",
+  "err_account_not_verified": "Tài khoản chưa được xác minh. Đang chuyển hướng...",
+  "LOGIN_SUCCESS": "Đăng nhập thành công!",
+  "err_empty_email": "Vui lòng nhập email!"
 }

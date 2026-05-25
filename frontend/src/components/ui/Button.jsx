@@ -3,18 +3,19 @@ export default function Button({
   onClick,
   type = "button",
   className = "",
+  disabled = false, // Bổ sung prop disabled để xử lý lúc đang load API
 }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={`
         w-full py-3 px-6 rounded-md
         font-bold text-[#1A0F0A] tracking-wide uppercase
-        bg-gradient-to-r from-[#E5C78B] via-[#C5A059] to-[#9C7935]
-        hover:from-[#C5A059] hover:via-[#9C7935] hover:to-[#7A5C22]
-        cursor-pointer
-        transition-all duration-300 transform
+        bg-gradient-gold
+        cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed
+        transition-all duration-300 transform active:scale-[0.98]
         flex items-center justify-center gap-2
         ${className}
       `}

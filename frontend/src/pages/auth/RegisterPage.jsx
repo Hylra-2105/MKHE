@@ -1,15 +1,17 @@
 import { useTranslation } from "react-i18next";
-import LoginForm from "@/features/auth/components/LoginForm";
+import RegisterForm from "@/features/auth/components/RegisterForm";
 
 import authBgDark from "@/assets/images/bg-login-dark-1.png";
 import authBgLight from "@/assets/images/bg-login-light-1.png";
 
-export default function LoginPage() {
-  const { t } = useTranslation("login");
+export default function RegisterPage() {
+  const { t } = useTranslation("register");
 
   return (
     <div className="flex flex-1 overflow-hidden">
+      
       <div className="hidden lg:flex lg:w-1/2 relative bg-mkhe-bg items-center justify-center border-r border-mkhe-border/30 overflow-hidden">
+      
         <img
           src={authBgDark}
           alt="MKHE Heritage Dark"
@@ -35,7 +37,7 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-mkhe-bg transition-colors duration-300">
-        <LoginForm />
+        <RegisterForm />
       </div>
     </div>
   );

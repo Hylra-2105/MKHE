@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Môi trường
+.env
+.env.local
+
+# Các file hệ thống/editor
+.DS_Store
+.vscode/
+.idea/
+dist/
+build/

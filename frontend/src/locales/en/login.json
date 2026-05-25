@@ -1,17 +1,27 @@
 {
-  "title": "System Login",
+  "title": "Log in to MKHE",
   "email_placeholder": "Your email address",
   "password_placeholder": "Password",
   "submit_btn": "Login",
+  "btn_processing": "PROCESSING...",
   "forgot_password": "Forgot password?",
   "no_account": "Don't have an account?",
   "register_now": "Register now",
   "or_continue_with": "Or continue with",
-
   "slogan": "Where the essence of heritage converges",
+  "google": "Google",
+
+  "msg_empty_fields": "Please enter both email and password!",
+  "msg_login_success": "Login successful!",
+  "msg_login_error": "Login failed! Please check again.",
   "hero_quote_1": "Preserving the nation's",
   "hero_quote_2": "soul in every",
   "hero_quote_3": "masterpiece.",
-  "google": "Google",
-  "facebook": "Facebook"
+  "remember_me": "Remember me",
+  "err_empty_password": "Please enter your password!",
+  "err_account_not_found": "Account does not exist!",
+  "err_wrong_password": "Password is incorrect!",
+  "err_account_not_verified": "Account not verified. Redirecting...",
+  "LOGIN_SUCCESS": "Login successful!",
+  "err_empty_email": "Please enter your email!"
 }

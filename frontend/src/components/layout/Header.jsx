@@ -27,15 +27,13 @@ export default function Header() {
 
   return (
     <header className="flex justify-between items-center px-8 py-4 bg-mkhe-input border-b border-mkhe-border transition-colors duration-300">
-      {/* Khối Logo bên trái: Căn đều ảnh và chữ */}
       <div className="flex items-center gap-3 select-none">
         <img src={logo} alt="MKHE Logo" className="h-9 w-auto object-contain" />
-        <span className="text-3xl font-logo font-bold tracking-wider text-mkhe-primary">
+        <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold">
           MKHE
         </span>
       </div>
 
-      {/* Khối nút chức năng bên phải */}
       <div className="flex gap-2">
         <button
           onClick={toggleLanguage}
