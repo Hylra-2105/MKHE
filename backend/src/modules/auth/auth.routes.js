@@ -5,6 +5,9 @@ import {
   loginUser,
   resendOTP,
   socialLogin,
+  forgotPassword, 
+  verifyResetOtp,
+  resetPassword,
 } from "./auth.controller.js";
 
 const router = express.Router();
@@ -23,5 +26,14 @@ router.post("/resend-otp", resendOTP);
 
 // social login route
 router.post("/social-login", socialLogin);
+
+// forgot password route
+router.post("/forgot-password", forgotPassword);
+
+// verify reset otp route
+router.post("/verify-reset-otp", verifyResetOtp);
+
+// reset password route
+router.post("/reset-password", resetPassword);
 
 export default router;

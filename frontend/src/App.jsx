@@ -14,6 +14,9 @@ import AuthRoute from "./components/router/AuthRoute";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import VerifyOTPPage from "./pages/auth/VerifyOTPPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+
 import HomePage from "./pages/Home/HomePage";
 
 function App() {
@@ -28,7 +31,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/home" replace />} />
 
-            {/* VÙNG BẢO VỆ CHO USER */}
             <Route
               path="/home"
               element={
@@ -38,7 +40,6 @@ function App() {
               }
             />
 
-            {/* VÙNG CHỈ DÀNH CHO KHÁCH (CHƯA ĐĂNG NHẬP) */}
             <Route
               path="/login"
               element={
@@ -60,6 +61,22 @@ function App() {
               element={
                 <AuthRoute>
                   <VerifyOTPPage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path="/forgot-password"
+              element={
+                <AuthRoute>
+                  <ForgotPasswordPage />
+                </AuthRoute>
+              }
+            />
+            <Route
+              path="/reset-password"
+              element={
+                <AuthRoute>
+                  <ResetPasswordPage />
                 </AuthRoute>
               }
             />
