@@ -1,7 +1,11 @@
 import User from "./auth.model.js";
-import { sendVerificationEmail } from "../../utils/email.js";
+// ĐÃ FIX LỖI: Thêm sendPasswordResetEmail vào import
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} from "../../utils/email.js";
 import jwt from "jsonwebtoken";
-import crypto from "crypto"; // Thêm crypto để tạo mật khẩu ảo
+import crypto from "crypto";
 
 // HÀM ĐĂNG KÝ
 export const registerUser = async (req, res) => {
@@ -188,7 +192,6 @@ export const resendOTP = async (req, res) => {
 // --- HÀM ĐĂNG NHẬP BẰNG MẠNG XÃ HỘI ---
 export const socialLogin = async (req, res) => {
   try {
-    console.log("📱 Social Login request received:", req.body);
     const { email, name, avatar, providerId } = req.body;
 
     if (!email) {
@@ -197,12 +200,10 @@ export const socialLogin = async (req, res) => {
 
     const providerName = providerId ? providerId.split(".")[0] : "unknown";
 
-    // 1. Tìm user trước thay vì dùng findOneAndUpdate
+    // Tìm user trước thay vì dùng findOneAndUpdate
     let user = await User.findOne({ email });
 
     if (!user) {
-      // 2. Nếu chưa có, tạo user mới
-      // Tạo một mật khẩu ngẫu nhiên để vượt qua Validation 'required' của Mongoose (nếu có)
       const randomPassword = crypto.randomBytes(16).toString("hex");
 
       user = await User.create({
@@ -211,16 +212,11 @@ export const socialLogin = async (req, res) => {
         name: name || email.split("@")[0],
         avatar: avatar || "",
         provider: providerName,
-        isVerified: true, // Social thì mặc định là verified
+        isVerified: true,
       });
     } else {
-      // 3. Nếu đã có User, CHỈ cập nhật thông tin nếu nó đang trống
-      // Không ghi đè avatar hiện tại của họ nếu họ đã có
       if (!user.name) user.name = name || email.split("@")[0];
       if (!user.avatar) user.avatar = avatar || "";
-
-      // Nếu user đăng nhập bằng Email/Pass, nhưng giờ dùng Google Login,
-      // thì đánh dấu họ là verified (vì email đã được Google xác minh)
       if (!user.isVerified) user.isVerified = true;
 
       await user.save();
@@ -250,11 +246,125 @@ export const socialLogin = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Lỗi khi đăng nhập Social:", error.message, error.stack);
-    res.status(500).json({
-      message: "SERVER_ERROR",
-      error: error.message,
-      details: process.env.NODE_ENV === "development" ? error.stack : undefined,
+    console.error("Lỗi khi đăng nhập Social:", error);
+    res.status(500).json({ message: "SERVER_ERROR" });
+  }
+};
+
+// --- HÀM QUÊN MẬT KHẨU ---
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "MISSING_FIELDS" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+
+    // Chặn tài khoản MXH
+    if (user.provider !== "local") {
+      return res.status(400).json({ message: "USE_SOCIAL_LOGIN" });
+    }
+
+    // Tạo mã OTP 6 số
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Lưu OTP vào DB
+    user.resetPasswordOtp = otp;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 phút
+    await user.save({ validateBeforeSave: false });
+
+    try {
+      // Gửi OTP qua mail
+      await sendPasswordResetEmail(
+        user.email,
+        otp,
+        process.env.EMAIL_USER,
+        process.env.EMAIL_PASS,
+      );
+      res.status(200).json({ success: true, message: "OTP_SENT" });
+    } catch (emailError) {
+      console.error("Lỗi khi gửi email:", emailError);
+      user.resetPasswordOtp = undefined;
+      user.resetPasswordExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ message: "EMAIL_SEND_FAILED" });
+    }
+  } catch (error) {
+    console.error("Lỗi yêu cầu quên mật khẩu:", error);
+    res.status(500).json({ message: "SERVER_ERROR" });
+  }
+};
+
+// --- HÀM XÁC THỰC OTP QUÊN MẬT KHẨU ---
+export const verifyResetOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!email || !otp)
+      return res.status(400).json({ message: "MISSING_FIELDS" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+
+    // Kiểm tra OTP
+    if (user.resetPasswordOtp !== otp) {
+      return res.status(400).json({ message: "INVALID_OTP" });
+    }
+    if (user.resetPasswordExpires < Date.now()) {
+      return res.status(400).json({ message: "EXPIRED_OTP" });
+    }
+
+    // Nếu OTP đúng -> Tạo một token bảo mật tạm thời cho phép đổi mật khẩu
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordOtp = undefined; // Xóa OTP đi cho an toàn
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      success: true,
+      message: "OTP_VERIFIED", // Đã bổ sung mã message thành công
+      resetToken,
     });
+  } catch (error) {
+    console.error("Lỗi xác thực mã OTP quên mật khẩu:", error);
+    res.status(500).json({ message: "SERVER_ERROR" });
+  }
+};
+
+// --- HÀM ĐẶT LẠI MẬT KHẨU ---   
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, resetToken, newPassword } = req.body;
+    if (!email || !resetToken || !newPassword)
+      return res.status(400).json({ message: "MISSING_FIELDS" });
+
+    const user = await User.findOne({
+      email,
+      resetPasswordToken: resetToken,
+      resetPasswordExpires: { $gt: Date.now() }, // Còn hạn
+    });
+
+    if (!user)
+      return res.status(400).json({ message: "INVALID_OR_EXPIRED_SESSION" });
+
+    // ĐÃ THÊM LOGIC KIỂM TRA MẬT KHẨU CŨ
+    const isSameAsOldPassword = await user.matchPassword(newPassword);
+    if (isSameAsOldPassword) {
+      return res.status(400).json({ message: "PASSWORD_MUST_BE_DIFFERENT" });
+    }
+
+    // Đổi mật khẩu
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "PASSWORD_RESET_SUCCESS",
+    });
+  } catch (error) {
+    console.error("Lỗi đặt lại mật khẩu:", error);
+    res.status(500).json({ message: "SERVER_ERROR" });
   }
 };

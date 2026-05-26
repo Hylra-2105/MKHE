@@ -147,9 +147,13 @@ export default function LoginForm() {
             <span></span> {t("remember_me")}
           </label>
         </div>
-        <a href="#" className="text-sm text-mkhe-primary hover:underline">
+        {/* ĐÃ SỬA THÀNH THẺ LINK Ở ĐÂY */}
+        <Link
+          to="/forgot-password"
+          className="text-sm text-mkhe-primary hover:underline"
+        >
           {t("forgot_password")}
-        </a>
+        </Link>
       </div>
 
       <Button type="submit" disabled={isLoading}>

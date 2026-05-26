@@ -26,11 +26,9 @@ export const useAuthStore = create((set) => ({
     try {
       const data = await authApi.login(credentials);
 
-      // Lưu vào LocalStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // Cập nhật State
       set({
         user: data.user,
         token: data.token,
@@ -51,14 +49,12 @@ export const useAuthStore = create((set) => ({
     try {
       const data = await authApi.verifyOTP(verificationData);
 
-      // Tự động reset loading sau 2 giây (khi chuyển trang xong)
       setTimeout(() => {
         set({ isLoading: false });
       }, 2000);
 
       return { success: true, message: data.message };
     } catch (error) {
-      // Bị lỗi thì phải set về false để người dùng nhập lại mã khác
       set({ isLoading: false });
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
       return { success: false, message: errorMsg };
@@ -82,7 +78,6 @@ export const useAuthStore = create((set) => ({
     try {
       const data = await authApi.socialLogin(socialData);
 
-      // Lưu Token và User vào LocalStorage y hệt đăng nhập thường
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
@@ -100,13 +95,58 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  // send otp reset password
+  forgotPasswordAction: async (email) => {
+    set({ isLoading: true });
+    try {
+      const data = await authApi.forgotPassword({ email });
+      set({ isLoading: false });
+      return { success: true, message: data.message };
+    } catch (error) {
+      set({ isLoading: false });
+      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
+      return { success: false, message: errorMsg };
+    }
+  },
+
+  // verify reset otp
+  verifyResetOtpAction: async (email, otp) => {
+    set({ isLoading: true });
+    try {
+      const data = await authApi.verifyResetOtp({ email, otp });
+      set({ isLoading: false });
+      // Trả về resetToken để component lưu lại mang sang trang ResetPassword
+      return { success: true, resetToken: data.resetToken };
+    } catch (error) {
+      set({ isLoading: false });
+      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
+      return { success: false, message: errorMsg };
+    }
+  },
+
+  // reser password
+  resetPasswordAction: async (email, resetToken, newPassword) => {
+    set({ isLoading: true });
+    try {
+      const data = await authApi.resetPassword({
+        email,
+        resetToken,
+        newPassword,
+      });
+      set({ isLoading: false });
+      return { success: true, message: data.message };
+    } catch (error) {
+      set({ isLoading: false });
+      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
+      return { success: false, message: errorMsg };
+    }
+  },
+
   // LOGOUT
   logoutAction: () => {
-    // Xóa bộ nhớ trình duyệt
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    // Xóa State
     set({ user: null, token: null });
   },
 }));
