@@ -20,7 +20,7 @@ export const verifyToken = (req, res, next) => {
     // Gắn thông tin user vừa giải mã được vào request để các Controller sau dùng
     req.user = decoded;
 
-    // Cấp phép đi tiếp vào Controller
+    // Cấp phép đi tiếp
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
