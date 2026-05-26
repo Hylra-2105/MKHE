@@ -138,6 +138,9 @@ export const loginUser = async (req, res) => {
       user: {
         _id: user._id,
         email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+        role: user.role,
         isVerified: user.isVerified,
       },
     });
@@ -331,7 +334,7 @@ export const verifyResetOtp = async (req, res) => {
   }
 };
 
-// --- HÀM ĐẶT LẠI MẬT KHẨU ---   
+// --- HÀM ĐẶT LẠI MẬT KHẨU ---
 export const resetPassword = async (req, res) => {
   try {
     const { email, resetToken, newPassword } = req.body;
@@ -366,5 +369,22 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Lỗi đặt lại mật khẩu:", error);
     res.status(500).json({ message: "SERVER_ERROR" });
+  }
+};
+
+// logout
+export const logoutUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    await User.findByIdAndUpdate(userId, { refreshToken: null });
+
+    return res.status(200).json({
+      success: true,
+      message: "Đăng xuất thành công trên hệ thống!",
+    });
+  } catch (error) {
+    console.error("Logout Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

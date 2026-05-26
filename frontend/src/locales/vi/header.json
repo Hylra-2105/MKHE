@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "heritage": "Di Sản",
+    "craft_villages": "Làng Nghề",
+    "shop": "Cửa Hàng",
+    "storytelling": "Câu Chuyện",
+    "values": "Giá Trị"
+  },
+  "user_menu": {
+    "profile": "Hồ sơ cá nhân",
+    "admin": "Trang Quản Trị",
+    "logout": "Đăng xuất"
+  },
+  "guest_menu": {
+    "login": "Đăng nhập"
+  },
+  "messages": {
+    "logout_success": "Đã đăng xuất thành công!"
+  },
+  "settings": {
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "light": "Sáng",
+    "dark": "Tối"
+  }
+}

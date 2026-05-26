@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "heritage": "Heritage",
+    "craft_villages": "Craft Villages",
+    "shop": "Shop",
+    "storytelling": "Storytelling",
+    "values": "Values"
+  },
+  "user_menu": {
+    "profile": "Profile",
+    "admin": "Admin Dashboard",
+    "logout": "Logout"
+  },
+  "guest_menu": {
+    "login": "Login"
+  },
+  "messages": {
+    "logout_success": "Logged out successfully!"
+  },
+  "settings": {
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  }
+}
