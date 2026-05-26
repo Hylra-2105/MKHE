@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }) {
 
   // Nếu CHƯA có token về trang /login
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return children;

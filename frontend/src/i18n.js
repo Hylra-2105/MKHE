@@ -8,6 +8,7 @@ import loginVI from "./locales/vi/login.json";
 import registerVI from "./locales/vi/register.json";
 import otpVI from "./locales/vi/otp.json";
 import forgotPasswordVI from "./locales/vi/forgot_password.json";
+import headerVI from "./locales/vi/header.json";
 
 // EN
 import commonEN from "./locales/en/common.json";
@@ -15,6 +16,7 @@ import loginEN from "./locales/en/login.json";
 import registerEN from "./locales/en/register.json";
 import otpEN from "./locales/en/otp.json";
 import forgotPasswordEN from "./locales/en/forgot_password.json";
+import headerEN from "./locales/en/header.json";
 
 const resources = {
   vi: {
@@ -23,6 +25,7 @@ const resources = {
     register: registerVI,
     otp: otpVI,
     forgot_password: forgotPasswordVI,
+    header: headerVI,
   },
   en: {
     common: commonEN,
@@ -30,6 +33,7 @@ const resources = {
     register: registerEN,
     otp: otpEN,
     forgot_password: forgotPasswordEN,
+    header: headerEN,
   },
 };
 
@@ -39,7 +43,7 @@ i18n
   .init({
     resources,
     fallbackLng: "vi",
-    ns: ["common", "login", "register", "otp", "forgot_password"],
+    ns: ["common", "login", "register", "otp", "forgot_password", "header"],
     defaultNS: "common",
     interpolation: {
       escapeValue: false,
