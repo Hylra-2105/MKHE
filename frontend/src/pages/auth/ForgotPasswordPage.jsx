@@ -1,0 +1,36 @@
+import ForgotPasswordForm from "@/features/auth/components/ForgotPasswordForm";
+import authBgDark from "@/assets/images/bg-forgot-password-dark.png";
+import authBgLight from "@/assets/images/bg-forgot-password-light.png";
+
+export default function ForgotPasswordPage() {
+  return (
+    <div className="flex-1 relative flex items-center justify-center p-4 overflow-hidden w-full h-full">
+      {/* Background Images - Đồng bộ với trang OTP */}
+      <img
+        src={authBgDark}
+        alt="MKHE Forgot Dark"
+        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 block [.light-mode_&]:hidden"
+      />
+
+      <img
+        src={authBgLight}
+        alt="MKHE Forgot Light"
+        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hidden [.light-mode_&]:block"
+      />
+
+      {/* Lớp phủ Overlay */}
+      <div className="absolute inset-0 bg-black/30 z-10 transition-colors duration-500 [.light-mode_&]:bg-white/20" />
+
+      {/* Khung Form Glassmorphism */}
+      <div className="relative z-20 w-full max-w-md p-8 bg-mkhe-input/40 backdrop-blur-xl border border-mkhe-primary/80 rounded-2xl shadow-[0_0_50px_color-mix(in_srgb,var(--color-mkhe-primary)_15%,transparent)] [.light-mode_&]:shadow-[0_0_50px_color-mix(in_srgb,var(--color-mkhe-primary)_30%,transparent)]">
+        {/* Đường kẻ trang trí phía trên và dưới */}
+        <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-mkhe-primary/70 to-transparent mx-8"></div>
+        <div className="absolute bottom-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-mkhe-primary/70 to-transparent mx-8"></div>
+
+        <div className="relative z-30 pt-4 pb-2">
+          <ForgotPasswordForm />
+        </div>
+      </div>
+    </div>
+  );
+}
