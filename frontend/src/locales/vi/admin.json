@@ -20,7 +20,7 @@
     "role": "Vai Trò",
     "status": "Trạng thái",
     "status_active": "Hoạt động",
-  "status_blocked": "Bị khóa",
+    "status_blocked": "Bị khóa",
     "actions": "Hành Động",
     "loading": "Đang tải dữ liệu...",
     "no_user": "Không tìm thấy người dùng nào phù hợp.",
@@ -28,14 +28,13 @@
     "block": "Khóa"
   },
   "filter": {
-    "placeholder": "Tìm theo tên hoặc email...",
-    "search": "Tìm",
-    "all_roles": "Tất cả Vai trò"
+    "placeholder": "Tìm theo tên...",
+    "search": "Tìm"
   },
   "roles": {
     "all": "Tất cả Vai trò",
-    "customer": "Customer",
-    "staff": "Staff",
-    "admin": "Admin"
+    "customer": "Khách hàng",
+    "staff": "Nhân viên",
+    "admin": "Quản trị viên"
   }
 }

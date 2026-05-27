@@ -12,15 +12,13 @@ export const getAllUsers = async (req, res) => {
 
     let query = {};
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
-      ];
+      query.name = { $regex: search, $options: "i" };
     }
     if (roleFilter) query.role = roleFilter;
 
     const totalUsers = await User.countDocuments(query);
     const users = await User.find(query)
+      .collation({ locale: "vi", strength: 2 })
       .select("-password -otp -refreshToken")
       .sort({ createdAt: -1 })
       .skip(skip)

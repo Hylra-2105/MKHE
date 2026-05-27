@@ -29,9 +29,8 @@
   },
 
   "filter": {
-    "placeholder": "Search by name or email...",
-    "search": "Search",
-    "all_roles": "All Roles"
+    "placeholder": "Search by name...",
+    "search": "Search"
   },
   "roles": {
     "all": "All Roles",

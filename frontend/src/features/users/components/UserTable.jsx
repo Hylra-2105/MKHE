@@ -66,7 +66,7 @@ const UserTable = ({ users, loading }) => {
                           : "bg-blue-500/20 text-blue-500"
                     }`}
                   >
-                    {user.role}
+                    {t(`roles.${user.role.toLowerCase()}`)}
                   </span>
                 </td>
                 <td className="p-4">
