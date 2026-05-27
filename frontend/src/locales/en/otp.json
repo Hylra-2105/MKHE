@@ -14,5 +14,9 @@
   "SERVER_ERROR": "Server error, please try again later!",
   "VERIFY_SUCCESS": "Account verification successful!",
   "RESEND_SUCCESS": "OTP resent successfully! Please check your email.",
-  "btn_processing": "Processing..."
+  "btn_processing": "Processing...",
+  "messages": {
+    "otp_sent_success": "OTP has been sent to your Gmail!",
+    "otp_send_error": "Error sending OTP: {{message}}"
+  }
 }

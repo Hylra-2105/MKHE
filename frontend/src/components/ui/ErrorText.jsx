@@ -1,11 +1,10 @@
-import React from 'react';
+import React from "react";
 
 const ErrorText = ({ error, t }) => {
-
   if (!error) return null;
 
   return (
-    <div className="flex items-center gap-1.5 mt-1.5 text-red-500 text-xs font-medium px-1">
+    <div className="flex items-center gap-1.5 -mt-2 text-red-500 text-xs font-medium px-1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"

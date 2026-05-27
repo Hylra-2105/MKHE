@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next"; // 1. Import i18n
+import { useTranslation } from "react-i18next";
 
 import UserFilter from "@/features/users/components/UserFilter";
 import UserTable from "@/features/users/components/UserTable";
@@ -10,7 +10,7 @@ import ForbiddenPage from "@/pages/errors/ForbiddenPage";
 
 export default function UserManagement() {
   const navigate = useNavigate();
-  const { t } = useTranslation("admin"); // 2. Khởi tạo hook dịch (nhớ truyền đúng tên file json)
+  const { t } = useTranslation("admin");
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,6 @@ export default function UserManagement() {
         setTotalPages(res.pagination.totalPages);
       }
     } catch (error) {
-      // 3. XỬ LÝ LỖI 403
       const errorStatus = error.response?.status;
       const errorCode = error.response?.data?.message;
 
@@ -44,7 +43,6 @@ export default function UserManagement() {
       }
 
       if (errorCode) {
-        // Tìm bản dịch trong file json (ví dụ: errors.FORBIDDEN_ACCESS)
         toast.error(t(`errors.${errorCode}`, { defaultValue: errorCode }));
       } else {
         toast.error(t("errors.fetch_failed"));
@@ -69,13 +67,15 @@ export default function UserManagement() {
     setRoleFilter(e.target.value);
   };
 
-  // Nếu bị từ chối truy cập, hiển thị trang 403
   if (isForbidden) {
     return <ForbiddenPage />;
   }
 
+  // Tạo mảng các số trang: [page-1, page, page+1] nhưng luôn hiển thị 3 số (ẩn những số không hợp lệ)
+  const pageNumbers = [page - 1, page, page + 1];
+
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text">
+    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -92,7 +92,6 @@ export default function UserManagement() {
       </div>
 
       {/* FILTER & TABLE */}
-      {/* Lưu ý: Nếu trong UserFilter và UserTable cũng có chữ cứng, bạn cũng nên truyền 't' xuống hoặc gọi useTranslation trong các file đó nhé */}
       <UserFilter
         searchInput={searchInput}
         setSearchInput={setSearchInput}
@@ -103,45 +102,66 @@ export default function UserManagement() {
 
       <UserTable users={users} loading={loading} />
 
+      {/* DIVIDER */}
+      <div className="h-px bg-mkhe-border/30 my-7"></div>
+
       {/* PAGINATION */}
-      {!loading && totalPages > 0 && (
-        <div className="flex justify-between items-center mt-6">
+      {totalPages > 0 && (
+        <div className="flex justify-between items-center">
           <span className="text-sm text-mkhe-text/60">
             {t("pagination.showing_page")}{" "}
             <span className="font-bold text-mkhe-primary">{page}</span> /{" "}
             {totalPages}
           </span>
-          <div className="flex gap-2">
+
+          <div className="flex items-center gap-1">
+            {/* Nút Previous (<) - LUÔN CHIẾM CHỖ, ẩn khi page = 1 */}
             <button
-              disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-4 py-2 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 disabled:opacity-30 transition"
+              disabled={page === 1 || loading}
+              className={`px-2 py-1 rounded transition-colors mr-2 ${
+                page === 1
+                  ? "invisible"
+                  : "text-mkhe-primary cursor-pointer hover:bg-mkhe-primary/20"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {t("pagination.prev")}
+              &lt;
             </button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-              (pageNum) => (
+            {/* CÁC SỐ TRANG - LUÔN HIỂN THỊ 3 SỐ, ẩn những số không hợp lệ */}
+            {pageNumbers.map((pageNum) => {
+              const isValid = pageNum >= 1 && pageNum <= totalPages;
+              const isActive = page === pageNum;
+
+              return (
                 <button
                   key={pageNum}
-                  onClick={() => setPage(pageNum)}
-                  className={`px-4 py-2 border rounded transition ${
-                    page === pageNum
-                      ? "bg-mkhe-primary text-white border-mkhe-primary shadow-md"
-                      : "border-mkhe-border/50 hover:bg-mkhe-primary/10"
-                  }`}
+                  onClick={() => isValid && setPage(pageNum)}
+                  disabled={loading || !isValid}
+                  className={`w-10 h-10 flex justify-center items-center transition-all duration-300 mx-1 ${
+                    !isValid
+                      ? "invisible w-8"
+                      : isActive
+                        ? "text-2xl text-mkhe-primary scale-80 cursor-pointer"
+                        : "text-base font-medium cursor-pointer text-mkhe-text/50 hover:text-mkhe-primary"
+                  } bg-transparent border-none focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {pageNum}
                 </button>
-              ),
-            )}
+              );
+            })}
 
+            {/* Nút Next (>) - LUÔN CHIẾM CHỖ, ẩn khi page = totalPages */}
             <button
-              disabled={page === totalPages}
               onClick={() => setPage(page + 1)}
-              className="px-4 py-2 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 disabled:opacity-30 transition"
+              disabled={page === totalPages || loading}
+              className={`px-2 py-1 rounded transition-colors font-bold ml-2 ${
+                page === totalPages
+                  ? "invisible"
+                  : "text-mkhe-primary cursor-pointer hover:bg-mkhe-primary/20"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {t("pagination.next")}
+              &gt;
             </button>
           </div>
         </div>
