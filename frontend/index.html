@@ -2,14 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <link rel="icon" type="image/png" href="/src/assets/images/logo-mkhe.png" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MKHE</title>
+
+    <style>
+      /* Áp dụng theme ngay từ khi page load để tránh flash */
+      :root {
+        --color-mkhe-primary: #c5a059;
+        --color-mkhe-primary-hover: #b38f4d;
+        --color-mkhe-bg: #f5f0ea;
+        --color-mkhe-text: #2d1e12;
+        --color-mkhe-input: #e4d5c7;
+        --color-mkhe-border: #c8b6a6;
+      }
+
+      /* Disable transition trên lần đầu tiên */
+      html.no-transition,
+      html.no-transition *,
+      html.no-transition *:before,
+      html.no-transition *:after {
+        transition: none !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <script type="module">
+      // Initialize theme before React renders
+      import { initializeTheme } from "/src/utils/theme.js";
+      initializeTheme();
+      import("/src/main.jsx");
+    </script>
   </body>
 </html>

@@ -1,0 +1,16 @@
+{
+  "users": {
+    "title": "Quản Lý Người Dùng",
+    "subtitle": "Xem danh sách, tìm kiếm và phân quyền hệ thống",
+    "add_member": "+ Thêm Thành Viên"
+  },
+  "pagination": {
+    "showing_page": "Hiển thị trang",
+    "prev": "Trước",
+    "next": "Sau"
+  },
+  "errors": {
+    "FORBIDDEN_ACCESS": "Bạn không có quyền truy cập vào chức năng này!",
+    "fetch_failed": "Lỗi khi tải danh sách người dùng!"
+  }
+}

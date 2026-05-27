@@ -1,13 +1,20 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 
-export default function ProtectedRoute({ children }) {
-  // Lấy token từ Zustand Store
-  const { token } = useAuthStore();
 
-  // Nếu CHƯA có token về trang /login
+export default function ProtectedRoute({ children, allowedRoles }) {
+  const { token, user } = useAuthStore();
+
   if (!token) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/login" replace />;
+  }
+
+  if (
+    allowedRoles &&
+    allowedRoles.length > 0 &&
+    (!user || !allowedRoles.includes(user.role))
+  ) {
+    return <Navigate to="/403" replace />;
   }
 
   return children;

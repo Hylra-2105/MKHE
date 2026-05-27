@@ -1,0 +1,8 @@
+{
+  "403_title": "Access Denied",
+  "403": "403",
+  "403_desc": "Sorry, you do not have permission to access this page. Please contact the administrator if you believe this is a mistake.",
+  "fetch_failed": "Failed to load user list!",
+  "forbidden_access": "You do not have permission to access this area or resource!",
+  "back_to_home": "Back to Home"
+}

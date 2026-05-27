@@ -22,7 +22,7 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Hàm xử lý riêng cho Google Login
+  // Hàm Google Login
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -147,7 +147,6 @@ export default function LoginForm() {
             <span></span> {t("remember_me")}
           </label>
         </div>
-        {/* ĐÃ SỬA THÀNH THẺ LINK Ở ĐÂY */}
         <Link
           to="/forgot-password"
           className="text-sm text-mkhe-primary hover:underline"

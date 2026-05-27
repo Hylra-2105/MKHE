@@ -9,19 +9,19 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-1 overflow-hidden">
-      
       <div className="hidden lg:flex lg:w-1/2 relative bg-mkhe-bg items-center justify-center border-r border-mkhe-border/30 overflow-hidden">
-      
         <img
           src={authBgDark}
           alt="MKHE Heritage Dark"
-          className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105 block [.light-mode_&]:hidden"
+          data-theme="dark"
+          className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105"
         />
 
         <img
           src={authBgLight}
           alt="MKHE Heritage Light"
-          className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105 hidden [.light-mode_&]:block"
+          data-theme="light"
+          className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hover:scale-105"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-mkhe-bg via-mkhe-bg/60 to-transparent z-10 transition-colors duration-500" />

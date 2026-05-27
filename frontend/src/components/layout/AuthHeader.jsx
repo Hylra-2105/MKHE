@@ -3,25 +3,32 @@ import { useState, useEffect } from "react";
 import logo from "@/assets/images/logo-mkhe.png";
 import { Globe, Moon, Sun } from "lucide-react";
 import { Link } from "react-router-dom";
+import { applyTheme } from "@/utils/theme";
 
 export default function AuthHeader() {
   const { i18n } = useTranslation();
 
-  // 1. Lấy trạng thái lưu trữ từ trình duyệt
-  const [isLight, setIsLight] = useState(() => {
-    return localStorage.getItem("theme") === "light";
+  const [isDark, setIsDark] = useState(() => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      return true;
+    } else if (theme === "light") {
+      return false;
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // 2. Kích hoạt class body & lưu lại lựa chọn
   useEffect(() => {
-    if (isLight) {
-      document.body.classList.add("light-mode");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.body.classList.remove("light-mode");
+    if (isDark) {
+      document.body.classList.add("dark-mode");
+      applyTheme(true);
       localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark-mode");
+      applyTheme(false);
+      localStorage.setItem("theme", "light");
     }
-  }, [isLight]);
+  }, [isDark]);
 
   // Đổi ngôn ngữ nhanh
   const toggleLanguage = () => {
@@ -52,10 +59,10 @@ export default function AuthHeader() {
         </button>
 
         <button
-          onClick={() => setIsLight(!isLight)}
+          onClick={() => setIsDark(!isDark)}
           className="opacity-80 hover:text-mkhe-primary cursor-pointer hover:opacity-100 transition-colors"
         >
-          {isLight ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          {isDark ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
         </button>
       </div>
     </header>

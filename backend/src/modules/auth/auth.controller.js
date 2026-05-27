@@ -1,5 +1,4 @@
-import User from "./auth.model.js";
-// ĐÃ FIX LỖI: Thêm sendPasswordResetEmail vào import
+import User from "../users/user.model.js";
 import {
   sendVerificationEmail,
   sendPasswordResetEmail,
@@ -126,7 +125,7 @@ export const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
@@ -192,7 +191,7 @@ export const resendOTP = async (req, res) => {
   }
 };
 
-// --- HÀM ĐĂNG NHẬP BẰNG MẠNG XÃ HỘI ---
+// login social
 export const socialLogin = async (req, res) => {
   try {
     const { email, name, avatar, providerId } = req.body;
@@ -230,7 +229,7 @@ export const socialLogin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email },
+      { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
@@ -254,7 +253,7 @@ export const socialLogin = async (req, res) => {
   }
 };
 
-// --- HÀM QUÊN MẬT KHẨU ---
+// fotgot password
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -268,7 +267,6 @@ export const forgotPassword = async (req, res) => {
       return res.status(400).json({ message: "USE_SOCIAL_LOGIN" });
     }
 
-    // Tạo mã OTP 6 số
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // Lưu OTP vào DB
@@ -298,7 +296,7 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-// --- HÀM XÁC THỰC OTP QUÊN MẬT KHẨU ---
+// verify reset otp
 export const verifyResetOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -320,12 +318,12 @@ export const verifyResetOtp = async (req, res) => {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordOtp = undefined; // Xóa OTP đi cho an toàn
+    user.resetPasswordOtp = undefined; // Xóa OTP
     await user.save({ validateBeforeSave: false });
 
     res.status(200).json({
       success: true,
-      message: "OTP_VERIFIED", // Đã bổ sung mã message thành công
+      message: "OTP_VERIFIED",
       resetToken,
     });
   } catch (error) {
@@ -334,7 +332,7 @@ export const verifyResetOtp = async (req, res) => {
   }
 };
 
-// --- HÀM ĐẶT LẠI MẬT KHẨU ---
+// reset password
 export const resetPassword = async (req, res) => {
   try {
     const { email, resetToken, newPassword } = req.body;
@@ -344,13 +342,13 @@ export const resetPassword = async (req, res) => {
     const user = await User.findOne({
       email,
       resetPasswordToken: resetToken,
-      resetPasswordExpires: { $gt: Date.now() }, // Còn hạn
+      resetPasswordExpires: { $gt: Date.now() },
     });
 
     if (!user)
       return res.status(400).json({ message: "INVALID_OR_EXPIRED_SESSION" });
 
-    // ĐÃ THÊM LOGIC KIỂM TRA MẬT KHẨU CŨ
+    // KIỂM TRA MẬT KHẨU CŨ
     const isSameAsOldPassword = await user.matchPassword(newPassword);
     if (isSameAsOldPassword) {
       return res.status(400).json({ message: "PASSWORD_MUST_BE_DIFFERENT" });

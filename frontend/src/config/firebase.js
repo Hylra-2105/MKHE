@@ -1,8 +1,7 @@
-// src/config/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// Cấu hình Firebase của bạn
+// Cấu hình Firebase 
 const firebaseConfig = {
   apiKey: "AIzaSyB9gb4Nn7CdquMWA5ff32N2n90xf1Hz48k",
   authDomain: "mkhe-auth.firebaseapp.com",

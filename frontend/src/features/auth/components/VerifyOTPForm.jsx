@@ -17,7 +17,6 @@ export default function VerifyOTPForm() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
-  // --- LOGIC ĐẾM NGƯỢC (COUNTDOWN) ---
   const [countdown, setCountdown] = useState(60); // Đếm ngược 60s
   const [isResending, setIsResending] = useState(false);
 
@@ -30,31 +29,25 @@ export default function VerifyOTPForm() {
     }
     return () => clearInterval(timer);
   }, [countdown]);
-  // ------------------------------------
 
-  // Chống nhảy thẳng vào link
   useEffect(() => {
     if (!email) navigate("/register");
   }, [email, navigate]);
 
-  // --- HÀM XÁC THỰC ---
+  // verify otp
   const verifyOtpCode = async (otpString) => {
-    // 1. Store tự động set isLoading = true
+    // Store tự động set isLoading = true
     const result = await verifyOTPAction({ email, otp: otpString });
 
     if (result.success) {
-      // 2. NẾU THÀNH CÔNG: Tạo độ trễ 2 giây để UX mượt mà như lúc gửi email
       setTimeout(() => {
-        // Hiện thông báo thành công (cho nó sống 1.5s)
         toast.success(t(result.message) || t("msg_success"), {
           duration: 1500,
         });
 
-        // Đợi thêm 0.5s cho toast chạy xong rồi mới chuyển trang
         setTimeout(() => navigate("/login"), 500);
-      }, 2000); // <- CHỈNH THỜI GIAN DELAY Ở ĐÂY (2000ms = 2 giây)
+      }, 2000); 
     } else {
-      // 3. NẾU CÓ LỖI: Báo ngay lập tức, không bắt user phải chờ
       const errorMsg = result.message || "SERVER_ERROR";
       toast.error(t(errorMsg), { duration: 3000 });
 
@@ -64,7 +57,7 @@ export default function VerifyOTPForm() {
     }
   };
 
-  // --- HÀM GỬI LẠI MÃ ---
+  // resend otp
   const handleResendOTP = async () => {
     if (countdown > 0 || isResending) return;
 
@@ -87,16 +80,15 @@ export default function VerifyOTPForm() {
     }
   };
 
-  // TỰ ĐỘNG SUBMIT KHI ĐỦ 6 SỐ
+  // đủ 6 số otp thì tự submit
   useEffect(() => {
     const otpString = otp.join("");
     if (otpString.length === 6 && !isLoading) {
       verifyOtpCode(otpString);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp]);
 
-  // --- CÁC HÀM XỬ LÝ INPUT CỦA NGƯỜI DÙNG ---
+  // CÁC HÀM XỬ LÝ INPUT CỦA NGƯỜI DÙNG
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (isNaN(value)) return;
