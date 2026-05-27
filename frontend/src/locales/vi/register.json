@@ -1,6 +1,7 @@
 {
   "title": "Bắt đầu với MKHE",
   "subtitle": "Gìn giữ và lan tỏa giá trị di sản",
+  "name_placeholder": "Họ và tên",
   "email_placeholder": "Email của bạn",
   "password_placeholder": "Mật khẩu",
   "confirm_password_placeholder": "Nhập lại mật khẩu",
@@ -19,6 +20,8 @@
   "err_empty_email": "Vui lòng nhập email!",
   "err_empty_password": "Vui lòng nhập mật khẩu!",
   "err_empty_confirm_password": "Vui lòng xác nhận mật khẩu!",
+  "err_empty_name": "Vui lòng nhập tên!",
+  "err_name_length": "Tên phải có ít nhất 2 ký tự!",
   "otp_sent": "Mã OTP đã được gửi đến email của bạn!",
   "err_email_exists": "Email này đã được đăng ký!"
 }

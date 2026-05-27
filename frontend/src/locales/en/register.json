@@ -1,6 +1,7 @@
 {
   "title": "Get started on MKHE",
   "subtitle": "Preserve and spread heritage values",
+  "name_placeholder": "Your Full Name",
   "email_placeholder": "Your Email",
   "password_placeholder": "Password",
   "confirm_password_placeholder": "Confirm Password",
@@ -19,6 +20,8 @@
   "err_empty_email": "Please enter your email!",
   "err_empty_password": "Please enter a password!",
   "err_empty_confirm_password": "Please confirm your password!",
+  "err_empty_name": "Please enter your name!",
+  "err_name_length": "Name must be at least 2 characters!",
   "otp_sent": "The OTP code has been sent to your email!",
   "err_email_exists": "This email is already registered!"
 }

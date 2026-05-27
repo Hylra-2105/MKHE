@@ -1,5 +1,30 @@
-export const validateRegistration = (email, password, confirmPassword) => {
+// Lấy chữ cái đầu của từ cuối trong tên
+// Ví dụ: "Lê Thành Nam" → "N", "lethanhnam" → "L", "Jon Smith" → "S"
+export const getLastNameInitial = (name) => {
+  if (!name) return "";
+
+  const trimmedName = name.trim();
+  const words = trimmedName.split(/\s+/); // Split by whitespace
+
+  // Lấy từ cuối và chữ cái đầu tiên của nó
+  const lastWord = words[words.length - 1];
+  return lastWord.charAt(0).toUpperCase();
+};
+
+export const validateRegistration = (
+  name,
+  email,
+  password,
+  confirmPassword,
+) => {
   const errors = {}; // Tạo một object chứa các lỗi
+
+  // Kiểm tra Họ tên
+  if (!name) {
+    errors.name = "err_empty_name";
+  } else if (name.trim().length < 2) {
+    errors.name = "err_name_length";
+  }
 
   // Kiểm tra Email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

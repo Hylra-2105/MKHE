@@ -14,5 +14,9 @@
   "SERVER_ERROR": "Lỗi máy chủ, vui lòng thử lại sau!",
   "VERIFY_SUCCESS": "Xác thực tài khoản thành công!",
   "RESEND_SUCCESS": "Đã gửi lại mã xác thực! Vui lòng kiểm tra Email.",
-  "btn_processing": "Đang gửi..."
+  "btn_processing": "Đang gửi...",
+  "messages": {
+    "otp_sent_success": "OTP đã được gửi đến Gmail của bạn!",
+    "otp_send_error": "Lỗi khi gửi OTP: {{message}}"
+  }
 }

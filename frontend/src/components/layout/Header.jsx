@@ -182,7 +182,11 @@ export default function Header() {
                     <Link
                       to="/profile"
                       onClick={() => setIsDropdownOpen(false)}
-                      className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                      className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                        location.pathname.startsWith("/profile")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
                     >
                       {t("user_menu.profile")}
                     </Link>
@@ -194,7 +198,11 @@ export default function Header() {
                         <Link
                           to="/admin/users"
                           onClick={() => setIsDropdownOpen(false)}
-                          className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            location.pathname.startsWith("/admin/users")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
                         >
                           {t("user_menu.manage_users")}
                         </Link>
@@ -202,7 +210,11 @@ export default function Header() {
                         <Link
                           to="/admin/analysis"
                           onClick={() => setIsDropdownOpen(false)}
-                          className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            location.pathname.startsWith("/admin/analysis")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
                         >
                           {t("user_menu.analytics")}
                         </Link>
@@ -213,7 +225,7 @@ export default function Header() {
 
                     <button
                       onClick={() => setActiveMenu("language")}
-                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <Globe className="w-4 h-4" /> {t("settings.language")}
@@ -228,7 +240,7 @@ export default function Header() {
 
                     <button
                       onClick={() => setIsDark(!isDark)}
-                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors border-none bg-transparent text-current font-inherit"
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors border-none bg-transparent text-current font-inherit"
                     >
                       <div className="flex items-center gap-3">
                         {isDark ? (

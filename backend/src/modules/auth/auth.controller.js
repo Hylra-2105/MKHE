@@ -9,9 +9,9 @@ import crypto from "crypto";
 // HÀM ĐĂNG KÝ
 export const registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!email || !password) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "MISSING_FIELDS" });
     }
 
@@ -20,7 +20,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "EMAIL_ALREADY_EXISTS" });
     }
 
-    const user = await User.create({ email, password });
+    const user = await User.create({ name: name.trim(), email, password });
 
     if (user) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
