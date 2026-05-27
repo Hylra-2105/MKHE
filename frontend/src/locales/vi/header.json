@@ -24,6 +24,7 @@
     "language": "Ngôn ngữ",
     "theme": "Giao diện",
     "light": "Sáng",
-    "dark": "Tối"
+    "dark": "Tối",
+    "back": "Quay lại"
   }
 }

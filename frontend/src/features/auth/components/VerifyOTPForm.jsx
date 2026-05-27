@@ -14,8 +14,10 @@ export default function VerifyOTPForm() {
   const { verifyOTPAction, resendOTPAction, isLoading } = useAuthStore();
 
   const email = location.state?.email || "";
+  const isNewRegister = location.state?.isNewRegister || false;
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
+  const hasAutoSentOTPRef = useRef(false); // Dùng ref thay vì state
 
   const [countdown, setCountdown] = useState(60); // Đếm ngược 60s
   const [isResending, setIsResending] = useState(false);
@@ -34,6 +36,36 @@ export default function VerifyOTPForm() {
     if (!email) navigate("/register");
   }, [email, navigate]);
 
+  // Tự động gửi OTP khi người dùng chuyển hướng sang trang này
+  useEffect(() => {
+    if (email && !hasAutoSentOTPRef.current && !isNewRegister) {
+      hasAutoSentOTPRef.current = true;
+
+      const autoSendOTP = async () => {
+        setIsResending(true);
+        const result = await resendOTPAction(email);
+        setIsResending(false);
+
+        if (result.success) {
+          toast.success(t("messages.otp_sent_success"), {
+            duration: 3000,
+          });
+          setCountdown(60);
+          if (inputRefs.current[0]) inputRefs.current[0].focus();
+        } else {
+          const errorMsg = result.message || "SERVER_ERROR";
+          toast.error(t(errorMsg), { duration: 3000 });
+
+          hasAutoSentOTPRef.current = false;
+        }
+      };
+
+      autoSendOTP();
+    } else if (isNewRegister) {
+      hasAutoSentOTPRef.current = true;
+    }
+  }, [email, resendOTPAction, t, isNewRegister]);
+
   // verify otp
   const verifyOtpCode = async (otpString) => {
     // Store tự động set isLoading = true
@@ -46,7 +78,7 @@ export default function VerifyOTPForm() {
         });
 
         setTimeout(() => navigate("/login"), 500);
-      }, 2000); 
+      }, 2000);
     } else {
       const errorMsg = result.message || "SERVER_ERROR";
       toast.error(t(errorMsg), { duration: 3000 });

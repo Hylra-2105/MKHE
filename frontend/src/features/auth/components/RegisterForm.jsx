@@ -20,13 +20,18 @@ export default function RegisterForm() {
   // LoginAction từ store để xử lý đăng ký bằng Google
   const { registerAction, socialLoginAction, isLoading } = useAuthStore();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
 
   // Đăng ký / Đăng nhập bằng Google
   const handleGoogleLogin = async () => {
+    if (isSubmitting || isLoading) return;
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
 
@@ -43,7 +48,7 @@ export default function RegisterForm() {
         providerId: "google",
       };
 
-      // Gọi Backend 
+      // Gọi Backend
       const res = await socialLoginAction(socialData);
 
       if (res && res.success) {
@@ -69,32 +74,49 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Prevent double submission
+    if (isSubmitting || isLoading) return;
+
+    setIsSubmitting(true);
     setErrors({});
 
-    // Kiểm tra validation
-    const validationErrors = validateRegistration(
-      email,
-      password,
-      confirmPassword,
-    );
+    try {
+      // Kiểm tra validation
+      const validationErrors = validateRegistration(
+        name,
+        email,
+        password,
+        confirmPassword,
+      );
 
-    if (validationErrors) {
-      return setErrors(validationErrors);
-    }
-
-    // Gọi API thông qua Store
-    const result = await registerAction({ email, password });
-
-    if (result.success) {
-      toast.success(t("otp_sent"), { duration: 1500 });
-      navigate("/verify-otp", { state: { email: email } });
-    } else {
-      const msg = result.message || "";
-      if (msg === "EMAIL_ALREADY_EXISTS") {
-        setErrors({ email: "err_email_exists" });
-      } else {
-        toast.error(t(msg) || t("error_default"), { duration: 3000 });
+      if (validationErrors) {
+        setErrors(validationErrors);
+        return;
       }
+
+      // Gọi API thông qua Store
+      const result = await registerAction({
+        name: name.trim(),
+        email,
+        password,
+      });
+
+      if (result.success) {
+        toast.success(t("otp_sent"), { duration: 1500 });
+        navigate("/verify-otp", {
+          state: { email: email, isNewRegister: true },
+        });
+      } else {
+        const msg = result.message || "";
+        if (msg === "EMAIL_ALREADY_EXISTS") {
+          setErrors({ email: "err_email_exists" });
+        } else {
+          toast.error(t(msg) || t("error_default"), { duration: 3000 });
+        }
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -106,6 +128,19 @@ export default function RegisterForm() {
       <p className="text-mkhe-text/60 mb-8 text-sm italic">{t("subtitle")}</p>
 
       <div className="space-y-4 mb-6">
+        <div>
+          <InputField
+            type="text"
+            placeholder={t("name_placeholder") || "Họ và tên"}
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (errors.name) setErrors((prev) => ({ ...prev, name: null }));
+            }}
+          />
+          <ErrorText error={errors.name} t={t} />
+        </div>
+
         <div>
           <InputField
             type="email"
@@ -148,13 +183,13 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      <Button type="submit" disabled={isLoading}>
-        {isLoading ? t("btn_processing") : t("btn_submit")}
+      <Button type="submit" disabled={isLoading || isSubmitting}>
+        {isLoading || isSubmitting ? t("btn_processing") : t("btn_submit")}
       </Button>
 
-      <div className="flex items-center my-6">
+      <div className="flex items-center my-4">
         <div className="flex-1 border-t border-mkhe-border/50"></div>
-        <span className="px-4 text-xs text-mkhe-text/50 uppercase tracking-wider">
+        <span className="px-3 text-xs text-mkhe-text/50 uppercase tracking-wider">
           {t("or_continue_with") || "HOẶC TIẾP TỤC VỚI"}
         </span>
         <div className="flex-1 border-t border-mkhe-border/50"></div>
@@ -163,8 +198,8 @@ export default function RegisterForm() {
       <button
         type="button"
         onClick={handleGoogleLogin}
-        disabled={isLoading}
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95"
+        disabled={isLoading || isSubmitting}
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <GoogleIcon />
         <span className="text-sm font-semibold text-mkhe-text">
@@ -172,7 +207,7 @@ export default function RegisterForm() {
         </span>
       </button>
 
-      <div className="text-center text-sm mt-4">
+      <div className="text-center text-sm mt-3">
         <span className="text-mkhe-text/60">{t("have_account")} </span>
         <Link
           to="/login"
