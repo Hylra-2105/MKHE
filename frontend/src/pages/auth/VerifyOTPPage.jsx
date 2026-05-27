@@ -8,18 +8,20 @@ export default function VerifyOTPPage() {
       <img
         src={authBgDark}
         alt="MKHE OTP Dark"
-        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 block [.light-mode_&]:hidden"
+        data-theme="dark"
+        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000"
       />
 
       <img
         src={authBgLight}
         alt="MKHE OTP Light"
-        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000 hidden [.light-mode_&]:block"
+        data-theme="light"
+        className="absolute inset-0 w-full h-full object-cover z-0 select-none transition-transform duration-1000"
       />
 
-      <div className="absolute inset-0 bg-black/30 z-10 transition-colors duration-500 [.light-mode_&]:bg-white/20" />
+      <div className="absolute inset-0 theme-overlay z-10 transition-colors duration-500" />
 
-      <div className="relative z-20 w-full max-w-md p-8 bg-mkhe-input/40 backdrop-blur-xl border border-mkhe-primary/80 rounded-2xl shadow-[0_0_50px_color-mix(in_srgb,var(--color-mkhe-primary)_15%,transparent)] [.light-mode_&]:shadow-[0_0_50px_color-mix(in_srgb,var(--color-mkhe-primary)_30%,transparent)]">
+      <div className="relative z-20 w-full max-w-md p-8 bg-mkhe-input/40 backdrop-blur-xl border border-mkhe-primary/80 rounded-2xl theme-shadow">
         <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-mkhe-primary/70 to-transparent mx-8"></div>
         <div className="absolute bottom-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-mkhe-primary/70 to-transparent mx-8"></div>
 

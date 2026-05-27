@@ -19,5 +19,6 @@
   "err_empty_email": "Please enter your email!",
   "err_empty_password": "Please enter a password!",
   "err_empty_confirm_password": "Please confirm your password!",
-  "otp_sent": "The OTP code has been sent to your email!"
+  "otp_sent": "The OTP code has been sent to your email!",
+  "err_email_exists": "This email is already registered!"
 }

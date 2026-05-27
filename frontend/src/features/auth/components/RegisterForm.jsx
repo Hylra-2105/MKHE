@@ -5,7 +5,6 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { validateRegistration } from "@/utils/validators";
 import toast from "react-hot-toast";
 
-// Bổ sung import Firebase cho nút Google
 import { auth, googleProvider } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 
@@ -18,7 +17,7 @@ export default function RegisterForm() {
   const { t } = useTranslation("register");
   const navigate = useNavigate();
 
-  // Lấy thêm socialLoginAction từ store để xử lý đăng ký bằng Google
+  // LoginAction từ store để xử lý đăng ký bằng Google
   const { registerAction, socialLoginAction, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState("");
@@ -26,7 +25,7 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
 
-  // Xử lý Đăng ký / Đăng nhập bằng Google
+  // Đăng ký / Đăng nhập bằng Google
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -44,7 +43,7 @@ export default function RegisterForm() {
         providerId: "google",
       };
 
-      // Gọi Backend (Backend của bạn đã cấu hình tự tạo user nếu chưa có)
+      // Gọi Backend 
       const res = await socialLoginAction(socialData);
 
       if (res && res.success) {
@@ -161,7 +160,6 @@ export default function RegisterForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      {/* Thay thế vòng lặp bằng một nút Google duy nhất */}
       <button
         type="button"
         onClick={handleGoogleLogin}

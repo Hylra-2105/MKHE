@@ -8,8 +8,11 @@
   },
   "user_menu": {
     "profile": "Hồ sơ cá nhân",
-    "admin": "Trang Quản Trị",
-    "logout": "Đăng xuất"
+    "manage_users": "Quản lý Người dùng",
+    "analytics": "Thống kê - Phân tích",
+    "logout": "Đăng xuất",
+    "admin_area": "Khu vực quản trị",
+    "staff_area": "Khu vực nhân viên"
   },
   "guest_menu": {
     "login": "Đăng nhập"

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { applyTheme } from "@/utils/theme";
 import toast from "react-hot-toast";
+import logo from "@/assets/images/logo-mkhe.png";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -11,7 +13,7 @@ import {
   Sun,
   Check,
   ChevronRight,
-  ChevronLeft, // Thêm Mũi tên trái cho nút Back
+  ChevronLeft,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -24,41 +26,51 @@ const LANGUAGES = [
 export default function Header() {
   const { t, i18n } = useTranslation("header");
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logoutAction } = useAuthStore();
 
-  // State quản lý Dropdown
+  // Check if user is admin or staff
+  const isAdmin = user?.role === "Admin";
+  const isStaff = user?.role === "Staff";
+  const isAdminOrStaff = isAdmin || isStaff;
+
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("main"); // 'main' hoặc 'language'
+  const [activeMenu, setActiveMenu] = useState("main");
   const [isGuestLangOpen, setIsGuestLangOpen] = useState(false);
 
   const dropdownRef = useRef(null);
   const guestLangRef = useRef(null);
 
-  // 1. Khởi tạo theme từ LocalStorage
-  const [isLight, setIsLight] = useState(() => {
-    return localStorage.getItem("theme") === "light";
+  const [isDark, setIsDark] = useState(() => {
+    // Init từ localStorage
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      return true;
+    } else if (theme === "light") {
+      return false;
+    }
+    // Fallback: check system preference
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // 2. Lưu Theme và thay class
   useEffect(() => {
-    if (isLight) {
-      document.body.classList.add("light-mode");
-      localStorage.setItem("theme", "light");
-    } else {
-      document.body.classList.remove("light-mode");
+    if (isDark) {
+      document.body.classList.add("dark-mode");
+      applyTheme(true);
       localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark-mode");
+      applyTheme(false);
+      localStorage.setItem("theme", "light");
     }
-  }, [isLight]);
+  }, [isDark]);
 
-  // Đóng các menu khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Đóng menu Customer
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
-        setTimeout(() => setActiveMenu("main"), 200); // Trả về menu chính khi đóng
+        setTimeout(() => setActiveMenu("main"), 200);
       }
-      // Đóng menu Guest
       if (
         guestLangRef.current &&
         !guestLangRef.current.contains(event.target)
@@ -89,50 +101,63 @@ export default function Header() {
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 relative z-50 transition-colors duration-300 text-current">
-      {/* LOGO GẮN LINK VỀ HOME */}
+    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 relative z-50 text-current transition-colors duration-300">
+      {/* KHU VỰC LOGO */}
       <div className="w-1/4">
         <Link
           to="/home"
-          className="flex items-center gap-3 select-none hover:opacity-80 transition-opacity cursor-pointer"
+          className="flex items-center gap-3 select-none cursor-pointer"
         >
-          <span className="text-3xl font-logo font-bold tracking-widest text-gradient-gold">
+          <img
+            src={logo}
+            alt="MKHE Logo"
+            className="h-9 w-auto object-contain"
+          />
+          <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold">
             MKHE
           </span>
         </Link>
       </div>
 
-      {/* MENU CHÍNH Ở GIỮA */}
+      {/* THANH ĐIỀU HƯỚNG Ở GIỮA (THAY ĐỔI THEO NGỮ CẢNH) */}
       <nav className="flex-1 flex justify-center gap-8 hidden lg:flex">
-        {navLinks.map((link) => (
-          <Link
-            key={link.key}
-            to={link.path}
-            className="text-sm font-medium opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors uppercase tracking-wider text-[11px]"
-          >
-            {t(`nav.${link.key}`)}
-          </Link>
-        ))}
+        {!isAdminOrStaff ? (
+          navLinks.map((link) => (
+            <Link
+              key={link.key}
+              to={link.path}
+              className="text-sm font-medium opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors uppercase tracking-wider text-[11px]"
+            >
+              {t(`nav.${link.key}`)}
+            </Link>
+          ))
+        ) : (
+          <div className="text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none">
+            {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}
+          </div>
+        )}
       </nav>
 
-      {/* CỤM BÊN PHẢI */}
+      {/* CỤM CHỨC NĂNG BÊN PHẢI */}
       <div className="w-1/4 flex items-center justify-end gap-5">
-        <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors">
-          <Search className="w-5 h-5" />
-        </button>
-        <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative">
-          <ShoppingCart className="w-5 h-5" />
-          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
-            0
-          </span>
-        </button>
+        {/* ẨN KÍNH LÚP VÀ GIỎ HÀNG KHI LÀ ADMIN HOẶC STAFF */}
+        {!isAdminOrStaff && (
+          <>
+            <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors">
+              <Search className="w-5 h-5" />
+            </button>
+            <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative">
+              <ShoppingCart className="w-5 h-5" />
+              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
+                0
+              </span>
+            </button>
+          </>
+        )}
 
-        {/* ========================================================= */}
-        {/* TRƯỜNG HỢP 1: ĐÃ ĐĂNG NHẬP (CUSTOMER)                     */}
-        {/* ========================================================= */}
+        {/* TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP */}
         {user ? (
           <div className="relative ml-2" ref={dropdownRef}>
-            {/* NÚT AVATAR */}
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-9 h-9 rounded-full border border-mkhe-primary/50 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
@@ -150,33 +175,45 @@ export default function Header() {
               )}
             </button>
 
-            {/* DROPDOWN MENU CHÍNH */}
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-6 w-60 bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl overflow-hidden py-2 z-50">
-                {/* --- TRẠNG THÁI 1: MENU CHÍNH --- */}
+              <div className="absolute right-0 mt-6 w-60 bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50">
                 {activeMenu === "main" && (
                   <div>
                     <Link
                       to="/profile"
-                      className="block px-4 py-2.5 text-sm opacity-80 cursor-pointer hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
                     >
                       {t("user_menu.profile")}
                     </Link>
+
                     {(user.role === "Admin" || user.role === "Staff") && (
-                      <Link
-                        to="/admin/dashboard"
-                        className="block px-4 py-2.5 text-sm text-mkhe-primary font-semibold cursor-pointer hover:bg-mkhe-primary/10 transition-colors"
-                      >
-                        {t("user_menu.admin")}
-                      </Link>
+                      <div className="py-1">
+                        <div className="h-px bg-mkhe-border/50 my-1 mx-4"></div>
+
+                        <Link
+                          to="/admin/users"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          {t("user_menu.manage_users")}
+                        </Link>
+
+                        <Link
+                          to="/admin/analysis"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className="block mx-2 px-3 py-2 rounded-md text-sm opacity-80 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          {t("user_menu.analytics")}
+                        </Link>
+                      </div>
                     )}
 
-                    <div className="h-px bg-mkhe-border my-2 mx-3"></div>
+                    <div className="h-px bg-mkhe-border my-2 mx-4"></div>
 
-                    {/* NÚT VÀO SUB-MENU NGÔN NGỮ */}
                     <button
                       onClick={() => setActiveMenu("language")}
-                      className="w-full text-left px-4 py-2.5 text-sm opacity-80 flex justify-between items-center cursor-pointer hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <Globe className="w-4 h-4" /> {t("settings.language")}
@@ -189,50 +226,45 @@ export default function Header() {
                       </div>
                     </button>
 
-                    {/* NÚT GẠT (TOGGLE) GIAO DIỆN SÁNG/TỐI */}
-                    <div
-                      onClick={() => setIsLight(!isLight)}
-                      className="w-full px-4 py-2.5 text-sm opacity-80 flex justify-between items-center cursor-pointer hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    <button
+                      onClick={() => setIsDark(!isDark)}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors border-none bg-transparent text-current font-inherit"
                     >
                       <div className="flex items-center gap-3">
-                        {isLight ? (
-                          <Sun className="w-4 h-4" />
-                        ) : (
+                        {isDark ? (
                           <Moon className="w-4 h-4" />
+                        ) : (
+                          <Sun className="w-4 h-4" />
                         )}{" "}
                         {t("settings.theme")}
                       </div>
-
-                      {/* Nút gạt dạng iOS */}
                       <div
-                        className={`w-10 h-5.5 rounded-full flex items-center px-1 transition-colors duration-300 ${isLight ? "bg-mkhe-primary" : "bg-gray-500"}`}
+                        className={`w-10 h-5.5 rounded-full flex items-center px-1 transition-colors duration-300 ${isDark ? "bg-mkhe-primary" : "bg-gray-500"}`}
                       >
                         <div
-                          className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${isLight ? "translate-x-4" : "translate-x-0"}`}
+                          className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${isDark ? "translate-x-4" : "translate-x-0"}`}
                         />
                       </div>
-                    </div>
+                    </button>
 
-                    <div className="h-px bg-mkhe-border my-2 mx-3"></div>
+                    <div className="h-px bg-mkhe-border my-2 mx-4"></div>
 
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2.5 text-sm text-red-400 cursor-pointer hover:bg-red-400/10 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 text-red-500 cursor-pointer hover:opacity-100 hover:bg-red-500/10 transition-colors"
                     >
                       {t("user_menu.logout")}
                     </button>
                   </div>
                 )}
 
-                {/* --- TRẠNG THÁI 2: MENU LỒNG CHỌN NGÔN NGỮ --- */}
                 {activeMenu === "language" && (
                   <div>
-                    {/* Nút Back quay lại Menu Chính */}
                     <button
                       onClick={() => setActiveMenu("main")}
-                      className="w-full px-4 py-3 flex items-center gap-2 text-sm font-semibold opacity-90 border-b border-mkhe-border mb-1 cursor-pointer hover:text-mkhe-primary hover:bg-mkhe-primary/5 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
                     >
-                      <ChevronLeft className="w-5 h-5" /> Trở lại
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
                     </button>
 
                     {LANGUAGES.map((lang) => (
@@ -240,9 +272,9 @@ export default function Header() {
                         key={lang.code}
                         onClick={() => {
                           i18n.changeLanguage(lang.code);
-                          setActiveMenu("main"); // Chọn xong tự động quay về menu chính
+                          setActiveMenu("main");
                         }}
-                        className="w-full px-6 py-3 text-left text-sm flex items-center justify-between cursor-pointer hover:bg-mkhe-primary/10 transition-colors"
+                        className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left text-sm flex items-center justify-between cursor-pointer hover:bg-mkhe-primary/10 transition-colors"
                       >
                         <span
                           className={
@@ -264,11 +296,8 @@ export default function Header() {
             )}
           </div>
         ) : (
-          /* ========================================================= */
-          /* TRƯỜNG HỢP 2: CHƯA ĐĂNG NHẬP (GUEST)                      */
-          /* ========================================================= */
+          /* TRƯỜNG HỢP CHƯA ĐĂNG NHẬP */
           <div className="flex items-center gap-3 ml-2 border-l border-mkhe-border pl-4">
-            {/* Menu Dropdown Ngôn ngữ Guest */}
             <div className="relative" ref={guestLangRef}>
               <button
                 onClick={() => setIsGuestLangOpen(!isGuestLangOpen)}
@@ -278,7 +307,7 @@ export default function Header() {
               </button>
 
               {isGuestLangOpen && (
-                <div className="absolute right-0 mt-4 w-32 bg-mkhe-input border border-mkhe-border rounded shadow-xl overflow-hidden py-1 z-50">
+                <div className="absolute right-0 mt-4 w-32 bg-mkhe-input border border-mkhe-border rounded-md shadow-xl py-1 z-50">
                   {LANGUAGES.map((lang) => (
                     <button
                       key={lang.code}
@@ -286,7 +315,7 @@ export default function Header() {
                         i18n.changeLanguage(lang.code);
                         setIsGuestLangOpen(false);
                       }}
-                      className="w-full px-4 py-2 text-left text-xs flex items-center justify-between cursor-pointer hover:bg-mkhe-primary/10 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left text-xs flex items-center justify-between cursor-pointer hover:bg-mkhe-primary/10 transition-colors"
                     >
                       <span
                         className={
@@ -303,19 +332,17 @@ export default function Header() {
               )}
             </div>
 
-            {/* Nút Toggle Theme Guest */}
             <button
-              onClick={() => setIsLight(!isLight)}
+              onClick={() => setIsDark(!isDark)}
               className="opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors"
             >
-              {isLight ? (
-                <Sun className="w-4 h-4" />
-              ) : (
+              {isDark ? (
                 <Moon className="w-4 h-4" />
+              ) : (
+                <Sun className="w-4 h-4" />
               )}
             </button>
 
-            {/* Nút Login Guest */}
             <Link
               to="/login"
               className="text-xs uppercase tracking-wider font-semibold text-mkhe-primary border border-mkhe-primary px-4 py-1.5 rounded hover:bg-mkhe-primary hover:text-white transition-all ml-1 cursor-pointer"

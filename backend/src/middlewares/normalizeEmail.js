@@ -8,8 +8,6 @@ export const normalizeEmailMiddleware = (req, res, next) => {
       localPart = localPart.replace(/\./g, ""); // Xóa toàn bộ dấu chấm
       localPart = localPart.split("+")[0];      // Cắt bỏ phần sau dấu cộng
     }
-
-    // Ghi đè lại email đã sạch sẽ vào req.body
     req.body.email = `${localPart}@${domain}`;
   }
   next();

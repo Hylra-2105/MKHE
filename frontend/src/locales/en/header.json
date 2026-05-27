@@ -9,7 +9,11 @@
   "user_menu": {
     "profile": "Profile",
     "admin": "Admin Dashboard",
-    "logout": "Logout"
+    "logout": "Logout",
+    "manage_users": "Manage Users",
+    "analytics": "Analytics",
+    "admin_area": "Admin Area",
+    "staff_area": "Staff Area"
   },
   "guest_menu": {
     "login": "Login"

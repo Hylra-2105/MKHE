@@ -18,7 +18,6 @@ export default function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState({});
 
-  // State để giữ hiệu ứng loading mượt mà
   const [isProcessing, setIsProcessing] = useState(false);
 
   const email = location.state?.email;
@@ -43,13 +42,11 @@ export default function ResetPasswordForm() {
     const result = await resetPasswordAction(email, resetToken, password);
 
     if (result.success) {
-      setIsProcessing(true); // Ép nút bấm xoay "Đang cập nhật..."
+      setIsProcessing(true); 
 
-      // Fake độ trễ 1.5 giây để UX trông pro hơn
       setTimeout(() => {
         toast.success(t("PASSWORD_RESET_SUCCESS"), { duration: 1500 });
 
-        // Chờ toast chạy xong mới về login
         setTimeout(() => navigate("/login"), 500);
       }, 1500);
     } else {
@@ -105,7 +102,6 @@ export default function ResetPasswordForm() {
         </div>
       </div>
 
-      {/* Áp dụng state isProcessing */}
       <Button type="submit" disabled={isLoading || isProcessing}>
         {isLoading || isProcessing ? t("btn_updating") : t("btn_reset")}
       </Button>

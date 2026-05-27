@@ -46,10 +46,10 @@ export const sendVerificationEmail = async (
   }
 };
 
-// gửi email reset password (ĐÃ SỬA SANG DẠNG OTP)
+// gửi email reset password
 export const sendPasswordResetEmail = async (
   toEmail,
-  otp, // Thay resetUrl thành otp
+  otp, 
   emailUser,
   emailPass,
 ) => {

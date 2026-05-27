@@ -1,0 +1,16 @@
+{
+  "users": {
+    "title": "User Management",
+    "subtitle": "View list, search, and assign system permissions",
+    "add_member": "+ Add Member"
+  },
+  "pagination": {
+    "showing_page": "Showing page",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "errors": {
+    "FORBIDDEN_ACCESS": "You do not have permission to access this feature!",
+    "fetch_failed": "Error occurred while fetching user list!"
+  }
+}

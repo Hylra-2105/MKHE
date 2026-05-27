@@ -23,7 +23,7 @@ export default function ForgotPasswordForm() {
   const [countdown, setCountdown] = useState(0);
   const [isResending, setIsResending] = useState(false);
 
-  // Thêm state này để ép giữ hiệu ứng loading cho mượt
+  // state loading 
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -45,9 +45,8 @@ export default function ForgotPasswordForm() {
     const result = await forgotPasswordAction(email);
 
     if (result.success) {
-      setIsProcessing(true); // Giữ nút ở trạng thái "Đang gửi..."
+      setIsProcessing(true); 
 
-      // Tạo độ trễ 1s trước khi nhảy sang form OTP
       setTimeout(() => {
         toast.success(t("OTP_SENT"));
         setStep(2);
@@ -66,13 +65,11 @@ export default function ForgotPasswordForm() {
     const result = await verifyResetOtpAction(email, otpString);
 
     if (result.success) {
-      setIsProcessing(true); // Giữ nút ở trạng thái "Đang xác thực..."
+      setIsProcessing(true);
 
-      // Fake độ trễ 1.5 giây để UX mượt mà
       setTimeout(() => {
         toast.success(t("OTP_VERIFIED"), { duration: 1500 });
 
-        // Chờ toast hiện 0.5s rồi mới văng sang trang đổi mật khẩu
         setTimeout(() => {
           navigate("/reset-password", {
             state: { email: email, resetToken: result.resetToken },
@@ -88,11 +85,9 @@ export default function ForgotPasswordForm() {
 
   useEffect(() => {
     const otpString = otp.join("");
-    // Chặn gọi API nếu đang trong quá trình fake loading
     if (otpString.length === 6 && !isLoading && !isProcessing) {
       verifyOtpCode(otpString);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp]);
 
   const handleChange = (e, index) => {
@@ -170,7 +165,6 @@ export default function ForgotPasswordForm() {
               />
               <ErrorText error={error} t={t} />
             </div>
-            {/* Sử dụng isProcessing để giữ nút loading */}
             <Button type="submit" disabled={isLoading || isProcessing}>
               {isLoading || isProcessing ? t("btn_sending") : t("btn_send_otp")}
             </Button>
@@ -200,7 +194,6 @@ export default function ForgotPasswordForm() {
               ))}
             </div>
 
-            {/* Sử dụng isProcessing để giữ nút loading */}
             <Button
               type="submit"
               disabled={isLoading || isProcessing || otp.join("").length < 6}

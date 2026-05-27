@@ -19,30 +19,31 @@ import VerifyOTPPage from "./pages/auth/VerifyOTPPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
-import HomePage from "./pages/Home/HomePage";
+import HomePage from "./pages/home/HomePage";
+import UserManagement from "./pages/users/UserManagementPage";
+
+import ForbiddenPage from "./pages/errors/ForbiddenPage";
 
 function App() {
   return (
     <Router>
       <Toaster position="top-center" reverseOrder={false} />
 
-      {/* XÓA BỎ THẺ <Header /> Ở ĐÂY, VÌ LAYOUT ĐÃ LO VIỆC ĐÓ RỒI */}
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* NHÓM 1: CÁC TRANG DÙNG HEADER NÂU (MAIN LAYOUT) */}
         <Route element={<MainLayout />}>
+          <Route path="/home" element={<HomePage />} />
           <Route
-            path="/home"
+            path="/admin/users"
             element={
-              <ProtectedRoute>
-                <HomePage />
+              <ProtectedRoute allowedRoles={["Admin"]}>
+                <UserManagement />
               </ProtectedRoute>
             }
           />
         </Route>
 
-        {/* NHÓM 2: CÁC TRANG DÙNG HEADER LOGIN (AUTH LAYOUT) */}
         <Route element={<AuthLayout />}>
           <Route
             path="/login"
@@ -85,6 +86,8 @@ function App() {
             }
           />
         </Route>
+
+        <Route path="/403" element={<ForbiddenPage />} />
       </Routes>
     </Router>
   );
