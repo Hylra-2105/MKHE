@@ -41,3 +41,37 @@ export const getAllUsers = async (req, res) => {
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
+
+// HÀM CẬP NHẬT THÔNG TIN NGƯỜI DÙNG BỞI ADMIN
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // BẢO MẬT: Xóa những trường không được phép update trực tiếp qua API này
+    delete updateData.email;
+    delete updateData.password;
+
+    // Tìm và cập nhật user, trả về user mới nhất ({ new: true })
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true },
+    ).select("-password -otp -refreshToken"); // Đồng bộ ẩn các trường nhạy cảm như hàm GET
+
+    if (!updatedUser) {
+      // Dùng hàm errorResponse và trả về mã lỗi chuẩn
+      return errorResponse(res, 404, "USER_NOT_FOUND");
+    }
+
+    // Chuẩn hóa format trả về khi thành công
+    return res.status(200).json({
+      success: true,
+      message: "USER_UPDATE_SUCCESS",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.error("Update User Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};

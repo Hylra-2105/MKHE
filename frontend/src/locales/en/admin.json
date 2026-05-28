@@ -1,8 +1,39 @@
 {
+  "common": {
+    "role": "System Role",
+    "status": "Status",
+    "active": "Active",
+    "blocked": "Blocked",
+    "delete_account": "Delete Account",
+    "lock_account": "Lock Account",
+    "unlock_account": "Unlock Account",
+    "cancel": "Cancel",
+    "save_info": "Save Information",
+    "edit": "Edit",
+    "search_placeholder": "Type to search...",
+    "no_results": "No results found"
+  },
   "users": {
     "title": "User Management",
     "subtitle": "View list, search, and assign system permissions",
-    "add_member": "+ Add Member"
+    "add_member": "+ Add Member",
+    "detail_title": "User Profile",
+    "basic_info": "Basic Information",
+    "fullname": "Full Name",
+    "email_readonly": "Email Address (Read-only)",
+    "shipping_contact": "Shipping & Contact",
+    "phone": "Phone Number",
+    "phone_placeholder": "Not updated yet",
+    "country": "Country",
+    "country_placeholder": "Select Country",
+    "city": "State/Province",
+    "city_placeholder": "Select State/Province",
+    "city_disabled": "Please select a country first",
+    "address": "Detailed Address",
+    "address_placeholder": "House number, street name, ward...",
+    "bio": "Biography / Notes",
+    "bio_placeholder": "Add notes about this customer...",
+    "bio_empty": "No introductory information provided."
   },
   "pagination": {
     "showing_page": "Showing page",
@@ -27,9 +58,8 @@
     "view": "View",
     "block": "Block"
   },
-
   "filter": {
-    "placeholder": "Search by name...",
+    "placeholder": "Search by name or email...",
     "search": "Search"
   },
   "roles": {
@@ -37,5 +67,16 @@
     "customer": "Customer",
     "staff": "Staff",
     "admin": "Admin"
+  },
+  "messages": {
+    "update_success": "User information updated successfully!",
+    "server_error": "Server connection error! Please try again later.",
+    "update_success_log": "Update successful (Dev log):",
+    "update_error_log": "Error while saving data to backend:",
+    "USER_UPDATE_SUCCESS": "User information updated successfully!",
+    "USER_NOT_FOUND": "This user could not be found in the system!",
+    "SERVER_ERROR": "Internal server error. Please try again later!",
+    "INVALID_TOKEN": "Invalid or expired session. Please log in again!",
+    "UNAUTHORIZED": "You do not have permission to perform this action!"
   }
 }
