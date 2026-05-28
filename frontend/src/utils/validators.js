@@ -50,3 +50,7 @@ export const validateRegistration = (
 
   return Object.keys(errors).length === 0 ? null : errors;
 };
+
+export const isValidPhoneInput = (value) => {
+  return /^[0-9+]*$/.test(value);
+};
