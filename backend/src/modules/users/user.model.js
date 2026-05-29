@@ -77,6 +77,16 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    blockReason: { type: String },
+    language: {
+      type: String,
+      enum: ["en", "vi"],
+      default: "vi",
+    },
   },
   {
     timestamps: true,

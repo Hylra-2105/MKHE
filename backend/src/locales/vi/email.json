@@ -1,0 +1,33 @@
+{
+  "verification": {
+    "subject": "Mã xác thực OTP của bạn tại MKHE",
+    "greeting": "Chào mừng bạn đến với MKHE",
+    "instruction": "Để hoàn tất đăng ký, vui lòng nhập mã OTP bên dưới:",
+    "codeLabel": "Mã OTP của bạn",
+    "footer": "Gửi lúc: {time}\nMã hết hạn sau 15 phút. Vui lòng không chia sẻ mã này.",
+    "noShare": "Vui lòng không chia sẻ mã này cho bất kỳ ai."
+  },
+  "resetPassword": {
+    "subject": "Yêu cầu đặt lại mật khẩu tại MKHE",
+    "greeting": "Khôi phục mật khẩu",
+    "instruction": "Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu của bạn.",
+    "codeLabel": "Mã khôi phục của bạn",
+    "footer": "Gửi lúc: {time}\nNếu không phải bạn yêu cầu, hãy bỏ qua email này.",
+    "ignored": "Nếu không phải bạn yêu cầu, hãy bỏ qua email này."
+  },
+  "blockAccount": {
+    "subject": "Thông báo tài khoản MKHE bị khóa",
+    "greeting": "Thông báo tài khoản",
+    "accountLocked": "Tài khoản của bạn đã bị khóa với lý do:",
+    "reasons": {
+      "spam_comments": "Bình luận spam",
+      "inappropriate_behavior": "Hành vi không phù hợp",
+      "fake_account": "Tài khoản giả mạo",
+      "boom_orders": "Bùng đơn hàng nhiều lần không lý do (Boomer)",
+      "fraud": "Gian lận",
+      "violation": "Vi phạm điều khoản dịch vụ"
+    },
+    "support": "Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ với quản trị viên MKHE.",
+    "footer": "Thời gian khóa: {time}"
+  }
+}

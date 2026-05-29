@@ -11,6 +11,8 @@ import {
   Edit2,
   Check,
   XCircle,
+  AlertTriangle,
+  ChevronDown,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -24,14 +26,21 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   const [editForm, setEditForm] = useState({});
   const [originalEditForm, setOriginalEditForm] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+
+  // Trạng thái bật/tắt các Popup con
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
+  const [isReasonDropdownOpen, setIsReasonDropdownOpen] = useState(false);
+  const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
+
+  // Lý do khóa mặc định (sẽ lấy từ key i18n đầu tiên)
+  const [blockReason, setBlockReason] = useState("spam_comments");
 
   const { countries, availableStates, dialCode } = useLocations(
     isOpen ? editForm?.country || user?.country || "" : "",
   );
 
   useEffect(() => {
-    // CHỈ LOAD DỮ LIỆU THÔ VÀO FORM, KHÔNG CẮT GỌT GÌ Ở ĐÂY CẢ
     if (user && isOpen) {
       const initialForm = {
         name: user.name || "",
@@ -40,12 +49,15 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
         city: user.city || "",
         address: user.address || "",
         bio: user.bio || "",
+        isBlocked: user.isBlocked ?? false,
       };
       setEditForm(initialForm);
       setOriginalEditForm(initialForm);
       setIsEditing(false);
     } else if (!isOpen) {
       setEditForm({});
+      setShowBlockConfirm(false);
+      setShowDeleteConfirm(false);
     }
   }, [user, isOpen]);
 
@@ -57,6 +69,13 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
+  useEffect(() => {
+    if (showBlockConfirm) {
+      setBlockReason("spam_comments"); // Reset về giá trị mặc định
+      setIsReasonDropdownOpen(false); // Đảm bảo dropdown đóng khi vừa mở popup
+    }
+  }, [showBlockConfirm]);
+
   if (!isOpen || !user) return null;
 
   const handleBackdropClick = (e) => {
@@ -64,10 +83,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   };
 
   // ==========================================
-  // PHÉP MÀU NẰM Ở ĐÂY: Tính toán số SẠCH ngay trước khi vẽ ra giao diện
+  // PHÉP MÀU XỬ LÝ SĐT: Tính toán số SẠCH ngay trước khi render
   let displayPhone = editForm.phone || "";
   if (dialCode) {
-    // Dùng đúng mã vùng hiện tại để gọt -> Tuyệt đối an toàn, không ăn phạm số
     while (displayPhone.startsWith(dialCode)) {
       displayPhone = displayPhone.substring(dialCode.length).trim();
     }
@@ -82,7 +100,6 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     let finalValue = value;
 
     if (name === "phone") {
-      // Chặn Admin copy/paste kèm mã vùng hoặc số 0
       if (dialCode) {
         while (finalValue.startsWith(dialCode)) {
           finalValue = finalValue.substring(dialCode.length).trim();
@@ -104,7 +121,6 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   const handleSave = async () => {
     let dataToSave = { ...editForm };
 
-    // Ghi đè bằng biến displayPhone đã được gọt siêu sạch ở trên
     if (displayPhone && dialCode) {
       dataToSave.phone = `${dialCode}${displayPhone}`;
     } else {
@@ -116,9 +132,6 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
       const response = await axiosClient.put(`/users/${user._id}`, dataToSave);
 
       if (response.data.success) {
-        console.log(t("messages.update_success_log"), response.data);
-
-        // Lưu ngược cái chuỗi đầy đủ (+84...) vào form gốc để load lại
         const savedForm = { ...editForm, phone: dataToSave.phone };
         setEditForm(savedForm);
         setOriginalEditForm(savedForm);
@@ -144,10 +157,10 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     setIsEditing(false);
   };
 
+  // Hàm thực thi XÓA vĩnh viễn
   const executeDelete = async () => {
     try {
       const response = await axiosClient.delete(`/users/${user._id}`);
-
       if (response.data.success) {
         toast.success(t("messages.delete_success"));
         if (onRefresh) onRefresh();
@@ -160,17 +173,65 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
         errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
       );
     } finally {
-      // Dù thành công hay thất bại cũng đóng cái popup hỏi lại
       setShowDeleteConfirm(false);
+    }
+  };
+
+  // Hàm điều hướng khi bấm nút Khóa/Mở khóa ở Footer
+  const handleBlockButtonClick = () => {
+    if (editForm.isBlocked) {
+      setShowUnlockConfirm(true);
+    } else {
+      // Đơn giản là bật popup lên thôi, không set state ở đây nữa
+      setShowBlockConfirm(true);
+    }
+  };
+
+  // Hàm thực thi KHÓA (Gửi kèm lý do lên API) hoặc MỞ KHÓA
+  const executeBlockToggle = async (status, reason) => {
+    setIsSaving(true);
+    try {
+      const response = await axiosClient.put(`/users/${user._id}`, {
+        isBlocked: status,
+        blockReason: reason, // Backend nhận thêm trường lý do này để lưu vết / gửi mail
+      });
+
+      if (response.data.success) {
+        toast.success(
+          status ? t("messages.lock_success") : t("messages.unlock_success"),
+        );
+
+        const updatedForm = { ...editForm, isBlocked: status };
+        setEditForm(updatedForm);
+        setOriginalEditForm(updatedForm);
+
+        if (onRefresh) onRefresh();
+
+        // Đóng modal sau 1 giây để user thấy danh sách được refresh
+        setTimeout(() => {
+          onClose();
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Block Toggle Error:", error);
+      const errorCode = error.response?.data?.message;
+      toast.error(
+        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+      );
+    } finally {
+      setIsSaving(false);
+      setShowBlockConfirm(false);
+      setShowUnlockConfirm(false);
     }
   };
 
   return (
     <div
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 animate-in fade-in duration-300"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4 animate-in fade-in duration-300"
     >
       <div className="relative bg-mkhe-bg w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-mkhe-border/30">
+        {/* HEADER */}
         <div className="flex justify-between items-center p-5 border-b border-mkhe-border/20 shrink-0">
           <h2 className="text-xl font-bold text-gradient-gold flex items-center gap-2">
             <Info className="w-5 h-5 text-mkhe-primary" />
@@ -184,8 +245,10 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
           </button>
         </div>
 
+        {/* BODY */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-12 h-full">
+            {/* CỘT TRÁI */}
             <div className="md:col-span-4 bg-mkhe-primary/5 p-8 border-r border-mkhe-border/20 flex flex-col items-center text-center sticky top-0 h-max">
               <img
                 src={
@@ -216,10 +279,14 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
                     {t("common.status")}
                   </label>
                   <div
-                    className={`h-10 flex items-center justify-center px-4 rounded-lg border ${user.isBlocked ? "bg-gray-500/10 border-gray-500/20 text-gray-600" : "bg-green-500/10 border-green-500/20 text-green-600"}`}
+                    className={`h-10 flex items-center justify-center px-4 rounded-lg border ${
+                      editForm.isBlocked
+                        ? "bg-orange-500/10 border-orange-500/20 text-orange-600"
+                        : "bg-green-500/10 border-green-500/20 text-green-600"
+                    }`}
                   >
                     <span className="text-sm font-bold uppercase">
-                      {user.isBlocked
+                      {editForm.isBlocked
                         ? t("common.blocked")
                         : t("common.active")}
                     </span>
@@ -228,6 +295,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
               </div>
             </div>
 
+            {/* CỘT PHẢI */}
             <div className="md:col-span-8 p-6 space-y-4">
               <div>
                 <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -290,7 +358,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
                   <EditableField
                     label={t("users.phone")}
                     name="phone"
-                    value={displayPhone} // ĐƯA BIẾN SẠCH VÀO HIỂN THỊ THAY VÌ EDITFORM.PHONE
+                    value={displayPhone}
                     isEditing={isEditing}
                     onChange={handleInputChange}
                     placeholder={
@@ -337,6 +405,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
           </div>
         </div>
 
+        {/* FOOTER BUTTONS */}
         <div className="p-5 border-t border-mkhe-border/20 flex justify-between items-center bg-gray-50/50 shrink-0">
           <div className="flex gap-3">
             <button
@@ -345,9 +414,13 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
             >
               <Trash2 className="w-4 h-4" /> {t("common.delete_account")}
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer">
+            <button
+              onClick={handleBlockButtonClick}
+              disabled={isSaving}
+              className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
+            >
               <Lock className="w-4 h-4" />{" "}
-              {user.isBlocked
+              {editForm.isBlocked
                 ? t("common.unlock_account")
                 : t("common.lock_account")}
             </button>
@@ -381,29 +454,32 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
             )}
           </div>
         </div>
+
+        {/* ================= POPUP 1: XÁC NHẬN XÓA TÀI KHOẢN ================= */}
         {showDeleteConfirm && (
-          <div className="absolute inset-0 z-[110] flex items-center justify-center bg-black/20 rounded-2xl animate-in fade-in duration-200">
-            <div className="relative bg-white w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-red-500/20 text-center transform scale-100 animate-in zoom-in-95 duration-200">
-              {/* Nút X góc phải */}
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            <div
+              className="bg-white w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-red-500/20 text-center relative"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"
+                className="absolute top-4 right-4 ..."
               >
                 <X className="w-5 h-5" />
               </button>
-
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 mt-2">
                 <Trash2 className="w-8 h-8 text-red-500" />
               </div>
-
               <h3 className="text-xl font-bold text-mkhe-text mb-2">
                 {t("messages.confirm_delete_title")}
               </h3>
-
               <p className="text-sm text-mkhe-text/70 mb-6 leading-relaxed">
                 {t("messages.confirm_delete")}
               </p>
-
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
@@ -416,6 +492,172 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
                   className="px-6 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all cursor-pointer"
                 >
                   {t("common.delete_permanently")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= POPUP 2: XÁC NHẬN KHÓA TÀI KHOẢN KÈM DROPDOWN LÝ DO ================= */}
+        {showBlockConfirm && (
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
+            onClick={() => setShowBlockConfirm(false)}
+          >
+            <div
+              className="relative bg-white w-full max-w-md p-6 rounded-2xl shadow-2xl border border-orange-500/20 transform scale-100 animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Nút X đóng góc phải */}
+              <button
+                onClick={() => setShowBlockConfirm(false)}
+                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="text-center">
+                <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-100 mt-2">
+                  <AlertTriangle className="w-8 h-8 text-orange-500" />
+                </div>
+                <h3 className="text-xl font-bold text-mkhe-text mb-2">
+                  {t("messages.confirm_lock_title")}
+                </h3>
+                <p className="text-sm text-mkhe-text/70 mb-4 leading-relaxed">
+                  {t("messages.confirm_lock_desc")}
+                </p>
+              </div>
+
+              {/* INPUT DROPDOWN CUSTOM XỊN XÒ */}
+              <div className="mb-6 relative">
+                <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1.5 text-left">
+                  {t("users.block_reason_label")}
+                </label>
+
+                {/* Lớp kính vô hình giúp click ra ngoài để đóng */}
+                {isReasonDropdownOpen && (
+                  <div
+                    className="fixed inset-0 z-[120]"
+                    onClick={() => setIsReasonDropdownOpen(false)}
+                  />
+                )}
+
+                <div className="relative w-full">
+                  {/* Nút bấm hiển thị */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsReasonDropdownOpen(!isReasonDropdownOpen)
+                    }
+                    className="w-full p-3 bg-white border border-mkhe-border/50 cursor-pointer rounded-xl focus:outline-none focus:border-mkhe-primary/50 text-sm font-medium text-mkhe-text flex justify-between items-center shadow-sm relative z-[121] transition-all"
+                  >
+                    <span className="truncate pr-4">
+                      {t(`reasons.${blockReason}`)}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-mkhe-primary shrink-0 transition-transform duration-300 ${
+                        isReasonDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Menu xổ xuống */}
+                  {isReasonDropdownOpen && (
+                    <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-mkhe-border/50 rounded-xl shadow-xl py-2 z-[122] max-h-56 overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-200">
+                      {[
+                        "spam_comments",
+                        "boom_orders",
+                        "fake_info",
+                        "policy_violation",
+                        "fraud_activity",
+                      ].map((reasonKey) => (
+                        <button
+                          key={reasonKey}
+                          type="button"
+                          onClick={() => {
+                            setBlockReason(reasonKey);
+                            setIsReasonDropdownOpen(false);
+                          }}
+                          className={`w-[calc(100%-16px)] mx-2 px-3 py-2.5 cursor-pointer rounded-lg text-sm text-left flex justify-between items-center cursor-pointer transition-colors ${
+                            blockReason === reasonKey
+                              ? "bg-mkhe-primary/10 text-mkhe-primary font-bold"
+                              : "text-mkhe-text/80 hover:bg-gray-100 hover:text-mkhe-text"
+                          }`}
+                        >
+                          <span className="truncate pr-2">
+                            {t(`reasons.${reasonKey}`)}
+                          </span>
+                          {blockReason === reasonKey && (
+                            <Check className="w-4 h-4 shrink-0 text-mkhe-primary" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* HÀNG BUTTONS */}
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowBlockConfirm(false)}
+                  className="px-5 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all cursor-pointer text-sm"
+                >
+                  {t("common.cancel")}
+                </button>
+                <button
+                  onClick={() => executeBlockToggle(true, blockReason)}
+                  className="px-5 py-2.5 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all cursor-pointer text-sm"
+                >
+                  {t("common.confirm_lock")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showUnlockConfirm && (
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
+            onClick={() => setShowUnlockConfirm(false)}
+          >
+            <div
+              className="relative bg-white w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-green-500/20 text-center transform scale-100 animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowUnlockConfirm(false)}
+                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-full transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100 mt-2">
+                <ShieldCheck className="w-8 h-8 text-green-500" />
+              </div>
+
+              <h3 className="text-xl font-bold text-mkhe-text mb-2">
+                {t("messages.confirm_unlock_title")}
+              </h3>
+
+              <p className="text-sm text-mkhe-text/70 mb-6 leading-relaxed">
+                {t("messages.confirm_unlock_desc")}
+              </p>
+
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowUnlockConfirm(false)}
+                  className="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all cursor-pointer"
+                >
+                  {t("common.cancel")}
+                </button>
+                <button
+                  onClick={() => {
+                    executeBlockToggle(false, "");
+                    setShowUnlockConfirm(false);
+                  }}
+                  className="px-6 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 shadow-lg shadow-green-600/30 transition-all cursor-pointer"
+                >
+                  {t("common.confirm_unlock")}
                 </button>
               </div>
             </div>

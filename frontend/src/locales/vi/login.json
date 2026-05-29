@@ -22,6 +22,8 @@
   "err_account_not_found": "Tài khoản không tồn tại!",
   "err_wrong_password": "Mật khẩu không đúng!",
   "err_account_not_verified": "Tài khoản chưa được xác minh. Đang chuyển hướng...",
+  "err_account_blocked": "Tài khoản của bạn đã bị khóa bởi quản trị viên. Vui lòng liên hệ hỗ trợ.",
   "LOGIN_SUCCESS": "Đăng nhập thành công!",
+  "ACCOUNT_BLOCKED": "Tài khoản của bạn đã bị khóa bởi quản trị viên. Vui lòng liên hệ hỗ trợ.",
   "err_empty_email": "Vui lòng nhập email!"
 }
