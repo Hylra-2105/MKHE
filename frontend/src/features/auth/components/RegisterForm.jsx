@@ -14,7 +14,7 @@ import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function RegisterForm() {
-  const { t } = useTranslation("register");
+  const { t, i18n } = useTranslation("register");
   const navigate = useNavigate();
 
   // LoginAction từ store để xử lý đăng ký bằng Google
@@ -26,7 +26,6 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
 
   // Đăng ký / Đăng nhập bằng Google
   const handleGoogleLogin = async () => {
@@ -100,6 +99,7 @@ export default function RegisterForm() {
         name: name.trim(),
         email,
         password,
+        language: i18n.language || "vi",
       });
 
       if (result.success) {

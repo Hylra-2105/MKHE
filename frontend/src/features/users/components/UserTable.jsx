@@ -19,7 +19,9 @@ const UserTable = ({ users, loading, onViewUser }) => {
             <th className="p-4 font-semibold text-center w-1/4">
               {t("table.role")}
             </th>
-            <th className="p-4 font-semibold w-1/6">{t("table.status")}</th>
+            <th className="p-4 font-semibold text-center w-1/6">
+              {t("table.status")}
+            </th>
             <th className="p-4 font-semibold text-center">
               {t("table.actions")}
             </th>
@@ -72,9 +74,9 @@ const UserTable = ({ users, loading, onViewUser }) => {
                     {t(`roles.${user.role.toLowerCase()}`)}
                   </span>
                 </td>
-                <td className="p-4">
+                <td className="p-4 text-center">
                   {user.isBlocked ? (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-500/20 text-gray-500 border border-gray-500/30">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-600 border border-orange-500/30">
                       {t("table.status_blocked")}
                     </span>
                   ) : (

@@ -22,6 +22,8 @@
   "err_account_not_found": "Account does not exist!",
   "err_wrong_password": "Password is incorrect!",
   "err_account_not_verified": "Account not verified. Redirecting...",
+  "err_account_blocked": "Account has been locked by administrator. Please contact support.",
   "LOGIN_SUCCESS": "Login successful!",
+  "ACCOUNT_BLOCKED": "Account has been locked by administrator. Please contact support.",
   "err_empty_email": "Please enter your email!"
 }

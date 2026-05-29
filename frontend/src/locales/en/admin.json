@@ -12,7 +12,9 @@
     "edit": "Edit",
     "search_placeholder": "Type to search...",
     "no_results": "No results found",
-    "delete_permanently": "Delete Permanently"
+    "delete_permanently": "Delete Permanently",
+    "confirm_lock": "Confirm Lock",
+    "confirm_unlock": "Unlock Now"
   },
   "users": {
     "title": "User Management",
@@ -34,7 +36,8 @@
     "address_placeholder": "House number, street name, ward...",
     "bio": "Biography / Notes",
     "bio_placeholder": "Add notes about this customer...",
-    "bio_empty": "No introductory information provided."
+    "bio_empty": "No introductory information provided.",
+    "block_reason_label": "Reason for Penalization"
   },
   "pagination": {
     "showing_page": "Showing page",
@@ -80,6 +83,19 @@
     "INVALID_TOKEN": "Invalid or expired session. Please log in again!",
     "UNAUTHORIZED": "You do not have permission to perform this action!",
     "confirm_delete_title": "Confirm Account Deletion?",
-    "confirm_delete": "Are you sure you want to permanently delete this user? This action cannot be undone!"
+    "confirm_delete": "Are you sure you want to permanently delete this user? This action cannot be undone!",
+    "confirm_lock_title": "Lock User Account?",
+    "confirm_lock_desc": "Locked accounts will be unable to sign in or shop on the system. Please select a violation reason:",
+    "lock_success": "User account has been locked successfully!",
+    "unlock_success": "User account has been unlocked and reactivated successfully!",
+    "confirm_unlock_title": "Unlock Account?",
+    "confirm_unlock_desc": "Are you sure you want to reactivate this account? The user will be able to sign in normally again."
+  },
+  "reasons": {
+    "spam_comments": "Spamming comments / Fake product reviews",
+    "boom_orders": "Multiple order booms without reason",
+    "fake_info": "Providing fake profile information/shipping address",
+    "policy_violation": "Violating system general terms and policies",
+    "fraud_activity": "Fraudulent activity / Exploiting promo codes"
   }
 }

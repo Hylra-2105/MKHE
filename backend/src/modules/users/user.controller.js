@@ -1,6 +1,7 @@
 import User from "./user.model.js";
 import { errorResponse } from "../../utils/response.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
+import { sendBlockAccountEmail } from "../../utils/email.js";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -14,7 +15,6 @@ export const getAllUsers = async (req, res) => {
     let query = {};
     if (search) {
       const searchRegex = createVietnameseRegex(search);
-
       query.$or = [
         { name: { $regex: searchRegex, $options: "i" } },
         { email: { $regex: searchRegex, $options: "i" } },
@@ -53,25 +53,46 @@ export const getAllUsers = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const updateData = req.body;
+    const { isBlocked, blockReason, ...otherData } = req.body;
 
-    // BẢO MẬT: Xóa những trường không được phép update trực tiếp qua API này
+    let updateData = { ...otherData };
+
+    // Xử lý logic khóa / mở khóa
+    if (isBlocked !== undefined) {
+      updateData.isBlocked = isBlocked;
+      // Chỉ lưu lý do nếu đang thực hiện KHÓA (isBlocked = true)
+      updateData.blockReason = isBlocked ? blockReason : "";
+    }
+
+    // Bảo mật: Loại bỏ các trường không được update
     delete updateData.email;
     delete updateData.password;
 
-    // Tìm và cập nhật user, trả về user mới nhất ({ new: true })
     const updatedUser = await User.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true, runValidators: true },
-    ).select("-password -otp -refreshToken"); // Đồng bộ ẩn các trường nhạy cảm như hàm GET
+      { returnDocument: "after", runValidators: true },
+    ).select("-password -otp -refreshToken");
 
-    if (!updatedUser) {
-      // Dùng hàm errorResponse và trả về mã lỗi chuẩn
-      return errorResponse(res, 404, "USER_NOT_FOUND");
+    if (!updatedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    // Gửi email nếu tài khoản vừa bị KHÓA
+    if (isBlocked === true && blockReason) {
+      // Gọi async nhưng không await để không làm chậm response API
+      // Lấy language từ user hoặc default vi
+      const userLang = updatedUser.language || "vi";
+      sendBlockAccountEmail(updatedUser.email, blockReason, userLang).catch(
+        (err) => {
+          console.error("[⚠️ Email Error] Gửi mail thất bại:", {
+            email: updatedUser.email,
+            reason: blockReason,
+            language: userLang,
+            error: err.message,
+          });
+        },
+      );
     }
 
-    // Chuẩn hóa format trả về khi thành công
     return res.status(200).json({
       success: true,
       message: "USER_UPDATE_SUCCESS",
@@ -87,13 +108,9 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Tìm và xóa thẳng tay khỏi Database
     const deletedUser = await User.findByIdAndDelete(id);
 
-    if (!deletedUser) {
-      return errorResponse(res, 404, "USER_NOT_FOUND");
-    }
+    if (!deletedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
 
     return res.status(200).json({
       success: true,

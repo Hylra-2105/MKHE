@@ -1,11 +1,21 @@
-import express from "express";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Lấy __dirname cho ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env từ thư mục backend root
+const envPath = path.resolve(__dirname, ".env");
+dotenv.config({ path: envPath });
+
+
+import express from "express";
 import cors from "cors";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/modules/auth/auth.routes.js";
 import userRoutes from "./src/modules/users/user.routes.js";
-
-dotenv.config();
 
 connectDB();
 

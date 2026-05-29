@@ -1,99 +1,129 @@
-import nodemailer from "nodemailer";
+import { getTransporter } from "../config/nodemailer.js";
+import { loadTranslation, getTranslation } from "../config/i18n.js";
 
-export const sendVerificationEmail = async (
-  toEmail,
-  otp,
-  emailUser,
-  emailPass,
-) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: emailUser,
-      pass: emailPass,
-    },
-  });
-
-  const mailOptions = {
-    from: `"MKHE Heritage" <${emailUser}>`,
-    to: toEmail,
-    subject: "Mã xác thực OTP của bạn tại MKHE",
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
-        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">Chào mừng bạn đến với MKHE</h2>
-        <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; text-align: center;">
-          Để hoàn tất đăng ký, vui lòng nhập mã OTP gồm 6 chữ số bên dưới vào ứng dụng:
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-          <span style="background-color: #e5dcd3; color: #333; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold; letter-spacing: 5px;">
-            ${otp}
-          </span>
-        </div>
-        <p style="color: #999; font-size: 14px; text-align: center; margin-top: 20px;">
-          Mã này sẽ hết hạn sau <strong>15 phút</strong>.<br>
-          Vui lòng không chia sẻ mã này cho bất kỳ ai.
-        </p>
-      </div>
-    `,
-  };
-
+// Hàm gửi email chung (giúp tránh lặp lại code)
+const sendEmail = async (mailOptions) => {
   try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email OTP đã được gửi tới: ${toEmail}`);
+    const transporter = getTransporter();
+    const result = await transporter.sendMail(mailOptions);
+    console.log(
+      `✓ Email đã được gửi tới: ${mailOptions.to} (MessageID: ${result.messageId})`,
+    );
+    return result;
   } catch (error) {
-    console.error("Lỗi khi gửi email:", error);
-    throw new Error("Không thể gửi email xác thực");
+    console.error("✗ Lỗi chi tiết khi gửi email:", {
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      errorMessage: error.message,
+      errorCode: error.code,
+      stack: error.stack,
+    });
+    throw error;
   }
 };
 
-// gửi email reset password
-export const sendPasswordResetEmail = async (
-  toEmail,
-  otp, 
-  emailUser,
-  emailPass,
-) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: emailUser,
-      pass: emailPass,
-    },
-  });
+// Helper function để format thời gian
+const getFormattedTime = (lang = "vi") => {
+  const options = {
+    timeZone: "Asia/Ho_Chi_Minh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+  return new Date().toLocaleString(lang === "en" ? "en-US" : "vi-VN", options);
+};
+
+/**
+ * Gửi mã OTP xác thực
+ * @param {string} toEmail - Email người nhận
+ * @param {string} otp - Mã OTP
+ * @param {string} lang - Ngôn ngữ (en, vi). Default: vi
+ */
+export const sendVerificationEmail = async (toEmail, otp, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const verTrans = trans.verification || {};
 
   const mailOptions = {
-    from: `"MKHE Heritage" <${emailUser}>`,
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Yêu cầu đặt lại mật khẩu tại MKHE",
+    subject: getTranslation(trans, "verification.subject"),
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
-        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">Khôi phục mật khẩu</h2>
-        <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; text-align: center;">
-          Chúng tôi đã nhận được yêu cầu đặt lại mật khẩu cho tài khoản MKHE liên kết với email này.
-        </p>
-        <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; text-align: center;">
-          Vui lòng nhập mã OTP gồm 6 chữ số bên dưới để tiến hành tạo mật khẩu mới:
-        </p>
-        
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${getTranslation(trans, "verification.greeting")}</h2>
+        <p style="text-align: center;">${getTranslation(trans, "verification.instruction")}</p>
         <div style="text-align: center; margin: 30px 0;">
-          <span style="background-color: #e5dcd3; color: #333; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold; letter-spacing: 5px;">
-            ${otp}
-          </span>
+          <span style="background-color: #e5dcd3; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold;">${otp}</span>
         </div>
-        
-        <p style="color: #999; font-size: 14px; text-align: center; margin-top: 20px; border-top: 1px solid #e5dcd3; padding-top: 20px;">
-          Mã này sẽ hết hạn sau <strong>15 phút</strong>.<br>
-          Nếu bạn không yêu cầu thay đổi mật khẩu, vui lòng bỏ qua email này. Tài khoản của bạn vẫn an toàn.
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${getTranslation(trans, "verification.footer", { time: getFormattedTime(lang) })}
         </p>
       </div>
     `,
   };
+  await sendEmail(mailOptions);
+};
 
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email Reset OTP đã được gửi tới: ${toEmail}`);
-  } catch (error) {
-    console.error("Lỗi khi gửi email reset password:", error);
-    throw new Error("Không thể gửi email khôi phục mật khẩu");
-  }
+/**
+ * Gửi email reset password
+ * @param {string} toEmail - Email người nhận
+ * @param {string} otp - Mã reset OTP
+ * @param {string} lang - Ngôn ngữ (en, vi). Default: vi
+ */
+export const sendPasswordResetEmail = async (toEmail, otp, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "resetPassword.subject"),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${getTranslation(trans, "resetPassword.greeting")}</h2>
+        <p style="text-align: center;">${getTranslation(trans, "resetPassword.instruction")}</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="background-color: #e5dcd3; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold;">${otp}</span>
+        </div>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${getTranslation(trans, "resetPassword.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email thông báo khóa tài khoản
+ * @param {string} toEmail - Email người nhận
+ * @param {string} reason - Lý do khóa (code)
+ * @param {string} lang - Ngôn ngữ (en, vi). Default: vi
+ */
+export const sendBlockAccountEmail = async (toEmail, reason, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+
+  // Get translated reason text
+  const reasonText =
+    getTranslation(trans, `blockAccount.reasons.${reason}`) || reason;
+
+  const mailOptions = {
+    from: `"MKHE Heritage Support" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "blockAccount.subject"),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #d97706; text-align: center;">${getTranslation(trans, "blockAccount.greeting")}</h2>
+        <p style="font-size: 16px; line-height: 1.6;">${getTranslation(trans, "blockAccount.accountLocked")}</p>
+        <div style="background-color: #fef3c7; border-left: 4px solid #d97706; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <strong style="font-size: 16px; color: #b45309;">${reasonText}</strong>
+        </div>
+        <p style="font-size: 14px; line-height: 1.6;">${getTranslation(trans, "blockAccount.support")}</p>
+        <p style="color: #999; font-size: 12px; border-top: 1px solid #e5dcd3; padding-top: 20px; margin-top: 30px;">
+          ${getTranslation(trans, "blockAccount.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
 };

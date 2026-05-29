@@ -9,7 +9,7 @@ import crypto from "crypto";
 // HÀM ĐĂNG KÝ
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, language } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "MISSING_FIELDS" });
@@ -20,7 +20,14 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "EMAIL_ALREADY_EXISTS" });
     }
 
-    const user = await User.create({ name: name.trim(), email, password });
+    const userLang = ["en", "vi"].includes(language) ? language : "vi";
+
+    const user = await User.create({
+      name: name.trim(),
+      email,
+      password,
+      language: userLang,
+    });
 
     if (user) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -29,12 +36,7 @@ export const registerUser = async (req, res) => {
       user.otpExpires = Date.now() + 15 * 60 * 1000;
       await user.save();
 
-      await sendVerificationEmail(
-        user.email,
-        otp,
-        process.env.EMAIL_USER,
-        process.env.EMAIL_PASS,
-      );
+      await sendVerificationEmail(user.email, otp, userLang);
 
       res.status(201).json({
         success: true,
@@ -118,6 +120,10 @@ export const loginUser = async (req, res) => {
 
     if (!user.isVerified) {
       return res.status(403).json({ message: "ACCOUNT_NOT_VERIFIED" });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "ACCOUNT_BLOCKED" });
     }
 
     if (!process.env.JWT_SECRET) {
@@ -218,10 +224,15 @@ export const socialLogin = async (req, res) => {
       });
     } else {
       if (!user.name) user.name = name || email.split("@")[0];
-      if (!user.avatar) user.avatar = avatar || "";
+      // Luôn cập nhật avatar từ Google (đè lên avatar truyền thống)
+      user.avatar = avatar;
       if (!user.isVerified) user.isVerified = true;
-
       await user.save();
+    }
+
+    // Check if account is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "ACCOUNT_BLOCKED" });
     }
 
     if (!process.env.JWT_SECRET) {
@@ -243,6 +254,7 @@ export const socialLogin = async (req, res) => {
         email: user.email,
         name: user.name,
         avatar: user.avatar,
+        role: user.role,
         isVerified: user.isVerified,
         provider: user.provider,
       },
@@ -275,13 +287,8 @@ export const forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     try {
-      // Gửi OTP qua mail
-      await sendPasswordResetEmail(
-        user.email,
-        otp,
-        process.env.EMAIL_USER,
-        process.env.EMAIL_PASS,
-      );
+      // Gửi OTP qua mail (sử dụng language của user)
+      await sendPasswordResetEmail(user.email, otp, user.language || "vi");
       res.status(200).json({ success: true, message: "OTP_SENT" });
     } catch (emailError) {
       console.error("Lỗi khi gửi email:", emailError);

@@ -43,13 +43,16 @@ export default function LoginForm() {
       const res = await socialLoginAction(socialData);
 
       if (res && res.success) {
-        toast.success(t("msg_login_success"));
-        setTimeout(() => {
-          navigate("/");
-          if (window.opener) window.close();
-        }, 1000);
+        toast.success(t("msg_login_success"), { duration: 3000 });
+        // Redirect immediately to homepage after social login
+        navigate("/");
       } else {
-        toast.error(t(res?.message) || t("error_default"));
+        const msg = res?.message || "";
+        if (msg === "ACCOUNT_BLOCKED") {
+          toast.error(t("err_account_blocked"), { duration: 4000 });
+        } else {
+          toast.error(t(msg) || t("error_default"), { duration: 3000 });
+        }
       }
     } catch (error) {
       console.error("Lỗi đăng nhập Google:", error);
@@ -88,7 +91,9 @@ export default function LoginForm() {
       } else {
         localStorage.removeItem("saved_email");
       }
-      toast.success(t(result.message) || t("msg_login_success"));
+      toast.success(t(result.message) || t("msg_login_success"), {
+        duration: 3000,
+      });
       setTimeout(() => navigate("/"), 1000);
     } else {
       const msg = result.message || "";
@@ -99,8 +104,10 @@ export default function LoginForm() {
       else if (msg === "ACCOUNT_NOT_VERIFIED") {
         setErrors({ email: "err_account_not_verified" });
         setTimeout(() => navigate("/verify-otp", { state: { email } }), 1500);
+      } else if (msg === "ACCOUNT_BLOCKED") {
+        setErrors({ email: "err_account_blocked" });
       } else {
-        toast.error(t(msg) || t("error_default"));
+        toast.error(t(msg) || t("error_default"), { duration: 3000 });
       }
     }
   };
