@@ -177,6 +177,7 @@ export default function UserManagement() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         user={selectedUser}
+        onRefresh={fetchUsers}
       />
     </div>
   );

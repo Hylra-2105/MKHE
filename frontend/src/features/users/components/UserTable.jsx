@@ -15,7 +15,7 @@ const UserTable = ({ users, loading, onViewUser }) => {
           <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
             <th className="p-4 font-semibold w-50">{t("table.avatar")}</th>
             <th className="p-4 font-semibold w-1/6">{t("table.name")}</th>
-            <th className="p-4 font-semibold w-1/8">{t("table.email")}</th>
+            <th className="p-4 font-semibold w-1/6">{t("table.email")}</th>
             <th className="p-4 font-semibold text-center w-1/4">
               {t("table.role")}
             </th>

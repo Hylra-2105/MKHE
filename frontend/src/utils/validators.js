@@ -1,5 +1,3 @@
-// Lấy chữ cái đầu của từ cuối trong tên
-// Ví dụ: "Lê Thành Nam" → "N", "lethanhnam" → "L", "Jon Smith" → "S"
 export const getLastNameInitial = (name) => {
   if (!name) return "";
 
@@ -53,4 +51,27 @@ export const validateRegistration = (
 
 export const isValidPhoneInput = (value) => {
   return /^[0-9+]*$/.test(value);
+};
+
+export const cleanPhoneNumber = (phone, dialCode = "") => {
+  if (!phone) return "";
+  let cleaned = phone.trim();
+
+  // 1. Nếu có dialCode (+84), gọt chính xác cục đó (an toàn tuyệt đối)
+  if (dialCode) {
+    while (cleaned.startsWith(dialCode)) {
+      cleaned = cleaned.substring(dialCode.length).trim();
+    }
+  } else {
+    // 2. Phòng hờ nếu ko có dialCode: Chỉ gọt bằng Regex NẾU có khoảng trắng
+    // (VD: "+84 333...", chứ viết liền "+84333" thì tha cho nó để khỏi ăn nhầm)
+    cleaned = cleaned.replace(/(^\+\d{1,4}\s+)+/g, "").trim();
+  }
+
+  // 3. Gọt số 0 đầu tiên
+  if (cleaned.startsWith("0")) {
+    cleaned = cleaned.substring(1).trim();
+  }
+
+  return cleaned;
 };

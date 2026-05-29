@@ -18,44 +18,36 @@ import { getLastNameInitial, isValidPhoneInput } from "@/utils/validators";
 import useLocations from "@/hooks/useLocations";
 import EditableField from "./EditableField";
 
-const UserDetailModal = ({ isOpen, onClose, user }) => {
+const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   const { t } = useTranslation("admin");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
+  const [originalEditForm, setOriginalEditForm] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { countries, availableStates, dialCode } = useLocations(
-    isOpen ? editForm.country : "",
+    isOpen ? editForm?.country || user?.country || "" : "",
   );
 
-  // HÀM HELPER: Gọt sạch mã vùng khỏi số điện thoại
-  const cleanPhoneNumber = (phone) => {
-    let cleaned = phone || "";
-    if (dialCode) {
-      // Gọt bỏ tất cả dialCode ở đầu (chống lặp)
-      while (cleaned.startsWith(dialCode)) {
-        cleaned = cleaned.substring(dialCode.length).trim();
-      }
-      // Gọt bỏ số 0 đầu
-      if (cleaned.startsWith("0")) {
-        cleaned = cleaned.substring(1).trim();
-      }
-    }
-    return cleaned;
-  };
-
   useEffect(() => {
-    if (user) {
-      setEditForm({
+    // CHỈ LOAD DỮ LIỆU THÔ VÀO FORM, KHÔNG CẮT GỌT GÌ Ở ĐÂY CẢ
+    if (user && isOpen) {
+      const initialForm = {
         name: user.name || "",
-        phone: cleanPhoneNumber(user.phone),
+        phone: user.phone || "",
         country: user.country || "",
         city: user.city || "",
         address: user.address || "",
         bio: user.bio || "",
-      });
+      };
+      setEditForm(initialForm);
+      setOriginalEditForm(initialForm);
       setIsEditing(false);
+    } else if (!isOpen) {
+      setEditForm({});
     }
-  }, [user, isOpen, dialCode]);
+  }, [user, isOpen]);
 
   useEffect(() => {
     const handleEsc = (e) => {
@@ -71,12 +63,39 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
     if (e.target === e.currentTarget) onClose();
   };
 
+  // ==========================================
+  // PHÉP MÀU NẰM Ở ĐÂY: Tính toán số SẠCH ngay trước khi vẽ ra giao diện
+  let displayPhone = editForm.phone || "";
+  if (dialCode) {
+    // Dùng đúng mã vùng hiện tại để gọt -> Tuyệt đối an toàn, không ăn phạm số
+    while (displayPhone.startsWith(dialCode)) {
+      displayPhone = displayPhone.substring(dialCode.length).trim();
+    }
+  }
+  if (displayPhone.startsWith("0")) {
+    displayPhone = displayPhone.substring(1).trim();
+  }
+  // ==========================================
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phone" && !isValidPhoneInput(value)) return;
+    let finalValue = value;
+
+    if (name === "phone") {
+      // Chặn Admin copy/paste kèm mã vùng hoặc số 0
+      if (dialCode) {
+        while (finalValue.startsWith(dialCode)) {
+          finalValue = finalValue.substring(dialCode.length).trim();
+        }
+      }
+      if (finalValue.startsWith("0")) {
+        finalValue = finalValue.substring(1).trim();
+      }
+      if (!isValidPhoneInput(finalValue)) return;
+    }
 
     setEditForm((prev) => {
-      const newForm = { ...prev, [name]: value };
+      const newForm = { ...prev, [name]: finalValue };
       if (name === "country") newForm.city = "";
       return newForm;
     });
@@ -84,65 +103,66 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
 
   const handleSave = async () => {
     let dataToSave = { ...editForm };
-    let cleanPhone = dataToSave.phone || "";
 
-    // Chuẩn hóa số điện thoại "Vô đối":
-    if (cleanPhone && dialCode) {
-      cleanPhone = cleanPhone.trim();
-
-      // Chống copy/paste lặp mã vùng từ Admin
-      while (cleanPhone.startsWith(dialCode)) {
-        cleanPhone = cleanPhone.substring(dialCode.length).trim();
-      }
-      // Gọt số 0 đầu tiên
-      if (cleanPhone.startsWith("0")) {
-        cleanPhone = cleanPhone.substring(1).trim();
-      }
-
-      dataToSave.phone = `${dialCode}${cleanPhone}`;
+    // Ghi đè bằng biến displayPhone đã được gọt siêu sạch ở trên
+    if (displayPhone && dialCode) {
+      dataToSave.phone = `${dialCode}${displayPhone}`;
+    } else {
+      dataToSave.phone = displayPhone;
     }
+
+    setIsSaving(true);
     try {
-      // Dùng axiosClient đã cấu hình sẵn interceptor và token
       const response = await axiosClient.put(`/users/${user._id}`, dataToSave);
 
-      // Nếu API trả về code thành công
       if (response.data.success) {
         console.log(t("messages.update_success_log"), response.data);
 
-        // Ép giao diện cập nhật ngay lập tức
-        setEditForm({ ...editForm, phone: cleanPhone });
+        // Lưu ngược cái chuỗi đầy đủ (+84...) vào form gốc để load lại
+        const savedForm = { ...editForm, phone: dataToSave.phone };
+        setEditForm(savedForm);
+        setOriginalEditForm(savedForm);
+
         setIsEditing(false);
-
-        // CỰC KỲ QUAN TRỌNG: Gọi hàm fetchUsers() từ props ở đây để load lại bảng!
-
-        // SỬ DỤNG TOAST THAY CHO ALERT
+        setIsSaving(false);
         toast.success(t("messages.update_success"));
+
+        if (onRefresh) onRefresh();
       }
     } catch (error) {
+      setIsSaving(false);
       console.error(t("messages.update_error_log"), error);
-
       const errorCode = error.response?.data?.message;
-      const errorMsg = errorCode
-        ? t(`messages.${errorCode}`)
-        : t("messages.server_error");
-
-      // SỬ DỤNG TOAST ERROR THAY CHO ALERT
-      toast.error(errorMsg);
+      toast.error(
+        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+      );
     }
   };
 
   const handleCancel = () => {
-    if (user) {
-      setEditForm({
-        name: user.name || "",
-        phone: cleanPhoneNumber(user.phone),
-        country: user.country || "",
-        city: user.city || "",
-        address: user.address || "",
-        bio: user.bio || "",
-      });
-    }
+    setEditForm(originalEditForm);
     setIsEditing(false);
+  };
+
+  const executeDelete = async () => {
+    try {
+      const response = await axiosClient.delete(`/users/${user._id}`);
+
+      if (response.data.success) {
+        toast.success(t("messages.delete_success"));
+        if (onRefresh) onRefresh();
+        onClose();
+      }
+    } catch (error) {
+      console.error(t("messages.update_error_log"), error);
+      const errorCode = error.response?.data?.message;
+      toast.error(
+        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+      );
+    } finally {
+      // Dù thành công hay thất bại cũng đóng cái popup hỏi lại
+      setShowDeleteConfirm(false);
+    }
   };
 
   return (
@@ -150,8 +170,7 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
       onClick={handleBackdropClick}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-4 animate-in fade-in duration-300"
     >
-      <div className="bg-mkhe-bg w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-mkhe-border/30">
-        {/* HEADER */}
+      <div className="relative bg-mkhe-bg w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden border border-mkhe-border/30">
         <div className="flex justify-between items-center p-5 border-b border-mkhe-border/20 shrink-0">
           <h2 className="text-xl font-bold text-gradient-gold flex items-center gap-2">
             <Info className="w-5 h-5 text-mkhe-primary" />
@@ -159,16 +178,14 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-full transition-all cursor-pointer"
+            className="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-full transition-all cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* BODY */}
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-12 h-full">
-            {/* CỘT TRÁI */}
             <div className="md:col-span-4 bg-mkhe-primary/5 p-8 border-r border-mkhe-border/20 flex flex-col items-center text-center sticky top-0 h-max">
               <img
                 src={
@@ -211,9 +228,7 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
 
-            {/* CỘT PHẢI */}
             <div className="md:col-span-8 p-6 space-y-4">
-              {/* THÔNG TIN CƠ BẢN */}
               <div>
                 <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-2 flex items-center gap-2">
                   <User className="w-4 h-4" /> {t("users.basic_info")}
@@ -237,13 +252,10 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
                 </div>
               </div>
 
-              {/* GIAO NHẬN */}
               <div>
                 <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
                   <MapPin className="w-4 h-4" /> {t("users.shipping_contact")}
                 </h4>
-
-                {/* Hàng 1: Quốc gia & Tỉnh/Thành */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
                   <EditableField
                     label={t("users.country")}
@@ -274,13 +286,11 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
                     t={t}
                   />
                 </div>
-
-                {/* Hàng 2: Số điện thoại (Chỉ chiếm 1/2 chiều rộng) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
                   <EditableField
                     label={t("users.phone")}
                     name="phone"
-                    value={editForm.phone}
+                    value={displayPhone} // ĐƯA BIẾN SẠCH VÀO HIỂN THỊ THAY VÌ EDITFORM.PHONE
                     isEditing={isEditing}
                     onChange={handleInputChange}
                     placeholder={
@@ -292,8 +302,6 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
                     disabled={isEditing && !editForm.country}
                   />
                 </div>
-
-                {/* Hàng 3: Địa chỉ chi tiết */}
                 <EditableField
                   label={t("users.address")}
                   name="address"
@@ -306,7 +314,6 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
                 />
               </div>
 
-              {/* BIO */}
               <div>
                 <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4">
                   {t("users.bio")}
@@ -322,8 +329,7 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
                   />
                 ) : (
                   <div className="p-4 bg-gray-50 rounded-xl border border-mkhe-border/20 text-sm text-mkhe-text/70 italic leading-relaxed min-h-[80px]">
-                    {editForm.bio || t("users.bio_empty")}{" "}
-                    {/* <--- ĐỔI user.bio THÀNH editForm.bio Ở ĐÂY NÈ CHA */}
+                    {editForm.bio || t("users.bio_empty")}
                   </div>
                 )}
               </div>
@@ -331,13 +337,15 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
           </div>
         </div>
 
-        {/* FOOTER */}
         <div className="p-5 border-t border-mkhe-border/20 flex justify-between items-center bg-gray-50/50 shrink-0">
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-red-100 text-red-600 rounded-lg font-bold text-sm hover:bg-red-600 hover:text-white transition-all cursor-pointer">
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+            >
               <Trash2 className="w-4 h-4" /> {t("common.delete_account")}
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-600 rounded-lg font-bold text-sm hover:bg-orange-600 hover:text-white transition-all cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer">
               <Lock className="w-4 h-4" />{" "}
               {user.isBlocked
                 ? t("common.unlock_account")
@@ -349,15 +357,18 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
               <>
                 <button
                   onClick={handleCancel}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-all cursor-pointer"
+                  disabled={isSaving}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-300 transition-all cursor-pointer disabled:opacity-50"
                 >
                   <XCircle className="w-4 h-4" /> {t("common.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer"
+                  disabled={isSaving}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
                 >
-                  <Check className="w-4 h-4" /> {t("common.save_info")}
+                  <Check className="w-4 h-4" />{" "}
+                  {isSaving ? t("common.saving") : t("common.save_info")}
                 </button>
               </>
             ) : (
@@ -370,6 +381,46 @@ const UserDetailModal = ({ isOpen, onClose, user }) => {
             )}
           </div>
         </div>
+        {showDeleteConfirm && (
+          <div className="absolute inset-0 z-[110] flex items-center justify-center bg-black/20 rounded-2xl animate-in fade-in duration-200">
+            <div className="relative bg-white w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-red-500/20 text-center transform scale-100 animate-in zoom-in-95 duration-200">
+              {/* Nút X góc phải */}
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 mt-2">
+                <Trash2 className="w-8 h-8 text-red-500" />
+              </div>
+
+              <h3 className="text-xl font-bold text-mkhe-text mb-2">
+                {t("messages.confirm_delete_title")}
+              </h3>
+
+              <p className="text-sm text-mkhe-text/70 mb-6 leading-relaxed">
+                {t("messages.confirm_delete")}
+              </p>
+
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-6 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all cursor-pointer"
+                >
+                  {t("common.cancel")}
+                </button>
+                <button
+                  onClick={executeDelete}
+                  className="px-6 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all cursor-pointer"
+                >
+                  {t("common.delete_permanently")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

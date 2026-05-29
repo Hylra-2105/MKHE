@@ -11,7 +11,8 @@
     "save_info": "Lưu thông tin",
     "edit": "Chỉnh sửa",
     "search_placeholder": "Nhập để tìm kiếm...",
-    "no_results": "Không tìm thấy kết quả"
+    "no_results": "Không tìm thấy kết quả",
+    "delete_permanently": "Xóa vĩnh viễn"
   },
   "users": {
     "title": "Quản lý người dùng",
@@ -77,6 +78,9 @@
     "USER_NOT_FOUND": "Không tìm thấy thông tin người dùng này trong hệ thống!",
     "SERVER_ERROR": "Lỗi máy chủ nội bộ. Vui lòng thử lại sau!",
     "INVALID_TOKEN": "Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!",
-    "UNAUTHORIZED": "Bạn không có quyền thực hiện thao tác này!"
+    "UNAUTHORIZED": "Bạn không có quyền thực hiện thao tác này!",
+    "delete_success": "Đã xóa người dùng thành công!",
+    "confirm_delete_title": "Xác nhận xóa tài khoản?",
+    "confirm_delete": "Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này không? Hành động này không thể hoàn tác!"
   }
 }
