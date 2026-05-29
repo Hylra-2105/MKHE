@@ -29,6 +29,26 @@ const userSchema = new mongoose.Schema(
       enum: ["Guest", "Customer", "Staff", "Admin"],
       default: "Customer",
     },
+    phone: {
+      type: String,
+      default: "",
+    },
+    country: {
+      type: String,
+      default: "",
+    },
+    city: {
+      type: String,
+      default: "",
+    },
+    address: {
+      type: String,
+      default: "",
+    },
+    bio: {
+      type: String,
+      default: "",
+    },
     isVerified: {
       type: Boolean,
       default: false,

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -7,9 +6,9 @@ import { useTranslation } from "react-i18next";
 import UserFilter from "@/features/users/components/UserFilter";
 import UserTable from "@/features/users/components/UserTable";
 import ForbiddenPage from "@/pages/errors/ForbiddenPage";
+import UserDetailModal from "@/features/users/components/UserDetailModal";
 
 export default function UserManagement() {
-  const navigate = useNavigate();
   const { t } = useTranslation("admin");
 
   const [users, setUsers] = useState([]);
@@ -23,6 +22,14 @@ export default function UserManagement() {
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
 
   const fetchUsers = async () => {
     try {
@@ -100,7 +107,7 @@ export default function UserManagement() {
         handleSearch={handleSearch}
       />
 
-      <UserTable users={users} loading={loading} />
+      <UserTable users={users} loading={loading} onViewUser={handleViewUser} />
 
       {/* DIVIDER */}
       <div className="h-px bg-mkhe-border/30 my-7"></div>
@@ -166,6 +173,12 @@ export default function UserManagement() {
           </div>
         </div>
       )}
+      <UserDetailModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        user={selectedUser}
+        onRefresh={fetchUsers}
+      />
     </div>
   );
 }

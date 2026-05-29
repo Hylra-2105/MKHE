@@ -1,8 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { getLastNameInitial } from "@/utils/validators";
+import { Eye } from "lucide-react";
 
-const UserTable = ({ users, loading }) => {
+const UserTable = ({ users, loading, onViewUser }) => {
   const { t } = useTranslation("admin");
 
   return (
@@ -12,11 +13,13 @@ const UserTable = ({ users, loading }) => {
       <table className="w-full text-left border-collapse min-w-[800px]">
         <thead>
           <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-            <th className="p-4 font-semibold w-10">{t("table.avatar")}</th>
-            <th className="p-4 font-semibold w-1/5">{t("table.name")}</th>
-            <th className="p-4 font-semibold w-1/3">{t("table.email")}</th>
-            <th className="p-4 font-semibold text-center">{t("table.role")}</th>
-            <th className="p-4 font-semibold ">{t("table.status")}</th>
+            <th className="p-4 font-semibold w-50">{t("table.avatar")}</th>
+            <th className="p-4 font-semibold w-1/6">{t("table.name")}</th>
+            <th className="p-4 font-semibold w-1/6">{t("table.email")}</th>
+            <th className="p-4 font-semibold text-center w-1/4">
+              {t("table.role")}
+            </th>
+            <th className="p-4 font-semibold w-1/6">{t("table.status")}</th>
             <th className="p-4 font-semibold text-center">
               {t("table.actions")}
             </th>
@@ -80,13 +83,16 @@ const UserTable = ({ users, loading }) => {
                     </span>
                   )}
                 </td>
-                <td className="p-4 text-center space-x-4">
-                  <button className="text-blue-500 hover:text-blue-400 font-medium hover:underline transition">
-                    {t("table.view")}
-                  </button>
-                  <button className="text-red-500 hover:text-red-400 font-medium hover:underline transition">
-                    {t("table.block")}
-                  </button>
+                <td className="p-4 text-center">
+                  <div className="flex justify-center">
+                    <button
+                      title={t("table.view")}
+                      onClick={() => onViewUser(user)}
+                      className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer"
+                    >
+                      <Eye className="w-5 h-5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))
