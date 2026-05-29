@@ -60,7 +60,8 @@ const SearchableDropdown = ({
               filteredOptions.map((opt) => (
                 <li
                   key={opt}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onChange({ target: { name, value: opt } });
                     setIsOpen(false);
                     setSearchTerm("");
