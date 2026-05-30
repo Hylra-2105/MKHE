@@ -17,7 +17,7 @@ export const authApi = {
   // Xác thực OTP
   verifyOTP: async (verificationData) => {
     const response = await axiosClient.post(
-      "/auth/verify-email",
+      ENDPOINTS.AUTH.VERIFY_EMAIL,
       verificationData,
     );
     return response.data;
@@ -25,31 +25,76 @@ export const authApi = {
 
   // Gửi lại OTP
   resendOTP: async (data) => {
-    const response = await axiosClient.post("/auth/resend-otp", data);
+    const response = await axiosClient.post(ENDPOINTS.AUTH.RESEND_OTP, data);
     return response.data;
   },
 
   // login = gg
   socialLogin: async (socialData) => {
-    const response = await axiosClient.post("/auth/social-login", socialData);
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.SOCIAL_LOGIN,
+      socialData,
+    );
     return response.data;
   },
 
   // send otp reset password
   forgotPassword: async (data) => {
-    const response = await axiosClient.post("/auth/forgot-password", data);
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.FORGOT_PASSWORD,
+      data,
+    );
     return response.data;
   },
 
   // verify reset otp
   verifyResetOtp: async (data) => {
-    const response = await axiosClient.post("/auth/verify-reset-otp", data);
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.VERIFY_RESET_OTP,
+      data,
+    );
     return response.data;
   },
 
   // reset password
   resetPassword: async (data) => {
-    const response = await axiosClient.post("/auth/reset-password", data);
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.RESET_PASSWORD,
+      data,
+    );
+    return response.data;
+  },
+
+  // send change password otp
+  sendChangePasswordOtp: async (data) => {
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.SEND_CHANGE_PASSWORD_OTP,
+      data,
+    );
+    return response.data;
+  },
+
+  // verify change password otp
+  verifyChangePasswordOtp: async (data) => {
+    const response = await axiosClient.post(
+      ENDPOINTS.AUTH.VERIFY_CHANGE_PASSWORD_OTP,
+      data,
+    );
+    return response.data;
+  },
+
+  // change password with otp
+  changePasswordWithOtp: async (data) => {
+    const response = await axiosClient.put(
+      ENDPOINTS.AUTH.CHANGE_PASSWORD_OTP,
+      data,
+    );
+    return response.data;
+  },
+
+  // get current user info
+  getMe: async () => {
+    const response = await axiosClient.get("/auth/me");
     return response.data;
   },
 };

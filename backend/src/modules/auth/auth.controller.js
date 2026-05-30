@@ -1,7 +1,9 @@
 import User from "../users/user.model.js";
+import { successResponse, errorResponse } from "../../utils/response.js";
 import {
   sendVerificationEmail,
   sendPasswordResetEmail,
+  sendChangePasswordEmail,
 } from "../../utils/email.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -147,6 +149,12 @@ export const loginUser = async (req, res) => {
         avatar: user.avatar,
         role: user.role,
         isVerified: user.isVerified,
+        provider: user.provider,
+        phone: user.phone,
+        country: user.country,
+        city: user.city,
+        address: user.address,
+        bio: user.bio,
       },
     });
   } catch (error) {
@@ -221,11 +229,16 @@ export const socialLogin = async (req, res) => {
         avatar: avatar || "",
         provider: providerName,
         isVerified: true,
+        hasCustomAvatar: false, // User mới hoàn toàn thì cờ này là false
       });
     } else {
       if (!user.name) user.name = name || email.split("@")[0];
-      // Luôn cập nhật avatar từ Google (đè lên avatar truyền thống)
-      user.avatar = avatar;
+
+      // Chỉ lấy ảnh Google đè vào nếu user CHƯA up ảnh custom
+      if (!user.hasCustomAvatar) {
+        user.avatar = avatar;
+      }
+
       if (!user.isVerified) user.isVerified = true;
       await user.save();
     }
@@ -257,6 +270,11 @@ export const socialLogin = async (req, res) => {
         role: user.role,
         isVerified: user.isVerified,
         provider: user.provider,
+        phone: user.phone,
+        country: user.country,
+        city: user.city,
+        address: user.address,
+        bio: user.bio,
       },
     });
   } catch (error) {
@@ -287,7 +305,7 @@ export const forgotPassword = async (req, res) => {
     await user.save({ validateBeforeSave: false });
 
     try {
-      // Gửi OTP qua mail (sử dụng language của user)
+      // Gửi OTP qua mail
       await sendPasswordResetEmail(user.email, otp, user.language || "vi");
       res.status(200).json({ success: true, message: "OTP_SENT" });
     } catch (emailError) {
@@ -381,15 +399,128 @@ export const resetPassword = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     const userId = req.user.id;
-
     await User.findByIdAndUpdate(userId, { refreshToken: null });
 
-    return res.status(200).json({
-      success: true,
-      message: "Đăng xuất thành công trên hệ thống!",
-    });
+    // Dùng successResponse
+    return successResponse(res, 200, "LOGOUT_SUCCESS");
   } catch (error) {
     console.error("Logout Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+export const sendChangePasswordOtp = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    // Lấy ngôn ngữ từ Frontend gửi lên, nếu không có mới xài tạm của User DB, cuối cùng mới fallback về "vi"
+    const requestedLang = req.body?.language;
+    const lang = ["en", "vi"].includes(requestedLang)
+      ? requestedLang
+      : user.language || "vi";
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.resetPasswordOtp = otp;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+    await user.save();
+
+    // Gửi email
+    sendChangePasswordEmail(user.email, otp, lang).catch((err) => {
+      console.error("[Email Error] Gửi OTP thất bại:", err.message);
+    });
+
+    return successResponse(res, 200, "OTP_SENT_SUCCESS");
+  } catch (error) {
+    console.error("sendChangePasswordOtp Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// API Kiểm tra OTP 
+export const verifyChangePasswordOtp = async (req, res) => {
+  try {
+    const { otp } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    // Check xem OTP có khớp và còn hạn không
+    if (
+      user.resetPasswordOtp !== otp ||
+      user.resetPasswordExpires < Date.now()
+    ) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
+    }
+
+    // chỉ báo "Thành công" cho Frontend chuyển sang trang nhập Pass mới.
+    // CHƯA XÓA OTP trong DB để bước sau còn dùng.
+    return successResponse(res, 200, "OTP_VERIFIED_SUCCESS");
+  } catch (error) {
+    console.error("verifyChangePasswordOtp Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Lưu mật khẩu mới 
+export const changePasswordWithOtp = async (req, res) => {
+  try {
+    const { otp, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    if (
+      user.resetPasswordOtp !== otp ||
+      user.resetPasswordExpires < Date.now()
+    ) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
+    }
+
+    // KIỂM TRA MẬT KHẨU CŨ
+    const isSameAsOldPassword = await user.matchPassword(newPassword);
+    if (isSameAsOldPassword) {
+      return errorResponse(res, 400, "PASSWORD_MUST_BE_DIFFERENT");
+    }
+
+    user.password = newPassword;
+    user.resetPasswordOtp = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return successResponse(res, 200, "PASSWORD_CHANGED_SUCCESS");
+  } catch (error) {
+    console.error("changePasswordWithOtp Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+export const getMe = async (req, res) => {
+  try {
+    // req.user có được là nhờ đi qua verifyToken
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return errorResponse(res, 404, "USER_NOT_FOUND");
+    }
+
+    if (user.isBlocked) {
+      return errorResponse(res, 403, "ACCOUNT_BLOCKED");
+    }
+
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.otp;
+    delete userData.otpExpires;
+    delete userData.resetPasswordOtp;
+    delete userData.resetPasswordToken;
+    delete userData.resetPasswordExpires;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "GET_ME_SUCCESS", userData);
+  } catch (error) {
+    console.error("Get Me Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

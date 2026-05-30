@@ -1,0 +1,58 @@
+{
+  "otp": {
+    "verified": "Xác thực thành công!",
+    "invalid_length": "Vui lòng nhập đủ 6 chữ số!",
+    "title": "Xác nhận danh tính",
+    "description": "Chúng tôi đã gửi mã xác nhận đến"
+  },
+  "errors": {
+    "pass_short": "Mật khẩu phải có ít nhất 6 ký tự",
+    "pass_mismatch": "Mật khẩu xác nhận không khớp",
+    "invalid_file_type": "Vui lòng chọn định dạng hình ảnh hoặc video hợp lệ!",
+    "video_too_large": "Video tải lên không được vượt quá 10MB!",
+    "image_too_large": "Ảnh tải lên không được vượt quá 5MB!"
+  },
+  "messages": {
+    "update_success": "Cập nhật thành công!",
+    "change_pass_success": "Đã cập nhật mật khẩu mới!",
+    "otp_sent_success": "Đã gửi mã OTP đến email!",
+    "otp_send_error": "Lỗi gửi mã OTP"
+  },
+  "auth": {
+    "new_password": "Mật khẩu mới",
+    "confirm_new_password": "Xác nhận lại"
+  },
+  "profile": {
+    "title": "Hồ sơ cá nhân",
+    "general_info": "Thông tin chung",
+    "change_password": "Đổi mật khẩu",
+    "update_avatar": "Cập nhật ảnh đại diện",
+    "drag_drop": "Kéo thả ảnh/video vào đây",
+    "click_browse": "hoặc click để duyệt thư mục",
+    "support_img": "Hỗ trợ: JPG, PNG, WEBP (Tối đa 5MB)",
+    "support_video": "Video MP4, WEBM (Tối đa 30MB)",
+    "new_password": "Tạo mật khẩu mới",
+    "update_password": "Đổi mật khẩu",
+    "change_password_desc": "Vui lòng nhập mật khẩu mới cho tài khoản của bạn."
+  },
+  "buttons": {
+    "verifying": "Đang xác thực...",
+    "submit": "Xác nhận",
+    "resend": "Gửi lại",
+    "saving": "Đang cập nhật..."
+  },
+  "labels": {
+    "not_received": "Chưa nhận được mã?",
+    "resend": "Gửi lại"
+  },
+  "common": {
+    "cancel": "Hủy bỏ",
+    "edit": "Chỉnh sửa",
+    "save_info": "Lưu thông tin"
+  },
+
+  "INVALID_OR_EXPIRED_OTP": "Mã OTP không hợp lệ hoặc đã hết hạn.",
+  "PASSWORD_MUST_BE_DIFFERENT": "Mật khẩu mới không được trùng với mật khẩu hiện tại.",
+  "USER_NOT_FOUND": "Không tìm thấy thông tin tài khoản.",
+  "SERVER_ERROR": "Lỗi máy chủ. Vui lòng thử lại sau."
+}

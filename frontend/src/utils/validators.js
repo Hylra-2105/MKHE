@@ -4,7 +4,7 @@ export const getLastNameInitial = (name) => {
   const trimmedName = name.trim();
   const words = trimmedName.split(/\s+/); // Split by whitespace
 
-  // Lấy từ cuối và chữ cái đầu tiên của nó
+  // Lấy từ cuối và chữ cái đầu tiên
   const lastWord = words[words.length - 1];
   return lastWord.charAt(0).toUpperCase();
 };
@@ -57,21 +57,30 @@ export const cleanPhoneNumber = (phone, dialCode = "") => {
   if (!phone) return "";
   let cleaned = phone.trim();
 
-  // 1. Nếu có dialCode (+84), gọt chính xác cục đó (an toàn tuyệt đối)
   if (dialCode) {
     while (cleaned.startsWith(dialCode)) {
       cleaned = cleaned.substring(dialCode.length).trim();
     }
   } else {
-    // 2. Phòng hờ nếu ko có dialCode: Chỉ gọt bằng Regex NẾU có khoảng trắng
-    // (VD: "+84 333...", chứ viết liền "+84333" thì tha cho nó để khỏi ăn nhầm)
     cleaned = cleaned.replace(/(^\+\d{1,4}\s+)+/g, "").trim();
   }
 
-  // 3. Gọt số 0 đầu tiên
   if (cleaned.startsWith("0")) {
     cleaned = cleaned.substring(1).trim();
   }
 
   return cleaned;
+};
+
+export const maskEmail = (email) => {
+  if (!email) return "";
+  return email.replace(
+    /^(.)(.*)(?=@)/,
+    (match, p1, p2) => p1 + "*".repeat(p2.length),
+  );
+};
+
+export const isVideoUrl = (url) => {
+  if (!url) return false;
+  return !!url.match(/\.(mp4|webm|ogg)$/i);
 };

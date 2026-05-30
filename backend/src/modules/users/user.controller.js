@@ -1,8 +1,9 @@
 import User from "./user.model.js";
-import { errorResponse } from "../../utils/response.js";
+import { successResponse, errorResponse } from "../../utils/response.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 import { sendBlockAccountEmail } from "../../utils/email.js";
 
+// admin lấy danh sách users
 export const getAllUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -64,7 +65,7 @@ export const updateUser = async (req, res) => {
       updateData.blockReason = isBlocked ? blockReason : "";
     }
 
-    // Bảo mật: Loại bỏ các trường không được update
+    // các trường không được update
     delete updateData.email;
     delete updateData.password;
 
@@ -118,6 +119,85 @@ export const deleteUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Delete User Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// User update profile
+export const updateMyProfile = async (req, res) => {
+  try {
+    // req.user được lấy từ verifyToken
+    const userId = req.user.id;
+    const { name, phone, country, city, address, bio, avatar } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return errorResponse(res, 404, "USER_NOT_FOUND");
+    }
+
+    // Cập nhật thông tin (Chỉ cập nhật field nào được gửi lên)
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (country !== undefined) user.country = country;
+    if (city !== undefined) user.city = city;
+    if (address !== undefined) user.address = address;
+    if (bio !== undefined) user.bio = bio;
+
+    // Nếu có gửi avatar mới lên -> Kích hoạt khiên bảo vệ
+    if (avatar) {
+      user.avatar = avatar;
+      user.hasCustomAvatar = true;
+    }
+
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.otp;
+    delete userData.otpExpires;
+    delete userData.resetPasswordOtp;
+    delete userData.resetPasswordToken;
+    delete userData.resetPasswordExpires;
+    delete userData.refreshToken;
+
+    // Trả về đúng chuẩn Helper
+    return successResponse(res, 200, "PROFILE_UPDATED_SUCCESS", userData);
+  } catch (error) {
+    console.error("[Update Profile Error]", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+export const uploadAvatar = async (req, res) => {
+  try {
+    // Nếu middleware của Multer không bắt được file
+    if (!req.file) {
+      return errorResponse(res, 400, "MISSING_FILE");
+    }
+
+    const userId = req.user.id;
+    const fileUrl = req.file.path; //  LINK CLOUDINARY TRẢ VỀ
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    // Cập nhật ảnh đại diện mới
+    user.avatar = fileUrl;
+    user.hasCustomAvatar = true;
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.otp;
+    delete userData.otpExpires;
+    delete userData.resetPasswordOtp;
+    delete userData.resetPasswordToken;
+    delete userData.resetPasswordExpires;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "AVATAR_UPLOAD_SUCCESS", userData);
+  } catch (error) {
+    console.error("Upload Avatar Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

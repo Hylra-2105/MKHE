@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { applyTheme } from "@/utils/theme";
+import { isVideoUrl } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
 import { useTranslation } from "react-i18next";
@@ -33,6 +34,9 @@ export default function Header() {
   const isAdmin = user?.role === "Admin";
   const isStaff = user?.role === "Staff";
   const isAdminOrStaff = isAdmin || isStaff;
+
+  // AVATAR CÓ PHẢI LÀ VIDEO KHÔNG
+  const isAvatarVideo = isVideoUrl(user?.avatar);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("main");
@@ -102,7 +106,7 @@ export default function Header() {
 
   return (
     <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 relative z-50 text-current transition-colors duration-300">
-      {/* KHU VỰC LOGO */}
+      {/* LOGO */}
       <div className="w-1/4">
         <Link
           to="/home"
@@ -119,7 +123,7 @@ export default function Header() {
         </Link>
       </div>
 
-      {/* THANH ĐIỀU HƯỚNG Ở GIỮA (THAY ĐỔI THEO NGỮ CẢNH) */}
+      {/* THANH ĐIỀU HƯỚNG Ở GIỮA */}
       <nav className="flex-1 flex justify-center gap-8 hidden lg:flex">
         {!isAdminOrStaff ? (
           navLinks.map((link) => (
@@ -160,14 +164,25 @@ export default function Header() {
           <div className="relative ml-2" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="w-9 h-9 rounded-full border border-mkhe-primary/50 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer"
+              className="w-9 h-9 rounded-full border border-mkhe-primary/50 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
             >
               {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                />
+                isAvatarVideo ? (
+                  <video
+                    src={user.avatar}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={user.avatar}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
+                )
               ) : (
                 <div className="w-full h-full bg-mkhe-primary/20 flex items-center justify-center font-bold text-mkhe-primary text-sm uppercase">
                   {(user.name || user.email)[0]}

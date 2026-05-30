@@ -1,0 +1,58 @@
+{
+  "otp": {
+    "verified": "Account verification successful!",
+    "invalid_length": "Please enter all 6 digits!",
+    "title": "Confirm your identity",
+    "description": "We have sent a verification code to"
+  },
+  "errors": {
+    "pass_short": "Password must be at least 6 characters",
+    "pass_mismatch": "Passwords do not match",
+    "invalid_file_type": "Please select a valid image or video file!",
+    "video_too_large": "Video upload must not exceed 10MB!",
+    "image_too_large": "Image upload must not exceed 5MB!"
+  },
+  "messages": {
+    "update_success": "Update successful!",
+    "change_pass_success": "Password updated successfully!",
+    "otp_sent_success": "OTP sent successfully!",
+    "otp_send_error": "Error sending OTP"
+  },
+  "auth": {
+    "new_password": "New Password",
+    "confirm_new_password": "Confirm Password"
+  },
+  "profile": {
+    "title": "Personal Profile",
+    "general_info": "General Information",
+    "change_password": "Change Password",
+    "update_avatar": "Update Avatar",
+    "drag_drop": "Drag and drop image/video here",
+    "click_browse": "or click to browse files",
+    "support_img": "Supported: JPG, PNG, WEBP (Max 5MB)",
+    "support_video": "Video MP4, WEBM (Max 30MB)",
+    "new_password": "Create New Password",
+    "update_password": "Change Password",
+    "change_password_desc": "Please enter a new password for your account."
+  },
+  "buttons": {
+    "verifying": "Verifying...",
+    "submit": "Submit",
+    "resend": "Resend",
+    "saving": "Saving..."
+  },
+  "labels": {
+    "not_received": "Didn't receive the code?",
+    "resend": "Resend"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "save_info": "Save Information"
+  },
+
+  "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP code.",
+  "PASSWORD_MUST_BE_DIFFERENT": "New password must be different from the current password.",
+  "USER_NOT_FOUND": "User account not found.",
+  "SERVER_ERROR": "An unexpected error occurred. Please try again later."
+}
