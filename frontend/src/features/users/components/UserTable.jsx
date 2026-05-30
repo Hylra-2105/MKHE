@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getLastNameInitial } from "@/utils/validators";
+import { getLastNameInitial, isVideoUrl } from "@/utils/validators";
 import { Eye } from "lucide-react";
 
 const UserTable = ({ users, loading, onViewUser }) => {
@@ -50,14 +50,25 @@ const UserTable = ({ users, loading, onViewUser }) => {
                 className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors"
               >
                 <td className="p-4">
-                  <img
-                    src={
-                      user.avatar ||
-                      `https://ui-avatars.com/api/?name=${getLastNameInitial(user.name)}&background=random`
-                    }
-                    alt="avatar"
-                    className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
-                  />
+                  {user.avatar && isVideoUrl(user.avatar) ? (
+                    <video
+                      src={user.avatar}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
+                    />
+                  ) : (
+                    <img
+                      src={
+                        user.avatar ||
+                        `https://ui-avatars.com/api/?name=${getLastNameInitial(user.name)}&background=random`
+                      }
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
+                    />
+                  )}
                 </td>
                 <td className="p-4 font-medium">{user.name}</td>
                 <td className="p-4 text-mkhe-text/80 ">{user.email}</td>

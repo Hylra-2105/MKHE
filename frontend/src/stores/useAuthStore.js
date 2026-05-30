@@ -1,10 +1,34 @@
 import { create } from "zustand";
 import { authApi } from "@/api/authApi";
 
+// 🔥 Hàm an toàn để lấy User từ LocalStorage (chống sập web)
+const getSafeUser = () => {
+  try {
+    const userString = localStorage.getItem("user");
+    // Kiểm tra kỹ xem nó có bị lỗi kiểu chuỗi "undefined" hay không
+    if (!userString || userString === "undefined") {
+      return null;
+    }
+    return JSON.parse(userString);
+  } catch (error) {
+    console.warn(
+      "Lỗi khi đọc user từ localStorage, đã tự động dọn dẹp.",
+      error,
+    );
+    localStorage.removeItem("user"); // Dọn luôn cái rác gây lỗi
+    return null;
+  }
+};
+
 export const useAuthStore = create((set) => ({
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: getSafeUser(), // Xài hàm an toàn ở đây
   token: localStorage.getItem("token") || null,
   isLoading: false,
+
+  setUser: (newUser) => {
+    localStorage.setItem("user", JSON.stringify(newUser));
+    set({ user: newUser });
+  },
 
   // REGISTER
   registerAction: async (userData) => {

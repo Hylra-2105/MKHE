@@ -1,7 +1,10 @@
 {
-  "403_title": "Truy cập bị từ chối",
   "403": "403",
+  "403_title": "Truy cập bị từ chối",
   "403_desc": "Xin lỗi, bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là sự nhầm lẫn.",
+  "404": "404",
+  "404_title": "Không tìm thấy trang",
+  "404_desc": "Trang bạn đang tìm kiếm có thể đã bị xóa, đổi tên hoặc tạm thời không thể truy cập.",
   "fetch_failed": "Lỗi khi tải danh sách người dùng!",
   "forbidden_access": "Bạn không có quyền truy cập vào khu vực hoặc tài nguyên này!",
   "back_to_home": "Quay về trang chủ"

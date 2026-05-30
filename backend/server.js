@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -9,7 +10,6 @@ const __dirname = path.dirname(__filename);
 // Load .env từ thư mục backend root
 const envPath = path.resolve(__dirname, ".env");
 dotenv.config({ path: envPath });
-
 
 import express from "express";
 import cors from "cors";

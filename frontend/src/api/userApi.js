@@ -1,23 +1,58 @@
-import axios from "axios";
-// 1. Import store của bạn vào đây (Sửa lại đường dẫn nếu cần)
-import { useAuthStore } from "@/stores/useAuthStore";
+import axiosClient from "@/api/axiosClient";
+import { ENDPOINTS } from "@/constants/endpoints";
 
-const API_URL = "http://localhost:5000/api/users";
+export const userApi = {
+  // Lấy danh sách users
+  getAllUsers: async (page = 1, limit = 5, search = "", role = "") => {
+    const response = await axiosClient.get(ENDPOINTS.USERS.GET_ALL, {
+      params: { page, limit, search, role },
+    });
+    return response.data;
+  },
 
-export const getAllUsersApi = async (
-  page = 1,
-  limit = 5,
-  search = "",
-  role = "",
-) => {
-  const token = useAuthStore.getState().token;
+  // Cập nhật profile của user hiện tại
+  updateProfile: async (profileData) => {
+    const response = await axiosClient.put(
+      ENDPOINTS.USERS.UPDATE_PROFILE,
+      profileData,
+    );
+    return response.data;
+  },
 
-  const response = await axios.get(API_URL, {
-    params: { page, limit, search, role },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  // Upload Avatar
+  uploadAvatar: async (formData) => {
+    const response = await axiosClient.post(
+      "/users/upload-avatar", 
+      formData,
+      {
+        headers: {
+          // dòng này để Backend (Multer) hiểu được đây là file
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  },
 
-  return response.data;
+  // Admin cập nhật user
+  updateUser: async (userId, updateData) => {
+    const response = await axiosClient.put(
+      `${ENDPOINTS.USERS.UPDATE}/${userId}`,
+      updateData,
+    );
+    return response.data;
+  },
+
+  // Admin xóa user
+  deleteUser: async (userId) => {
+    const response = await axiosClient.delete(
+      `${ENDPOINTS.USERS.DELETE}/${userId}`,
+    );
+    return response.data;
+  },
+};
+
+// For backward compatibility
+export const getAllUsersApi = (page, limit, search, role) => {
+  return userApi.getAllUsers(page, limit, search, role);
 };
