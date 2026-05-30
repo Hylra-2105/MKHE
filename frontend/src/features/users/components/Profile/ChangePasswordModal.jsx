@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { X, Eye, EyeOff } from "lucide-react";
+import { X, Eye, EyeOff, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { maskEmail } from "@/utils/validators";
 import { authApi } from "@/api/authApi";
@@ -21,6 +21,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const [timer, setTimer] = useState(0);
   const [hasSentOTP, setHasSentOTP] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // =========================================================
   // BƯỚC 1: KHÔI PHỤC TRẠNG THÁI TỪ LOCALSTORAGE KHI F5 (RELOAD) PAGÉ
@@ -96,6 +97,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       // TH3: Gửi OTP (lần đầu hoặc khi đã hết 60s chờ)
       const sendInitialOtp = async () => {
         try {
+          setErrorMsg("");
           await authApi.sendChangePasswordOtp({ language: currentLang });
           toast.success(t("messages.otp_sent_success"));
 
@@ -109,8 +111,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           setHasSentOTP(true);
           setStep("verify");
         } catch (error) {
-          const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-          toast.error(t(errorMsg));
+          const msg = error.response?.data?.message || "SERVER_ERROR";
+          setErrorMsg(t(msg));
         }
       };
       sendInitialOtp();
@@ -122,10 +124,26 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const maskedEmail = maskEmail(userEmail);
 
+  const handleClose = () => {
+    setErrorMsg("");
+    if (step === "update") {
+      localStorage.removeItem("mkhe_otp_expires_at");
+      localStorage.removeItem("mkhe_otp_has_sent");
+      localStorage.removeItem("mkhe_otp_step");
+      setStep("verify");
+      setHasSentOTP(false);
+      setTimer(0);
+      setOtp(["", "", "", "", "", ""]);
+      setNewPass({ password: "", confirm: "" });
+    }
+    onClose();
+  };
+
   // ================= CÁC HÀM XỬ LÝ 6 Ô OTP =================
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (isNaN(value)) return;
+    setErrorMsg("");
 
     const newOtp = [...otp];
     newOtp[index] = value.substring(value.length - 1);
@@ -138,6 +156,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim();
     if (isNaN(pastedData)) return;
+    setErrorMsg("");
 
     const digits = pastedData.slice(0, 6).split("");
     const newOtp = ["", "", "", "", "", ""];
@@ -160,6 +179,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const executeVerifyOTP = async (otpString) => {
     setLoading(true);
+    setErrorMsg("");
     try {
       const response = await authApi.verifyChangePasswordOtp({
         otp: otpString,
@@ -171,8 +191,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
         toast.success(t("otp.verified"));
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(t(errorMsg));
+      const msg = error.response?.data?.message || "SERVER_ERROR";
+      setErrorMsg(t(msg));
       setOtp(["", "", "", "", "", ""]);
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     } finally {
@@ -183,15 +203,16 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
   const handleVerifySubmit = (e) => {
     e.preventDefault();
     const otpString = otp.join("");
-    if (otpString.length !== 6) return toast.error(t("otp.invalid_length"));
+    if (otpString.length !== 6) return setErrorMsg(t("otp.invalid_length"));
     executeVerifyOTP(otpString);
   };
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    if (newPass.password.length < 6) return toast.error(t("errors.pass_short"));
+    setErrorMsg("");
+    if (newPass.password.length < 6) return setErrorMsg(t("errors.pass_short"));
     if (newPass.password !== newPass.confirm)
-      return toast.error(t("errors.pass_mismatch"));
+      return setErrorMsg(t("errors.pass_mismatch"));
 
     setLoading(true);
     try {
@@ -216,8 +237,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
         onClose();
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(t(errorMsg));
+      const msg = error.response?.data?.message || "SERVER_ERROR";
+      setErrorMsg(t(msg));
     } finally {
       setLoading(false);
     }
@@ -225,6 +246,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const handleResend = async () => {
     try {
+      setErrorMsg("");
       await authApi.sendChangePasswordOtp({ language: currentLang });
 
       const lockUntil = Date.now() + 60000;
@@ -235,8 +257,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       if (inputRefs.current[0]) inputRefs.current[0].focus();
       toast.success(t("messages.otp_sent_success"));
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(t(errorMsg));
+      const msg = error.response?.data?.message || "SERVER_ERROR";
+      setErrorMsg(t(msg));
     }
   };
 
@@ -245,7 +267,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 transition-opacity duration-200 ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
         className={`relative bg-[var(--color-mkhe-bg)] w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-mkhe-border)]/30 transform transition-all duration-200 ${
@@ -260,7 +282,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           </h2>
           <div className="w-10 flex justify-end">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-2 hover:bg-[var(--color-mkhe-primary)]/10 rounded-full cursor-pointer transition-colors"
             >
               <X className="w-5 h-5 text-[var(--color-mkhe-text)]/70" />
@@ -299,6 +321,13 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                   />
                 ))}
               </div>
+
+              {errorMsg && (
+                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                  <Info className="w-4 h-4" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
 
               <Button
                 type="submit"
@@ -347,9 +376,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                   <input
                     type={showPass ? "text" : "password"}
                     value={newPass.password}
-                    onChange={(e) =>
-                      setNewPass({ ...newPass, password: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setErrorMsg("");
+                      setNewPass({ ...newPass, password: e.target.value });
+                    }}
                     className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
                     placeholder="••••••••"
                   />
@@ -373,14 +403,22 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                   <input
                     type={showPass ? "text" : "password"}
                     value={newPass.confirm}
-                    onChange={(e) =>
-                      setNewPass({ ...newPass, confirm: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setErrorMsg("");
+                      setNewPass({ ...newPass, confirm: e.target.value });
+                    }}
                     className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
                     placeholder="••••••••"
                   />
                 </div>
               </div>
+
+              {errorMsg && (
+                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20 mt-4">
+                  <Info className="w-4 h-4" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
 
               <Button type="submit" disabled={loading} className="w-full mt-4">
                 {loading ? t("buttons.saving") : t("profile.update_password")}
