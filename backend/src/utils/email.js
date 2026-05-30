@@ -127,3 +127,33 @@ export const sendBlockAccountEmail = async (toEmail, reason, lang = "vi") => {
   };
   await sendEmail(mailOptions);
 };
+
+
+/**
+ * Gửi email xác thực khi người dùng CHỦ ĐỘNG đổi mật khẩu trong Profile
+ * @param {string} toEmail - Email người nhận
+ * @param {string} otp - Mã xác thực OTP
+ * @param {string} lang - Ngôn ngữ (en, vi). Default: vi
+ */
+export const sendChangePasswordEmail = async (toEmail, otp, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "changePassword.subject"), // <--- Móc đúng vào block changePassword
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${getTranslation(trans, "changePassword.greeting")}</h2>
+        <p style="text-align: center;">${getTranslation(trans, "changePassword.instruction")}</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="background-color: #e5dcd3; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold;">${otp}</span>
+        </div>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${getTranslation(trans, "changePassword.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};

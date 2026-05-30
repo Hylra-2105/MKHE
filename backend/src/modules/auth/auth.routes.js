@@ -9,6 +9,10 @@ import {
   verifyResetOtp,
   resetPassword,
   logoutUser,
+  sendChangePasswordOtp,
+  verifyChangePasswordOtp,
+  changePasswordWithOtp,
+  getMe,
 } from "./auth.controller.js";
 
 // Import các Middleware cần thiết
@@ -44,5 +48,21 @@ router.post("/reset-password", normalizeEmailMiddleware, resetPassword);
 
 // logout route
 router.post("/logout", verifyToken, logoutUser);
+
+// send change password otp route
+router.post("/send-change-password-otp", verifyToken, sendChangePasswordOtp);
+
+// verify change password otp route
+router.post(
+  "/verify-change-password-otp",
+  verifyToken,
+  verifyChangePasswordOtp,
+);
+
+// change password with otp route
+router.put("/change-password-otp", verifyToken, changePasswordWithOtp);
+
+// get current user info
+router.get("/me", verifyToken, getMe);
 
 export default router;

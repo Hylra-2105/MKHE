@@ -14,7 +14,6 @@ const EditableField = ({
   t,
   prefix,
 }) => {
-  // Xử lý thông minh khi chế độ Đọc: Nếu SDT chưa có +84 thì tự nối vào cho đẹp
   const displayValue =
     prefix && value && !value.startsWith(prefix) ? `${prefix} ${value}` : value;
 
@@ -40,13 +39,13 @@ const EditableField = ({
             value={value}
             onChange={onChange}
             disabled={disabled}
-            className="w-full p-2 bg-white border border-mkhe-primary/50 rounded focus:outline-none focus:ring-2 focus:ring-mkhe-primary/20 text-sm"
+            className="w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
             rows="2"
           />
         ) : (
-          <div className="flex shadow-sm rounded">
+          <div className="flex shadow-sm rounded transition-colors">
             {prefix && (
-              <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-mkhe-primary/50 bg-gray-100 text-gray-500 sm:text-sm font-semibold h-8">
+              <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-[var(--color-mkhe-primary)]/50 bg-[var(--color-mkhe-border)]/30 text-[var(--color-mkhe-text)]/60 sm:text-sm font-semibold h-8 transition-colors">
                 {prefix}
               </span>
             )}
@@ -56,13 +55,13 @@ const EditableField = ({
               value={value}
               onChange={onChange}
               disabled={disabled}
-              className={`w-full p-2 bg-white border border-mkhe-primary/50 h-8 focus:outline-none focus:ring-2 focus:ring-mkhe-primary/20 text-sm ${prefix ? "rounded-r" : "rounded"}`}
+              className={`w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 h-8 focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors ${prefix ? "rounded-r" : "rounded"}`}
             />
           </div>
         )
       ) : (
         <p
-          className={`text-mkhe-text font-medium border-b border-mkhe-border/10 pb-1 min-h-[32px] flex items-end ${!value ? "italic text-mkhe-text/50" : ""}`}
+          className={`text-mkhe-text font-medium border-b border-mkhe-border/90 pb-1 min-h-[32px] flex items-end ${!value ? "italic text-mkhe-text/50" : ""}`}
         >
           {displayValue || placeholder}
         </p>

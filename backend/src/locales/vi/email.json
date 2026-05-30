@@ -29,5 +29,13 @@
     },
     "support": "Nếu bạn cho rằng đây là lỗi, vui lòng liên hệ với quản trị viên MKHE.",
     "footer": "Thời gian khóa: {time}"
+  },
+  "changePassword": {
+    "subject": "Mã OTP thay đổi mật khẩu tại MKHE",
+    "greeting": "Yêu cầu thay đổi mật khẩu",
+    "instruction": "Chúng tôi nhận được yêu cầu thay đổi mật khẩu cho tài khoản của bạn. Vui lòng nhập mã OTP dưới đây để xác thực:",
+    "codeLabel": "Mã OTP của bạn",
+    "footer": "Gửi lúc: {time}\nMã này sẽ hết hạn trong 10 phút. Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bảo vệ tài khoản ngay lập tức.",
+    "ignored": "Nếu bạn không thực hiện yêu cầu này, vui lòng đổi mật khẩu hoặc liên hệ bộ phận hỗ trợ."
   }
 }
