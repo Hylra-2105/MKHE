@@ -10,6 +10,11 @@ export const userApi = {
     return response.data;
   },
 
+  createUser: async (userData) => {
+    const response = await axiosClient.post("/users", userData);
+    return response.data;
+  },
+
   // Cập nhật profile của user hiện tại
   updateProfile: async (profileData) => {
     const response = await axiosClient.put(
@@ -21,16 +26,12 @@ export const userApi = {
 
   // Upload Avatar
   uploadAvatar: async (formData) => {
-    const response = await axiosClient.post(
-      "/users/upload-avatar", 
-      formData,
-      {
-        headers: {
-          // dòng này để Backend (Multer) hiểu được đây là file
-          "Content-Type": "multipart/form-data",
-        },
+    const response = await axiosClient.post("/users/upload-avatar", formData, {
+      headers: {
+        // dòng này để Backend (Multer) hiểu được đây là file
+        "Content-Type": "multipart/form-data",
       },
-    );
+    });
     return response.data;
   },
 

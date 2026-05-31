@@ -3,10 +3,11 @@ import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
-import UserFilter from "@/features/users/components/UserFilter";
-import UserTable from "@/features/users/components/UserTable";
+import UserFilter from "@/features/users/components/Admin/UserFilter";
+import UserTable from "@/features/users/components/Admin/UserTable";
+import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
+import AddUserModal from "@/features/users/components/Admin/AddUserModal";
 import ForbiddenPage from "@/pages/errors/ForbiddenPage";
-import UserDetailModal from "@/features/users/components/UserDetailModal";
 
 export default function UserManagement() {
   const { t } = useTranslation("admin");
@@ -25,6 +26,7 @@ export default function UserManagement() {
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleViewUser = (user) => {
     setSelectedUser(user);
@@ -93,7 +95,10 @@ export default function UserManagement() {
             {t("users.subtitle")}
           </p>
         </div>
-        <button className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold">
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+        >
           {t("users.add_member")}
         </button>
       </div>
@@ -177,6 +182,11 @@ export default function UserManagement() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         user={selectedUser}
+        onRefresh={fetchUsers}
+      />
+      <AddUserModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
         onRefresh={fetchUsers}
       />
     </div>
