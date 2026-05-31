@@ -20,9 +20,9 @@ import {
   getLastNameInitial,
   isValidPhoneInput,
   isVideoUrl,
-} from "@/utils/validators"; 
+} from "@/utils/validators";
 import useLocations from "@/hooks/useLocations";
-import EditableField from "./EditableField";
+import EditableField from "@/features/users/components/Admin/EditableField";
 
 const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   const { t } = useTranslation("admin");
@@ -75,8 +75,8 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
 
   useEffect(() => {
     if (showBlockConfirm) {
-      setBlockReason("spam_comments"); 
-      setIsReasonDropdownOpen(false); 
+      setBlockReason("spam_comments");
+      setIsReasonDropdownOpen(false);
     }
   }, [showBlockConfirm]);
 
@@ -209,7 +209,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
 
         if (onRefresh) onRefresh();
 
-        // Đóng modal sau 1 giây 
+        // Đóng modal sau 1 giây
         setTimeout(() => {
           onClose();
         }, 1000);

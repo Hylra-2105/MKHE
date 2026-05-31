@@ -1,5 +1,5 @@
 import React from "react";
-import SearchableDropdown from "./SearchableDropdown";
+import SearchableDropdown from "@/features/users/components/Admin/SearchableDropdown";
 
 const EditableField = ({
   label,
@@ -39,6 +39,7 @@ const EditableField = ({
             value={value}
             onChange={onChange}
             disabled={disabled}
+            placeholder={placeholder}
             className="w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
             rows="2"
           />
@@ -55,6 +56,7 @@ const EditableField = ({
               value={value}
               onChange={onChange}
               disabled={disabled}
+              placeholder={placeholder}
               className={`w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 h-8 focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors ${prefix ? "rounded-r" : "rounded"}`}
             />
           </div>

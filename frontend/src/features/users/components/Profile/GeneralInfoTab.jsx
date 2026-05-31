@@ -6,11 +6,10 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { userApi } from "@/api/userApi";
 import useLocations from "@/hooks/useLocations";
 import { isValidPhoneInput } from "@/utils/validators";
-// Import file EditableField của cha (Đảm bảo đường dẫn đúng)
-import EditableField from "../EditableField";
+import EditableField from "@/features/users/components/Admin/EditableField";
 
-const GeneralInfoTab = ({ user }) => {
-  const { t } = useTranslation("admin"); 
+const GeneralInfoTab = ({ user, isAdminView = false }) => {
+  const { t } = useTranslation("admin");
   const { setUser } = useAuthStore();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +37,7 @@ const GeneralInfoTab = ({ user }) => {
     }
   }, [user]);
 
-  // PHÉP MÀU XỬ LÝ SĐT
+  // XỬ LÝ SĐT
   let displayPhone = editForm.phone || "";
   if (dialCode) {
     while (displayPhone.startsWith(dialCode)) {
@@ -97,7 +96,6 @@ const GeneralInfoTab = ({ user }) => {
       }
     } catch (error) {
       console.error("Lỗi update profile:", error);
-      // Bắt lỗi từ BE quăng lên (SNAKE_CASE) để i18n dịch ra
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
       toast.error(t(errorMsg, "Cập nhật thất bại!"));
     } finally {
@@ -216,12 +214,32 @@ const GeneralInfoTab = ({ user }) => {
               onChange={handleInputChange}
               rows="3"
               className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
-              placeholder={t("users.bio_placeholder", "Add notes...")}
+              // 🔥 FIX 1: Phân biệt Placeholder lúc đang Edit
+              placeholder={
+                isAdminView
+                  ? t(
+                      "users.bio_admin_placeholder",
+                      "Thêm ghi chú về khách hàng này (Chỉ admin xem)...",
+                    )
+                  : t(
+                      "users.bio_user_placeholder",
+                      "Giới thiệu bản thân hoặc ghi chú cá nhân của bạn...",
+                    )
+              }
             />
           ) : (
             <div className="p-4 bg-[var(--color-mkhe-input)]/50 rounded-xl border border-[var(--color-mkhe-border)]/90 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">
+              {/* 🔥 FIX 2: Phân biệt Text lúc chưa có dữ liệu (View mode) */}
               {editForm.bio ||
-                t("users.bio_empty", "No introductory information provided.")}
+                (isAdminView
+                  ? t(
+                      "users.bio_empty_admin",
+                      "Chưa có ghi chú nội bộ nào cho khách hàng này.",
+                    )
+                  : t(
+                      "users.bio_empty_user",
+                      "Bạn chưa cập nhật tiểu sử hoặc ghi chú cá nhân.",
+                    ))}
             </div>
           )}
         </div>
