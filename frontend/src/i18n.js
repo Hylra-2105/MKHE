@@ -12,6 +12,7 @@ import headerVI from "./locales/vi/header.json";
 import adminVI from "./locales/vi/admin.json";
 import errorsVI from "./locales/vi/errors.json";
 import userVI from "./locales/vi/user.json";
+import productVI from "./locales/vi/product.json";
 
 // EN
 
@@ -23,10 +24,10 @@ import headerEN from "./locales/en/header.json";
 import adminEN from "./locales/en/admin.json";
 import errorsEN from "./locales/en/errors.json";
 import userEN from "./locales/en/user.json";
+import productEN from "./locales/en/product.json";
 
 const resources = {
   vi: {
-
     login: loginVI,
     register: registerVI,
     otp: otpVI,
@@ -35,9 +36,9 @@ const resources = {
     admin: adminVI,
     errors: errorsVI,
     user: userVI,
+    product: productVI,
   },
   en: {
-
     login: loginEN,
     register: registerEN,
     otp: otpEN,
@@ -46,6 +47,7 @@ const resources = {
     admin: adminEN,
     errors: errorsEN,
     user: userEN,
+    product: productEN,
   },
 };
 
@@ -56,7 +58,6 @@ i18n
     resources,
     fallbackLng: "vi",
     ns: [
-
       "login",
       "register",
       "otp",
@@ -65,6 +66,7 @@ i18n
       "admin",
       "errors",
       "user",
+      "product",
     ],
     defaultNS: "user",
     interpolation: {

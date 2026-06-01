@@ -13,7 +13,8 @@
     "manage_users": "Manage Users",
     "analytics": "Analytics",
     "admin_area": "Admin Area",
-    "staff_area": "Staff Area"
+    "staff_area": "Staff Area",
+    "manage_products": "Manage Products"
   },
   "guest_menu": {
     "login": "Login"

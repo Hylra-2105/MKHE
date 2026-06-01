@@ -206,37 +206,57 @@ export default function Header() {
                       {t("user_menu.profile")}
                     </Link>
 
+                    {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}
                     {(user.role === "Admin" || user.role === "Staff") && (
                       <div className="py-1">
                         <div className="h-px bg-mkhe-border/50 my-1 mx-4"></div>
 
+                        {/* Chỉ Admin mới thấy Quản lý Người dùng */}
+                        {user.role === "Admin" && (
+                          <Link
+                            to="/admin/users"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                              location.pathname.startsWith("/admin/users")
+                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                            }`}
+                          >
+                            {t("user_menu.manage_users")}
+                          </Link>
+                        )}
+
+                        {/* Cả Admin và Staff đều thấy Quản lý Sản phẩm */}
                         <Link
-                          to="/admin/users"
+                          to="/admin/products"
                           onClick={() => setIsDropdownOpen(false)}
                           className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
-                            location.pathname.startsWith("/admin/users")
+                            location.pathname.startsWith("/admin/products")
                               ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                               : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                           }`}
                         >
-                          {t("user_menu.manage_users")}
+                          {t("user_menu.manage_products")}
                         </Link>
 
-                        <Link
-                          to="/admin/analysis"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
-                            location.pathname.startsWith("/admin/analysis")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          {t("user_menu.analytics")}
-                        </Link>
+                        {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
+                        {user.role === "Admin" && (
+                          <Link
+                            to="/admin/analysis"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                              location.pathname.startsWith("/admin/analysis")
+                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                            }`}
+                          >
+                            {t("user_menu.analytics")}
+                          </Link>
+                        )}
                       </div>
                     )}
 
-                    <div className="h-px bg-mkhe-border my-2 mx-4"></div>
+                    <div className="h-px bg-mkhe-border/30 my-2 mx-4"></div>
 
                     <button
                       onClick={() => setActiveMenu("language")}

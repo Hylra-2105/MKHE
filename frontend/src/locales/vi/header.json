@@ -12,7 +12,8 @@
     "analytics": "Thống kê - Phân tích",
     "logout": "Đăng xuất",
     "admin_area": "Khu vực quản trị",
-    "staff_area": "Khu vực nhân viên"
+    "staff_area": "Khu vực nhân viên",
+    "manage_products": "Quản lý Sản phẩm"
   },
   "guest_menu": {
     "login": "Đăng nhập"

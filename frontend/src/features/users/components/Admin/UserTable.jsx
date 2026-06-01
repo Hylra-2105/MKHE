@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { getLastNameInitial, isVideoUrl } from "@/utils/validators";
 import { Eye } from "lucide-react";
 
-const UserTable = ({ users, loading, onViewUser }) => {
+const UserTable = ({ users, loading, onViewUser, currentUser }) => {
   const { t } = useTranslation("admin");
 
   return (
@@ -47,7 +47,7 @@ const UserTable = ({ users, loading, onViewUser }) => {
             users.map((user) => (
               <tr
                 key={user._id}
-                className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors"
+                className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
                 <td className="p-4">
                   {user.avatar && isVideoUrl(user.avatar) ? (
@@ -74,12 +74,12 @@ const UserTable = ({ users, loading, onViewUser }) => {
                 <td className="p-4 text-mkhe-text/80 ">{user.email}</td>
                 <td className="p-4 text-center">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold ${
+                    className={`px-2.5 py-1 rounded text-xs font-bold border ${
                       user.role === "Admin"
-                        ? "bg-red-500/20 text-red-500"
+                        ? "bg-red-500/10 text-red-600 border-red-500/30"
                         : user.role === "Staff"
-                          ? "bg-green-500/20 text-green-500"
-                          : "bg-blue-500/20 text-blue-500"
+                          ? "bg-green-500/10 text-green-600 border-green-500/30"
+                          : "bg-blue-500/10 text-blue-600 border-blue-500/30"
                     }`}
                   >
                     {t(`roles.${user.role.toLowerCase()}`)}
@@ -98,13 +98,15 @@ const UserTable = ({ users, loading, onViewUser }) => {
                 </td>
                 <td className="p-4 text-center">
                   <div className="flex justify-center">
-                    <button
-                      title={t("table.view")}
-                      onClick={() => onViewUser(user)}
-                      className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer"
-                    >
-                      <Eye className="w-5 h-5" />
-                    </button>
+                    {user._id !== currentUser?._id && (
+                      <button
+                        title={t("table.view")}
+                        onClick={() => onViewUser(user)}
+                        className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
