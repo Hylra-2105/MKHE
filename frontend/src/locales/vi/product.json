@@ -1,0 +1,83 @@
+{
+  "page": {
+    "title": "Quản lý Sản phẩm",
+    "subtitle": "Xây dựng danh mục thương mại và quản lý ma trận B2B/B2C",
+    "add_btn": "+ Thêm sản phẩm",
+    "page_text": "Trang",
+    "trash_btn": "Thùng rác"
+  },
+  "filter": {
+    "search_placeholder": "Tìm kiếm theo tên sản phẩm hoặc mã SKU...",
+    "search_btn": "Tìm kiếm",
+    "all_categories": "Tất cả phân loại"
+  },
+  "table": {
+    "name": "Tên sản phẩm",
+    "sku": "Mã SKU",
+    "category": "Phân loại",
+    "price": "Giá bán",
+    "stock": "Tồn kho",
+    "status": "Trạng thái",
+    "actions": "Hành động",
+    "empty": "Chưa có sản phẩm nào trong kho dữ liệu.",
+    "edit": "Sửa",
+    "delete": "Xóa (Xóa Mềm)"
+  },
+  "modal": {
+    "add_title": "Thêm Sản phẩm Mới",
+    "name": "Tên sản phẩm",
+    "name_placeholder": "Ví dụ: Túi Tote Thổ Cẩm Kẻ Sọc",
+    "sku": "Mã SKU",
+    "sku_placeholder": "MK-TOTE-01",
+    "category": "Phân loại Ma trận",
+    "price": "Giá bán (đ)",
+    "price_placeholder": "250000",
+    "stock": "Số lượng tồn kho",
+    "stock_placeholder": "100",
+    "description": "Mô tả tóm tắt sản phẩm",
+    "description_placeholder": "Nhập thông tin mô tả chi tiết phục vụ hiển thị bán hàng...",
+    "cancel": "Hủy",
+    "save": "Lưu dữ liệu",
+    "saving": "Đang lưu...",
+    "edit_title": "Chỉnh sửa Sản phẩm",
+    "status": "Trạng thái hiển thị",
+    "confirm_delete": "Xác nhận xóa",
+    "deleting": "Đang xử lý...",
+    "trash_title": "Thùng rác Sản phẩm",
+    "restore": "Khôi phục",
+    "empty_trash": "Thùng rác hiện đang trống.",
+    "confirm_restore_title": "Khôi phục Sản phẩm?",
+    "confirm_restore_desc": "Bạn có chắc chắn muốn khôi phục \"{{name}}\" vào danh sách sản phẩm không?",
+    "confirm_restore_btn": "Khôi phục"
+  },
+  "statuses": {
+    "DRAFT": "Bản nháp (Đang ẩn)",
+    "PUBLISHED": "Công khai (Đang bán)",
+    "OUT_OF_STOCK": "Hết hàng"
+  },
+  "pagination": {
+    "showing_page": "Trang"
+  },
+  "categories": {
+    "B2B_Luxury": "B2B Luxury",
+    "B2B_Standard": "B2B Standard",
+    "B2C_Premium": "B2C Premium",
+    "B2C_Mass_Premium": "B2C Mass-Premium"
+  },
+  "messages": {
+    "fill_required": "Vui lòng điền đầy đủ các trường bắt buộc!",
+    "add_success": "Thêm sản phẩm thành công!",
+    "sku_exists": "Mã SKU này đã tồn tại trong hệ thống!",
+    "add_error": "Có lỗi xảy ra khi tạo sản phẩm!",
+    "fetch_error": "Không thể kết nối lấy dữ liệu kho hàng!",
+    "delete_success": "Đã ẩn sản phẩm thành công!",
+    "delete_error": "Lỗi khi ẩn sản phẩm!",
+    "edit_developing": "Tính năng sửa sản phẩm {{sku}} đang hoàn thiện",
+    "update_success": "Cập nhật sản phẩm thành công!",
+    "update_error": "Lỗi khi cập nhật sản phẩm!",
+    "delete_confirm_title": "Xác nhận xóa sản phẩm?",
+    "delete_confirm_desc": "Hành động này sẽ ẩn sản phẩm khỏi hệ thống. Bạn có chắc chắn không?",
+    "restore_success": "Đã khôi phục sản phẩm thành công!",
+    "restore_error": "Lỗi khi khôi phục sản phẩm!"
+  }
+}

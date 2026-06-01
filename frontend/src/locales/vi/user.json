@@ -16,7 +16,8 @@
     "update_success": "Cập nhật thành công!",
     "change_pass_success": "Đã cập nhật mật khẩu mới!",
     "otp_sent_success": "Đã gửi mã OTP đến email!",
-    "otp_send_error": "Lỗi gửi mã OTP"
+    "otp_send_error": "Lỗi gửi mã OTP",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "auth": {
     "new_password": "Mật khẩu mới",

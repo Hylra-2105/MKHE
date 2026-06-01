@@ -1,0 +1,83 @@
+{
+  "page": {
+    "title": "Product Management",
+    "subtitle": "Build commercial catalogs and manage B2B/B2C matrices",
+    "add_btn": "+ Add Product",
+    "page_text": "Page",
+    "trash_btn": "Trash"
+  },
+  "filter": {
+    "search_placeholder": "Search by product name or SKU...",
+    "search_btn": "Search",
+    "all_categories": "All Categories"
+  },
+  "table": {
+    "name": "Product Name",
+    "sku": "SKU",
+    "category": "Category",
+    "price": "Price",
+    "stock": "Stock",
+    "status": "Status",
+    "actions": "Actions",
+    "empty": "No products available in the database.",
+    "edit": "Edit",
+    "delete": "Delete (Soft Delete)"
+  },
+  "modal": {
+    "add_title": "Add New Product",
+    "name": "Product Name",
+    "name_placeholder": "E.g., Striped Brocade Tote Bag",
+    "sku": "SKU",
+    "sku_placeholder": "MK-TOTE-01",
+    "category": "Matrix Category",
+    "price": "Selling Price (VND)",
+    "price_placeholder": "250000",
+    "stock": "Stock Quantity",
+    "stock_placeholder": "100",
+    "description": "Short Description",
+    "description_placeholder": "Enter detailed description for sales display...",
+    "cancel": "Cancel",
+    "save": "Save Data",
+    "saving": "Saving...",
+    "edit_title": "Edit Product",
+    "status": "Display Status",
+    "confirm_delete": "Confirm Delete",
+    "deleting": "Processing...",
+    "trash_title": "Product Trash",
+    "restore": "Restore",
+    "empty_trash": "The trash is currently empty.",
+    "confirm_restore_title": "Restore Product?",
+    "confirm_restore_desc": "Are you sure you want to restore \"{{name}}\" to the product list?",
+    "confirm_restore_btn": "Restore"
+  },
+  "statuses": {
+    "DRAFT": "Draft (Hidden)",
+    "PUBLISHED": "Published (Active)",
+    "OUT_OF_STOCK": "Out of Stock"
+  },
+  "pagination": {
+    "showing_page": "Page"
+  },
+  "categories": {
+    "B2B_Luxury": "B2B Luxury",
+    "B2B_Standard": "B2B Standard",
+    "B2C_Premium": "B2C Premium",
+    "B2C_Mass_Premium": "B2C Mass-Premium"
+  },
+  "messages": {
+    "fill_required": "Please fill in all required fields!",
+    "add_success": "Product added successfully!",
+    "sku_exists": "This SKU already exists in the system!",
+    "add_error": "An error occurred while creating the product!",
+    "fetch_error": "Unable to connect to inventory data!",
+    "delete_success": "Product hidden successfully!",
+    "delete_error": "Error hiding product!",
+    "edit_developing": "Edit feature for {{sku}} is under development",
+    "update_success": "Product updated successfully!",
+    "update_error": "Error updating product!",
+    "delete_confirm_title": "Confirm delete product?",
+    "delete_confirm_desc": "This action will hide the product from the system. Are you sure?",
+    "restore_success": "Product restored successfully!",
+    "restore_error": "Error restoring product!"
+  }
+}

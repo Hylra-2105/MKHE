@@ -106,7 +106,8 @@
     "lock_success": "User account has been locked successfully!",
     "unlock_success": "User account has been unlocked and reactivated successfully!",
     "confirm_unlock_title": "Unlock Account?",
-    "confirm_unlock_desc": "Are you sure you want to reactivate this account? The user will be able to sign in normally again."
+    "confirm_unlock_desc": "Are you sure you want to reactivate this account? The user will be able to sign in normally again.",
+    "delete_success": "Account deleted successfully!"
   },
   "reasons": {
     "spam_comments": "Spamming comments / Fake product reviews",

@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { Trash2 } from "lucide-react"; 
 
-import UserFilter from "@/features/users/components/Admin/UserFilter";
-import UserTable from "@/features/users/components/Admin/UserTable";
-import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
-import AddUserModal from "@/features/users/components/Admin/AddUserModal";
-import ForbiddenPage from "@/pages/errors/ForbiddenPage";
+import { productApi } from "@/api/productApi";
+import ProductTable from "@/features/products/components/Admin/ProductTable";
+import AddProductModal from "@/features/products/components/Admin/AddProductModal";
+import EditProductModal from "@/features/products/components/Admin/EditProductModal";
+import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
+import ProductFilter from "@/features/products/components/Admin/ProductFilter";
 
-export default function UserManagement() {
-  const { t } = useTranslation("admin");
-  const { user: currentUser } = useAuthStore();
+const ProductManagementPage = () => {
+  const { t } = useTranslation("product");
 
-  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isForbidden, setIsForbidden] = useState(false);
+
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isTrashModalOpen, setIsTrashModalOpen] = useState(false); // State cho Thùng rác
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [page, setPage] = useState(1);
   const [limit] = useState(5);
@@ -24,48 +27,33 @@ export default function UserManagement() {
 
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
 
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  const handleViewUser = (user) => {
-    setSelectedUser(user);
-    setIsModalOpen(true);
-  };
-
-  const fetchUsers = async () => {
+  const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter);
+      const res = await productApi.getAllProducts(
+        page,
+        limit,
+        appliedSearch,
+        categoryFilter,
+      );
 
       if (res.success) {
-        setUsers(res.data);
-        setTotalPages(res.pagination.totalPages);
+        setProducts(res.data);
+        setTotalPages(res.pagination?.totalPages || 1);
       }
     } catch (error) {
-      const errorStatus = error.response?.status;
-      const errorCode = error.response?.data?.message;
-
-      if (errorStatus === 403) {
-        setIsForbidden(true);
-        return;
-      }
-
-      if (errorCode) {
-        toast.error(t(`errors.${errorCode}`, { defaultValue: errorCode }));
-      } else {
-        toast.error(t("errors.fetch_failed"));
-      }
+      toast.error(t("messages.fetch_error"));
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  }, [page, appliedSearch, roleFilter]);
+    fetchProducts();
+  }, [page, appliedSearch, categoryFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -73,16 +61,16 @@ export default function UserManagement() {
     setAppliedSearch(searchInput);
   };
 
-  const handleRoleChange = (e) => {
+  const handleCategoryChange = (e) => {
     setPage(1);
-    setRoleFilter(e.target.value);
+    setCategoryFilter(e.target.value);
   };
 
-  if (isForbidden) {
-    return <ForbiddenPage />;
-  }
+  const handleEditProduct = (product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
 
-  // Tạo mảng các số trang: [page-1, page, page+1] nhưng luôn hiển thị 3 số (ẩn những số không hợp lệ)
   const pageNumbers = [page - 1, page, page + 1];
 
   return (
@@ -91,34 +79,44 @@ export default function UserManagement() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
-            {t("users.title")}
+            {t("page.title")}
           </h1>
           <p className="text-sm text-mkhe-text/60 italic">
-            {t("users.subtitle")}
+            {t("page.subtitle")}
           </p>
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
-        >
-          {t("users.add_member")}
-        </button>
+        <div className="flex gap-3">
+          {/* NÚT THÙNG RÁC */}
+          <button
+            onClick={() => setIsTrashModalOpen(true)}
+            className="flex items-center gap-2 bg-mkhe-primary text-white px-4 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+          >
+            <Trash2 className="w-4 h-4 text-white" />
+            {t("page.trash_btn")}
+          </button>
+
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+          >
+            {t("page.add_btn")}
+          </button>
+        </div>
       </div>
 
       {/* FILTER & TABLE */}
-      <UserFilter
+      <ProductFilter
         searchInput={searchInput}
         setSearchInput={setSearchInput}
-        roleFilter={roleFilter}
-        handleRoleChange={handleRoleChange}
+        categoryFilter={categoryFilter}
+        handleCategoryChange={handleCategoryChange}
         handleSearch={handleSearch}
       />
 
-      <UserTable
-        users={users}
+      <ProductTable
+        products={products}
         loading={loading}
-        onViewUser={handleViewUser}
-        currentUser={currentUser}
+        onEdit={handleEditProduct}
       />
 
       {/* DIVIDER */}
@@ -128,13 +126,12 @@ export default function UserManagement() {
       {totalPages > 0 && (
         <div className="flex justify-between items-center">
           <span className="text-sm text-mkhe-text/60">
-            {t("pagination.showing_page")}{" "}
+            {t("page.page_text")}{" "}
             <span className="font-bold text-mkhe-primary">{page}</span> /{" "}
             {totalPages}
           </span>
 
           <div className="flex items-center gap-1">
-            {/* Nút Previous (<) - LUÔN CHIẾM CHỖ, ẩn khi page = 1 */}
             <button
               onClick={() => setPage(page - 1)}
               disabled={page === 1 || loading}
@@ -147,7 +144,6 @@ export default function UserManagement() {
               &lt;
             </button>
 
-            {/* CÁC SỐ TRANG - LUÔN HIỂN THỊ 3 SỐ, ẩn những số không hợp lệ */}
             {pageNumbers.map((pageNum) => {
               const isValid = pageNum >= 1 && pageNum <= totalPages;
               const isActive = page === pageNum;
@@ -170,7 +166,6 @@ export default function UserManagement() {
               );
             })}
 
-            {/* Nút Next (>) - LUÔN CHIẾM CHỖ, ẩn khi page = totalPages */}
             <button
               onClick={() => setPage(page + 1)}
               disabled={page === totalPages || loading}
@@ -185,17 +180,31 @@ export default function UserManagement() {
           </div>
         </div>
       )}
-      <UserDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        user={selectedUser}
-        onRefresh={fetchUsers}
-      />
-      <AddUserModal
+
+      {/* MODALS */}
+      <AddProductModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onRefresh={fetchUsers}
+        onSuccess={fetchProducts}
+      />
+
+      <EditProductModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedProduct(null);
+        }}
+        onSuccess={fetchProducts}
+        product={selectedProduct}
+      />
+
+      <TrashProductModal
+        isOpen={isTrashModalOpen}
+        onClose={() => setIsTrashModalOpen(false)}
+        onSuccess={fetchProducts}
       />
     </div>
   );
-}
+};
+
+export default ProductManagementPage;

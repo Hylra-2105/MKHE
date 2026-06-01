@@ -106,7 +106,8 @@
     "lock_success": "Đã khóa tài khoản người dùng thành công!",
     "unlock_success": "Đã mở khóa và khôi phục hoạt động tài khoản thành công!",
     "confirm_unlock_title": "Mở khóa tài khoản?",
-    "confirm_unlock_desc": "Bạn có chắc chắn muốn khôi phục hoạt động cho tài khoản này? Người dùng sẽ có thể đăng nhập lại bình thường."
+    "confirm_unlock_desc": "Bạn có chắc chắn muốn khôi phục hoạt động cho tài khoản này? Người dùng sẽ có thể đăng nhập lại bình thường.",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "reasons": {
     "spam_comments": "Bình luận rác / Đánh giá sản phẩm giả mạo",

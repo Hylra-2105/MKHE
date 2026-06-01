@@ -3,13 +3,17 @@ export default function Button({
   onClick,
   type = "button",
   className = "",
-  disabled = false, // Bổ sung prop disabled để xử lý lúc đang load API
+  disabled = false,
+  form, // Thêm form prop để support form="id"
+  ...rest // Nhận các prop khác
 }) {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
+      form={form}
+      {...rest}
       className={`
         w-full py-3 px-6 rounded-md
         font-bold text-[#1A0F0A] tracking-wide uppercase

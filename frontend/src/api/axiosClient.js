@@ -44,6 +44,7 @@ axiosClient.interceptors.response.use(
         "/verify-otp",
         "/forgot-password",
         "/reset-password",
+        "/home",
       ];
 
       const isAuthPage = authPages.some((page) => currentPath.includes(page));

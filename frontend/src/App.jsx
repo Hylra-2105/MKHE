@@ -25,6 +25,7 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 import HomePage from "./pages/home/HomePage";
 import UserManagement from "./pages/users/UserManagementPage";
+import ProductManagementPage from "./pages/products/ProductManagementPage";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -34,9 +35,6 @@ import ProfilePage from "@/pages/users/ProfilePage";
 function App() {
   const { setUser } = useAuthStore();
 
-  // ==========================================
-  // LOGIC TỰ ĐỘNG LẤY DATA MỚI KHI F5 (RELOAD)
-  // ==========================================
   useEffect(() => {
     const fetchFreshUserData = async () => {
       try {
@@ -72,6 +70,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin"]}>
                 <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ProductManagementPage />
               </ProtectedRoute>
             }
           />

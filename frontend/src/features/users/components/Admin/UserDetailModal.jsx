@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import {
   getLastNameInitial,
   isValidPhoneInput,
@@ -472,214 +473,110 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
           </div>
         </div>
 
-        {/* XÁC NHẬN XÓA TÀI KHOẢN*/}
-        {showDeleteConfirm && (
-          <div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
-            onClick={() => setShowDeleteConfirm(false)}
-          >
-            <div
-              className="bg-[var(--color-mkhe-bg)] w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-red-500/20 text-center relative transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5 transition-colors" />
-              </button>
-              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 mt-2 transition-colors">
-                <Trash2 className="w-8 h-8 text-red-500" />
-              </div>
-              <h3 className="text-xl font-bold text-[var(--color-mkhe-text)] mb-2 transition-colors">
-                {t("messages.confirm_delete_title")}
-              </h3>
-              <p className="text-sm text-[var(--color-mkhe-text)]/70 mb-6 leading-relaxed transition-colors">
-                {t("messages.confirm_delete")}
-              </p>
-              <div className="flex gap-3 justify-center">
+        {/* XÁC NHẬN XÓA TÀI KHOẢN */}
+        <ConfirmModal
+          isOpen={showDeleteConfirm}
+          onConfirm={executeDelete}
+          onCancel={() => setShowDeleteConfirm(false)}
+          title={t("messages.confirm_delete_title")}
+          message={t("messages.confirm_delete")}
+          confirmText={t("common.delete_permanently")}
+          cancelText={t("common.cancel")}
+          icon="trash"
+          isDanger={true}
+        />
+
+        {/* XÁC NHẬN KHÓA TÀI KHOẢN KÈM DROPDOWN LÝ DO */}
+        <ConfirmModal
+          isOpen={showBlockConfirm}
+          onConfirm={() => executeBlockToggle(true, blockReason)}
+          onCancel={() => setShowBlockConfirm(false)}
+          title={t("messages.confirm_lock_title")}
+          message={t("messages.confirm_lock_desc")}
+          confirmText={t("common.confirm_lock")}
+          cancelText={t("common.cancel")}
+          icon="alert"
+          loading={isSaving}
+          children={
+            <div className="mb-6 relative">
+              <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1.5 text-left transition-colors">
+                {t("users.block_reason_label")}
+              </label>
+
+              {isReasonDropdownOpen && (
+                <div
+                  className="fixed inset-0 z-[120]"
+                  onClick={() => setIsReasonDropdownOpen(false)}
+                />
+              )}
+
+              <div className="relative w-full">
                 <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-xl hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer"
+                  type="button"
+                  onClick={() => setIsReasonDropdownOpen(!isReasonDropdownOpen)}
+                  className="w-full p-3 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 cursor-pointer rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)]/50 text-sm font-medium flex justify-between items-center shadow-sm relative z-[121] transition-all"
                 >
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={executeDelete}
-                  className="px-6 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 shadow-lg shadow-red-500/30 transition-all cursor-pointer"
-                >
-                  {t("common.delete_permanently")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* XÁC NHẬN KHÓA TÀI KHOẢN KÈM DROPDOWN LÝ DO  */}
-        {showBlockConfirm && (
-          <div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
-            onClick={() => setShowBlockConfirm(false)}
-          >
-            <div
-              className="relative bg-[var(--color-mkhe-bg)] w-full max-w-md p-6 rounded-2xl shadow-2xl border border-orange-500/20 transform scale-100 animate-in zoom-in-95 duration-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Nút X đóng góc phải */}
-              <button
-                onClick={() => setShowBlockConfirm(false)}
-                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5 transition-colors" />
-              </button>
-
-              <div className="text-center">
-                <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-100 mt-2 transition-colors">
-                  <AlertTriangle className="w-8 h-8 text-orange-500" />
-                </div>
-                <h3 className="text-xl font-bold text-[var(--color-mkhe-text)] mb-2 transition-colors">
-                  {t("messages.confirm_lock_title")}
-                </h3>
-                <p className="text-sm text-[var(--color-mkhe-text)]/70 mb-4 leading-relaxed transition-colors">
-                  {t("messages.confirm_lock_desc")}
-                </p>
-              </div>
-
-              {/* INPUT DROPDOWN CUSTOM XỊN XÒ */}
-              <div className="mb-6 relative">
-                <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1.5 text-left transition-colors">
-                  {t("users.block_reason_label")}
-                </label>
-
-                {/* Lớp kính vô hình giúp click ra ngoài để đóng */}
-                {isReasonDropdownOpen && (
-                  <div
-                    className="fixed inset-0 z-[120]"
-                    onClick={() => setIsReasonDropdownOpen(false)}
+                  <span className="truncate pr-4">
+                    {t(`reasons.${blockReason}`)}
+                  </span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-[var(--color-mkhe-primary)] shrink-0 transition-transform duration-300 ${
+                      isReasonDropdownOpen ? "rotate-180" : ""
+                    }`}
                   />
+                </button>
+
+                {isReasonDropdownOpen && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 rounded-xl shadow-xl py-2 z-[122] max-h-56 overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-200 transition-colors">
+                    {[
+                      "spam_comments",
+                      "boom_orders",
+                      "fake_info",
+                      "policy_violation",
+                      "fraud_activity",
+                    ].map((reasonKey) => (
+                      <button
+                        key={reasonKey}
+                        type="button"
+                        onClick={() => {
+                          setBlockReason(reasonKey);
+                          setIsReasonDropdownOpen(false);
+                        }}
+                        className={`w-[calc(100%-16px)] mx-2 px-3 py-2.5 cursor-pointer rounded-lg text-sm text-left flex justify-between items-center transition-colors ${
+                          blockReason === reasonKey
+                            ? "bg-[var(--color-mkhe-primary)]/10 text-[var(--color-mkhe-primary)] font-bold"
+                            : "text-[var(--color-mkhe-text)]/80 hover:bg-[var(--color-mkhe-border)]/30 hover:text-[var(--color-mkhe-text)]"
+                        }`}
+                      >
+                        <span className="truncate pr-2">
+                          {t(`reasons.${reasonKey}`)}
+                        </span>
+                        {blockReason === reasonKey && (
+                          <Check className="w-4 h-4 shrink-0 text-[var(--color-mkhe-primary)] transition-colors" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 )}
-
-                <div className="relative w-full">
-                  {/* Nút bấm hiển thị */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setIsReasonDropdownOpen(!isReasonDropdownOpen)
-                    }
-                    className="w-full p-3 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 cursor-pointer rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)]/50 text-sm font-medium flex justify-between items-center shadow-sm relative z-[121] transition-all"
-                  >
-                    <span className="truncate pr-4">
-                      {t(`reasons.${blockReason}`)}
-                    </span>
-                    <ChevronDown
-                      className={`w-4 h-4 text-[var(--color-mkhe-primary)] shrink-0 transition-transform duration-300 ${
-                        isReasonDropdownOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-
-                  {/* Menu xổ xuống */}
-                  {isReasonDropdownOpen && (
-                    <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 rounded-xl shadow-xl py-2 z-[122] max-h-56 overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-200 transition-colors">
-                      {[
-                        "spam_comments",
-                        "boom_orders",
-                        "fake_info",
-                        "policy_violation",
-                        "fraud_activity",
-                      ].map((reasonKey) => (
-                        <button
-                          key={reasonKey}
-                          type="button"
-                          onClick={() => {
-                            setBlockReason(reasonKey);
-                            setIsReasonDropdownOpen(false);
-                          }}
-                          className={`w-[calc(100%-16px)] mx-2 px-3 py-2.5 cursor-pointer rounded-lg text-sm text-left flex justify-between items-center transition-colors ${
-                            blockReason === reasonKey
-                              ? "bg-[var(--color-mkhe-primary)]/10 text-[var(--color-mkhe-primary)] font-bold"
-                              : "text-[var(--color-mkhe-text)]/80 hover:bg-[var(--color-mkhe-border)]/30 hover:text-[var(--color-mkhe-text)]"
-                          }`}
-                        >
-                          <span className="truncate pr-2">
-                            {t(`reasons.${reasonKey}`)}
-                          </span>
-                          {blockReason === reasonKey && (
-                            <Check className="w-4 h-4 shrink-0 text-[var(--color-mkhe-primary)] transition-colors" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* HÀNG BUTTONS */}
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setShowBlockConfirm(false)}
-                  className="px-5 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-xl hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer text-sm"
-                >
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={() => executeBlockToggle(true, blockReason)}
-                  className="px-5 py-2.5 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 shadow-lg shadow-orange-500/30 transition-all cursor-pointer text-sm"
-                >
-                  {t("common.confirm_lock")}
-                </button>
               </div>
             </div>
-          </div>
-        )}
-        {showUnlockConfirm && (
-          <div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/40  animate-in fade-in duration-200"
-            onClick={() => setShowUnlockConfirm(false)}
-          >
-            <div
-              className="relative bg-[var(--color-mkhe-bg)] w-full max-w-sm p-6 rounded-2xl shadow-2xl border border-green-500/20 text-center transform scale-100 animate-in zoom-in-95 duration-200 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setShowUnlockConfirm(false)}
-                className="absolute top-4 right-4 p-1.5 text-gray-400 hover:text-green-500 hover:bg-green-50 rounded-full transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5 transition-colors" />
-              </button>
-
-              <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100 mt-2 transition-colors">
-                <ShieldCheck className="w-8 h-8 text-green-500" />
-              </div>
-
-              <h3 className="text-xl font-bold text-[var(--color-mkhe-text)] mb-2 transition-colors">
-                {t("messages.confirm_unlock_title")}
-              </h3>
-
-              <p className="text-sm text-[var(--color-mkhe-text)]/70 mb-6 leading-relaxed transition-colors">
-                {t("messages.confirm_unlock_desc")}
-              </p>
-
-              <div className="flex gap-3 justify-center">
-                <button
-                  onClick={() => setShowUnlockConfirm(false)}
-                  className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-xl hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer"
-                >
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={() => {
-                    executeBlockToggle(false, "");
-                    setShowUnlockConfirm(false);
-                  }}
-                  className="px-6 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 shadow-lg shadow-green-600/30 transition-all cursor-pointer"
-                >
-                  {t("common.confirm_unlock")}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+          }
+        />
+        {/* XÁC NHẬN MỞ KHÓA TÀI KHOẢN */}
+        <ConfirmModal
+          isOpen={showUnlockConfirm}
+          onConfirm={() => {
+            executeBlockToggle(false, "");
+            setShowUnlockConfirm(false);
+          }}
+          onCancel={() => setShowUnlockConfirm(false)}
+          title={t("messages.confirm_unlock_title")}
+          message={t("messages.confirm_unlock_desc")}
+          confirmText={t("common.confirm_unlock")}
+          cancelText={t("common.cancel")}
+          icon="shield"
+          loading={isSaving}
+        />
       </div>
     </div>
   );
