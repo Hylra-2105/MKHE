@@ -51,3 +51,5 @@ export const uploadCloud = multer({
     fileSize: 10 * 1024 * 1024,
   },
 });
+
+export { cloudinary };

@@ -15,10 +15,10 @@ const ProductTable = ({ products, loading, onEdit }) => {
             <th className="p-4 font-semibold w-1/4">{t("table.name")}</th>
             <th className="p-4 font-semibold w-1/7">{t("table.sku")}</th>
             <th className="p-4 font-semibold w-1/7">{t("table.category")}</th>
-            <th className="p-4 font-semibold text-center w-1/8">
+            <th className="p-4 font-semibold text-center w-1/9">
               {t("table.price")}
             </th>
-            <th className="p-4 font-semibold text-center w-1/10">
+            <th className="p-4 font-semibold text-center w-1/11">
               {t("table.stock")}
             </th>
             <th className="p-4 font-semibold text-center w-1/6">

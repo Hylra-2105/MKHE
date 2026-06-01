@@ -25,30 +25,55 @@
   },
   "modal": {
     "add_title": "Thêm Sản phẩm Mới",
+    "edit_title": "Chỉnh sửa Sản phẩm",
+    "trash_title": "Thùng rác Sản phẩm",
+
     "name": "Tên sản phẩm",
     "name_placeholder": "Ví dụ: Túi Tote Thổ Cẩm Kẻ Sọc",
+
     "sku": "Mã SKU",
     "sku_placeholder": "MK-TOTE-01",
+
     "category": "Phân loại Ma trận",
+
     "price": "Giá bán (đ)",
     "price_placeholder": "250000",
+
     "stock": "Số lượng tồn kho",
     "stock_placeholder": "100",
+
     "description": "Mô tả tóm tắt sản phẩm",
     "description_placeholder": "Nhập thông tin mô tả chi tiết phục vụ hiển thị bán hàng...",
+
+    "status": "Trạng thái hiển thị",
+
     "cancel": "Hủy",
     "save": "Lưu dữ liệu",
     "saving": "Đang lưu...",
-    "edit_title": "Chỉnh sửa Sản phẩm",
-    "status": "Trạng thái hiển thị",
-    "confirm_delete": "Xác nhận xóa",
     "deleting": "Đang xử lý...",
-    "trash_title": "Thùng rác Sản phẩm",
+    "processing": "Đang xử lý...",
+
+    "confirm_delete": "Xác nhận xóa",
+
     "restore": "Khôi phục",
     "empty_trash": "Thùng rác hiện đang trống.",
+
     "confirm_restore_title": "Khôi phục Sản phẩm?",
     "confirm_restore_desc": "Bạn có chắc chắn muốn khôi phục \"{{name}}\" vào danh sách sản phẩm không?",
-    "confirm_restore_btn": "Khôi phục"
+    "confirm_restore_btn": "Khôi phục",
+
+    "gallery_label": "Hình ảnh/video của sản phẩm",
+    "drag_drop_text": "Kéo thả ảnh/video vào đây",
+    "click_to_select": "hoặc click để chọn",
+    "current_images": "Ảnh/video hiện tại",
+    "new_images": "Ảnh/video mới",
+    "marked_for_deletion": "Đã đánh dấu xóa",
+    "new_badge": "Mới",
+    "mark_for_deletion": "Đánh dấu xóa",
+    "delete_image": "Xóa tệp này",
+    "restore_image": "Khôi phục",
+    "images_label": "Hình ảnh sản phẩm",
+    "processing": "Đang xử lý..."
   },
   "statuses": {
     "DRAFT": "Bản nháp (Đang ẩn)",
@@ -78,6 +103,11 @@
     "delete_confirm_title": "Xác nhận xóa sản phẩm?",
     "delete_confirm_desc": "Hành động này sẽ ẩn sản phẩm khỏi hệ thống. Bạn có chắc chắn không?",
     "restore_success": "Đã khôi phục sản phẩm thành công!",
-    "restore_error": "Lỗi khi khôi phục sản phẩm!"
+    "restore_error": "Lỗi khi khôi phục sản phẩm!",
+    "gallery_upload_error": "Lỗi khi tải tệp lên!",
+    "gallery_delete_error": "Lỗi khi xóa tệp!",
+    "max_images_error": "Chỉ được tải lên tối đa {{max}} tệp. Hiện có {{current}} tệp.",
+    "invalid_file_type": "Loại tệp không hợp lệ! Chỉ chấp nhận ảnh và video.",
+    "image_too_large": "Kích thước tệp quá lớn! Tối đa 5MB cho mỗi tệp."
   }
 }

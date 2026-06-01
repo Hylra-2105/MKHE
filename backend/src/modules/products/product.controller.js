@@ -1,5 +1,7 @@
 import Product from "./product.model.js";
+import { cloudinary } from "../../config/cloudinary.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
+import { successResponse, errorResponse } from "../../utils/response.js";
 
 // [POST] /api/products - Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
@@ -153,8 +155,8 @@ export const updateProduct = async (req, res) => {
 
     // Tiến hành cập nhật dữ liệu mới
     const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
-      new: true, // Trả về cục data MỚI nhất sau khi sửa thành công
-      runValidators: true, // Ép Mongoose chạy lại các điều kiện kiểm tra (ví dụ: giá không được âm)
+      returnDocument: "after",
+      runValidators: true,
     });
 
     if (!updatedProduct) {
@@ -186,7 +188,7 @@ export const deleteProduct = async (req, res) => {
     const deletedProduct = await Product.findByIdAndUpdate(
       id,
       { status: "HIDDEN" },
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!deletedProduct) {
@@ -234,9 +236,9 @@ export const restoreProduct = async (req, res) => {
 
     // Tìm sản phẩm đang bị ẩn và đổi trạng thái về DRAFT
     const restoredProduct = await Product.findOneAndUpdate(
-      { _id: id, status: "HIDDEN" }, // Điều kiện phải là sản phẩm đang bị xóa
-      { status: "DRAFT" }, // Đổi về DRAFT
-      { new: true }, // Trả về data sau khi cập nhật
+      { _id: id, status: "HIDDEN" },
+      { status: "DRAFT" },
+      { returnDocument: "after" },
     );
 
     if (!restoredProduct) {
@@ -253,5 +255,115 @@ export const restoreProduct = async (req, res) => {
   } catch (error) {
     console.error("Error in restoreProduct:", error);
     return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+  }
+};
+
+// [POST] /api/products/:id/upload-gallery - Upload multiple images cho sản phẩm
+export const uploadProductGallery = async (req, res) => {
+  try {
+    console.log("[Upload Gallery] Request received");
+    console.log("[Upload Gallery] Files:", req.files?.length);
+
+    // Nếu middleware của Multer không bắt được file
+    if (!req.files || req.files.length === 0) {
+      console.error("[Upload Gallery] No files provided");
+      return errorResponse(res, 400, "MISSING_FILE");
+    }
+
+    const { id } = req.params;
+    console.log("[Upload Gallery] Product ID:", id);
+
+    // Lấy URLs từ Cloudinary
+    const imageUrls = req.files.map((file) => file.path);
+    console.log("[Upload Gallery] Image URLs:", imageUrls);
+
+    // Tìm sản phẩm
+    const product = await Product.findById(id);
+    if (!product) {
+      console.error("[Upload Gallery] Product not found:", id);
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
+    console.log(
+      "[Upload Gallery] Current images count:",
+      product.images?.length,
+    );
+
+    // Thêm ảnh vào gallery (hoặc thay thế nếu muốn)
+    product.images = [...(product.images || []), ...imageUrls];
+    console.log("[Upload Gallery] New images count:", product.images.length);
+
+    await product.save();
+    console.log("[Upload Gallery] Product saved successfully");
+
+    return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", product);
+  } catch (error) {
+    console.error("[Upload Gallery] Error:", error.message || error);
+    console.error("[Upload Gallery] Error stack:", error.stack);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// [DELETE] /api/products/:id/delete-images - Xóa images từ Cloudinary + Database
+export const deleteProductImages = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imagesToDelete } = req.body;
+
+    if (
+      !imagesToDelete ||
+      !Array.isArray(imagesToDelete) ||
+      imagesToDelete.length === 0
+    ) {
+      return errorResponse(res, 400, "NO_IMAGES_TO_DELETE");
+    }
+
+    const product = await Product.findById(id);
+    if (!product) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+
+    // Xóa từng ảnh từ Cloudinary (thu thập lỗi nhưng vẫn tiếp tục xóa ảnh khác)
+    const deletionErrors = [];
+    for (const imageUrl of imagesToDelete) {
+      try {
+        // Extract public_id từ Cloudinary URL
+        // URL format: https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/mkhe_avatars/{public_id}
+        const urlParts = imageUrl.split("/");
+        const publicIdWithExt = urlParts[urlParts.length - 1];
+        const publicId = `mkhe_avatars/${publicIdWithExt.split(".")[0]}`;
+
+        console.log(`[Delete Image] Attempting to delete: ${publicId}`);
+
+        // Xóa từ Cloudinary
+        const deleteResult = await cloudinary.uploader.destroy(publicId, {
+          type: "upload",
+          resource_type: "image",
+        });
+        console.log(`[Delete Image] Cloudinary delete result:`, deleteResult);
+      } catch (error) {
+        console.error(
+          `[Delete Image] Failed to delete ${imageUrl}:`,
+          error.message || error,
+        );
+        deletionErrors.push(imageUrl);
+      }
+    }
+
+    // Cập nhật product: remove những ảnh đã xóa (cả thành công lẫn thất bại)
+    product.images = product.images.filter(
+      (img) => !imagesToDelete.includes(img),
+    );
+    await product.save();
+
+    // Nếu có lỗi xóa nhưng vẫn xóa thành công từ DB, vẫn trả về success
+    if (deletionErrors.length > 0) {
+      console.warn(
+        `[Delete Image] Partially successful. Failed to delete ${deletionErrors.length}/${imagesToDelete.length} images from Cloudinary`,
+      );
+    }
+
+    return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", product);
+  } catch (error) {
+    console.error("[Delete Images] Fatal error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

@@ -49,4 +49,29 @@ export const productApi = {
     const response = await axiosClient.put(`/products/${id}/restore`);
     return response.data;
   },
+
+  // Upload gallery cho sản phẩm
+  uploadProductGallery: async (productId, formData) => {
+    const response = await axiosClient.post(
+      `/products/${productId}/upload-gallery`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  },
+
+  // Xóa images từ sản phẩm (Cloudinary + Database)
+  deleteProductImages: async (productId, imagesToDelete) => {
+    const response = await axiosClient.delete(
+      `/products/${productId}/delete-images`,
+      {
+        data: { imagesToDelete },
+      },
+    );
+    return response.data;
+  },
 };

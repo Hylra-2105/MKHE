@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Product Management",
-    "subtitle": "Build commercial catalogs and manage B2B/B2C matrices",
+    "subtitle": "Build commercial catalogs and manage the B2B/B2C matrix",
     "add_btn": "+ Add Product",
     "page_text": "Page",
     "trash_btn": "Trash"
@@ -19,40 +19,53 @@
     "stock": "Stock",
     "status": "Status",
     "actions": "Actions",
-    "empty": "No products available in the database.",
+    "empty": "No products available in the inventory.",
     "edit": "Edit",
     "delete": "Delete (Soft Delete)"
   },
   "modal": {
     "add_title": "Add New Product",
     "name": "Product Name",
-    "name_placeholder": "E.g., Striped Brocade Tote Bag",
+    "name_placeholder": "Example: Striped Brocade Tote Bag",
     "sku": "SKU",
     "sku_placeholder": "MK-TOTE-01",
     "category": "Matrix Category",
-    "price": "Selling Price (VND)",
+    "price": "Price (Đ)",
     "price_placeholder": "250000",
     "stock": "Stock Quantity",
     "stock_placeholder": "100",
-    "description": "Short Description",
-    "description_placeholder": "Enter detailed description for sales display...",
+    "description": "Short Product Description",
+    "description_placeholder": "Enter detailed product information for display and sales purposes...",
     "cancel": "Cancel",
-    "save": "Save Data",
+    "save": "Save",
     "saving": "Saving...",
     "edit_title": "Edit Product",
     "status": "Display Status",
-    "confirm_delete": "Confirm Delete",
+    "confirm_delete": "Confirm Deletion",
     "deleting": "Processing...",
     "trash_title": "Product Trash",
     "restore": "Restore",
     "empty_trash": "The trash is currently empty.",
     "confirm_restore_title": "Restore Product?",
     "confirm_restore_desc": "Are you sure you want to restore \"{{name}}\" to the product list?",
-    "confirm_restore_btn": "Restore"
+    "confirm_restore_btn": "Restore",
+
+    "gallery_label": "Product Images/Videos",
+    "drag_drop_text": "Drag and drop images/videos here",
+    "click_to_select": "or click to select files",
+    "current_images": "Current Images/Videos",
+    "new_images": "New Images/Videos",
+    "marked_for_deletion": "Marked for Deletion",
+    "new_badge": "New",
+    "mark_for_deletion": "Mark for Deletion",
+    "delete_image": "Delete This File",
+    "restore_image": "Restore",
+    "processing": "Processing...",
+    "images_label": "Product Images/videos"
   },
   "statuses": {
     "DRAFT": "Draft (Hidden)",
-    "PUBLISHED": "Published (Active)",
+    "PUBLISHED": "Published (On Sale)",
     "OUT_OF_STOCK": "Out of Stock"
   },
   "pagination": {
@@ -62,22 +75,27 @@
     "B2B_Luxury": "B2B Luxury",
     "B2B_Standard": "B2B Standard",
     "B2C_Premium": "B2C Premium",
-    "B2C_Mass_Premium": "B2C Mass-Premium"
+    "B2C_Mass_Premium": "B2C Mass Premium"
   },
   "messages": {
     "fill_required": "Please fill in all required fields!",
     "add_success": "Product added successfully!",
     "sku_exists": "This SKU already exists in the system!",
     "add_error": "An error occurred while creating the product!",
-    "fetch_error": "Unable to connect to inventory data!",
+    "fetch_error": "Unable to retrieve inventory data!",
     "delete_success": "Product hidden successfully!",
-    "delete_error": "Error hiding product!",
-    "edit_developing": "Edit feature for {{sku}} is under development",
+    "delete_error": "Error while hiding the product!",
+    "edit_developing": "The product editing feature for {{sku}} is under development.",
     "update_success": "Product updated successfully!",
-    "update_error": "Error updating product!",
-    "delete_confirm_title": "Confirm delete product?",
-    "delete_confirm_desc": "This action will hide the product from the system. Are you sure?",
+    "update_error": "Error while updating the product!",
+    "delete_confirm_title": "Confirm Product Deletion?",
+    "delete_confirm_desc": "This action will hide the product from the system. Are you sure you want to continue?",
     "restore_success": "Product restored successfully!",
-    "restore_error": "Error restoring product!"
+    "restore_error": "Error while restoring the product!",
+    "gallery_upload_error": "Error uploading file!",
+    "gallery_delete_error": "Error deleting file!",
+    "max_images_error": "You can upload a maximum of {{max}} files. Currently selected: {{current}}.",
+    "invalid_file_type": "Invalid file type! Only images and videos are allowed.",
+    "image_too_large": "File size is too large! Maximum size is 5MB per file."
   }
 }
