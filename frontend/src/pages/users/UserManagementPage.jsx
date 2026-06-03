@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -35,7 +35,7 @@ export default function UserManagement() {
     setIsModalOpen(true);
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter);
@@ -61,11 +61,11 @@ export default function UserManagement() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, appliedSearch, roleFilter, t]);
 
   useEffect(() => {
     fetchUsers();
-  }, [page, appliedSearch, roleFilter]);
+  }, [fetchUsers]);
 
   const handleSearch = (e) => {
     e.preventDefault();

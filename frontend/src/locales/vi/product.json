@@ -48,6 +48,7 @@
     "status": "Trạng thái hiển thị",
 
     "cancel": "Hủy",
+    "create": "Tạo mới",
     "save": "Lưu dữ liệu",
     "saving": "Đang lưu...",
     "deleting": "Đang xử lý...",
@@ -109,5 +110,11 @@
     "max_images_error": "Chỉ được tải lên tối đa {{max}} tệp. Hiện có {{current}} tệp.",
     "invalid_file_type": "Loại tệp không hợp lệ! Chỉ chấp nhận ảnh và video.",
     "image_too_large": "Kích thước tệp quá lớn! Tối đa 5MB cho mỗi tệp."
+  },
+  "culturalDNA": {
+    "CHAM": "Mã gen Chăm",
+    "KHMER": "Mã gen Khmer",
+    "KINH": "Mã gen Kinh",
+    "OTHER": "Khác / Đa bản sắc"
   }
 }

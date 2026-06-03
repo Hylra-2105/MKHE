@@ -105,7 +105,7 @@ export default function Header() {
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 relative z-50 text-current transition-colors duration-300">
+    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 sticky top-0 z-50 text-current transition-colors duration-300">
       {/* LOGO */}
       <div className="w-1/4">
         <Link

@@ -3,7 +3,7 @@ export function initializeTheme() {
   document.documentElement.classList.add("no-transition");
 
   const theme = localStorage.getItem("theme");
-  let isDark = false;
+  let isDark;
 
   if (theme === "dark") {
     isDark = true;

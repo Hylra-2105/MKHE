@@ -1,10 +1,25 @@
 import axiosClient from "@/api/axiosClient";
 
 export const productApi = {
-  // Lấy danh sách products
-  getAllProducts: async (page = 1, limit = 5, search = "", category = "") => {
+  getAllProducts: async (
+    page = 1,
+    limit = 5,
+    search = "",
+    category = "",
+    culturalDNA = "",
+    status = "",
+    inStock = false,
+  ) => {
     const response = await axiosClient.get("/products", {
-      params: { page, limit, search, category },
+      params: {
+        page,
+        limit,
+        search,
+        category,
+        culturalDNA,
+        status,
+        inStock,
+      },
     });
     return response.data;
   },
@@ -54,12 +69,7 @@ export const productApi = {
   uploadProductGallery: async (productId, formData) => {
     const response = await axiosClient.post(
       `/products/${productId}/upload-gallery`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      },
+      formData
     );
     return response.data;
   },

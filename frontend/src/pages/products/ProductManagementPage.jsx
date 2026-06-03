@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react"; 
+import { Trash2 } from "lucide-react";
 
 import { productApi } from "@/api/productApi";
 import ProductTable from "@/features/products/components/Admin/ProductTable";
@@ -18,30 +18,36 @@ const ProductManagementPage = () => {
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isTrashModalOpen, setIsTrashModalOpen] = useState(false); // State cho Thùng rác
+  const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
+  const [limit] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
-  const fetchProducts = async () => {
+  // 1. THÊM STATE CHO BỘ LỌC MÃ GEN
+  const [dnaFilter, setDnaFilter] = useState("");
+
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
+      // TRUYỀN status=ADMIN_ALL ĐỂ LẤY TẤT CẢ SẢN PHẨM (kể cả DRAFT, HIDDEN, v.v)
       const res = await productApi.getAllProducts(
         page,
         limit,
         appliedSearch,
         categoryFilter,
+        dnaFilter,
+        "ADMIN_ALL", // Thêm status parameter để lấy tất cả
       );
 
       if (res.success) {
-        setProducts(res.data);
-        setTotalPages(res.pagination?.totalPages || 1);
+        setProducts(res.data.data);
+        setTotalPages(res.data.pagination?.totalPages || 1);
       }
     } catch (error) {
       toast.error(t("messages.fetch_error"));
@@ -49,11 +55,12 @@ const ProductManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, appliedSearch, categoryFilter, dnaFilter, t]);
 
+  // 3. THÊM fetchProducts VÀO dependency array
   useEffect(() => {
     fetchProducts();
-  }, [page, appliedSearch, categoryFilter]);
+  }, [fetchProducts]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -64,6 +71,12 @@ const ProductManagementPage = () => {
   const handleCategoryChange = (e) => {
     setPage(1);
     setCategoryFilter(e.target.value);
+  };
+
+  // 4. HÀM XỬ LÝ KHI ĐỔI MÃ GEN
+  const handleDnaChange = (e) => {
+    setPage(1);
+    setDnaFilter(e.target.value);
   };
 
   const handleEditProduct = (product) => {
@@ -92,7 +105,7 @@ const ProductManagementPage = () => {
             className="flex items-center gap-2 bg-mkhe-primary text-white px-4 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
           >
             <Trash2 className="w-4 h-4 text-white" />
-            {t("page.trash_btn")}
+            {t("page.trash_btn", "Thùng rác")}
           </button>
 
           <button
@@ -111,6 +124,9 @@ const ProductManagementPage = () => {
         categoryFilter={categoryFilter}
         handleCategoryChange={handleCategoryChange}
         handleSearch={handleSearch}
+        // 5. TRUYỀN PROPS XUỐNG COMPONENT CON
+        dnaFilter={dnaFilter}
+        handleDnaChange={handleDnaChange}
       />
 
       <ProductTable

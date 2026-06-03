@@ -6,50 +6,49 @@ import { successResponse, errorResponse } from "../../utils/response.js";
 // [POST] /api/products - Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
   try {
-    const { name, sku, description, categoryMatrix, price, stock, images } =
-      req.body;
+    const {
+      name,
+      sku,
+      description,
+      categoryMatrix,
+      culturalDNA,
+      price,
+      stock,
+      images,
+    } = req.body;
 
-    // 1. Validate cơ bản (Bắt buộc phải có các trường này)
+    // 1. Validate cơ bản
     if (!name || !sku || !categoryMatrix || price === undefined) {
-      return res
-        .status(400)
-        .json({ success: false, message: "MISSING_REQUIRED_FIELDS" });
+      return errorResponse(res, 400, "MISSING_REQUIRED_FIELDS");
     }
 
-    // 2. Kiểm tra SKU đã tồn tại chưa (Tuyệt đối không để trùng)
+    // 2. Kiểm tra SKU đã tồn tại chưa
     const existingProduct = await Product.findOne({ sku: sku.toUpperCase() });
     if (existingProduct) {
-      return res
-        .status(400)
-        .json({ success: false, message: "SKU_ALREADY_EXISTS" });
+      return errorResponse(res, 400, "SKU_ALREADY_EXISTS");
     }
 
     // 3. Tạo sản phẩm mới
     const newProduct = new Product({
       name,
-      sku: sku.toUpperCase(), // Ép kiểu in hoa cho đồng bộ
+      sku: sku.toUpperCase(),
       description,
       categoryMatrix,
+      culturalDNA: culturalDNA || "OTHER", // Hứng dữ liệu mã gen văn hóa
       price: Number(price),
       stock: Number(stock) || 0,
       images: images || [],
-      // Status sẽ tự động là DRAFT theo default của Model
     });
 
     await newProduct.save();
 
-    return res.status(201).json({
-      success: true,
-      message: "PRODUCT_CREATED_SUCCESS",
-      product: newProduct,
-    });
+    return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
     console.error("Error in createProduct:", error);
-    // Bắt lỗi Validation của Mongoose (ví dụ sai enum B2B/B2C, giá âm...)
     if (error.name === "ValidationError") {
-      return res.status(400).json({ success: false, message: error.message });
+      return errorResponse(res, 400, "VALIDATION_ERROR");
     }
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -60,12 +59,17 @@ export const getProducts = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const search = req.query.search || "";
     const category = req.query.category || "";
+    const culturalDNA = req.query.culturalDNA || "";
+
+    // === THÊM 2 THAM SỐ MỚI ĐỂ LỌC CHO GUEST ===
+    const status = req.query.status || "";
+    const inStock = req.query.inStock === "true"; // Nếu FE truyền inStock=true thì mới lọc
 
     const skip = (page - 1) * limit;
 
     let query = {};
 
-    // 1. Nếu có từ khóa search -> Tìm theo Tên hoặc theo mã SKU (không phân biệt hoa thường và dấu tiếng Việt)
+    // 1. Nếu có từ khóa search
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
@@ -74,18 +78,42 @@ export const getProducts = async (req, res) => {
       ];
     }
 
-    // 2. Nếu có chọn Phân loại ma trận (B2B, B2C...) -> Lọc đúng loại đó
+    // 2. Nếu có chọn Phân loại ma trận
     if (category) {
       query.categoryMatrix = category;
     }
 
-    // 3. Không lấy sản phẩm đã xóa mềm (status = HIDDEN)
-    query.status = { $ne: "HIDDEN" };
+    // 3. Lọc theo Mã gen văn hóa
+    if (culturalDNA) {
+      query.culturalDNA = culturalDNA;
+    }
 
-    // Đếm tổng số sản phẩm phù hợp
+    // === 4. LỌC TRẠNG THÁI (STATUS) ===
+    // Nếu FE truyền status cụ thể: Lọc chính xác
+    // Nếu FE truyền status="" (empty): Lấy ACTIVE + PUBLISHED (guest/user safe)
+    // Nếu FE không truyền status: Lấy ACTIVE + PUBLISHED (default safe)
+    if (status) {
+      // Status được truyền và không rỗng
+      if (status === "ADMIN_ALL") {
+        // Special case: Admin lấy tất cả trừ HIDDEN
+        query.status = { $ne: "HIDDEN" };
+      } else {
+        // Lọc status cụ thể
+        query.status = status;
+      }
+    } else {
+      // Default: Lấy PUBLISHED hoặc ACTIVE (safe cho guest/user)
+      query.status = { $in: ["ACTIVE", "PUBLISHED"] };
+    }
+
+    // === 5. LỌC TỒN KHO (CHỈ LẤY HÀNG CÒN) ===
+    // Luôn filter inStock cho guest/user safety
+    if (inStock !== false) {
+      query.stock = { $gt: 0 };
+    }
+
     const totalProducts = await Product.countDocuments(query);
 
-    // Lấy dữ liệu theo phân trang và sắp xếp mới nhất lên đầu
     const products = await Product.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -93,8 +121,7 @@ export const getProducts = async (req, res) => {
 
     const totalPages = Math.ceil(totalProducts / limit);
 
-    return res.status(200).json({
-      success: true,
+    return successResponse(res, 200, "GET_PRODUCTS_SUCCESS", {
       pagination: {
         totalItems: totalProducts,
         totalPages,
@@ -105,7 +132,7 @@ export const getProducts = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getProducts:", error);
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -114,22 +141,16 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Tạm thời bỏ populate đi vì mình chưa tạo bảng DPP_Profile
     const product = await Product.findById(id);
 
     if (!product) {
-      return res
-        .status(404)
-        .json({ success: false, message: "PRODUCT_NOT_FOUND" });
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     }
 
-    return res.status(200).json({
-      success: true,
-      data: product,
-    });
+    return successResponse(res, 200, "GET_PRODUCT_SUCCESS", product);
   } catch (error) {
     console.error("Error in getProductById:", error);
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -139,43 +160,33 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    // Bẫy nghiệp vụ: Nếu Admin sửa SKU, phải kiểm tra xem SKU mới có bị trùng với sản phẩm KHÁC không
     if (updates.sku) {
       updates.sku = updates.sku.toUpperCase();
       const existingProduct = await Product.findOne({
         sku: updates.sku,
-        _id: { $ne: id }, // Tìm xem có ai trùng SKU ngoại trừ chính nó không
+        _id: { $ne: id },
       });
       if (existingProduct) {
-        return res
-          .status(400)
-          .json({ success: false, message: "SKU_ALREADY_EXISTS" });
+        return errorResponse(res, 400, "SKU_ALREADY_EXISTS");
       }
     }
 
-    // Tiến hành cập nhật dữ liệu mới
     const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
       returnDocument: "after",
       runValidators: true,
     });
 
     if (!updatedProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "PRODUCT_NOT_FOUND" });
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "PRODUCT_UPDATED_SUCCESS",
-      product: updatedProduct,
-    });
+    return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
     if (error.name === "ValidationError") {
-      return res.status(400).json({ success: false, message: error.message });
+      return errorResponse(res, 400, "VALIDATION_ERROR");
     }
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -184,7 +195,6 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Luật Tech Lead: Không dùng hàm xóa hẳn mà chuyển trạng thái (status) sang 'HIDDEN' để bảo toàn dữ liệu đơn hàng cũ
     const deletedProduct = await Product.findByIdAndUpdate(
       id,
       { status: "HIDDEN" },
@@ -192,19 +202,13 @@ export const deleteProduct = async (req, res) => {
     );
 
     if (!deletedProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "PRODUCT_NOT_FOUND" });
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "PRODUCT_DELETED_SUCCESS",
-      product: deletedProduct,
-    });
+    return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
     console.error("Error in deleteProduct:", error);
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -220,13 +224,13 @@ export const getDeletedProducts = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.status(200).json({
-      success: true,
+    return successResponse(res, 200, "GET_TRASHED_SUCCESS", {
       data: trashedProducts,
       pagination: { total, page, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error in getDeletedProducts:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -234,7 +238,6 @@ export const restoreProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Tìm sản phẩm đang bị ẩn và đổi trạng thái về DRAFT
     const restoredProduct = await Product.findOneAndUpdate(
       { _id: id, status: "HIDDEN" },
       { status: "DRAFT" },
@@ -242,19 +245,18 @@ export const restoreProduct = async (req, res) => {
     );
 
     if (!restoredProduct) {
-      return res
-        .status(404)
-        .json({ success: false, message: "PRODUCT_NOT_FOUND_IN_TRASH" });
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND_IN_TRASH");
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "PRODUCT_RESTORED_SUCCESS",
-      data: restoredProduct,
-    });
+    return successResponse(
+      res,
+      200,
+      "PRODUCT_RESTORED_SUCCESS",
+      restoredProduct,
+    );
   } catch (error) {
     console.error("Error in restoreProduct:", error);
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -264,7 +266,6 @@ export const uploadProductGallery = async (req, res) => {
     console.log("[Upload Gallery] Request received");
     console.log("[Upload Gallery] Files:", req.files?.length);
 
-    // Nếu middleware của Multer không bắt được file
     if (!req.files || req.files.length === 0) {
       console.error("[Upload Gallery] No files provided");
       return errorResponse(res, 400, "MISSING_FILE");
@@ -273,11 +274,9 @@ export const uploadProductGallery = async (req, res) => {
     const { id } = req.params;
     console.log("[Upload Gallery] Product ID:", id);
 
-    // Lấy URLs từ Cloudinary
     const imageUrls = req.files.map((file) => file.path);
     console.log("[Upload Gallery] Image URLs:", imageUrls);
 
-    // Tìm sản phẩm
     const product = await Product.findById(id);
     if (!product) {
       console.error("[Upload Gallery] Product not found:", id);
@@ -289,7 +288,6 @@ export const uploadProductGallery = async (req, res) => {
       product.images?.length,
     );
 
-    // Thêm ảnh vào gallery (hoặc thay thế nếu muốn)
     product.images = [...(product.images || []), ...imageUrls];
     console.log("[Upload Gallery] New images count:", product.images.length);
 
@@ -321,22 +319,21 @@ export const deleteProductImages = async (req, res) => {
     const product = await Product.findById(id);
     if (!product) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
 
-    // Xóa từng ảnh từ Cloudinary (thu thập lỗi nhưng vẫn tiếp tục xóa ảnh khác)
     const deletionErrors = [];
     for (const imageUrl of imagesToDelete) {
       try {
-        // Extract public_id từ Cloudinary URL
-        // URL format: https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/mkhe_avatars/{public_id}
         const urlParts = imageUrl.split("/");
         const publicIdWithExt = urlParts[urlParts.length - 1];
-        const publicId = `mkhe_avatars/${publicIdWithExt.split(".")[0]}`;
+        const isVideo = imageUrl.includes("mkhe_videos");
+        const folder = isVideo ? "mkhe_videos" : "mkhe_avatars";
+        const resourceType = isVideo ? "video" : "image";
+        const publicId = `${folder}/${publicIdWithExt.split(".")[0]}`;
 
-        console.log(`[Delete Image] Attempting to delete: ${publicId}`);
+        console.log(`[Delete Image] Attempting to delete: ${publicId} as ${resourceType}`);
 
-        // Xóa từ Cloudinary
         const deleteResult = await cloudinary.uploader.destroy(publicId, {
           type: "upload",
-          resource_type: "image",
+          resource_type: resourceType,
         });
         console.log(`[Delete Image] Cloudinary delete result:`, deleteResult);
       } catch (error) {
@@ -348,13 +345,11 @@ export const deleteProductImages = async (req, res) => {
       }
     }
 
-    // Cập nhật product: remove những ảnh đã xóa (cả thành công lẫn thất bại)
     product.images = product.images.filter(
       (img) => !imagesToDelete.includes(img),
     );
     await product.save();
 
-    // Nếu có lỗi xóa nhưng vẫn xóa thành công từ DB, vẫn trả về success
     if (deletionErrors.length > 0) {
       console.warn(
         `[Delete Image] Partially successful. Failed to delete ${deletionErrors.length}/${imagesToDelete.length} images from Cloudinary`,

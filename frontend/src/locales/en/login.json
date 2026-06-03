@@ -25,5 +25,6 @@
   "err_account_blocked": "Account has been locked by administrator. Please contact support.",
   "LOGIN_SUCCESS": "Login successful!",
   "ACCOUNT_BLOCKED": "Account has been locked by administrator. Please contact support.",
-  "err_empty_email": "Please enter your email!"
+  "err_empty_email": "Please enter your email!",
+  "error_social_login": "Social login failed! Please try again."
 }

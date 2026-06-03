@@ -10,7 +10,7 @@ import { draftDB } from "@/utils/db";
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
-const AUTO_SAVE_DELAY = 5000; // 5 giây
+const AUTO_SAVE_DELAY = 5000;
 
 const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const { t } = useTranslation("product");
@@ -23,6 +23,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     sku: "",
     description: "",
     categoryMatrix: "B2C_Mass_Premium",
+    culturalDNA: "OTHER",
     price: "",
     stock: "",
   });
@@ -63,11 +64,26 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     loadDraft();
   }, [isOpen]);
 
+  // ================= CLEANUP OBJECT URLS ON UNMOUNT =================
+  useEffect(() => {
+    return () => {
+      // Revoke all object URLs khi component unmount hoặc modal close
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   const categories = [
     { value: "B2B_Luxury", label: t("categories.B2B_Luxury") },
     { value: "B2B_Standard", label: t("categories.B2B_Standard") },
     { value: "B2C_Premium", label: t("categories.B2C_Premium") },
     { value: "B2C_Mass_Premium", label: t("categories.B2C_Mass_Premium") },
+  ];
+
+  const culturalDNAs = [
+    { value: "CHAM", label: t("culturalDNA.CHAM") },
+    { value: "KHMER", label: t("culturalDNA.KHMER") },
+    { value: "KINH", label: t("culturalDNA.KINH") },
+    { value: "OTHER", label: t("culturalDNA.OTHER") },
   ];
 
   // ================= AUTO-SAVE LOGIC (DEBOUNCE 5S) =================
@@ -147,16 +163,16 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
 
     fileArray.forEach((file) => {
-      if (!file.type.startsWith("image/")) {
-        toast.error(t("errors.invalid_file_type"));
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+        toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(t("errors.image_too_large"));
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(t("errors.image_too_large", "Kích thước file không được vượt quá 10MB"));
         return;
       }
       validFiles.push(file);
-      newPreviews.push(URL.createObjectURL(file));
+      newPreviews.push({ url: URL.createObjectURL(file), type: file.type });
     });
 
     setImageFiles((prev) => [...prev, ...validFiles]);
@@ -166,7 +182,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   };
 
   const removeImage = (indexToRemove) => {
-    URL.revokeObjectURL(previewUrls[indexToRemove]);
+    URL.revokeObjectURL(previewUrls[indexToRemove].url);
     setImageFiles((prev) => prev.filter((_, i) => i !== indexToRemove));
     setPreviewUrls((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
@@ -187,32 +203,42 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         stock: Number(formData.stock) || 0,
       });
 
-      if (response.success) {
-        const newProductId = response.product._id;
+      if (!response.success || !response.data?._id) {
+        throw new Error("No product ID returned");
+      }
 
-        if (imageFiles.length > 0) {
+      const newProductId = response.data._id;
+
+      // Handle image upload separately
+      if (imageFiles.length > 0) {
+        try {
           const uploadData = new FormData();
           imageFiles.forEach((file) => uploadData.append("images", file));
           await productApi.uploadProductGallery(newProductId, uploadData);
+        } catch (uploadError) {
+          console.error("Image upload failed:", uploadError);
+          toast.error(
+            t(
+              "messages.image_upload_error",
+              "Tạo sản phẩm thành công nhưng upload ảnh thất bại",
+            ),
+          );
+          // Continue anyway - product is created
         }
-
-        toast.success(t("messages.add_success"));
-
-        // Thành công -> XÓA SẠCH BẢN NHÁP từ IndexedDB
-        await draftDB.removeItem(LOCAL_STORAGE_KEY);
-        setFormData({
-          name: "",
-          sku: "",
-          description: "",
-          categoryMatrix: "B2C_Mass_Premium",
-          price: "",
-          stock: "",
-        });
-        setImageFiles([]);
-        setPreviewUrls([]);
-        if (onSuccess) onSuccess();
-        onClose();
       }
+
+      toast.success(t("messages.add_success"));
+
+      // Clear draft and reset form
+      try {
+        await draftDB.removeItem(LOCAL_STORAGE_KEY);
+      } catch (e) {
+        console.error("Error removing draft:", e);
+      }
+
+      resetForm();
+      if (onSuccess) onSuccess();
+      onClose();
     } catch (error) {
       const errorMsg = error.response?.data?.message;
       if (errorMsg === "SKU_ALREADY_EXISTS") {
@@ -225,26 +251,29 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
   };
 
-  const handleCancel = async () => {
-    // Chủ động bấm Cancel -> XÓA SẠCH BẢN NHÁP từ IndexedDB
-    try {
-      await draftDB.removeItem(LOCAL_STORAGE_KEY);
-    } catch (e) {
-      console.error("Lỗi xóa bản nháp:", e);
-    }
-
+  const resetForm = () => {
     setFormData({
       name: "",
       sku: "",
       description: "",
       categoryMatrix: "B2C_Mass_Premium",
+      culturalDNA: "OTHER",
       price: "",
       stock: "",
     });
     setImageFiles([]);
-    // Revoke object URLs để giải phóng bộ nhớ
-    previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
     setPreviewUrls([]);
+  };
+
+  const handleCancel = async () => {
+    // Chủ động bấm Cancel -> XÓA SẠCH BẢN NHÁP từ IndexedDB
+    resetForm();
+    try {
+      await draftDB.removeItem(LOCAL_STORAGE_KEY);
+    } catch (e) {
+      console.error("Lỗi xóa bản nháp:", e);
+    }
     onClose();
   };
 
@@ -305,7 +334,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileInput}
-                accept="image/*"
+                accept="image/*,video/*"
                 multiple
                 className="hidden"
               />
@@ -313,17 +342,25 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
             {previewUrls.length > 0 && (
               <div className="grid grid-cols-3 gap-3 mt-6">
-                {previewUrls.map((url, index) => (
+                {previewUrls.map((preview, index) => (
                   <div
                     key={index}
                     className="relative group rounded-lg overflow-hidden border border-mkhe-border/30 aspect-square cursor-pointer hover:border-mkhe-primary transition-colors"
-                    onClick={() => setActiveLightboxUrl(url)}
+                    onClick={() => setActiveLightboxUrl(preview)}
                   >
-                    <img
-                      src={url}
-                      alt={`preview-${index}`}
-                      className="w-full h-full object-cover"
-                    />
+                    {preview.type.startsWith("video/") ? (
+                      <video
+                        src={preview.url}
+                        className="w-full h-full object-cover"
+                        muted
+                      />
+                    ) : (
+                      <img
+                        src={preview.url}
+                        alt={`preview-${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
 
                     <button
                       type="button"
@@ -389,6 +426,21 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     options={categories}
                     onChange={(val) => updateField("categoryMatrix", val)}
                     placeholder={t("modal.category")}
+                    className="w-full"
+                    triggerClassName="p-3.5 rounded-xl text-sm"
+                    optionClassName="text-sm truncate"
+                  />
+                </div>
+                <div className="space-y-1 col-span-6">
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                    {t("modal.cultural_dna", "Mã gen Văn hóa")}{" "}
+                    <span className="ml-1 text-red-500">*</span>
+                  </label>
+                  <Dropdown
+                    value={formData.culturalDNA}
+                    options={culturalDNAs}
+                    onChange={(val) => updateField("culturalDNA", val)}
+                    placeholder="Chọn Mã gen"
                     className="w-full"
                     triggerClassName="p-3.5 rounded-xl text-sm"
                     optionClassName="text-sm truncate"
@@ -465,7 +517,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
             disabled={loading}
             className="!w-auto px-8 py-2.5 rounded-xl text-sm whitespace-nowrap"
           >
-            {loading ? t("modal.processing") : t("modal.save")}
+            {loading ? t("modal.processing") : t("modal.create")}
           </Button>
         </div>
       </div>
@@ -485,15 +537,24 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
           >
             <button
               onClick={() => setActiveLightboxUrl(null)}
-              className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer"
+              className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer z-10"
             >
               <X className="w-6 h-6" />
             </button>
-            <img
-              src={activeLightboxUrl}
-              alt="Zoomed Product"
-              className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
-            />
+            {activeLightboxUrl.type && activeLightboxUrl.type.startsWith("video/") ? (
+              <video
+                src={activeLightboxUrl.url || activeLightboxUrl}
+                controls
+                autoPlay
+                className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+              />
+            ) : (
+              <img
+                src={activeLightboxUrl.url || activeLightboxUrl}
+                alt="Zoomed Product"
+                className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+              />
+            )}
           </div>
         </div>
       )}
