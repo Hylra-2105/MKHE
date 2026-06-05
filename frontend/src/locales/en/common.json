@@ -10,5 +10,6 @@
   "ACCOUNT_ALREADY_VERIFIED": "This account has already been verified.",
   "PASSWORD_TOO_SHORT": "Password must be at least 6 characters long.",
   "INVALID_EMAIL_FORMAT": "Invalid email format. Please enter a valid email.",
-  "REGISTER_SUCCESS": "Registration successful!"
+  "REGISTER_SUCCESS": "Registration successful!",
+  "PASSWORD_MUST_BE_DIFFERENT": "The new password must be different from the old password."
 }

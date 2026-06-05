@@ -14,12 +14,12 @@ export const registerUser = async (req, res) => {
     const { name, email, password, language } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: "EMAIL_ALREADY_EXISTS" });
+      return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
     const userLang = ["en", "vi"].includes(language) ? language : "vi";
@@ -38,19 +38,18 @@ export const registerUser = async (req, res) => {
       user.otpExpires = Date.now() + 15 * 60 * 1000;
       await user.save();
 
-      await sendVerificationEmail(user.email, otp, userLang);
-
-      res.status(201).json({
-        success: true,
-        message: "REGISTER_SUCCESS",
-        email: user.email,
+      // Fire and forget email
+      sendVerificationEmail(user.email, otp, userLang).catch((err) => {
+        console.error("[Email Error]", err.message);
       });
+
+      return successResponse(res, 201, "REGISTER_SUCCESS", { email: user.email });
     } else {
-      res.status(400).json({ message: "INVALID_DATA" });
+      return errorResponse(res, 400, "INVALID_DATA");
     }
   } catch (error) {
     console.error("Lỗi khi đăng ký:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -60,39 +59,36 @@ export const verifyEmail = async (req, res) => {
     const { email, otp } = req.body;
 
     if (!email || !otp) {
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+      return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
     }
 
     if (user.isVerified) {
-      return res.status(400).json({ message: "ACCOUNT_ALREADY_VERIFIED" });
+      return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
     if (user.otp !== otp) {
-      return res.status(400).json({ message: "INVALID_OTP" });
+      return errorResponse(res, 400, "INVALID_OTP");
     }
 
     if (user.otpExpires < Date.now()) {
-      return res.status(400).json({ message: "EXPIRED_OTP" });
+      return errorResponse(res, 400, "EXPIRED_OTP");
     }
 
     user.isVerified = true;
-    user.otp = null;
-    user.otpExpires = null;
+    user.otp = undefined;
+    user.otpExpires = undefined;
     await user.save();
 
-    res.status(200).json({
-      success: true,
-      message: "VERIFY_SUCCESS",
-    });
+    return successResponse(res, 200, "VERIFY_SUCCESS");
   } catch (error) {
     console.error("Lỗi Verify OTP:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -102,30 +98,29 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+      return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
     }
 
-    // Chặn tài khoản được tạo từ Google nhưng lại dùng tính năng đăng nhập bằng Mật khẩu
     if (!user.password && user.provider !== "local") {
-      return res.status(400).json({ message: "USE_SOCIAL_LOGIN" });
+      return errorResponse(res, 400, "USE_SOCIAL_LOGIN");
     }
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: "WRONG_PASSWORD" });
+      return errorResponse(res, 400, "WRONG_PASSWORD");
     }
 
     if (!user.isVerified) {
-      return res.status(403).json({ message: "ACCOUNT_NOT_VERIFIED" });
+      return errorResponse(res, 403, "ACCOUNT_NOT_VERIFIED");
     }
 
     if (user.isBlocked) {
-      return res.status(403).json({ message: "ACCOUNT_BLOCKED" });
+      return errorResponse(res, 403, "ACCOUNT_BLOCKED");
     }
 
     if (!process.env.JWT_SECRET) {
@@ -135,12 +130,10 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" },
+      { expiresIn: "7d" }
     );
 
-    res.status(200).json({
-      success: true,
-      message: "LOGIN_SUCCESS",
+    return successResponse(res, 200, "LOGIN_SUCCESS", {
       token: token,
       user: {
         _id: user._id,
@@ -159,7 +152,7 @@ export const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi đăng nhập:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -169,17 +162,17 @@ export const resendOTP = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+      return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
     }
 
     if (user.isVerified) {
-      return res.status(400).json({ message: "ACCOUNT_ALREADY_VERIFIED" });
+      return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -188,20 +181,15 @@ export const resendOTP = async (req, res) => {
     user.otpExpires = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    await sendVerificationEmail(
-      user.email,
-      otp,
-      process.env.EMAIL_USER,
-      process.env.EMAIL_PASS,
-    );
-
-    res.status(200).json({
-      success: true,
-      message: "RESEND_SUCCESS",
+    // Fix bug: 3 params instead of 4
+    sendVerificationEmail(user.email, otp, user.language || "vi").catch((err) => {
+        console.error("[Email Error]", err.message);
     });
+
+    return successResponse(res, 200, "RESEND_SUCCESS");
   } catch (error) {
     console.error("Lỗi khi gửi lại OTP:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -211,12 +199,11 @@ export const socialLogin = async (req, res) => {
     const { email, name, avatar, providerId } = req.body;
 
     if (!email) {
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
-    const providerName = providerId ? providerId.split(".")[0] : "unknown";
+    const providerName = providerId ? providerId.split(".")[0] : "google";
 
-    // Tìm user trước thay vì dùng findOneAndUpdate
     let user = await User.findOne({ email });
 
     if (!user) {
@@ -229,13 +216,12 @@ export const socialLogin = async (req, res) => {
         avatar: avatar || "",
         provider: providerName,
         isVerified: true,
-        hasCustomAvatar: false, // User mới hoàn toàn thì cờ này là false
+        hasCustomAvatar: false,
       });
     } else {
       if (!user.name) user.name = name || email.split("@")[0];
 
-      // Chỉ lấy ảnh Google đè vào nếu user CHƯA up ảnh custom
-      if (!user.hasCustomAvatar) {
+      if (!user.hasCustomAvatar && avatar) {
         user.avatar = avatar;
       }
 
@@ -243,9 +229,8 @@ export const socialLogin = async (req, res) => {
       await user.save();
     }
 
-    // Check if account is blocked
     if (user.isBlocked) {
-      return res.status(403).json({ message: "ACCOUNT_BLOCKED" });
+      return errorResponse(res, 403, "ACCOUNT_BLOCKED");
     }
 
     if (!process.env.JWT_SECRET) {
@@ -255,12 +240,10 @@ export const socialLogin = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" },
+      { expiresIn: "7d" }
     );
 
-    res.status(200).json({
-      success: true,
-      message: "LOGIN_SUCCESS",
+    return successResponse(res, 200, "LOGIN_SUCCESS", {
       token: token,
       user: {
         _id: user._id,
@@ -279,7 +262,7 @@ export const socialLogin = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi đăng nhập Social:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -287,37 +270,29 @@ export const socialLogin = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ message: "MISSING_FIELDS" });
+    if (!email) return errorResponse(res, 400, "MISSING_FIELDS");
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+    if (!user) return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
 
-    // Chặn tài khoản MXH
     if (user.provider !== "local") {
-      return res.status(400).json({ message: "USE_SOCIAL_LOGIN" });
+      return errorResponse(res, 400, "USE_SOCIAL_LOGIN");
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Lưu OTP vào DB
     user.resetPasswordOtp = otp;
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 phút
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
     await user.save({ validateBeforeSave: false });
 
-    try {
-      // Gửi OTP qua mail
-      await sendPasswordResetEmail(user.email, otp, user.language || "vi");
-      res.status(200).json({ success: true, message: "OTP_SENT" });
-    } catch (emailError) {
-      console.error("Lỗi khi gửi email:", emailError);
-      user.resetPasswordOtp = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save({ validateBeforeSave: false });
-      return res.status(500).json({ message: "EMAIL_SEND_FAILED" });
-    }
+    sendPasswordResetEmail(user.email, otp, user.language || "vi").catch((err) => {
+      console.error("[Email Error]", err);
+    });
+
+    return successResponse(res, 200, "OTP_SENT");
   } catch (error) {
     console.error("Lỗi yêu cầu quên mật khẩu:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -325,35 +300,28 @@ export const forgotPassword = async (req, res) => {
 export const verifyResetOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    if (!email || !otp)
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+    if (!email || !otp) return errorResponse(res, 400, "MISSING_FIELDS");
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "ACCOUNT_NOT_FOUND" });
+    if (!user) return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
 
-    // Kiểm tra OTP
     if (user.resetPasswordOtp !== otp) {
-      return res.status(400).json({ message: "INVALID_OTP" });
+      return errorResponse(res, 400, "INVALID_OTP");
     }
     if (user.resetPasswordExpires < Date.now()) {
-      return res.status(400).json({ message: "EXPIRED_OTP" });
+      return errorResponse(res, 400, "EXPIRED_OTP");
     }
 
-    // Nếu OTP đúng -> Tạo một token bảo mật tạm thời cho phép đổi mật khẩu
     const resetToken = crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordOtp = undefined; // Xóa OTP
+    user.resetPasswordOtp = undefined;
     await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({
-      success: true,
-      message: "OTP_VERIFIED",
-      resetToken,
-    });
+    return successResponse(res, 200, "OTP_VERIFIED", { resetToken });
   } catch (error) {
     console.error("Lỗi xác thực mã OTP quên mật khẩu:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -361,8 +329,7 @@ export const verifyResetOtp = async (req, res) => {
 export const resetPassword = async (req, res) => {
   try {
     const { email, resetToken, newPassword } = req.body;
-    if (!email || !resetToken || !newPassword)
-      return res.status(400).json({ message: "MISSING_FIELDS" });
+    if (!email || !resetToken || !newPassword) return errorResponse(res, 400, "MISSING_FIELDS");
 
     const user = await User.findOne({
       email,
@@ -370,28 +337,22 @@ export const resetPassword = async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() },
     });
 
-    if (!user)
-      return res.status(400).json({ message: "INVALID_OR_EXPIRED_SESSION" });
+    if (!user) return errorResponse(res, 400, "INVALID_OR_EXPIRED_SESSION");
 
-    // KIỂM TRA MẬT KHẨU CŨ
     const isSameAsOldPassword = await user.matchPassword(newPassword);
     if (isSameAsOldPassword) {
-      return res.status(400).json({ message: "PASSWORD_MUST_BE_DIFFERENT" });
+      return errorResponse(res, 400, "PASSWORD_MUST_BE_DIFFERENT");
     }
 
-    // Đổi mật khẩu
     user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).json({
-      success: true,
-      message: "PASSWORD_RESET_SUCCESS",
-    });
+    return successResponse(res, 200, "PASSWORD_RESET_SUCCESS");
   } catch (error) {
     console.error("Lỗi đặt lại mật khẩu:", error);
-    res.status(500).json({ message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -401,7 +362,6 @@ export const logoutUser = async (req, res) => {
     const userId = req.user.id;
     await User.findByIdAndUpdate(userId, { refreshToken: null });
 
-    // Dùng successResponse
     return successResponse(res, 200, "LOGOUT_SUCCESS");
   } catch (error) {
     console.error("Logout Error:", error);
@@ -414,11 +374,8 @@ export const sendChangePasswordOtp = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    // Lấy ngôn ngữ từ Frontend gửi lên, nếu không có mới xài tạm của User DB, cuối cùng mới fallback về "vi"
     const requestedLang = req.body?.language;
-    const lang = ["en", "vi"].includes(requestedLang)
-      ? requestedLang
-      : user.language || "vi";
+    const lang = ["en", "vi"].includes(requestedLang) ? requestedLang : user.language || "vi";
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -426,7 +383,6 @@ export const sendChangePasswordOtp = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Gửi email
     sendChangePasswordEmail(user.email, otp, lang).catch((err) => {
       console.error("[Email Error] Gửi OTP thất bại:", err.message);
     });
@@ -438,7 +394,6 @@ export const sendChangePasswordOtp = async (req, res) => {
   }
 };
 
-// API Kiểm tra OTP 
 export const verifyChangePasswordOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -446,16 +401,10 @@ export const verifyChangePasswordOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    // Check xem OTP có khớp và còn hạn không
-    if (
-      user.resetPasswordOtp !== otp ||
-      user.resetPasswordExpires < Date.now()
-    ) {
+    if (user.resetPasswordOtp !== otp || user.resetPasswordExpires < Date.now()) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
-    // chỉ báo "Thành công" cho Frontend chuyển sang trang nhập Pass mới.
-    // CHƯA XÓA OTP trong DB để bước sau còn dùng.
     return successResponse(res, 200, "OTP_VERIFIED_SUCCESS");
   } catch (error) {
     console.error("verifyChangePasswordOtp Error:", error);
@@ -463,7 +412,6 @@ export const verifyChangePasswordOtp = async (req, res) => {
   }
 };
 
-// Lưu mật khẩu mới 
 export const changePasswordWithOtp = async (req, res) => {
   try {
     const { otp, newPassword } = req.body;
@@ -471,22 +419,18 @@ export const changePasswordWithOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    if (
-      user.resetPasswordOtp !== otp ||
-      user.resetPasswordExpires < Date.now()
-    ) {
+    if (user.resetPasswordOtp !== otp || user.resetPasswordExpires < Date.now()) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
-    // KIỂM TRA MẬT KHẨU CŨ
     const isSameAsOldPassword = await user.matchPassword(newPassword);
     if (isSameAsOldPassword) {
       return errorResponse(res, 400, "PASSWORD_MUST_BE_DIFFERENT");
     }
 
     user.password = newPassword;
-    user.resetPasswordOtp = null;
-    user.resetPasswordExpires = null;
+    user.resetPasswordOtp = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
 
     return successResponse(res, 200, "PASSWORD_CHANGED_SUCCESS");
@@ -498,7 +442,6 @@ export const changePasswordWithOtp = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    // req.user có được là nhờ đi qua verifyToken
     const user = await User.findById(req.user.id);
 
     if (!user) {

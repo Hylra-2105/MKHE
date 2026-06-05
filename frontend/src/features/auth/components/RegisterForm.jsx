@@ -26,10 +26,12 @@ export default function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Đăng ký / Đăng nhập bằng Google
   const handleGoogleLogin = async () => {
-    if (isSubmitting || isLoading) return;
+    if (isSubmitting || isLoading || isGoogleLoading) return;
+    setIsGoogleLoading(true);
 
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -52,10 +54,8 @@ export default function RegisterForm() {
 
       if (res && res.success) {
         toast.success(t("msg_login_success") || "Thành công!");
-        setTimeout(() => {
-          navigate("/");
-          if (window.opener) window.close();
-        }, 1000);
+        navigate("/");
+        if (window.opener) window.close();
       } else {
         toast.error(
           t(res?.message, { ns: "common" }) ||
@@ -72,6 +72,8 @@ export default function RegisterForm() {
         return;
       }
       toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -205,12 +207,16 @@ export default function RegisterForm() {
       <button
         type="button"
         onClick={handleGoogleLogin}
-        disabled={isLoading || isSubmitting}
+        disabled={isLoading || isSubmitting || isGoogleLoading}
         className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <GoogleIcon />
+        {(isLoading || isSubmitting || isGoogleLoading) ? (
+          <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
+        ) : (
+          <GoogleIcon />
+        )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {t("google") || "Google"}
+          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing", { ns: "common" }) : (t("google") || "Google")}
         </span>
       </button>
 

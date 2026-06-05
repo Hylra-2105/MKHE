@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { X, Eye, EyeOff, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
+import ErrorText from "@/components/ui/ErrorText";
 import { maskEmail } from "@/utils/validators";
 import { authApi } from "@/api/authApi";
 
 const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
-  const { t, i18n } = useTranslation("user");
+  const { t, i18n } = useTranslation(["user", "common"]);
   const currentLang = i18n.language;
 
   const [step, setStep] = useState("verify");
@@ -22,6 +23,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
   const [timer, setTimer] = useState(0);
   const [hasSentOTP, setHasSentOTP] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState({});
 
   // =========================================================
   // BƯỚC 1: KHÔI PHỤC TRẠNG THÁI TỪ LOCALSTORAGE KHI F5 (RELOAD) PAGÉ
@@ -112,7 +114,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           setStep("verify");
         } catch (error) {
           const msg = error.response?.data?.message || "SERVER_ERROR";
-          setErrorMsg(t(msg, { ns: "common" }) || t(msg));
+          // Try user namespace first, fallback to common namespace
+          let translated = t(msg);
+          if (translated === msg) translated = t(msg, { ns: "common" });
+          setErrorMsg(translated);
         }
       };
       sendInitialOtp();
@@ -135,6 +140,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       setTimer(0);
       setOtp(["", "", "", "", "", ""]);
       setNewPass({ password: "", confirm: "" });
+      setErrors({});
     }
     onClose();
   };
@@ -210,9 +216,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     setErrorMsg("");
-    if (newPass.password.length < 6) return setErrorMsg(t("errors.pass_short"));
+    setErrors({});
+    if (newPass.password.length < 6) return setErrors({ password: t("errors.pass_short") });
     if (newPass.password !== newPass.confirm)
-      return setErrorMsg(t("errors.pass_mismatch"));
+      return setErrors({ confirm: t("errors.pass_mismatch") });
 
     setLoading(true);
     try {
@@ -238,7 +245,14 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       }
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg, { ns: "common" }) || t(msg));
+      let translated = t(msg);
+      if (translated === msg) translated = t(msg, { ns: "common" });
+      
+      if (msg === "PASSWORD_MUST_BE_DIFFERENT") {
+        setErrors({ password: translated });
+      } else {
+        setErrorMsg(translated);
+      }
     } finally {
       setLoading(false);
     }
@@ -258,7 +272,9 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       toast.success(t("messages.otp_sent_success"));
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg, { ns: "common" }) || t(msg));
+      let translated = t(msg);
+      if (translated === msg) translated = t(msg, { ns: "common" });
+      setErrorMsg(translated);
     }
   };
 
@@ -323,8 +339,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                  <Info className="w-4 h-4" />
+                <div className="flex items-center gap-1.5 -mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-4">
+                  <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
@@ -378,9 +394,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     value={newPass.password}
                     onChange={(e) => {
                       setErrorMsg("");
+                      setErrors((prev) => ({ ...prev, password: null }));
                       setNewPass({ ...newPass, password: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
+                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
                   />
                   <button
@@ -394,6 +411,11 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                       <Eye className="w-5 h-5" />
                     )}
                   </button>
+                  {errors.password && (
+                    <div className="mt-3">
+                      <ErrorText error={errors.password} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="relative">
@@ -405,17 +427,23 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     value={newPass.confirm}
                     onChange={(e) => {
                       setErrorMsg("");
+                      setErrors((prev) => ({ ...prev, confirm: null }));
                       setNewPass({ ...newPass, confirm: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
+                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
                   />
+                  {errors.confirm && (
+                    <div className="mt-3">
+                      <ErrorText error={errors.confirm} />
+                    </div>
+                  )}
                 </div>
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20 mt-4">
-                  <Info className="w-4 h-4" />
+                <div className="flex items-center gap-1.5 mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-2">
+                  <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}

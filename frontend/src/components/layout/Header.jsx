@@ -28,7 +28,8 @@ export default function Header() {
   const { t, i18n } = useTranslation("header");
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logoutAction } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
+  const logoutAction = useAuthStore((state) => state.logoutAction);
 
   // Check if user is admin or staff
   const isAdmin = user?.role === "Admin";

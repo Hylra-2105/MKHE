@@ -10,5 +10,6 @@
   "ACCOUNT_ALREADY_VERIFIED": "Tài khoản này đã được xác thực rồi.",
   "PASSWORD_TOO_SHORT": "Mật khẩu phải có ít nhất 6 ký tự.",
   "INVALID_EMAIL_FORMAT": "Định dạng email không hợp lệ. Vui lòng nhập email hợp lệ.",
-  "REGISTER_SUCCESS": "Đăng ký thành công!"
+  "REGISTER_SUCCESS": "Đăng ký thành công!",
+  "PASSWORD_MUST_BE_DIFFERENT": "Mật khẩu mới không được trùng với mật khẩu cũ."
 }

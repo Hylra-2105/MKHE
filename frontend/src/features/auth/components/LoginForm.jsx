@@ -21,9 +21,13 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Hàm Google Login
   const handleGoogleLogin = async () => {
+    if (isLoading || isGoogleLoading) return;
+    setIsGoogleLoading(true);
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
 
@@ -66,6 +70,8 @@ export default function LoginForm() {
         return; // Người dùng tự đóng popup
       }
       toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -97,7 +103,7 @@ export default function LoginForm() {
       toast.success(t(result.message) || t("msg_login_success"), {
         duration: 3000,
       });
-      setTimeout(() => navigate("/"), 1000);
+      navigate("/");
     } else {
       const msg = result.message || "";
       if (msg === "ACCOUNT_NOT_FOUND")
@@ -179,16 +185,19 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      {/* Nút đăng nhập Google */}
       <button
         type="button"
         onClick={handleGoogleLogin}
-        disabled={isLoading}
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors"
+        disabled={isLoading || isGoogleLoading}
+        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <GoogleIcon />
+        {(isLoading || isGoogleLoading) ? (
+          <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
+        ) : (
+          <GoogleIcon />
+        )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {t("google")}
+          {(isLoading || isGoogleLoading) ? t("btn_processing") : t("google")}
         </span>
       </button>
 

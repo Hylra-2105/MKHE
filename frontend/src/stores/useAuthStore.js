@@ -1,28 +1,33 @@
 import { create } from "zustand";
-import { authApi } from "@/api/authApi";
+import { authService } from "@/features/auth/auth.service";
 
 // 🔥 Hàm an toàn để lấy User từ LocalStorage (chống sập web)
 const getSafeUser = () => {
   try {
     const userString = localStorage.getItem("user");
-    // Kiểm tra kỹ xem nó có bị lỗi kiểu chuỗi "undefined" hay không
-    if (!userString || userString === "undefined") {
+    if (!userString || userString === "undefined" || userString === "null") {
       return null;
     }
     return JSON.parse(userString);
   } catch (error) {
-    console.warn(
-      "Lỗi khi đọc user từ localStorage, đã tự động dọn dẹp.",
-      error,
-    );
-    localStorage.removeItem("user"); // Dọn luôn cái rác gây lỗi
+    console.warn("Lỗi khi đọc user từ localStorage, đã tự động dọn dẹp.", error);
+    localStorage.removeItem("user");
     return null;
   }
 };
 
+const getSafeToken = () => {
+  const token = localStorage.getItem("token");
+  if (!token || token === "undefined" || token === "null") {
+    localStorage.removeItem("token");
+    return null;
+  }
+  return token;
+};
+
 export const useAuthStore = create((set) => ({
-  user: getSafeUser(), // Xài hàm an toàn ở đây
-  token: localStorage.getItem("token") || null,
+  user: getSafeUser(),
+  token: getSafeToken(),
   isLoading: false,
 
   setUser: (newUser) => {
@@ -34,7 +39,7 @@ export const useAuthStore = create((set) => ({
   registerAction: async (userData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.register(userData);
+      const data = await authService.register(userData);
       set({ isLoading: false });
       return { success: true, message: data.message };
     } catch (error) {
@@ -48,7 +53,7 @@ export const useAuthStore = create((set) => ({
   loginAction: async (credentials) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.login(credentials);
+      const data = await authService.login(credentials);
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -71,7 +76,7 @@ export const useAuthStore = create((set) => ({
   verifyOTPAction: async (verificationData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.verifyOTP(verificationData);
+      const data = await authService.verifyOTP(verificationData);
 
       setTimeout(() => {
         set({ isLoading: false });
@@ -88,7 +93,7 @@ export const useAuthStore = create((set) => ({
   // RESEND OTP
   resendOTPAction: async (email) => {
     try {
-      const data = await authApi.resendOTP({ email });
+      const data = await authService.resendOTP({ email });
       return { success: true, message: data.message };
     } catch (error) {
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
@@ -100,7 +105,7 @@ export const useAuthStore = create((set) => ({
   socialLoginAction: async (socialData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.socialLogin(socialData);
+      const data = await authService.socialLogin(socialData);
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -123,7 +128,7 @@ export const useAuthStore = create((set) => ({
   forgotPasswordAction: async (email) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.forgotPassword({ email });
+      const data = await authService.forgotPassword({ email });
       set({ isLoading: false });
       return { success: true, message: data.message };
     } catch (error) {
@@ -137,7 +142,7 @@ export const useAuthStore = create((set) => ({
   verifyResetOtpAction: async (email, otp) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.verifyResetOtp({ email, otp });
+      const data = await authService.verifyResetOtp({ email, otp });
       set({ isLoading: false });
       // Trả về resetToken để component lưu lại mang sang trang ResetPassword
       return { success: true, resetToken: data.resetToken };
@@ -152,7 +157,7 @@ export const useAuthStore = create((set) => ({
   resetPasswordAction: async (email, resetToken, newPassword) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.resetPassword({
+      const data = await authService.resetPassword({
         email,
         resetToken,
         newPassword,
