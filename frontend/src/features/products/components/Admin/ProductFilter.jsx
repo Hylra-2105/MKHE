@@ -8,6 +8,8 @@ const ProductFilter = ({
   categoryFilter,
   handleCategoryChange,
   handleSearch,
+  dnaFilter, // Thêm prop mới
+  handleDnaChange, // Thêm prop mới
 }) => {
   const { t } = useTranslation("product");
 
@@ -19,9 +21,19 @@ const ProductFilter = ({
     { value: "B2C_Mass_Premium", label: t("categories.B2C_Mass_Premium") },
   ];
 
+  // Khai báo thêm option cho Mã gen Văn hóa
+  const dnaOptions = [
+    { value: "", label: t("filter.all_dna", "Tất cả Mã gen") },
+    { value: "CHAM", label: t("culturalDNA.CHAM", "Mã gen Chăm") },
+    { value: "KHMER", label: t("culturalDNA.KHMER", "Mã gen Khmer") },
+    { value: "KINH", label: t("culturalDNA.KINH", "Mã gen Kinh") },
+    { value: "OTHER", label: t("culturalDNA.OTHER", "Khác / Đa bản sắc") },
+  ];
+
   return (
-    <div className="bg-mkhe-bg p-3 md:p-4 rounded shadow mb-6 flex flex-col md:flex-row md:items-center gap-4 border border-mkhe-border/30">
-      <form onSubmit={handleSearch} className="flex-1 flex gap-2">
+    <div className="bg-mkhe-bg p-3 md:p-4 rounded shadow mb-6 flex flex-col xl:flex-row xl:items-center gap-4 border border-mkhe-border/30">
+      {/* Khối Search */}
+      <form onSubmit={handleSearch} className="flex-1 flex gap-2 w-full">
         <input
           type="text"
           placeholder={t("filter.search_placeholder")}
@@ -31,21 +43,36 @@ const ProductFilter = ({
         />
         <button
           type="submit"
-          className="h-10 w-40 bg-mkhe-primary text-white px-6 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold"
+          className="h-10 w-28 md:w-40 bg-mkhe-primary text-white px-4 md:px-6 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold whitespace-nowrap"
         >
           {t("filter.search_btn")}
         </button>
       </form>
 
-      <Dropdown
-        value={categoryFilter}
-        options={categoryOptions}
-        onChange={(val) => handleCategoryChange({ target: { value: val } })}
-        placeholder={t("filter.all_categories")}
-        className="w-full md:w-80"
-        triggerClassName="h-10 px-3 rounded"
-        optionClassName="text-sm"
-      />
+      {/* Khối Dropdown Filters */}
+      <div className="flex flex-col md:flex-row gap-3 w-full xl:w-auto">
+        <Dropdown
+          value={categoryFilter}
+          options={categoryOptions}
+          // Do component Dropdown Custom của cha trả về thẳng giá trị (value),
+          // nên phải gói nó lại thành event giả { target: { value: val } } để khớp hàm cũ
+          onChange={(val) => handleCategoryChange({ target: { value: val } })}
+          placeholder={t("filter.all_categories")}
+          className="w-full md:w-48 lg:w-56"
+          triggerClassName="h-10 px-3 rounded"
+          optionClassName="text-sm"
+        />
+
+        <Dropdown
+          value={dnaFilter}
+          options={dnaOptions}
+          onChange={(val) => handleDnaChange({ target: { value: val } })}
+          placeholder={t("filter.all_dna", "Tất cả Mã gen")}
+          className="w-full md:w-48 lg:w-56"
+          triggerClassName="h-10 px-3 rounded"
+          optionClassName="text-sm"
+        />
+      </div>
     </div>
   );
 };

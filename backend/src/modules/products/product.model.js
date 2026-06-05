@@ -23,6 +23,11 @@ const productSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    culturalDNA: {
+      type: String,
+      enum: ["CHAM", "KHMER", "KINH", "OTHER"],
+      default: "OTHER",
+    },
     price: {
       type: Number,
       required: true,

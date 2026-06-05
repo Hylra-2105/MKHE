@@ -37,6 +37,7 @@
     "description": "Short Product Description",
     "description_placeholder": "Enter detailed product information for display and sales purposes...",
     "cancel": "Cancel",
+    "create": "Create",
     "save": "Save",
     "saving": "Saving...",
     "edit_title": "Edit Product",
@@ -97,5 +98,11 @@
     "max_images_error": "You can upload a maximum of {{max}} files. Currently selected: {{current}}.",
     "invalid_file_type": "Invalid file type! Only images and videos are allowed.",
     "image_too_large": "File size is too large! Maximum size is 5MB per file."
+  },
+  "culturalDNA": {
+    "CHAM": "Cham Genetic Code",
+    "KHMER": "Khmer Genetic Code",
+    "KINH": "Kinh Genetic Code",
+    "OTHER": "Other / Multi-ethnic"
   }
 }

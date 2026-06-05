@@ -49,6 +49,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     { value: "B2C_Mass_Premium", label: t("categories.B2C_Mass_Premium") },
   ];
 
+  const culturalDNAs = [
+    { value: "CHAM", label: t("culturalDNA.CHAM") },
+    { value: "KHMER", label: t("culturalDNA.KHMER") },
+    { value: "KINH", label: t("culturalDNA.KINH") },
+    { value: "OTHER", label: t("culturalDNA.OTHER") },
+  ];
+
   const statuses = [
     { value: "DRAFT", label: t("statuses.DRAFT") },
     { value: "PUBLISHED", label: t("statuses.PUBLISHED") },
@@ -62,6 +69,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         sku: product.sku || "",
         description: product.description || "",
         categoryMatrix: product.categoryMatrix || "B2B_Luxury",
+        culturalDNA: product.culturalDNA || "OTHER",
         price: product.price || "",
         stock: product.stock || "",
         status: product.status || "DRAFT",
@@ -104,6 +112,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     const totalImages =
       keptImages.length + newImagePreviews.length + fileArray.length;
 
+    const isVideoUrl = (url) => {
+      if (!url) return false;
+      return !!url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('mkhe_videos');
+    };
+
     if (totalImages > MAX_IMAGES) {
       toast.error(
         t("messages.max_images_error", {
@@ -119,12 +132,12 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
     fileArray.forEach((file) => {
       if (!file.type.startsWith("image/") && !file.type.startsWith("video/"))
-        return toast.error(t("messages.invalid_file_type"));
-      if (file.size > 5 * 1024 * 1024)
-        return toast.error(t("messages.image_too_large"));
+        return toast.error(t("messages.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
+      if (file.size > 10 * 1024 * 1024)
+        return toast.error(t("messages.image_too_large", "Kích thước file không được vượt quá 10MB"));
 
       validFiles.push(file);
-      newPreviews.push(URL.createObjectURL(file));
+      newPreviews.push({ url: URL.createObjectURL(file), type: file.type });
     });
 
     setNewImageFiles((prev) => [...prev, ...validFiles]);
@@ -146,7 +159,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   // 3. Xóa ảnh mới vừa chọn
   const removeNewImage = (indexToRemove) => {
-    URL.revokeObjectURL(newImagePreviews[indexToRemove]);
+    URL.revokeObjectURL(newImagePreviews[indexToRemove].url);
     setNewImageFiles((prev) => prev.filter((_, i) => i !== indexToRemove));
     setNewImagePreviews((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
@@ -247,6 +260,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   const handleCancel = () => {
     // Reset all image states when canceling
+    newImagePreviews.forEach(p => URL.revokeObjectURL(p.url));
     setNewImageFiles([]);
     setNewImagePreviews([]);
     setDeletedImages([]);
@@ -328,11 +342,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       className="relative group rounded-lg overflow-hidden border border-mkhe-border/30 aspect-square cursor-pointer hover:border-mkhe-primary transition-colors"
                       onClick={() => setActiveLightboxUrl(url)}
                     >
-                      <img
-                        src={url}
-                        alt={`kept-${index}`}
-                        className="w-full h-full object-cover"
-                      />
+                      {url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('mkhe_videos') ? (
+                        <video src={url} className="w-full h-full object-cover" muted />
+                      ) : (
+                        <img
+                          src={url}
+                          alt={`kept-${index}`}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -363,11 +381,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       className="relative group rounded-lg overflow-hidden border border-mkhe-primary/50 aspect-square cursor-pointer transition-colors"
                       onClick={() => setActiveLightboxUrl(url)}
                     >
-                      <img
-                        src={url}
-                        alt={`new-${index}`}
-                        className="w-full h-full object-cover"
-                      />
+                      {url.type && url.type.startsWith("video/") ? (
+                        <video src={url.url} className="w-full h-full object-cover" muted />
+                      ) : (
+                        <img
+                          src={url.url}
+                          alt={`new-${index}`}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
                       <button
                         type="button"
                         onClick={(e) => {
@@ -502,6 +524,23 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     triggerClassName="p-3.5 rounded-xl text-sm"
                   />
                 </div>
+                <div className="space-y-1 col-span-6">
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                    {t("modal.cultural_dna", "Mã gen Văn hóa")}{" "}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <Dropdown
+                    value={formData.culturalDNA}
+                    options={culturalDNAs}
+                    onChange={(val) =>
+                      setFormData((prev) => ({ ...prev, culturalDNA: val }))
+                    }
+                    placeholder="Chọn Mã gen"
+                    className="w-full"
+                    triggerClassName="p-3.5 rounded-xl text-sm"
+                    optionClassName="text-sm truncate"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -573,7 +612,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
               type="button"
               onClick={handleCancel}
               disabled={loading}
-              className="px-6 py-2.5 bg-transparent text-mkhe-text font-bold rounded-xl hover:bg-mkhe-border/20 transition-colors disabled:opacity-50 text-sm cursor-pointer"
+              className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
             >
               {t("modal.cancel")}
             </button>
@@ -603,15 +642,24 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
             >
               <button
                 onClick={() => setActiveLightboxUrl(null)}
-                className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer"
+                className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer z-10"
               >
                 <X className="w-6 h-6" />
               </button>
-              <img
-                src={activeLightboxUrl}
-                alt="Zoomed Product"
-                className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
-              />
+              {(activeLightboxUrl.type?.startsWith("video/") || (typeof activeLightboxUrl === 'string' && (activeLightboxUrl.match(/\.(mp4|webm|ogg|mov)$/i) || activeLightboxUrl.includes('mkhe_videos')))) ? (
+                <video
+                  src={activeLightboxUrl.url || activeLightboxUrl}
+                  controls
+                  autoPlay
+                  className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+                />
+              ) : (
+                <img
+                  src={activeLightboxUrl.url || activeLightboxUrl}
+                  alt="Zoomed Product"
+                  className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+                />
+              )}
             </div>
           </div>
         )}

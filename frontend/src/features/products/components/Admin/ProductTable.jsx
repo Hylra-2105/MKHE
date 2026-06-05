@@ -7,7 +7,9 @@ const ProductTable = ({ products, loading, onEdit }) => {
 
   return (
     <div
-      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/30 min-h-[380px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/30 min-h-[420px] transition-opacity relative ${
+        loading ? "opacity-60 pointer-events-none" : "opacity-100"
+      }`}
     >
       <table className="w-full text-left border-collapse min-w-[800px]">
         <thead>
@@ -30,23 +32,14 @@ const ProductTable = ({ products, loading, onEdit }) => {
           </tr>
         </thead>
         <tbody className="text-mkhe-text relative">
-          {loading && (
-            <tr className="absolute inset-0 h-full flex items-center justify-center bg-mkhe-bg/50 backdrop-blur-sm pointer-events-none">
-              <td colSpan="7" className="text-center">
-                <div className="inline-block animate-spin">
-                  <div className="w-8 h-8 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
-                </div>
-              </td>
-            </tr>
-          )}
-          {!loading && products.length === 0 ? (
+          {!loading && (!products || products.length === 0) ? (
             <tr>
               <td colSpan="7" className="p-8 text-center text-mkhe-text/60">
                 {t("table.empty")}
               </td>
             </tr>
           ) : (
-            products.map((product) => (
+            products?.map((product) => (
               <tr
                 key={product._id}
                 className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
@@ -57,14 +50,28 @@ const ProductTable = ({ products, loading, onEdit }) => {
                 <td className="p-4 text-mkhe-primary font-semibold">
                   {product.sku}
                 </td>
+
+                {/* CỘT CATEGORY GHÉP VỚI MÃ GEN */}
                 <td className="p-4">
-                  <span className="bg-mkhe-primary/10 text-mkhe-primary font-medium px-2.5 py-1 rounded text-xs border border-mkhe-primary/30">
-                    {t(
-                      `categories.${product.categoryMatrix}`,
-                      product.categoryMatrix,
+                  <div className="flex flex-col gap-2 items-start">
+                    <span className="bg-mkhe-primary/10 text-mkhe-primary font-medium px-2.5 py-1 rounded text-[11px] border border-mkhe-primary/30 whitespace-nowrap">
+                      {t(
+                        `categories.${product.categoryMatrix}`,
+                        product.categoryMatrix,
+                      )}
+                    </span>
+
+                    {product.culturalDNA && product.culturalDNA !== "OTHER" && (
+                      <span className="bg-mkhe-primary/5 text-mkhe-primary font-bold px-2.5 py-1 rounded border border-mkhe-primary/30 text-[10px] tracking-wider uppercase whitespace-nowrap">
+                        {t(
+                          `culturalDNA.${product.culturalDNA}`,
+                          product.culturalDNA,
+                        )}
+                      </span>
                     )}
-                  </span>
+                  </div>
                 </td>
+
                 <td className="p-4 text-center font-bold text-mkhe-primary">
                   {product.price?.toLocaleString("vi-VN") || 0} đ
                 </td>
@@ -101,10 +108,11 @@ const ProductTable = ({ products, loading, onEdit }) => {
         </tbody>
       </table>
 
+      {/* Loading Spinner mượt mà hơn */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-mkhe-bg/30 backdrop-blur-sm rounded">
+        <div className="absolute inset-0 flex items-center justify-center bg-mkhe-bg/30 backdrop-blur-sm rounded z-10">
           <div className="animate-spin">
-            <div className="w-12 h-12 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
+            <div className="w-10 h-10 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
           </div>
         </div>
       )}

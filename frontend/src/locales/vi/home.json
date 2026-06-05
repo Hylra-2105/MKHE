@@ -1,0 +1,38 @@
+{
+  "dna": {
+    "title": "Các Sản Phẩm Văn Hóa",
+    "subtitle": "Khám phá những tinh hoa thủ công đặc trưng",
+    "view_all": "Xem toàn bộ"
+  },
+  "hero": {
+    "tag": "Heritage & Elegance",
+    "title_1": "Nơi bản sắc địa phương được nâng tầm bằng tư duy ",
+    "title_highlight": "sáng tạo.",
+    "subtitle": "Khám phá di sản tinh hoa qua từng đường nét thủ công đương đại. Đánh thức bản sắc bằng công nghệ số.",
+    "cta_explore": "Khám phá Bộ Sưu Tập",
+    "cta_about": "Câu chuyện MKHE",
+    "watch_video": "Xem Video"
+  },
+  "footer": {
+    "brand_desc": "Bảo tồn và phát huy di sản văn hóa Việt Nam thông qua nghệ thuật thủ công đương đại và công nghệ số.",
+    "explore": {
+      "title": "Khám phá",
+      "about": "Về chúng tôi",
+      "b2b": "Bộ sưu tập B2B",
+      "b2c": "Thời trang B2C",
+      "heritage": "Hành trình Di sản"
+    },
+    "support": {
+      "title": "Hỗ trợ",
+      "privacy": "Chính sách bảo mật",
+      "terms": "Điều khoản dịch vụ",
+      "nfc": "Hướng dẫn quét NFC",
+      "tracking": "Theo dõi đơn hàng"
+    },
+    "contact": {
+      "title": "Liên hệ",
+      "address": "Cần Thơ, Việt Nam, 94100"
+    },
+    "rights": "Đã đăng ký bản quyền."
+  }
+}

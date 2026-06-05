@@ -1,0 +1,38 @@
+{
+  "dna": {
+    "title": "Cultural Products",
+    "subtitle": "Discover the quintessence of unique craftsmanship",
+    "view_all": "View all"
+  },
+  "hero": {
+    "tag": "Heritage & Elegance",
+    "title_1": "Where local identity is elevated by ",
+    "title_highlight": "creative thinking.",
+    "subtitle": "Discover exquisite heritage through contemporary craftsmanship. Awakening identity with digital technology.",
+    "cta_explore": "Explore Collection",
+    "cta_about": "MKHE Story",
+    "watch_video": "Watch Video"
+  },
+  "footer": {
+    "brand_desc": "Preserving and promoting Vietnamese cultural heritage through contemporary craftsmanship and digital technology.",
+    "explore": {
+      "title": "Explore",
+      "about": "About Us",
+      "b2b": "B2B Collection",
+      "b2c": "B2C Fashion",
+      "heritage": "Heritage Journey"
+    },
+    "support": {
+      "title": "Support",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "nfc": "NFC Scan Guide",
+      "tracking": "Order Tracking"
+    },
+    "contact": {
+      "title": "Contact",
+      "address": "Can Tho, Vietnam, 94100"
+    },
+    "rights": "All rights reserved."
+  }
+}

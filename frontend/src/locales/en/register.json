@@ -23,5 +23,6 @@
   "err_empty_name": "Please enter your name!",
   "err_name_length": "Name must be at least 2 characters!",
   "otp_sent": "The OTP code has been sent to your email!",
-  "err_email_exists": "This email is already registered!"
+  "err_email_exists": "This email is already registered!",
+  "error_social_login": "Social login failed! Please try again."
 }

@@ -11,6 +11,11 @@ const axiosClient = axios.create({
 // KIỂM SOÁT TRƯỚC KHI GỬI (Gắn Token)
 axiosClient.interceptors.request.use(
   (config) => {
+    // Nếu gửi file (FormData), phải xóa Content-Type để trình duyệt tự thêm boundary
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+    }
+
     // Moi token từ LocalStorage ra
     const token = localStorage.getItem("token");
     if (token) {

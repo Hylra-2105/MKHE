@@ -14,6 +14,7 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Trigger để buộc refetch
 
   // Confirm Modal State
   const [confirmData, setConfirmData] = useState({
@@ -22,18 +23,27 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
     productName: "",
   });
 
-  // Fetch danh sách sản phẩm đã xóa khi mở Modal
+  // Fetch danh sách sản phẩm đã xóa khi mở Modal hoặc khi refreshTrigger thay đổi
   useEffect(() => {
     if (isOpen) fetchDeletedProducts();
-  }, [page, isOpen]);
+  }, [page, isOpen, refreshTrigger]);
 
   const fetchDeletedProducts = async () => {
     setLoading(true);
     try {
       const res = await productApi.getDeletedProducts(page, 5);
+
       if (res.success) {
-        setDeletedProducts(res.data || []);
-        setTotalPages(res.pagination?.totalPages || 1);
+        // Flexible response handling - works with both {data: []} and {data: {data: []}}
+        const productsData = Array.isArray(res.data)
+          ? res.data
+          : res.data?.data || [];
+        const paginationData = res.data?.pagination || { totalPages: 1 };
+
+        setDeletedProducts(productsData);
+        setTotalPages(paginationData.totalPages || 1);
+      } else {
+        throw new Error(res.message || "Lấy danh sách thất bại");
       }
     } catch (error) {
       toast.error(t("messages.fetch_error"));
@@ -45,18 +55,36 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
   const handleRestore = async (id) => {
     setActionLoading(id);
     try {
-      // Hàm này chờ BE của cha code xong
       const res = await productApi.restoreProduct(id);
-      if (res.success) {
+
+      if (!res) {
+        throw new Error("API không trả về response");
+      }
+
+      if (res.success || res.data) {
         toast.success(t("messages.restore_success"));
-        fetchDeletedProducts(); // Load lại thùng rác
-        if (onSuccess) onSuccess(); // Báo cho trang cha load lại bảng chính
+
+        if (onSuccess) onSuccess();
+
+        // Buộc refetch danh sách trash bằng cách update refreshTrigger
+        setRefreshTrigger((prev) => prev + 1);
+
+        // Đóng confirm modal
+        setConfirmData({ isOpen: false, productId: null, productName: "" });
+      } else {
+        const errorMsg = res.message || "Khôi phục thất bại";
+        throw new Error(errorMsg);
       }
     } catch (error) {
-      toast.error(t("messages.restore_error"));
+      const errorMsg =
+        error.response?.data?.message ||
+        error.message ||
+        t("messages.restore_error");
+
+      toast.error(`❌ Lỗi khôi phục: ${errorMsg}`);
+      // Keep modal open on error so user can retry
     } finally {
       setActionLoading(null);
-      setConfirmData({ isOpen: false, productId: null, productName: "" });
     }
   };
 
@@ -107,7 +135,9 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
               {/* Gán min-height cho cái table wrapper để nó luôn cao cố định */}
               <div
                 className={`bg-mkhe-bg rounded-xl border border-mkhe-border/30 overflow-hidden flex-1 min-h-[360px] transition-opacity duration-300 relative ${
-                  loading ? "opacity-60 pointer-events-none" : "opacity-100"
+                  loading || isPending
+                    ? "opacity-60 pointer-events-none"
+                    : "opacity-100"
                 }`}
               >
                 {loading && (

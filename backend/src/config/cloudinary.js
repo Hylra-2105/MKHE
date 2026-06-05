@@ -21,8 +21,7 @@ const storage = new CloudinaryStorage({
 
     return {
       folder: isVideo ? "mkhe_videos" : "mkhe_avatars",
-      resource_type: "auto", // Cloudinary tự nhận diện Video/Ảnh động thay vì ép về định dạng ảnh tĩnh
-      allowed_formats: ["jpg", "png", "jpeg", "webp", "mp4", "webm"],
+      resource_type: isVideo ? "video" : "image", 
       public_id: `${Date.now()}-${file.originalname.split(".")[0]}`, // Đặt tên file tránh trùng lặp
     };
   },
