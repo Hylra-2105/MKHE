@@ -6,7 +6,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import Button from "@/components/ui/Button";
 
 export default function VerifyOTPForm() {
-  const { t } = useTranslation("otp");
+  const { t } = useTranslation(["otp", "common"]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -54,7 +54,9 @@ export default function VerifyOTPForm() {
           if (inputRefs.current[0]) inputRefs.current[0].focus();
         } else {
           const errorMsg = result.message || "SERVER_ERROR";
-          toast.error(t(errorMsg), { duration: 3000 });
+          toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+            duration: 3000,
+          });
 
           hasAutoSentOTPRef.current = false;
         }
@@ -81,7 +83,9 @@ export default function VerifyOTPForm() {
       }, 2000);
     } else {
       const errorMsg = result.message || "SERVER_ERROR";
-      toast.error(t(errorMsg), { duration: 3000 });
+      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+        duration: 3000,
+      });
 
       // Reset input để nhập lại
       setOtp(["", "", "", "", "", ""]);
@@ -108,7 +112,9 @@ export default function VerifyOTPForm() {
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     } else {
       const errorMsg = result.message || "SERVER_ERROR";
-      toast.error(t(errorMsg), { duration: 3000 });
+      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+        duration: 3000,
+      });
     }
   };
 

@@ -97,7 +97,9 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
     } catch (error) {
       console.error("Lỗi update profile:", error);
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(t(errorMsg, "Cập nhật thất bại!"));
+      toast.error(
+        t(errorMsg, { ns: "common" }) || t(errorMsg) || "Cập nhật thất bại!",
+      );
     } finally {
       setIsSaving(false);
     }

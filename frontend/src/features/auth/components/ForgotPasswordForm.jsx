@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import ErrorText from "@/components/ui/ErrorText";
 
 export default function ForgotPasswordForm() {
-  const { t } = useTranslation("forgot_password");
+  const { t } = useTranslation(["forgot_password", "common"]);
   const navigate = useNavigate();
   const { forgotPasswordAction, verifyResetOtpAction, isLoading } =
     useAuthStore();
@@ -23,7 +23,7 @@ export default function ForgotPasswordForm() {
   const [countdown, setCountdown] = useState(0);
   const [isResending, setIsResending] = useState(false);
 
-  // state loading 
+  // state loading
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function ForgotPasswordForm() {
     const result = await forgotPasswordAction(email);
 
     if (result.success) {
-      setIsProcessing(true); 
+      setIsProcessing(true);
 
       setTimeout(() => {
         toast.success(t("OTP_SENT"));
@@ -77,7 +77,11 @@ export default function ForgotPasswordForm() {
         }, 500);
       }, 1500);
     } else {
-      toast.error(t(result.message) || t("SERVER_ERROR"));
+      toast.error(
+        t(result.message, { ns: "common" }) ||
+          t(result.message) ||
+          t("SERVER_ERROR", { ns: "common" }),
+      );
       setOtp(["", "", "", "", "", ""]);
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     }
@@ -130,7 +134,11 @@ export default function ForgotPasswordForm() {
       setCountdown(60);
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     } else {
-      toast.error(t(result.message) || t("SERVER_ERROR"));
+      toast.error(
+        t(result.message, { ns: "common" }) ||
+          t(result.message) ||
+          t("SERVER_ERROR", { ns: "common" }),
+      );
     }
   };
 

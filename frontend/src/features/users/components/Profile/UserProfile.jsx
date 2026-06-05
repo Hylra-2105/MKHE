@@ -118,7 +118,7 @@ const UserProfile = () => {
     } catch (error) {
       console.error(error);
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(t(errorMsg));
+      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg));
 
       // Upload xịt thì trả lại ảnh gốc
       setAvatarPreview(user?.avatar || "");

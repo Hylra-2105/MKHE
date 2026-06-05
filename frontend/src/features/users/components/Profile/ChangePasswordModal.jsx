@@ -112,7 +112,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           setStep("verify");
         } catch (error) {
           const msg = error.response?.data?.message || "SERVER_ERROR";
-          setErrorMsg(t(msg));
+          setErrorMsg(t(msg, { ns: "common" }) || t(msg));
         }
       };
       sendInitialOtp();
@@ -238,7 +238,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       }
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg));
+      setErrorMsg(t(msg, { ns: "common" }) || t(msg));
     } finally {
       setLoading(false);
     }
@@ -258,7 +258,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       toast.success(t("messages.otp_sent_success"));
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg));
+      setErrorMsg(t(msg, { ns: "common" }) || t(msg));
     }
   };
 

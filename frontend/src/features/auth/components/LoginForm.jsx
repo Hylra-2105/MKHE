@@ -12,7 +12,7 @@ import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function LoginForm() {
-  const { t } = useTranslation("login");
+  const { t } = useTranslation(["login", "common"]);
   const navigate = useNavigate();
 
   const { loginAction, socialLoginAction, isLoading } = useAuthStore();
@@ -51,7 +51,10 @@ export default function LoginForm() {
         if (msg === "ACCOUNT_BLOCKED") {
           toast.error(t("err_account_blocked"), { duration: 4000 });
         } else {
-          toast.error(t(msg) || t("error_default"), { duration: 3000 });
+          toast.error(
+            t(msg, { ns: "common" }) || t(msg) || t("error_default"),
+            { duration: 3000 },
+          );
         }
       }
     } catch (error) {
@@ -107,7 +110,9 @@ export default function LoginForm() {
       } else if (msg === "ACCOUNT_BLOCKED") {
         setErrors({ email: "err_account_blocked" });
       } else {
-        toast.error(t(msg) || t("error_default"), { duration: 3000 });
+        toast.error(t(msg, { ns: "common" }) || t(msg) || t("error_default"), {
+          duration: 3000,
+        });
       }
     }
   };

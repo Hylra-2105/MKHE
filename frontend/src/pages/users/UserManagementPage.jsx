@@ -11,7 +11,7 @@ import AddUserModal from "@/features/users/components/Admin/AddUserModal";
 import ForbiddenPage from "@/pages/errors/ForbiddenPage";
 
 export default function UserManagement() {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation(["admin", "common"]);
   const { user: currentUser } = useAuthStore();
 
   const [users, setUsers] = useState([]);
@@ -54,7 +54,11 @@ export default function UserManagement() {
       }
 
       if (errorCode) {
-        toast.error(t(`errors.${errorCode}`, { defaultValue: errorCode }));
+        toast.error(
+          t(`messages.${errorCode}`) ||
+            t(errorCode, { ns: "common" }) ||
+            errorCode,
+        );
       } else {
         toast.error(t("errors.fetch_failed"));
       }

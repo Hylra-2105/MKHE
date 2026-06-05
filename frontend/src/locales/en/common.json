@@ -1,0 +1,14 @@
+{
+  "SERVER_ERROR": "Internal server error. Please try again later!",
+  "error_default": "An error occurred. Please try again.",
+  "success": "Success",
+  "loading": "Loading...",
+  "error": "Error",
+  "warning": "Warning",
+  "info": "Information",
+  "INVALID_DATA": "Invalid data. Please check your input.",
+  "ACCOUNT_ALREADY_VERIFIED": "This account has already been verified.",
+  "PASSWORD_TOO_SHORT": "Password must be at least 6 characters long.",
+  "INVALID_EMAIL_FORMAT": "Invalid email format. Please enter a valid email.",
+  "REGISTER_SUCCESS": "Registration successful!"
+}

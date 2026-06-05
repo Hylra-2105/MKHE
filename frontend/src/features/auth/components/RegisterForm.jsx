@@ -14,7 +14,7 @@ import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function RegisterForm() {
-  const { t, i18n } = useTranslation("register");
+  const { t, i18n } = useTranslation(["register", "common"]);
   const navigate = useNavigate();
 
   // LoginAction từ store để xử lý đăng ký bằng Google
@@ -57,7 +57,11 @@ export default function RegisterForm() {
           if (window.opener) window.close();
         }, 1000);
       } else {
-        toast.error(t(res?.message) || t("error_default"));
+        toast.error(
+          t(res?.message, { ns: "common" }) ||
+            t(res?.message) ||
+            t("error_default"),
+        );
       }
     } catch (error) {
       console.error("Lỗi đăng ký Google:", error);
@@ -112,7 +116,10 @@ export default function RegisterForm() {
         if (msg === "EMAIL_ALREADY_EXISTS") {
           setErrors({ email: "err_email_exists" });
         } else {
-          toast.error(t(msg) || t("error_default"), { duration: 3000 });
+          toast.error(
+            t(msg, { ns: "common" }) || t(msg) || t("error_default"),
+            { duration: 3000 },
+          );
         }
       }
     } finally {

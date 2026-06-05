@@ -151,7 +151,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
       console.error(t("messages.update_error_log"), error);
       const errorCode = error.response?.data?.message;
       toast.error(
-        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+        errorCode
+          ? t(`messages.${errorCode}`) || t(errorCode, { ns: "common" })
+          : t("messages.server_error") || t("SERVER_ERROR", { ns: "common" }),
       );
     }
   };
@@ -174,7 +176,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
       console.error(t("messages.update_error_log"), error);
       const errorCode = error.response?.data?.message;
       toast.error(
-        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+        errorCode
+          ? t(`messages.${errorCode}`) || t(errorCode, { ns: "common" })
+          : t("messages.server_error") || t("SERVER_ERROR", { ns: "common" }),
       );
     } finally {
       setShowDeleteConfirm(false);
@@ -219,7 +223,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
       console.error("Block Toggle Error:", error);
       const errorCode = error.response?.data?.message;
       toast.error(
-        errorCode ? t(`messages.${errorCode}`) : t("messages.server_error"),
+        errorCode
+          ? t(`messages.${errorCode}`) || t(errorCode, { ns: "common" })
+          : t("messages.server_error") || t("SERVER_ERROR", { ns: "common" }),
       );
     } finally {
       setIsSaving(false);

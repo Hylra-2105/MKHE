@@ -9,7 +9,7 @@ import Button from "@/components/ui/Button";
 import ErrorText from "@/components/ui/ErrorText";
 
 export default function ResetPasswordForm() {
-  const { t } = useTranslation("forgot_password");
+  const { t } = useTranslation(["forgot_password", "common"]);
   const navigate = useNavigate();
   const location = useLocation();
   const { resetPasswordAction, isLoading } = useAuthStore();
@@ -42,7 +42,7 @@ export default function ResetPasswordForm() {
     const result = await resetPasswordAction(email, resetToken, password);
 
     if (result.success) {
-      setIsProcessing(true); 
+      setIsProcessing(true);
 
       setTimeout(() => {
         toast.success(t("PASSWORD_RESET_SUCCESS"), { duration: 1500 });
@@ -54,7 +54,11 @@ export default function ResetPasswordForm() {
         toast.error(t("err_invalid_session"));
         navigate("/forgot-password");
       } else {
-        toast.error(t(result.message) || t("SERVER_ERROR"));
+        toast.error(
+          t(result.message, { ns: "common" }) ||
+            t(result.message) ||
+            t("SERVER_ERROR", { ns: "common" }),
+        );
       }
     }
   };

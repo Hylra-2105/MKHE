@@ -14,6 +14,7 @@ import errorsVI from "./locales/vi/errors.json";
 import userVI from "./locales/vi/user.json";
 import productVI from "./locales/vi/product.json";
 import homeVI from "./locales/vi/home.json";
+import commonVI from "./locales/vi/common.json";
 
 // EN
 
@@ -27,6 +28,7 @@ import errorsEN from "./locales/en/errors.json";
 import userEN from "./locales/en/user.json";
 import productEN from "./locales/en/product.json";
 import homeEN from "./locales/en/home.json";
+import commonEN from "./locales/en/common.json";
 
 const resources = {
   vi: {
@@ -40,6 +42,7 @@ const resources = {
     user: userVI,
     product: productVI,
     home: homeVI,
+    common: commonVI,
   },
   en: {
     login: loginEN,
@@ -52,6 +55,7 @@ const resources = {
     user: userEN,
     product: productEN,
     home: homeEN,
+    common: commonEN,
   },
 };
 
@@ -72,6 +76,7 @@ i18n
       "user",
       "product",
       "home",
+      "common",
     ],
     defaultNS: "user",
     interpolation: {
