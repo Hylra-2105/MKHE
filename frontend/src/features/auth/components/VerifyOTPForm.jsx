@@ -54,7 +54,7 @@ export default function VerifyOTPForm() {
           if (inputRefs.current[0]) inputRefs.current[0].focus();
         } else {
           const errorMsg = result.message || "SERVER_ERROR";
-          toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+          toast.error(t([errorMsg, `common:${errorMsg}`]), {
             duration: 3000,
           });
 
@@ -83,7 +83,7 @@ export default function VerifyOTPForm() {
       }, 2000);
     } else {
       const errorMsg = result.message || "SERVER_ERROR";
-      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+      toast.error(t([errorMsg, `common:${errorMsg}`]), {
         duration: 3000,
       });
 
@@ -112,7 +112,7 @@ export default function VerifyOTPForm() {
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     } else {
       const errorMsg = result.message || "SERVER_ERROR";
-      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg), {
+      toast.error(t([errorMsg, `common:${errorMsg}`]), {
         duration: 3000,
       });
     }

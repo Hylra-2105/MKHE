@@ -14,7 +14,7 @@ import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function RegisterForm() {
-  const { t, i18n } = useTranslation(["register", "common"]);
+  const { t, i18n } = useTranslation(["register", "common", "login"]);
   const navigate = useNavigate();
 
   // LoginAction từ store để xử lý đăng ký bằng Google
@@ -53,14 +53,13 @@ export default function RegisterForm() {
       const res = await socialLoginAction(socialData);
 
       if (res && res.success) {
-        toast.success(t("msg_login_success") || "Thành công!");
+        toast.success(t("msg_login_success", { ns: "login" }) || "Thành công!");
         navigate("/");
         if (window.opener) window.close();
       } else {
         toast.error(
-          t(res?.message, { ns: "common" }) ||
-            t(res?.message) ||
-            t("error_default"),
+          t([res?.message, `common:${res?.message}`, "error_default"]),
+          { duration: 3000 },
         );
       }
     } catch (error) {
@@ -119,7 +118,7 @@ export default function RegisterForm() {
           setErrors({ email: "err_email_exists" });
         } else {
           toast.error(
-            t(msg, { ns: "common" }) || t(msg) || t("error_default"),
+            t([msg, `common:${msg}`, "error_default"]),
             { duration: 3000 },
           );
         }
@@ -216,7 +215,7 @@ export default function RegisterForm() {
           <GoogleIcon />
         )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing", { ns: "common" }) : (t("google") || "Google")}
+          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing") : (t("google", { ns: "login" }) || "Google")}
         </span>
       </button>
 

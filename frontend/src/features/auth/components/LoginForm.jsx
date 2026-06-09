@@ -56,7 +56,7 @@ export default function LoginForm() {
           toast.error(t("err_account_blocked"), { duration: 4000 });
         } else {
           toast.error(
-            t(msg, { ns: "common" }) || t(msg) || t("error_default"),
+            t([msg, `common:${msg}`, "error_default"]),
             { duration: 3000 },
           );
         }
@@ -116,7 +116,7 @@ export default function LoginForm() {
       } else if (msg === "ACCOUNT_BLOCKED") {
         setErrors({ email: "err_account_blocked" });
       } else {
-        toast.error(t(msg, { ns: "common" }) || t(msg) || t("error_default"), {
+        toast.error(t([msg, `common:${msg}`, "error_default"]), {
           duration: 3000,
         });
       }
