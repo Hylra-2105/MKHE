@@ -11,6 +11,7 @@
   "msg_error_default": "Invalid or expired OTP!",
   "INVALID_OTP": "Invalid OTP!",
   "EXPIRED_OTP": "Expired OTP, please request a new one!",
+  "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP, please request a new one!",
   "SERVER_ERROR": "Server error, please try again later!",
   "VERIFY_SUCCESS": "Account verification successful!",
   "RESEND_SUCCESS": "OTP resent successfully! Please check your email.",

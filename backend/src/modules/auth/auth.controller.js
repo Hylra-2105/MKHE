@@ -1,4 +1,5 @@
 import User from "../users/user.model.js";
+import OTP from "./otp.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import {
   sendVerificationEmail,
@@ -34,9 +35,7 @@ export const registerUser = async (req, res) => {
     if (user) {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      user.otp = otp;
-      user.otpExpires = Date.now() + 15 * 60 * 1000;
-      await user.save();
+      await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
       // Fire and forget email
       sendVerificationEmail(user.email, otp, userLang).catch((err) => {
@@ -72,18 +71,15 @@ export const verifyEmail = async (req, res) => {
       return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
-    if (user.otp !== otp) {
-      return errorResponse(res, 400, "INVALID_OTP");
-    }
-
-    if (user.otpExpires < Date.now()) {
-      return errorResponse(res, 400, "EXPIRED_OTP");
+    const validOtp = await OTP.findOne({ email, otp, purpose: "VERIFY_EMAIL" });
+    if (!validOtp) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
     user.isVerified = true;
-    user.otp = undefined;
-    user.otpExpires = undefined;
     await user.save();
+
+    await OTP.deleteOne({ _id: validOtp._id });
 
     return successResponse(res, 200, "VERIFY_SUCCESS");
   } catch (error) {
@@ -177,12 +173,12 @@ export const resendOTP = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    user.otp = otp;
-    user.otpExpires = Date.now() + 15 * 60 * 1000;
-    await user.save();
+    await OTP.deleteMany({ email: user.email, purpose: "VERIFY_EMAIL" });
+    await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
     // Fix bug: 3 params instead of 4
-    sendVerificationEmail(user.email, otp, user.language || "vi").catch((err) => {
+    const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
+    sendVerificationEmail(user.email, otp, userLang).catch((err) => {
         console.error("[Email Error]", err.message);
     });
 
@@ -281,11 +277,11 @@ export const forgotPassword = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    user.resetPasswordOtp = otp;
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000;
-    await user.save({ validateBeforeSave: false });
+    await OTP.deleteMany({ email: user.email, purpose: "RESET_PASSWORD" });
+    await OTP.create({ email: user.email, otp, purpose: "RESET_PASSWORD" });
 
-    sendPasswordResetEmail(user.email, otp, user.language || "vi").catch((err) => {
+    const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
+    sendPasswordResetEmail(user.email, otp, userLang).catch((err) => {
       console.error("[Email Error]", err);
     });
 
@@ -305,18 +301,18 @@ export const verifyResetOtp = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
 
-    if (user.resetPasswordOtp !== otp) {
-      return errorResponse(res, 400, "INVALID_OTP");
-    }
-    if (user.resetPasswordExpires < Date.now()) {
-      return errorResponse(res, 400, "EXPIRED_OTP");
+    const validOtp = await OTP.findOne({ email, otp, purpose: "RESET_PASSWORD" });
+    if (!validOtp) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordOtp = undefined;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Reset token valid for 15 minutes
     await user.save({ validateBeforeSave: false });
+
+    await OTP.deleteOne({ _id: validOtp._id });
 
     return successResponse(res, 200, "OTP_VERIFIED", { resetToken });
   } catch (error) {
@@ -379,11 +375,11 @@ export const sendChangePasswordOtp = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    user.resetPasswordOtp = otp;
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
-    await user.save();
+    await OTP.deleteMany({ email: user.email, purpose: "CHANGE_PASSWORD" });
+    await OTP.create({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
 
-    sendChangePasswordEmail(user.email, otp, lang).catch((err) => {
+    const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
+    sendChangePasswordEmail(user.email, otp, userLang).catch((err) => {
       console.error("[Email Error] Gửi OTP thất bại:", err.message);
     });
 
@@ -401,7 +397,8 @@ export const verifyChangePasswordOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    if (user.resetPasswordOtp !== otp || user.resetPasswordExpires < Date.now()) {
+    const validOtp = await OTP.findOne({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
+    if (!validOtp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
@@ -419,7 +416,8 @@ export const changePasswordWithOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    if (user.resetPasswordOtp !== otp || user.resetPasswordExpires < Date.now()) {
+    const validOtp = await OTP.findOne({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
+    if (!validOtp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
@@ -429,9 +427,9 @@ export const changePasswordWithOtp = async (req, res) => {
     }
 
     user.password = newPassword;
-    user.resetPasswordOtp = undefined;
-    user.resetPasswordExpires = undefined;
     await user.save();
+
+    await OTP.deleteOne({ _id: validOtp._id });
 
     return successResponse(res, 200, "PASSWORD_CHANGED_SUCCESS");
   } catch (error) {
@@ -454,9 +452,6 @@ export const getMe = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.otp;
-    delete userData.otpExpires;
-    delete userData.resetPasswordOtp;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
     delete userData.refreshToken;

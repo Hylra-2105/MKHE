@@ -22,6 +22,11 @@ axiosClient.interceptors.request.use(
       // Gắn vào Header theo chuẩn Bearer
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Truyền ngôn ngữ hiện tại của UI xuống Backend
+    const currentLang = localStorage.getItem("i18nextLng") || "vi";
+    config.headers["Accept-Language"] = currentLang;
+
     return config;
   },
   (error) => {

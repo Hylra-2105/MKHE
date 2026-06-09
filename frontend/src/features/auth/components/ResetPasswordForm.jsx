@@ -55,9 +55,7 @@ export default function ResetPasswordForm() {
         navigate("/forgot-password");
       } else {
         toast.error(
-          t(result.message, { ns: "common" }) ||
-            t(result.message) ||
-            t("SERVER_ERROR", { ns: "common" }),
+          t([result.message, `common:${result.message}`, "common:SERVER_ERROR"])
         );
       }
     }

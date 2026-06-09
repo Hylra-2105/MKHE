@@ -57,7 +57,7 @@ export default function ForgotPasswordForm() {
         }, 100);
       }, 1000);
     } else {
-      setError(t(result.message) || t("SERVER_ERROR"));
+      setError(t([result.message, `common:${result.message}`, "common:SERVER_ERROR"]));
     }
   };
 
@@ -78,9 +78,7 @@ export default function ForgotPasswordForm() {
       }, 1500);
     } else {
       toast.error(
-        t(result.message, { ns: "common" }) ||
-          t(result.message) ||
-          t("SERVER_ERROR", { ns: "common" }),
+        t([result.message, `common:${result.message}`, "common:SERVER_ERROR"])
       );
       setOtp(["", "", "", "", "", ""]);
       if (inputRefs.current[0]) inputRefs.current[0].focus();
@@ -135,9 +133,7 @@ export default function ForgotPasswordForm() {
       if (inputRefs.current[0]) inputRefs.current[0].focus();
     } else {
       toast.error(
-        t(result.message, { ns: "common" }) ||
-          t(result.message) ||
-          t("SERVER_ERROR", { ns: "common" }),
+        t([result.message, `common:${result.message}`, "common:SERVER_ERROR"])
       );
     }
   };
