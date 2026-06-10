@@ -19,7 +19,6 @@ import {
 // Import các Middleware cần thiết
 import { normalizeEmailMiddleware } from "../../middlewares/normalizeEmail.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
-import { checkRole } from "../../middlewares/checkRole.js";
 import { validate } from "../../middlewares/validate.js";
 import { otpLimiter } from "../../middlewares/rateLimiter.js";
 import {

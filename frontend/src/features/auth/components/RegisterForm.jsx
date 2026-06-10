@@ -18,7 +18,7 @@ export default function RegisterForm() {
   const { t, i18n } = useTranslation(["register", "common", "login"]);
   const navigate = useNavigate();
 
-  // LoginAction từ store để xử lý đăng ký bằng Google
+  // Auth actions từ store
   const { registerAction, socialLoginAction, isLoading } = useAuthStore();
 
   const [name, setName] = useState("");
@@ -31,7 +31,7 @@ export default function RegisterForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  // Đăng ký / Đăng nhập bằng Google
+  // Xử lý đăng nhập Google
   const handleGoogleLogin = async () => {
     if (isSubmitting || isLoading || isGoogleLoading) return;
     setIsGoogleLoading(true);
@@ -52,11 +52,11 @@ export default function RegisterForm() {
         providerId: "google",
       };
 
-      // Gọi Backend
+      // Gọi backend API
       const res = await socialLoginAction(socialData);
 
       if (res && res.success) {
-        toast.success(t("msg_login_success", { ns: "login" }) || "Thành công!");
+        toast.success(t("msg_login_success", { ns: "login" }));
         navigate("/");
         if (window.opener) window.close();
       } else {
@@ -73,7 +73,7 @@ export default function RegisterForm() {
       ) {
         return;
       }
-      toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+      toast.error(t("error_social_login"));
     } finally {
       setIsGoogleLoading(false);
     }
@@ -82,14 +82,14 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prevent double submission
+    // Ngăn chặn submit nhiều lần
     if (isSubmitting || isLoading) return;
 
     setIsSubmitting(true);
     setErrors({});
 
     try {
-      // Kiểm tra validation
+      // Kiểm tra form hợp lệ
       const validationErrors = validateRegistration(
         name,
         email,
@@ -102,7 +102,7 @@ export default function RegisterForm() {
         return;
       }
 
-      // Gọi API thông qua Store
+      // Gửi request đăng ký
       const result = await registerAction({
         name: name.trim(),
         email,
@@ -142,7 +142,7 @@ export default function RegisterForm() {
         <div>
           <InputField
             type="text"
-            placeholder={t("name_placeholder") || "Họ và tên"}
+            placeholder={t("name_placeholder")}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -227,7 +227,7 @@ export default function RegisterForm() {
       <div className="flex items-center my-4">
         <div className="flex-1 border-t border-mkhe-border/50"></div>
         <span className="px-3 text-xs text-mkhe-text/50 uppercase tracking-wider">
-          {t("or_continue_with") || "HOẶC TIẾP TỤC VỚI"}
+          {t("or_continue_with")}
         </span>
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
@@ -244,7 +244,7 @@ export default function RegisterForm() {
           <GoogleIcon />
         )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing") : (t("google", { ns: "login" }) || "Google")}
+          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing") : t("google", { ns: "login" })}
         </span>
       </button>
 

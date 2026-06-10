@@ -22,13 +22,13 @@ const UserProfile = () => {
   const { user, setUser, isFetchingUser } = useAuthStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
-  // STATE CHO AVATAR VÀ DRAG & DROP
+  // Quản lý state cho avatar
   const fileInputRef = useRef(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [isPreviewVideo, setIsPreviewVideo] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  // State cho Modal Kéo thả
+  // State cho modal upload
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -41,7 +41,7 @@ const UserProfile = () => {
 
   const hasPassword = user?.provider === "local" || user?.hasPassword;
 
-  // HÀM XỬ LÝ KÉO THẢ (DRAG & DROP)
+  // Xử lý sự kiện kéo thả
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -59,7 +59,7 @@ const UserProfile = () => {
     await processFile(file);
   };
 
-  // HÀM XỬ LÝ FILE (DÙNG CHUNG CHO KÉO THẢ VÀ CHỌN TAY)
+  // Xử lý file được chọn
   const processFile = async (file) => {
     if (!file) return;
 
@@ -73,7 +73,7 @@ const UserProfile = () => {
       return;
     }
 
-    // Kiểm tra dung lượng (Ảnh max 5MB, Video max 30MB)
+    // Kiểm tra dung lượng file
     const maxSize = isVideo ? 30 * 1024 * 1024 : 5 * 1024 * 1024;
     if (file.size > maxSize) {
       const errorMsg = isVideo
@@ -84,33 +84,33 @@ const UserProfile = () => {
       return;
     }
 
-    // Tối ưu bộ nhớ: Xóa URL tạm cũ
+    // Xóa URL tạm cũ
     if (avatarPreview && avatarPreview.startsWith("blob:")) {
       URL.revokeObjectURL(avatarPreview);
     }
 
-    // Cập nhật giao diện ngay lập tức
+    // Hiển thị preview
     const objectUrl = URL.createObjectURL(file);
     setAvatarPreview(objectUrl);
     setIsPreviewVideo(isVideo);
 
-    // Đóng Modal sau khi đã nhận file thành công
+    // Đóng modal
     setIsUploadModalOpen(false);
 
-    // Tiến hành upload
+    // Upload lên server
     await uploadAvatarToServer(file);
   };
 
   const uploadAvatarToServer = async (file) => {
     setIsUploading(true);
     try {
-      // Đóng gói file vào FormData để gửi đi
+      // Chuẩn bị form data
       const formData = new FormData();
       formData.append("avatar", file);
 
       const response = await userApi.uploadAvatar(formData);
 
-      // Nếu thành công, lấy cục data User mới nhất từ Backend đè thẳng vào Store
+      // Cập nhật store
       if (response.success) {
         setUser(response.data);
         toast.success(t("messages.update_success"));
@@ -120,7 +120,7 @@ const UserProfile = () => {
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
       toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg));
 
-      // Upload xịt thì trả lại ảnh gốc
+      // Hoàn tác UI khi lỗi
       setAvatarPreview(user?.avatar || "");
       setIsPreviewVideo(isVideoUrl(user?.avatar));
     } finally {
@@ -175,7 +175,7 @@ const UserProfile = () => {
       </h1>
 
       <div className="bg-[var(--color-mkhe-input)] rounded-2xl shadow-xl border border-[var(--color-mkhe-border)]/30 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
-        {/* CỘT TRÁI*/}
+
         <div className="md:w-[35%] bg-mkhe-primary/5 p-8 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 flex flex-col items-center transition-colors">
           <div className="relative mb-10 mt-4 group">
             {renderMedia()}
@@ -214,7 +214,7 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* CỘT PHẢI*/}
+
         <div className="flex-1 flex flex-col bg-[var(--color-mkhe-input)] transition-colors">
           <GeneralInfoTab user={user} />
         </div>
@@ -226,7 +226,7 @@ const UserProfile = () => {
         userEmail={user.email}
       />
 
-      {/*MODAL KÉO THẢ FILE */}
+
       <div
         className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4 transition-opacity duration-200 ${
           isUploadModalOpen ? "opacity-100" : "opacity-0 pointer-events-none"
