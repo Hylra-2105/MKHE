@@ -16,8 +16,8 @@ axiosClient.interceptors.request.use(
       delete config.headers["Content-Type"];
     }
 
-    // Moi token từ LocalStorage ra
-    const token = localStorage.getItem("token");
+    // Moi token từ LocalStorage hoặc SessionStorage
+    const token = localStorage.getItem("token") || sessionStorage.getItem("token");
     if (token) {
       // Gắn vào Header theo chuẩn Bearer
       config.headers.Authorization = `Bearer ${token}`;
@@ -45,25 +45,22 @@ axiosClient.interceptors.response.use(
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      // Không redirect nếu đang ở auth pages (login, register, verify-otp, etc)
-      // Để user có thời gian đọc error message từ form
-      const currentPath = window.location.pathname;
-      const authPages = [
-        "/login",
-        "/register",
-        "/verify-otp",
-        "/forgot-password",
-        "/reset-password",
-        "/home",
-      ];
+      // Dựa vào API endpoint bị lỗi thay vì hardcode tên trang web
+      const url = error.config?.url || "";
+      // Các API auth (đăng nhập, quên pass...) trả về 401/403 là do sai thông tin -> Không đá văng
+      // Ngoại trừ /auth/me (dùng để check session) nếu lỗi 401 thì chắc chắn token hỏng -> Đá văng
+      const isAuthBusinessError = url.includes("/auth/") && !url.includes("/auth/me");
 
-      const isAuthPage = authPages.some((page) => currentPath.includes(page));
-
-      if (!isAuthPage) {
-        // Chỉ redirect nếu ở page khác (admin, user management, etc)
+      if (!isAuthBusinessError) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.href = "/login";
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("user");
+        
+        // Tránh redirect nếu đang ở sẵn trang login
+        if (window.location.pathname !== "/login") {
+          window.location.href = "/login";
+        }
       }
     }
     return Promise.reject(error);
