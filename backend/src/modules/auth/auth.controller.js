@@ -126,11 +126,21 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    user.refreshTokens.push(refreshToken);
+    await user.save();
+
     return successResponse(res, 200, "LOGIN_SUCCESS", {
       token: token,
+      refreshToken: refreshToken,
       user: {
         _id: user._id,
         email: user.email,
@@ -236,11 +246,21 @@ export const socialLogin = async (req, res) => {
     const token = jwt.sign(
       { id: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    user.refreshTokens.push(refreshToken);
+    await user.save();
+
     return successResponse(res, 200, "LOGIN_SUCCESS", {
       token: token,
+      refreshToken: refreshToken,
       user: {
         _id: user._id,
         email: user.email,
@@ -356,12 +376,60 @@ export const resetPassword = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    await User.findByIdAndUpdate(userId, { refreshToken: null });
+    const { refreshToken } = req.body;
+    
+    if (refreshToken) {
+      await User.findByIdAndUpdate(userId, { 
+        $pull: { refreshTokens: refreshToken } 
+      });
+    }
 
     return successResponse(res, 200, "LOGOUT_SUCCESS");
   } catch (error) {
     console.error("Logout Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// refresh token
+export const refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return errorResponse(res, 400, "MISSING_REFRESH_TOKEN");
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
+    
+    const user = await User.findById(decoded.id);
+    if (!user || !user.refreshTokens.includes(refreshToken)) {
+      return errorResponse(res, 403, "INVALID_REFRESH_TOKEN");
+    }
+
+    // Xóa token cũ
+    user.refreshTokens = user.refreshTokens.filter(t => t !== refreshToken);
+
+    // Cấp token mới
+    const newAccessToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" }
+    );
+    
+    const newRefreshToken = jwt.sign(
+      { id: user._id },
+      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    user.refreshTokens.push(newRefreshToken);
+    await user.save({ validateBeforeSave: false });
+
+    return successResponse(res, 200, "REFRESH_SUCCESS", {
+      token: newAccessToken,
+      refreshToken: newRefreshToken
+    });
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    return errorResponse(res, 403, "EXPIRED_REFRESH_TOKEN");
   }
 };
 
@@ -454,7 +522,7 @@ export const getMe = async (req, res) => {
     delete userData.password;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
-    delete userData.refreshToken;
+    delete userData.refreshTokens;
 
     return successResponse(res, 200, "GET_ME_SUCCESS", userData);
   } catch (error) {

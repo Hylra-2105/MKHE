@@ -33,9 +33,23 @@ const getSafeToken = () => {
   return token;
 };
 
+const getSafeRefreshToken = () => {
+  let rToken = localStorage.getItem("refreshToken");
+  if (!rToken) {
+    rToken = sessionStorage.getItem("refreshToken");
+  }
+  if (!rToken || rToken === "undefined" || rToken === "null") {
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("refreshToken");
+    return null;
+  }
+  return rToken;
+};
+
 export const useAuthStore = create((set) => ({
   user: getSafeUser(),
   token: getSafeToken(),
+  refreshToken: getSafeRefreshToken(),
   isLoading: false,
 
   setUser: (newUser) => {
@@ -69,11 +83,13 @@ export const useAuthStore = create((set) => ({
 
       const storage = rememberMe ? localStorage : sessionStorage;
       storage.setItem("token", data.token);
+      storage.setItem("refreshToken", data.refreshToken);
       storage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -121,11 +137,13 @@ export const useAuthStore = create((set) => ({
       const data = await authService.socialLogin(socialData);
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -185,12 +203,24 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGOUT
-  logoutAction: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
+  logoutAction: async () => {
+    try {
+      const currentRefreshToken = getSafeRefreshToken();
+      if (currentRefreshToken) {
+        await authService.logout({ refreshToken: currentRefreshToken });
+      }
+    } catch (error) {
+      console.error("Lỗi khi logout backend:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("user");
 
-    set({ user: null, token: null });
+      set({ user: null, token: null, refreshToken: null });
+    }
   },
 }));

@@ -58,10 +58,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
-    refreshToken: {
+    refreshTokens: [{
       type: String,
-      default: null,
-    },
+    }],
     resetPasswordToken: {
       type: String,
       default: null,

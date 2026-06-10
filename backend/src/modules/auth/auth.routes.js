@@ -13,6 +13,7 @@ import {
   verifyChangePasswordOtp,
   changePasswordWithOtp,
   getMe,
+  refreshToken,
 } from "./auth.controller.js";
 
 // Import các Middleware cần thiết
@@ -58,6 +59,9 @@ router.post("/reset-password", validate(resetPasswordSchema), normalizeEmailMidd
 
 // logout route
 router.post("/logout", verifyToken, logoutUser);
+
+// refresh token route
+router.post("/refresh-token", refreshToken);
 
 // send change password otp route
 router.post("/send-change-password-otp", verifyToken, otpLimiter, sendChangePasswordOtp);
