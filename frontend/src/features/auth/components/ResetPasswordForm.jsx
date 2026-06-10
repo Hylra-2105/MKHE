@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/useAuthStore";
 import toast from "react-hot-toast";
+import { Eye, EyeOff } from "lucide-react";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
@@ -16,6 +17,8 @@ export default function ResetPasswordForm() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState({});
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -78,20 +81,33 @@ export default function ResetPasswordForm() {
       <div className="space-y-4 mb-6 text-left">
         <div>
           <InputField
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder={t("pass_placeholder")}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
               if (error.password) setError({ ...error, password: null });
             }}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="cursor-pointer p-1"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            }
           />
           <ErrorText error={error.password} t={t} />
         </div>
 
         <div>
           <InputField
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             placeholder={t("confirm_placeholder")}
             value={confirmPassword}
             onChange={(e) => {
@@ -99,6 +115,19 @@ export default function ResetPasswordForm() {
               if (error.confirmPassword)
                 setError({ ...error, confirmPassword: null });
             }}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="cursor-pointer p-1"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            }
           />
           <ErrorText error={error.confirmPassword} t={t} />
         </div>

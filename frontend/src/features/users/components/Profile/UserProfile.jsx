@@ -19,7 +19,7 @@ import ChangePasswordModal from "./ChangePasswordModal";
 const UserProfile = () => {
   const { t } = useTranslation("user");
 
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, isFetchingUser } = useAuthStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   // STATE CHO AVATAR VÀ DRAG & DROP
@@ -136,6 +136,12 @@ const UserProfile = () => {
       isUploading ? "opacity-50 blur-[2px]" : "opacity-100 blur-0"
     }`;
 
+    if (isFetchingUser) {
+      return (
+        <div className="w-36 h-36 rounded-full bg-mkhe-border/20 animate-pulse border-4 border-[var(--color-mkhe-input)] shadow-xl" />
+      );
+    }
+
     if (isPreviewVideo) {
       return (
         <video
@@ -156,6 +162,7 @@ const UserProfile = () => {
           `https://ui-avatars.com/api/?name=${getLastNameInitial(user.name)}&background=random`
         }
         alt="avatar"
+        loading="lazy"
         className={commonClasses}
       />
     );

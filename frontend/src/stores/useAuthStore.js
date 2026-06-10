@@ -51,6 +51,9 @@ export const useAuthStore = create((set) => ({
   token: getSafeToken(),
   refreshToken: getSafeRefreshToken(),
   isLoading: false,
+  isFetchingUser: false,
+
+  setFetchingUser: (status) => set({ isFetchingUser: status }),
 
   setUser: (newUser) => {
     if (sessionStorage.getItem("token")) {

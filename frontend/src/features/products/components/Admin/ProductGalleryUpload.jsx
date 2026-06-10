@@ -214,6 +214,7 @@ const ProductGalleryUpload = ({
                 <img
                   src={preview.url}
                   alt={`preview-${index}`}
+                  loading="lazy"
                   className={`w-full h-full object-cover transition-all duration-300 ${
                     isUploading ? "opacity-50 blur-[2px]" : "opacity-100"
                   }`}

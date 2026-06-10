@@ -275,6 +275,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
                     `https://ui-avatars.com/api/?name=${getLastNameInitial(user.name)}&background=random`
                   }
                   alt="avatar"
+                  loading="lazy"
                   className="w-32 h-32 rounded-full object-cover border-4 border-[var(--color-mkhe-input)] shadow-xl mb-4 transition-colors"
                 />
               )}

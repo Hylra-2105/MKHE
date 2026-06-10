@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { validateRegistration } from "@/utils/validators";
+import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { auth, googleProvider } from "@/config/firebase";
@@ -24,6 +25,8 @@ export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -164,7 +167,7 @@ export default function RegisterForm() {
 
         <div>
           <InputField
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder={t("password_placeholder")}
             value={password}
             onChange={(e) => {
@@ -172,13 +175,26 @@ export default function RegisterForm() {
               if (errors.password)
                 setErrors((prev) => ({ ...prev, password: null }));
             }}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="cursor-pointer p-1"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            }
           />
           <ErrorText error={errors.password} t={t} />
         </div>
 
         <div>
           <InputField
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             placeholder={t("confirm_password_placeholder")}
             value={confirmPassword}
             onChange={(e) => {
@@ -186,6 +202,19 @@ export default function RegisterForm() {
               if (errors.confirmPassword)
                 setErrors((prev) => ({ ...prev, confirmPassword: null }));
             }}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="cursor-pointer p-1"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            }
           />
           <ErrorText error={errors.confirmPassword} t={t} />
         </div>

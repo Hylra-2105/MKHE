@@ -36,6 +36,7 @@ function App() {
   const setUser = useAuthStore((state) => state.setUser);
   const token = useAuthStore((state) => state.token);
   const logoutAction = useAuthStore((state) => state.logoutAction);
+  const setFetchingUser = useAuthStore((state) => state.setFetchingUser);
   
   const isInitialMount = React.useRef(true);
 
@@ -48,6 +49,7 @@ function App() {
       
       if (token) {
         const fetchFreshUserData = async () => {
+          setFetchingUser(true);
           try {
             const response = await authApi.getMe();
 
@@ -60,13 +62,15 @@ function App() {
           } catch (error) {
             console.log("Chưa đăng nhập hoặc Token hết hạn, đang dọn dẹp...");
             logoutAction();
+          } finally {
+            setFetchingUser(false);
           }
         };
 
         fetchFreshUserData();
       }
     }
-  }, [setUser, token, logoutAction]);
+  }, [setUser, token, logoutAction, setFetchingUser]);
 
   return (
     <Router>

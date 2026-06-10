@@ -19,6 +19,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const [newPass, setNewPass] = useState({ password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   const [timer, setTimer] = useState(0);
   const [hasSentOTP, setHasSentOTP] = useState(false);
@@ -423,7 +424,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     {t("auth.confirm_new_password")}
                   </label>
                   <input
-                    type={showPass ? "text" : "password"}
+                    type={showConfirmPass ? "text" : "password"}
                     value={newPass.confirm}
                     onChange={(e) => {
                       setErrorMsg("");
@@ -433,6 +434,17 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPass(!showConfirmPass)}
+                    className="absolute right-4 top-9 text-[var(--color-mkhe-text)]/50 hover:text-[var(--color-mkhe-primary)] cursor-pointer transition-colors"
+                  >
+                    {showConfirmPass ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
                   {errors.confirm && (
                     <div className="mt-3">
                       <ErrorText error={errors.confirm} />

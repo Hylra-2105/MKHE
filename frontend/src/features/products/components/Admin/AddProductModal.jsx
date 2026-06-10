@@ -358,6 +358,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       <img
                         src={preview.url}
                         alt={`preview-${index}`}
+                        loading="lazy"
                         className="w-full h-full object-cover"
                       />
                     )}
@@ -552,6 +553,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
               <img
                 src={activeLightboxUrl.url || activeLightboxUrl}
                 alt="Zoomed Product"
+                loading="lazy"
                 className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
               />
             )}

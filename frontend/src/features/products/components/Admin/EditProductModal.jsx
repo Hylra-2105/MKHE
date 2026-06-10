@@ -348,6 +348,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                         <img
                           src={url}
                           alt={`kept-${index}`}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       )}
@@ -387,6 +388,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                         <img
                           src={url.url}
                           alt={`new-${index}`}
+                          loading="lazy"
                           className="w-full h-full object-cover"
                         />
                       )}
@@ -427,6 +429,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       <img
                         src={url}
                         alt={`deleted-${index}`}
+                        loading="lazy"
                         className="w-full h-full object-cover grayscale opacity-40 blur-[1px]"
                       />
                       <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
@@ -657,6 +660,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 <img
                   src={activeLightboxUrl.url || activeLightboxUrl}
                   alt="Zoomed Product"
+                  loading="lazy"
                   className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
                 />
               )}

@@ -87,11 +87,22 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    logoutAction();
+  const handleLogout = async () => {
+    await logoutAction();
     setIsDropdownOpen(false);
     toast.success(t("messages.logout_success"));
-    navigate("/login");
+    
+    // Xử lý theo ngữ cảnh (Context-Aware Logout)
+    const protectedRoutes = ["/profile", "/admin", "/checkout"];
+    const isProtected = protectedRoutes.some((route) =>
+      location.pathname.startsWith(route)
+    );
+
+    if (isProtected) {
+      const currentPath = location.pathname + location.search;
+      navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
+    }
+    // Nếu đang ở trang công khai (/home, /shop...) thì không navigate, giữ nguyên vị trí
   };
 
   const navLinks = [
