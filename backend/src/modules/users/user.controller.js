@@ -27,7 +27,7 @@ export const getAllUsers = async (req, res) => {
     const totalUsers = await User.countDocuments(query);
     const users = await User.find(query)
       .collation({ locale: "vi", strength: 2 })
-      .select("-password -otp -refreshToken")
+      .select("-password -refreshToken")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
       id,
       { $set: updateData },
       { returnDocument: "after", runValidators: true },
-    ).select("-password -otp -refreshToken");
+    ).select("-password -refreshToken");
 
     if (!updatedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
 
@@ -153,9 +153,6 @@ export const updateMyProfile = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.otp;
-    delete userData.otpExpires;
-    delete userData.resetPasswordOtp;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
     delete userData.refreshToken;
@@ -188,9 +185,6 @@ export const uploadAvatar = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.otp;
-    delete userData.otpExpires;
-    delete userData.resetPasswordOtp;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
     delete userData.refreshToken;

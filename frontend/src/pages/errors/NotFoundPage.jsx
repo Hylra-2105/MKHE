@@ -13,6 +13,7 @@ export default function NotFoundPage() {
           <img
             src={notFoundImg}
             alt="MKHE Not Found"
+            loading="lazy"
             className="w-56 h-auto object-contain"
           />
         </div>

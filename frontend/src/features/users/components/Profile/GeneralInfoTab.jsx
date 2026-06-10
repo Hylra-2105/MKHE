@@ -37,7 +37,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
     }
   }, [user]);
 
-  // XỬ LÝ SĐT
+  // Định dạng số điện thoại
   let displayPhone = editForm.phone || "";
   if (dialCode) {
     while (displayPhone.startsWith(dialCode)) {
@@ -83,11 +83,10 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
     setIsSaving(true);
 
     try {
-      // Gọi userApi thay vì raw axios
       const response = await userApi.updateProfile(dataToSave);
 
       if (response.success) {
-        // Cập nhật Zustand Store bằng dữ liệu Backend trả về
+        // Cập nhật store sau khi lưu
         setUser(response.data);
         setOriginalEditForm({ ...editForm, phone: response.data.phone });
 
@@ -98,7 +97,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
       console.error("Lỗi update profile:", error);
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
       toast.error(
-        t(errorMsg, { ns: "common" }) || t(errorMsg) || "Cập nhật thất bại!",
+        t(errorMsg, { ns: "common" }) || t(errorMsg)
       );
     } finally {
       setIsSaving(false);
@@ -113,15 +112,15 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   return (
     <>
       <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
-        {/* THÔNG TIN CƠ BẢN */}
+
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
             <User className="w-4 h-4" />{" "}
-            {t("users.basic_info", "BASIC INFORMATION")}
+            {t("users.basic_info")}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <EditableField
-              label={t("users.fullname", "FULL NAME")}
+              label={t("users.fullname")}
               name="name"
               value={editForm.name}
               isEditing={isEditing}
@@ -129,7 +128,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
             />
             <div>
               <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
-                {t("users.email_readonly", "EMAIL ADDRESS (READ-ONLY)")}
+                {t("users.email_readonly")}
               </label>
               <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70">
                 {user.email}
@@ -138,33 +137,33 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
           </div>
         </div>
 
-        {/* ĐỊA CHỈ GIAO HÀNG */}
+
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
             <MapPin className="w-4 h-4" />{" "}
-            {t("users.shipping_contact", "SHIPPING & CONTACT")}
+            {t("users.shipping_contact")}
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
             <EditableField
-              label={t("users.country", "COUNTRY")}
+              label={t("users.country")}
               name="country"
               value={editForm.country}
               isEditing={isEditing}
               onChange={handleInputChange}
-              placeholder={t("users.country_placeholder", "Select Country")}
+              placeholder={t("users.country_placeholder")}
               options={countries}
               t={t}
             />
             <EditableField
-              label={t("users.city", "STATE/PROVINCE")}
+              label={t("users.city")}
               name="city"
               value={editForm.city}
               isEditing={isEditing}
               onChange={handleInputChange}
               placeholder={
                 editForm.country
-                  ? t("users.city_placeholder", "Select State/Province")
-                  : t("users.city_disabled", "Please select a country first")
+                  ? t("users.city_placeholder")
+                  : t("users.city_disabled")
               }
               options={availableStates}
               disabled={
@@ -175,39 +174,36 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
             <EditableField
-              label={t("users.phone", "PHONE NUMBER")}
+              label={t("users.phone")}
               name="phone"
               value={displayPhone}
               isEditing={isEditing}
               onChange={handleInputChange}
               placeholder={
                 editForm.country
-                  ? t("users.phone_placeholder", "Phone Number")
-                  : t("users.city_disabled", "Please select a country first")
+                  ? t("users.phone_placeholder")
+                  : t("users.city_disabled")
               }
               prefix={dialCode}
               disabled={isEditing && !editForm.country}
             />
           </div>
           <EditableField
-            label={t("users.address", "DETAILED ADDRESS")}
+            label={t("users.address")}
             name="address"
             value={editForm.address}
             isEditing={isEditing}
             onChange={handleInputChange}
-            placeholder={t(
-              "users.address_placeholder",
-              "House number, street name...",
-            )}
+            placeholder={t("users.address_placeholder")}
             isTextArea
             t={t}
           />
         </div>
 
-        {/* BIO */}
+
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4">
-            {t("users.bio", "BIOGRAPHY / NOTES")}
+            {t("users.bio")}
           </h4>
           {isEditing ? (
             <textarea
@@ -216,40 +212,26 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               onChange={handleInputChange}
               rows="3"
               className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
-              // 🔥 FIX 1: Phân biệt Placeholder lúc đang Edit
+              // Phân biệt placeholder theo role
               placeholder={
                 isAdminView
-                  ? t(
-                      "users.bio_admin_placeholder",
-                      "Thêm ghi chú về khách hàng này (Chỉ admin xem)...",
-                    )
-                  : t(
-                      "users.bio_user_placeholder",
-                      "Giới thiệu bản thân hoặc ghi chú cá nhân của bạn...",
-                    )
+                  ? t("users.bio_admin_placeholder")
+                  : t("users.bio_user_placeholder")
               }
             />
           ) : (
             <div className="p-4 bg-[var(--color-mkhe-input)]/50 rounded-xl border border-[var(--color-mkhe-border)]/90 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">
-              {/* 🔥 FIX 2: Phân biệt Text lúc chưa có dữ liệu (View mode) */}
+              // Phân biệt thông báo khi trống theo role
               {editForm.bio ||
                 (isAdminView
-                  ? t(
-                      "users.bio_empty_admin",
-                      "Chưa có ghi chú nội bộ nào cho khách hàng này.",
-                    )
-                  : t(
-                      "users.bio_empty_user",
-                      "Bạn chưa cập nhật tiểu sử hoặc ghi chú cá nhân.",
-                    ))}
+                  ? t("users.bio_empty_admin")
+                  : t("users.bio_empty_user"))}
             </div>
           )}
         </div>
       </div>
 
-      {/* FOOTER BUTTONS */}
-      <div className="flex flex-col">
-        <div className="mx-10 border-t border-[var(--color-mkhe-border)] opacity-90 transition-colors" />
+
 
         <div className="p-4 flex justify-end items-center bg-[var(--color-mkhe-input)]/30 shrink-0 rounded-br-2xl transition-colors">
           <div className="flex gap-3">
@@ -260,7 +242,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
                   disabled={isSaving}
                   className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/60 transition-all cursor-pointer disabled:opacity-50"
                 >
-                  <XCircle className="w-4 h-4" /> {t("common.cancel", "Cancel")}
+                  <XCircle className="w-4 h-4" /> {t("common.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
@@ -269,8 +251,8 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
                 >
                   <Check className="w-4 h-4" />{" "}
                   {isSaving
-                    ? t("common.saving", "Saving...")
-                    : t("common.save_info", "Save Information")}
+                    ? t("common.saving")
+                    : t("common.save_info")}
                 </button>
               </>
             ) : (
@@ -278,12 +260,11 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
               >
-                <Edit2 className="w-4 h-4" /> {t("common.edit", "Edit")}
+                <Edit2 className="w-4 h-4" /> {t("common.edit")}
               </button>
             )}
           </div>
         </div>
-      </div>
     </>
   );
 };

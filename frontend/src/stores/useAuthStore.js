@@ -1,37 +1,66 @@
 import { create } from "zustand";
 import { authService } from "@/features/auth/auth.service";
 
-// 🔥 Hàm an toàn để lấy User từ LocalStorage (chống sập web)
+// 🔥 Hàm an toàn để lấy User từ Storage (chống sập web)
 const getSafeUser = () => {
   try {
-    const userString = localStorage.getItem("user");
+    let userString = localStorage.getItem("user");
+    if (!userString) {
+      userString = sessionStorage.getItem("user");
+    }
     if (!userString || userString === "undefined" || userString === "null") {
       return null;
     }
     return JSON.parse(userString);
   } catch (error) {
-    console.warn("Lỗi khi đọc user từ localStorage, đã tự động dọn dẹp.", error);
+    console.warn("Lỗi khi đọc user từ storage, đã tự động dọn dẹp.", error);
     localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     return null;
   }
 };
 
 const getSafeToken = () => {
-  const token = localStorage.getItem("token");
+  let token = localStorage.getItem("token");
+  if (!token) {
+    token = sessionStorage.getItem("token");
+  }
   if (!token || token === "undefined" || token === "null") {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     return null;
   }
   return token;
 };
 
+const getSafeRefreshToken = () => {
+  let rToken = localStorage.getItem("refreshToken");
+  if (!rToken) {
+    rToken = sessionStorage.getItem("refreshToken");
+  }
+  if (!rToken || rToken === "undefined" || rToken === "null") {
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("refreshToken");
+    return null;
+  }
+  return rToken;
+};
+
 export const useAuthStore = create((set) => ({
   user: getSafeUser(),
   token: getSafeToken(),
+  refreshToken: getSafeRefreshToken(),
   isLoading: false,
+  isFetchingUser: false,
+
+  setFetchingUser: (status) => set({ isFetchingUser: status }),
 
   setUser: (newUser) => {
-    localStorage.setItem("user", JSON.stringify(newUser));
+    if (sessionStorage.getItem("token")) {
+      sessionStorage.setItem("user", JSON.stringify(newUser));
+    } else {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    }
     set({ user: newUser });
   },
 
@@ -50,17 +79,20 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGIN
-  loginAction: async (credentials) => {
+  loginAction: async (credentials, rememberMe = false) => {
     set({ isLoading: true });
     try {
       const data = await authService.login(credentials);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("token", data.token);
+      storage.setItem("refreshToken", data.refreshToken);
+      storage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -108,11 +140,13 @@ export const useAuthStore = create((set) => ({
       const data = await authService.socialLogin(socialData);
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -172,10 +206,24 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGOUT
-  logoutAction: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  logoutAction: async () => {
+    try {
+      const currentRefreshToken = getSafeRefreshToken();
+      if (currentRefreshToken) {
+        await authService.logout({ refreshToken: currentRefreshToken });
+      }
+    } catch (error) {
+      console.error("Lỗi khi logout backend:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("user");
 
-    set({ user: null, token: null });
+      set({ user: null, token: null, refreshToken: null });
+    }
   },
 }));

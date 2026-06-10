@@ -17,9 +17,9 @@ try {
       projectId: "mkhe-auth",
     });
   }
-  console.log("🔥 Firebase Admin initialized successfully");
+  console.log("Firebase Admin initialized successfully");
 } catch (error) {
-  console.error("❌ Firebase Admin initialization error:", error);
+  console.error("Firebase Admin initialization error:", error);
 }
 
 export const adminAuth = admin.auth();

@@ -1,8 +1,9 @@
 import { auth, googleProvider } from "@/config/firebase";
 import { signInWithPopup } from "firebase/auth";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -14,12 +15,18 @@ import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 export default function LoginForm() {
   const { t } = useTranslation(["login", "common"]);
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectPath = searchParams.get("redirect");
 
   const { loginAction, socialLoginAction, isLoading } = useAuthStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => {
+    return !!localStorage.getItem("saved_email");
+  });
   const [errors, setErrors] = useState({});
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -48,15 +55,25 @@ export default function LoginForm() {
 
       if (res && res.success) {
         toast.success(t("msg_login_success"), { duration: 3000 });
-        // Redirect immediately to homepage after social login
-        navigate("/");
+        if (redirectPath) {
+          navigate(redirectPath);
+        } else {
+          const userRole = useAuthStore.getState().user?.role;
+          if (userRole === "Admin") {
+            navigate("/admin/users");
+          } else if (userRole === "Staff") {
+            navigate("/admin/products");
+          } else {
+            navigate("/home");
+          }
+        }
       } else {
         const msg = res?.message || "";
         if (msg === "ACCOUNT_BLOCKED") {
           toast.error(t("err_account_blocked"), { duration: 4000 });
         } else {
           toast.error(
-            t(msg, { ns: "common" }) || t(msg) || t("error_default"),
+            t([msg, `common:${msg}`, "error_default"]),
             { duration: 3000 },
           );
         }
@@ -103,7 +120,19 @@ export default function LoginForm() {
       toast.success(t(result.message) || t("msg_login_success"), {
         duration: 3000,
       });
-      navigate("/");
+      
+      if (redirectPath) {
+        navigate(redirectPath);
+      } else {
+        const userRole = useAuthStore.getState().user?.role;
+        if (userRole === "Admin") {
+          navigate("/admin/users");
+        } else if (userRole === "Staff") {
+          navigate("/admin/products");
+        } else {
+          navigate("/home");
+        }
+      }
     } else {
       const msg = result.message || "";
       if (msg === "ACCOUNT_NOT_FOUND")
@@ -116,7 +145,7 @@ export default function LoginForm() {
       } else if (msg === "ACCOUNT_BLOCKED") {
         setErrors({ email: "err_account_blocked" });
       } else {
-        toast.error(t(msg, { ns: "common" }) || t(msg) || t("error_default"), {
+        toast.error(t([msg, `common:${msg}`, "error_default"]), {
           duration: 3000,
         });
       }
@@ -143,10 +172,23 @@ export default function LoginForm() {
         </div>
         <div>
           <InputField
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder={t("password_placeholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            rightElement={
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="cursor-pointer p-1"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
+            }
           />
           <ErrorText error={errors.password} t={t} />
         </div>

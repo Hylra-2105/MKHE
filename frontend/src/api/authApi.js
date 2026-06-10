@@ -97,4 +97,16 @@ export const authApi = {
     const response = await axiosClient.get("/auth/me");
     return response.data;
   },
+
+  // refresh token
+  refreshToken: async (data) => {
+    const response = await axiosClient.post(ENDPOINTS.AUTH.REFRESH_TOKEN, data);
+    return response.data;
+  },
+
+  // logout
+  logout: async (data) => {
+    const response = await axiosClient.post(ENDPOINTS.AUTH.LOGOUT, data);
+    return response.data;
+  },
 };

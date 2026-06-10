@@ -55,6 +55,7 @@ const DnaCard = ({
               <img
                 src={item.image || item.thumbnail || item.images[0]}
                 alt={item.name}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700"
               />
             ) : (

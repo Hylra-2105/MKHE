@@ -66,6 +66,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                         `https://ui-avatars.com/api/?name=${getLastNameInitial(user.name)}&background=random`
                       }
                       alt="avatar"
+                      loading="lazy"
                       className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
                     />
                   )}

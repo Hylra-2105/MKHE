@@ -14,6 +14,7 @@ export default function ForbiddenPage() {
           <img
             src={forbidden}
             alt="MKHE Forbidden Guardian"
+            loading="lazy"
             className="w-56 h-auto object-contain"
           />
         </div>

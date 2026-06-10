@@ -86,7 +86,7 @@ export default function UserManagementFeature() {
     return <ForbiddenPage />;
   }
 
-  // Tạo mảng các số trang: [page-1, page, page+1] nhưng luôn hiển thị 3 số (ẩn những số không hợp lệ)
+  // Hiển thị 3 số trang
   const pageNumbers = [page - 1, page, page + 1];
 
   return (
@@ -138,7 +138,7 @@ export default function UserManagementFeature() {
           </span>
 
           <div className="flex items-center gap-1">
-            {/* Nút Previous (<) - LUÔN CHIẾM CHỖ, ẩn khi page = 1 */}
+
             <button
               onClick={() => setPage(page - 1)}
               disabled={page === 1 || loading}
@@ -151,7 +151,7 @@ export default function UserManagementFeature() {
               &lt;
             </button>
 
-            {/* CÁC SỐ TRANG - LUÔN HIỂN THỊ 3 SỐ, ẩn những số không hợp lệ */}
+
             {pageNumbers.map((pageNum) => {
               const isValid = pageNum >= 1 && pageNum <= totalPages;
               const isActive = page === pageNum;
@@ -174,7 +174,7 @@ export default function UserManagementFeature() {
               );
             })}
 
-            {/* Nút Next (>) - LUÔN CHIẾM CHỖ, ẩn khi page = totalPages */}
+
             <button
               onClick={() => setPage(page + 1)}
               disabled={page === totalPages || loading}

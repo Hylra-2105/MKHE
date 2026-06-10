@@ -47,4 +47,13 @@ export const authService = {
   resetPassword: async (data) => {
     return await authApi.resetPassword(data);
   },
+
+  refreshToken: async (data) => {
+    const response = await authApi.refreshToken(data);
+    return response.data; // { token, refreshToken }
+  },
+
+  logout: async (data) => {
+    return await authApi.logout(data);
+  },
 };

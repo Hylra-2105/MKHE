@@ -29,20 +29,20 @@ const ProductManagementPage = () => {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
-  // 1. THÊM STATE CHO BỘ LỌC MÃ GEN
+  // State cho bộ lọc mã gen
   const [dnaFilter, setDnaFilter] = useState("");
 
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      // TRUYỀN status=ADMIN_ALL ĐỂ LẤY TẤT CẢ SẢN PHẨM (kể cả DRAFT, HIDDEN, v.v)
+      // Lấy tất cả sản phẩm (kể cả DRAFT, HIDDEN)
       const res = await productApi.getAllProducts(
         page,
         limit,
         appliedSearch,
         categoryFilter,
         dnaFilter,
-        "ADMIN_ALL", // Thêm status parameter để lấy tất cả
+        "ADMIN_ALL",
       );
 
       if (res.success) {
@@ -57,7 +57,6 @@ const ProductManagementPage = () => {
     }
   }, [page, limit, appliedSearch, categoryFilter, dnaFilter, t]);
 
-  // 3. THÊM fetchProducts VÀO dependency array
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -73,7 +72,7 @@ const ProductManagementPage = () => {
     setCategoryFilter(e.target.value);
   };
 
-  // 4. HÀM XỬ LÝ KHI ĐỔI MÃ GEN
+  // Xử lý khi đổi mã gen
   const handleDnaChange = (e) => {
     setPage(1);
     setDnaFilter(e.target.value);
@@ -99,13 +98,12 @@ const ProductManagementPage = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          {/* NÚT THÙNG RÁC */}
           <button
             onClick={() => setIsTrashModalOpen(true)}
             className="flex items-center gap-2 bg-mkhe-primary text-white px-4 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
           >
             <Trash2 className="w-4 h-4 text-white" />
-            {t("page.trash_btn", "Thùng rác")}
+            {t("page.trash_btn")}
           </button>
 
           <button
@@ -124,7 +122,6 @@ const ProductManagementPage = () => {
         categoryFilter={categoryFilter}
         handleCategoryChange={handleCategoryChange}
         handleSearch={handleSearch}
-        // 5. TRUYỀN PROPS XUỐNG COMPONENT CON
         dnaFilter={dnaFilter}
         handleDnaChange={handleDnaChange}
       />
