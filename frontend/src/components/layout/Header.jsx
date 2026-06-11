@@ -403,7 +403,7 @@ export default function Header() {
             </button>
 
             <Link
-              to="/login"
+              to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`}
               className="text-xs uppercase tracking-wider font-semibold text-mkhe-primary border border-mkhe-primary px-4 py-1.5 rounded hover:bg-mkhe-primary hover:text-white transition-all ml-1 cursor-pointer"
             >
               {t("guest_menu.login")}

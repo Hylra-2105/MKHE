@@ -9,6 +9,7 @@ import {
   restoreProduct,
   uploadProductGallery,
   deleteProductImages,
+  uploadProduct3D, 
 } from "./product.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { checkRole } from "../../middlewares/checkRole.js";
@@ -37,11 +38,20 @@ router.post(
   "/:id/upload-gallery",
   verifyToken,
   checkRole(["Admin", "Staff"]),
-  uploadCloud.array("images", 10), // Max 10 ảnh
+  uploadCloud.array("images", 10), 
   uploadProductGallery,
 );
 
-// Xóa images từ sản phẩm (Cloudinary + Database)
+// upload 3d 
+router.post(
+  "/:id/upload-3d",
+  verifyToken,
+  checkRole(["Admin", "Staff"]),
+  uploadCloud.single("file3D"), 
+  uploadProduct3D,
+);
+
+// Xóa images từ sản phẩm
 router.delete(
   "/:id/delete-images",
   verifyToken,

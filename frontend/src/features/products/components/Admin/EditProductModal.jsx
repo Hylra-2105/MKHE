@@ -7,6 +7,8 @@ import {
   UploadCloud,
   ImageIcon,
   RotateCcw,
+  Fingerprint,
+  Box,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -25,15 +27,22 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const [formData, setFormData] = useState({
     name: "",
     sku: "",
+    vendor: "",
     description: "",
     categoryMatrix: "B2B_Luxury",
+    culturalDNA: "OTHER",
     price: "",
     stock: "",
     status: "DRAFT",
+    hasDPP: false,
+    artisanName: "",
+    gpsLocation: "",
   });
 
-  // --- STATE FOR IMAGES ---
+  // --- STATE FOR IMAGES & 3D ---
   const fileInputRef = useRef(null);
+  const fileInput3DRef = useRef(null);
+
   const [keptImages, setKeptImages] = useState([]); // Ảnh cũ giữ lại
   const [deletedImages, setDeletedImages] = useState([]); // Ảnh cũ đánh dấu xóa
   const [newImageFiles, setNewImageFiles] = useState([]); // Ảnh mới từ máy (File)
@@ -41,6 +50,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   const [isDragging, setIsDragging] = useState(false);
   const [activeLightboxUrl, setActiveLightboxUrl] = useState(null);
+
+  const [file3D, setFile3D] = useState(null);
+  const [isDragging3D, setIsDragging3D] = useState(false);
 
   const categories = [
     { value: "B2B_Luxury", label: t("categories.B2B_Luxury") },
@@ -62,23 +74,37 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     { value: "OUT_OF_STOCK", label: t("statuses.OUT_OF_STOCK") },
   ];
 
+  const vendors = [
+    { value: "HTX Châu Giang", label: "HTX Châu Giang" },
+    { value: "HTX Văn Giáo", label: "HTX Văn Giáo" },
+    { value: "Cô Ba Khăn Rằn", label: "Cô Ba Khăn Rằn" },
+    { value: "Gốm Phnôm Pi", label: "Gốm Phnôm Pi" },
+    { value: "Hanhsilk", label: "Hanhsilk" },
+    { value: "MKHE", label: "MKHE" }
+  ];
+
   useEffect(() => {
     if (product && isOpen) {
       setFormData({
         name: product.name || "",
         sku: product.sku || "",
+        vendor: product.vendor || "",
         description: product.description || "",
         categoryMatrix: product.categoryMatrix || "B2B_Luxury",
         culturalDNA: product.culturalDNA || "OTHER",
         price: product.price || "",
         stock: product.stock || "",
         status: product.status || "DRAFT",
+        hasDPP: product.hasDPP || false,
+        artisanName: product.artisanName || "",
+        gpsLocation: product.gpsLocation || "",
       });
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
       setDeletedImages([]);
       setNewImageFiles([]);
       setNewImagePreviews([]);
+      setFile3D(null);
       setShowDeleteConfirm(false);
     }
   }, [product, isOpen]);
@@ -86,8 +112,40 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   if (!isOpen || !product) return null;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
+
+  // ================= KÉO THẢ & XỬ LÝ FILE 3D (.GLB) =================
+  const handleDragOver3D = (e) => { e.preventDefault(); setIsDragging3D(true); };
+  const handleDragLeave3D = (e) => { e.preventDefault(); setIsDragging3D(false); };
+  const handleDrop3D = (e) => {
+    e.preventDefault();
+    setIsDragging3D(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      process3DFile(e.dataTransfer.files[0]);
+    }
+  };
+  const handleFileInput3D = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      process3DFile(e.target.files[0]);
+    }
+  };
+
+  const process3DFile = (file) => {
+    if (!file.name.endsWith('.glb') && !file.name.endsWith('.gltf')) {
+      return toast.error("Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)");
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      return toast.error("Kích thước file 3D không được vượt quá 5MB để tối ưu tốc độ.");
+    }
+    setFile3D(file);
+    if (fileInput3DRef.current) fileInput3DRef.current.value = "";
+  };
+
+  const remove3DFile = (e) => {
+    e.stopPropagation();
+    setFile3D(null);
   };
 
   // ================= QUẢN LÝ ẢNH =================
@@ -167,8 +225,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.sku || !formData.price) {
-      return toast.error(t("messages.fill_required"));
+    if (!formData.name || !formData.sku || !formData.price || !formData.vendor) {
+      return toast.error("Vui lòng điền đủ Tên, SKU, Giá và Nhà cung cấp.");
+    }
+    if (formData.hasDPP) {
+      if (!formData.artisanName || !formData.gpsLocation) {
+        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS.");
+      }
     }
 
     setLoading(true);
@@ -183,23 +246,27 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         throw new Error("Product update failed");
       }
 
-      // 2. UPLOAD ẢNH MỚI NẾU CÓ
+      // 2. UPLOAD ẢNH & 3D MỚI NẾU CÓ
+      const uploadPromises = [];
       if (newImageFiles.length > 0) {
         const uploadData = new FormData();
         newImageFiles.forEach((file) => uploadData.append("images", file));
+        uploadPromises.push(productApi.uploadProductGallery(product._id, uploadData));
+      }
 
+      if (formData.hasDPP && file3D) {
+        const upload3DData = new FormData();
+        upload3DData.append("file3D", file3D);
+        uploadPromises.push(productApi.uploadProduct3D(product._id, upload3DData));
+      }
+
+      if (uploadPromises.length > 0) {
         try {
-          const uploadResponse = await productApi.uploadProductGallery(
-            product._id,
-            uploadData,
-          );
-          if (!uploadResponse.success) {
-            throw new Error("Image upload failed");
-          }
+          await Promise.all(uploadPromises);
         } catch (uploadError) {
           console.error("[EditProduct] Upload error:", uploadError);
-          toast.error(t("messages.gallery_upload_error"));
-          throw uploadError;
+          toast.error("Lỗi upload ảnh hoặc file 3D");
+          // Continue anyway
         }
       }
 
@@ -265,6 +332,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     setNewImagePreviews([]);
     setDeletedImages([]);
     setKeptImages(product.images || []);
+    setFile3D(null);
     onClose();
   };
 
@@ -290,7 +358,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         {/* BODY */}
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* CỘT TRÁI: QUẢN LÝ ẢNH */}
-          <div className="md:w-[40%] bg-mkhe-primary/5 p-6 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 overflow-y-auto custom-scrollbar">
+          <div className="md:w-[35%] bg-mkhe-primary/5 p-6 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 overflow-y-auto custom-scrollbar">
             <div className="flex items-center gap-2 mb-4">
               <ImageIcon className="w-4 h-4 text-mkhe-primary" />
               <label className="text-xs font-bold text-mkhe-text/70 uppercase">
@@ -454,147 +522,129 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
           </div>
 
           {/* CỘT PHẢI: FORM THÔNG TIN */}
-          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
-            <form
-              id="edit-product-form"
-              onSubmit={handleSubmit}
-              className="space-y-5"
-            >
-              <div className="grid grid-cols-12 gap-4">
-                <div className="space-y-1 col-span-7">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.name")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                  />
+          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
+            <form id="edit-product-form" onSubmit={handleSubmit} className="space-y-6">
+              
+              {/* KHỐI 1: THÔNG TIN CƠ BẢN */}
+              <div className="space-y-4">
+                
+                {/* DÒNG 1: TÊN SẢN PHẨM & SKU */}
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="space-y-1 col-span-8">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
+                    <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  </div>
+                  <div className="space-y-1 col-span-4">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
+                    <input type="text" name="sku" required value={formData.sku} disabled className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed" />
+                  </div>
                 </div>
 
-                <div className="space-y-1 col-span-5">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.status")}
-                  </label>
-                  <Dropdown
-                    value={formData.status}
-                    options={statuses}
-                    onChange={(val) =>
-                      handleChange({ target: { name: "status", value: val } })
-                    }
-                    placeholder={t("modal.status")}
-                    className="w-full"
-                    triggerClassName="p-3.5 rounded-xl text-sm"
-                    optionClassName="text-sm"
-                  />
+                {/* DÒNG 2: PHÂN LOẠI, MÃ GEN & TRẠNG THÁI */}
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="space-y-1 col-span-4">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-red-500">*</span></label>
+                    <Dropdown value={formData.categoryMatrix} options={categories} onChange={(val) => handleChange({ target: { name: "categoryMatrix", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                  </div>
+                  <div className="space-y-1 col-span-4">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-red-500">*</span></label>
+                    <Dropdown value={formData.culturalDNA} options={culturalDNAs} onChange={(val) => handleChange({ target: { name: "culturalDNA", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                  </div>
+                  <div className="space-y-1 col-span-4">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.status")}</label>
+                    <Dropdown value={formData.status} options={statuses} onChange={(val) => handleChange({ target: { name: "status", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                  </div>
+                </div>
+
+                {/* DÒNG 3: NHÀ CUNG CẤP, GIÁ BÁN, TỒN KHO */}
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="space-y-1 col-span-6">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">Nhà cung cấp <span className="text-red-500">*</span></label>
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => handleChange({ target: { name: "vendor", value: val } })} placeholder="Chọn Đối tác" className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                  </div>
+                  <div className="space-y-1 col-span-3">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
+                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => handleChange({ target: { name: "price", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  </div>
+                  <div className="space-y-1 col-span-3">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
+                    <input type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.description")}</label>
+                  <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm resize-none" />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.sku")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
+              {/* KHỐI 2: HỆ SINH THÁI HỘ CHIẾU SỐ (DPP) */}
+              <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2 relative z-10">
+                  <div className="flex items-center gap-2">
+                    <Fingerprint className="w-5 h-5 text-mkhe-primary" />
+                    <div>
+                      <h3 className="text-sm font-bold text-mkhe-text">Cập nhật Hộ chiếu số (DPP)</h3>
+                      <p className="text-[11px] text-mkhe-text/60">Tích hợp chip NFC và trải nghiệm văn hóa 3D</p>
+                    </div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="hasDPP" checked={formData.hasDPP} onChange={handleChange} className="sr-only peer" />
+                    <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
                   </label>
-                  <input
-                    type="text"
-                    name="sku"
-                    required
-                    value={formData.sku}
-                    disabled
-                    className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed"
-                  />
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.category")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <Dropdown
-                    value={formData.categoryMatrix}
-                    options={categories}
-                    onChange={(val) =>
-                      handleChange({
-                        target: { name: "categoryMatrix", value: val },
-                      })
-                    }
-                    placeholder={t("modal.category")}
-                    className="w-full"
-                    triggerClassName="p-3.5 rounded-xl text-sm"
-                  />
-                </div>
-                <div className="space-y-1 col-span-6">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.cultural_dna", "Mã gen Văn hóa")}{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <Dropdown
-                    value={formData.culturalDNA}
-                    options={culturalDNAs}
-                    onChange={(val) =>
-                      setFormData((prev) => ({ ...prev, culturalDNA: val }))
-                    }
-                    placeholder="Chọn Mã gen"
-                    className="w-full"
-                    triggerClassName="p-3.5 rounded-xl text-sm"
-                    optionClassName="text-sm truncate"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.price")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="price"
-                    value={formatNumber(formData.price)}
-                    onChange={(e) => {
-                      const rawValue = parseNumber(e.target.value);
-                      handleChange({
-                        target: { name: "price", value: rawValue },
-                      });
-                    }}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                  />
+                <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[500px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Tên nghệ nhân chế tác <span className="text-red-500">*</span></label>
+                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder="VD: Mohamad, Cô Ba..." />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Tọa độ GPS Làng nghề <span className="text-red-500">*</span></label>
+                      <input type="text" name="gpsLocation" value={formData.gpsLocation} onChange={handleChange} required={formData.hasDPP} className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder="VD: 10.823, 106.629" />
+                    </div>
+                  </div>
+                  
+                  {/* KÉO THẢ FILE 3D XỊN XÒ */}
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1 flex items-center gap-1">
+                      <Box className="w-3 h-3" /> File mô hình 3D (.glb, .gltf) - Dưới 5MB
+                    </label>
+                    <div
+                      onDragOver={handleDragOver3D}
+                      onDragLeave={handleDragLeave3D}
+                      onDrop={handleDrop3D}
+                      onClick={() => fileInput3DRef.current?.click()}
+                      className={`border border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${
+                        isDragging3D
+                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-[1.02]"
+                          : "border-mkhe-border/50 bg-transparent hover:border-mkhe-primary hover:bg-mkhe-primary/5"
+                      }`}
+                    >
+                      <input type="file" ref={fileInput3DRef} onChange={handleFileInput3D} accept=".glb,.gltf" className="hidden" />
+                      
+                      {file3D ? (
+                        <div className="flex items-center gap-3 w-full justify-between bg-mkhe-primary/10 p-2.5 rounded-lg border border-mkhe-primary/30">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <Box className="w-5 h-5 text-mkhe-primary shrink-0" />
+                            <span className="text-sm text-mkhe-text font-medium truncate">{file3D.name || "File 3D hiện tại"}</span>
+                          </div>
+                          <button type="button" onClick={remove3DFile} className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-md transition-colors">
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center gap-2 py-3">
+                          <UploadCloud className={`w-6 h-6 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
+                          <span className="text-xs font-medium text-mkhe-text/70 text-center">
+                            {product.file3D ? "Sản phẩm đã có file 3D. Click để chọn file 3D khác thay thế." : "Kéo thả hoặc click để chọn file 3D (.glb)"}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("modal.stock")}
-                  </label>
-                  <input
-                    type="text"
-                    name="stock"
-                    value={formatNumber(formData.stock)}
-                    onChange={(e) => {
-                      const rawValue = parseNumber(e.target.value);
-                      handleChange({
-                        target: { name: "stock", value: rawValue },
-                      });
-                    }}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                  {t("modal.description")}
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm resize-none"
-                />
               </div>
             </form>
           </div>

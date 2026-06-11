@@ -28,15 +28,20 @@ const productSchema = new mongoose.Schema(
       enum: ["CHAM", "KHMER", "KINH", "OTHER"],
       default: "OTHER",
     },
+    vendor: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     price: {
       type: Number,
       required: true,
-      min: [0, "Giá sản phẩm không được số âm"],
+      min: [0, "PRICE_CANNOT_BE_NEGATIVE"], 
     },
     stock: {
       type: Number,
       required: true,
-      min: [0, "Tồn kho không được số âm"],
+      min: [0, "STOCK_CANNOT_BE_NEGATIVE"],
       default: 0,
     },
     images: [
@@ -48,6 +53,21 @@ const productSchema = new mongoose.Schema(
       type: String,
       enum: ["DRAFT", "PUBLISHED", "OUT_OF_STOCK", "HIDDEN"],
       default: "DRAFT",
+    },
+    hasDPP: {
+      type: Boolean,
+      default: false,
+    },
+    artisanName: {
+      type: String,
+      trim: true,
+    },
+    gpsLocation: {
+      type: String,
+      trim: true,
+    },
+    file3D: {
+      type: String, 
     },
     dppProfileId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -63,10 +83,21 @@ const productSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Middleware (Hook) tự động: Nếu cập nhật tồn kho về 0 thì tự chuyển status thành OUT_OF_STOCK
+// Middleware (Hook) xử lý logic tự động trước khi save
 productSchema.pre("save", async function () {
+  // 1. Logic tồn kho
   if (this.stock === 0 && this.status === "PUBLISHED") {
     this.status = "OUT_OF_STOCK";
+  }
+
+  // Logic Validate bắt buộc cho Hộ chiếu số
+  if (this.hasDPP) {
+    if (!this.artisanName) {
+      throw new Error("ARTISAN_NAME_REQUIRED");
+    }
+    if (!this.gpsLocation) {
+      throw new Error("GPS_LOCATION_REQUIRED");
+    }
   }
 });
 

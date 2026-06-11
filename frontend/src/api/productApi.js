@@ -9,6 +9,7 @@ export const productApi = {
     culturalDNA = "",
     status = "",
     inStock = false,
+    vendor = "",
   ) => {
     const response = await axiosClient.get("/products", {
       params: {
@@ -19,6 +20,7 @@ export const productApi = {
         culturalDNA,
         status,
         inStock,
+        vendor,
       },
     });
     return response.data;
@@ -71,6 +73,16 @@ export const productApi = {
       `/products/${productId}/upload-gallery`,
       formData
     );
+    return response.data;
+  },
+
+  // Upload hộ chiếu số (3D file)
+  uploadProduct3D: async (id, formData) => {
+    const response = await axiosClient.post(`/products/${id}/upload-3d`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data;
   },
 
