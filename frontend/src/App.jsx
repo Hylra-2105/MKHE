@@ -25,6 +25,7 @@ import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 import HomePage from "./pages/home/HomePage";
 import UserManagement from "./pages/users/UserManagementPage";
+import ProductManagementPage from "./pages/products/ProductManagementPage";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -32,31 +33,44 @@ import NotFoundPage from "./pages/errors/NotFoundPage";
 import ProfilePage from "@/pages/users/ProfilePage";
 
 function App() {
-  const { setUser } = useAuthStore();
+  const setUser = useAuthStore((state) => state.setUser);
+  const token = useAuthStore((state) => state.token);
+  const logoutAction = useAuthStore((state) => state.logoutAction);
+  const setFetchingUser = useAuthStore((state) => state.setFetchingUser);
+  
+  const isInitialMount = React.useRef(true);
 
-  // ==========================================
-  // LOGIC TỰ ĐỘNG LẤY DATA MỚI KHI F5 (RELOAD)
-  // ==========================================
   useEffect(() => {
-    const fetchFreshUserData = async () => {
-      try {
-        const response = await authApi.getMe();
+    // Chỉ fetch 1 LẦN DUY NHẤT khi người dùng tải lại trang (F5)
+    // Nếu người dùng vừa mới đăng nhập, token thay đổi từ null -> string, ta KHÔNG fetch lại nữa
+    // vì lúc đăng nhập backend đã trả về thông tin user mới nhất rồi.
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      
+      if (token) {
+        const fetchFreshUserData = async () => {
+          setFetchingUser(true);
+          try {
+            const response = await authApi.getMe();
 
-        if (response && response.success) {
-          // Bắt data trả về. Tùy vào hàm successResponse ở Backend cấu hình mà nó nằm ở .user hoặc .data
-          const userData = response.user || response.data;
-          if (userData) {
-            setUser(userData);
+            if (response && response.success) {
+              const userData = response.data || response.user;
+              if (userData) {
+                setUser(userData);
+              }
+            }
+          } catch (error) {
+            console.log("Chưa đăng nhập hoặc Token hết hạn, đang dọn dẹp...");
+            logoutAction();
+          } finally {
+            setFetchingUser(false);
           }
-        }
-      } catch (error) {
-        // Lỗi này thường do chưa đăng nhập (không có token), cứ kệ nó không cần báo lỗi popup lên màn hình
-        console.log("Chưa đăng nhập hoặc Token hết hạn");
-      }
-    };
+        };
 
-    fetchFreshUserData();
-  }, [setUser]);
+        fetchFreshUserData();
+      }
+    }
+  }, [setUser, token, logoutAction, setFetchingUser]);
 
   return (
     <Router>
@@ -72,6 +86,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin"]}>
                 <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/products"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ProductManagementPage />
               </ProtectedRoute>
             }
           />

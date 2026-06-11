@@ -23,5 +23,6 @@
   "err_empty_name": "Vui lòng nhập tên!",
   "err_name_length": "Tên phải có ít nhất 2 ký tự!",
   "otp_sent": "Mã OTP đã được gửi đến email của bạn!",
-  "err_email_exists": "Email này đã được đăng ký!"
+  "err_email_exists": "Email này đã được đăng ký!",
+  "error_social_login": "Đăng nhập bằng mạng xã hội thất bại! Vui lòng thử lại."
 }

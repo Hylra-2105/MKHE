@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -14,6 +13,7 @@ export default function NotFoundPage() {
           <img
             src={notFoundImg}
             alt="MKHE Not Found"
+            loading="lazy"
             className="w-56 h-auto object-contain"
           />
         </div>

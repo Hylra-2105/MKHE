@@ -25,5 +25,6 @@
   "err_account_blocked": "Tài khoản của bạn đã bị khóa bởi quản trị viên. Vui lòng liên hệ hỗ trợ.",
   "LOGIN_SUCCESS": "Đăng nhập thành công!",
   "ACCOUNT_BLOCKED": "Tài khoản của bạn đã bị khóa bởi quản trị viên. Vui lòng liên hệ hỗ trợ.",
-  "err_empty_email": "Vui lòng nhập email!"
+  "err_empty_email": "Vui lòng nhập email!",
+  "error_social_login": "Đăng nhập bằng mạng xã hội thất bại! Vui lòng thử lại."
 }

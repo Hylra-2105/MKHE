@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { X, Eye, EyeOff, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
+import ErrorText from "@/components/ui/ErrorText";
 import { maskEmail } from "@/utils/validators";
 import { authApi } from "@/api/authApi";
 
 const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
-  const { t, i18n } = useTranslation("user");
+  const { t, i18n } = useTranslation(["user", "common"]);
   const currentLang = i18n.language;
 
   const [step, setStep] = useState("verify");
@@ -18,14 +19,14 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const [newPass, setNewPass] = useState({ password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   const [timer, setTimer] = useState(0);
   const [hasSentOTP, setHasSentOTP] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [errors, setErrors] = useState({});
 
-  // =========================================================
-  // BƯỚC 1: KHÔI PHỤC TRẠNG THÁI TỪ LOCALSTORAGE KHI F5 (RELOAD) PAGÉ
-  // =========================================================
+  // Khôi phục trạng thái OTP từ localStorage khi reload trang
   useEffect(() => {
     const expiresAt = localStorage.getItem("mkhe_otp_expires_at");
     const savedStep = localStorage.getItem("mkhe_otp_step");
@@ -41,7 +42,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       }
     }
 
-    // Nếu đã từng gửi trước đó nhưng thời gian đếm ngược kết thúc, vẫn giữ lại trạng thái form cho người dùng nhập tiếp
+    // Giữ trạng thái form nếu đã gửi OTP nhưng hết thời gian đếm ngược
     if (savedHasSent === "true") {
       setHasSentOTP(true);
       setStep(savedStep || "verify");
@@ -49,9 +50,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     }
   }, []);
 
-  // =========================================================
-  // BƯỚC 2: ĐẾM NGƯỢC THỜI GIAN (Bỏ điều kiện isOpen để đóng modal vẫn đếm ngầm)
-  // =========================================================
+  // Đếm ngược thời gian chờ OTP
   useEffect(() => {
     let interval;
     if (timer > 0 && step === "verify") {
@@ -62,7 +61,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     return () => clearInterval(interval);
   }, [timer, step]);
 
-  // Tự động kích hoạt khi gõ đủ 6 số
+  // Tự động xác thực khi nhập đủ 6 số OTP
   useEffect(() => {
     const otpString = otp.join("");
     if (otpString.length === 6 && !loading && step === "verify") {
@@ -70,9 +69,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     }
   }, [otp]);
 
-  // =========================================================
-  // BƯỚC 3: XỬ LÝ KHI NGƯỜI DÙNG BẤM MỞ MODAL (Kiểm tra chặn spam mail)
-  // =========================================================
+  // Gửi OTP khi mở Modal
   useEffect(() => {
     if (isOpen) {
       const expiresAt = localStorage.getItem("mkhe_otp_expires_at");
@@ -81,27 +78,26 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
         ? Math.ceil((parseInt(expiresAt) - Date.now()) / 1000)
         : 0;
 
-      // TH1: Nếu đã xác thực thành công và đang ở bước nhập mật khẩu mới
-      // -> Giữ nguyên form update, không gửi OTP mới.
+      // Giữ form cập nhật mật khẩu nếu đã xác thực thành công
       if (savedStep === "update") {
         setStep("update");
         return;
       }
 
-      // TH2: Nếu đồng hồ đếm ngược lock vẫn đang chạy -> Giữ nguyên form, không gửi lại mail mới
+      // Giữ form nếu đang trong thời gian chờ
       if (remaining > 0) {
         setTimer(remaining);
         return;
       }
 
-      // TH3: Gửi OTP (lần đầu hoặc khi đã hết 60s chờ)
+      // Gửi OTP khi hết thời gian chờ hoặc lần đầu mở
       const sendInitialOtp = async () => {
         try {
           setErrorMsg("");
           await authApi.sendChangePasswordOtp({ language: currentLang });
           toast.success(t("messages.otp_sent_success"));
 
-          // Lưu mốc thời gian khóa nút "Gửi lại" trong 60 giây tiếp theo xuống LocalStorage
+          // Lưu thời gian khóa gửi lại OTP vào localStorage
           const lockUntil = Date.now() + 60000;
           localStorage.setItem("mkhe_otp_expires_at", lockUntil.toString());
           localStorage.setItem("mkhe_otp_has_sent", "true");
@@ -112,14 +108,17 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           setStep("verify");
         } catch (error) {
           const msg = error.response?.data?.message || "SERVER_ERROR";
-          setErrorMsg(t(msg));
+          // Try user namespace first, fallback to common namespace
+          let translated = t(msg);
+          if (translated === msg) translated = t(msg, { ns: "common" });
+          setErrorMsg(translated);
         }
       };
       sendInitialOtp();
     }
   }, [isOpen, currentLang, t]);
 
-  // Nếu chưa từng bấm Đổi mật khẩu bao giờ thì tàng hình hoàn toàn
+  // Ẩn modal nếu chưa từng mở
   if (!isOpen && !hasSentOTP) return null;
 
   const maskedEmail = maskEmail(userEmail);
@@ -135,11 +134,12 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       setTimer(0);
       setOtp(["", "", "", "", "", ""]);
       setNewPass({ password: "", confirm: "" });
+      setErrors({});
     }
     onClose();
   };
 
-  // ================= CÁC HÀM XỬ LÝ 6 Ô OTP =================
+  // Xử lý nhập OTP
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (isNaN(value)) return;
@@ -175,7 +175,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       inputRefs.current[index - 1].focus();
     }
   };
-  // ==========================================================
+
 
   const executeVerifyOTP = async (otpString) => {
     setLoading(true);
@@ -187,7 +187,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
       if (response.success) {
         setStep("update");
-        localStorage.setItem("mkhe_otp_step", "update"); // Lưu lại bước để F5 không bay mất trang nhập pass mới
+        localStorage.setItem("mkhe_otp_step", "update"); // Lưu trạng thái để không mất form khi reload
         toast.success(t("otp.verified"));
       }
     } catch (error) {
@@ -210,9 +210,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
     setErrorMsg("");
-    if (newPass.password.length < 6) return setErrorMsg(t("errors.pass_short"));
+    setErrors({});
+    if (newPass.password.length < 6) return setErrors({ password: t("errors.pass_short") });
     if (newPass.password !== newPass.confirm)
-      return setErrorMsg(t("errors.pass_mismatch"));
+      return setErrors({ confirm: t("errors.pass_mismatch") });
 
     setLoading(true);
     try {
@@ -224,7 +225,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       if (response.success) {
         toast.success(t("messages.change_pass_success"));
 
-        // ĐỔI THÀNH CÔNG: Dọn sạch mọi dấu vết trong máy
+        // Xóa trạng thái OTP sau khi đổi mật khẩu thành công
         localStorage.removeItem("mkhe_otp_expires_at");
         localStorage.removeItem("mkhe_otp_has_sent");
         localStorage.removeItem("mkhe_otp_step");
@@ -238,7 +239,14 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       }
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg));
+      let translated = t(msg);
+      if (translated === msg) translated = t(msg, { ns: "common" });
+      
+      if (msg === "PASSWORD_MUST_BE_DIFFERENT") {
+        setErrors({ password: translated });
+      } else {
+        setErrorMsg(translated);
+      }
     } finally {
       setLoading(false);
     }
@@ -258,7 +266,9 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       toast.success(t("messages.otp_sent_success"));
     } catch (error) {
       const msg = error.response?.data?.message || "SERVER_ERROR";
-      setErrorMsg(t(msg));
+      let translated = t(msg);
+      if (translated === msg) translated = t(msg, { ns: "common" });
+      setErrorMsg(translated);
     }
   };
 
@@ -274,7 +284,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           isOpen ? "scale-100" : "scale-95"
         }`}
       >
-        {/* HEADER */}
+
         <div className="flex items-center justify-between mx-6 pt-6 pb-5 border-b border-[var(--color-mkhe-border)]/50 transition-colors">
           <div className="w-10"></div>
           <h2 className="text-lg font-bold text-gradient-gold">
@@ -290,7 +300,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
           </div>
         </div>
 
-        {/* BODY */}
+
         <div className="p-8">
           {step === "verify" ? (
             <form
@@ -323,8 +333,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                  <Info className="w-4 h-4" />
+                <div className="flex items-center gap-1.5 -mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-4">
+                  <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}
@@ -378,9 +388,10 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     value={newPass.password}
                     onChange={(e) => {
                       setErrorMsg("");
+                      setErrors((prev) => ({ ...prev, password: null }));
                       setNewPass({ ...newPass, password: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
+                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
                   />
                   <button
@@ -394,6 +405,11 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                       <Eye className="w-5 h-5" />
                     )}
                   </button>
+                  {errors.password && (
+                    <div className="mt-3">
+                      <ErrorText error={errors.password} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="relative">
@@ -401,21 +417,38 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
                     {t("auth.confirm_new_password")}
                   </label>
                   <input
-                    type={showPass ? "text" : "password"}
+                    type={showConfirmPass ? "text" : "password"}
                     value={newPass.confirm}
                     onChange={(e) => {
                       setErrorMsg("");
+                      setErrors((prev) => ({ ...prev, confirm: null }));
                       setNewPass({ ...newPass, confirm: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors"
+                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPass(!showConfirmPass)}
+                    className="absolute right-4 top-9 text-[var(--color-mkhe-text)]/50 hover:text-[var(--color-mkhe-primary)] cursor-pointer transition-colors"
+                  >
+                    {showConfirmPass ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                  {errors.confirm && (
+                    <div className="mt-3">
+                      <ErrorText error={errors.confirm} />
+                    </div>
+                  )}
                 </div>
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-2 text-red-500 text-sm mb-4 justify-center bg-red-500/10 p-3 rounded-lg border border-red-500/20 mt-4">
-                  <Info className="w-4 h-4" />
+                <div className="flex items-center gap-1.5 mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-2">
+                  <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
               )}

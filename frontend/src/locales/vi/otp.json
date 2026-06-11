@@ -11,6 +11,7 @@
   "msg_error_default": "Mã OTP không hợp lệ hoặc đã hết hạn!",
   "INVALID_OTP": "Mã OTP không chính xác!",
   "EXPIRED_OTP": "Mã OTP đã hết hạn, vui lòng gửi lại mã mới!",
+  "INVALID_OR_EXPIRED_OTP": "Mã OTP không chính xác hoặc đã hết hạn!",
   "SERVER_ERROR": "Lỗi máy chủ, vui lòng thử lại sau!",
   "VERIFY_SUCCESS": "Xác thực tài khoản thành công!",
   "RESEND_SUCCESS": "Đã gửi lại mã xác thực! Vui lòng kiểm tra Email.",

@@ -13,6 +13,8 @@ export const ENDPOINTS = {
     SEND_CHANGE_PASSWORD_OTP: `${API_BASE_URL}/auth/send-change-password-otp`,
     VERIFY_CHANGE_PASSWORD_OTP: `${API_BASE_URL}/auth/verify-change-password-otp`,
     CHANGE_PASSWORD_OTP: `${API_BASE_URL}/auth/change-password-otp`,
+    REFRESH_TOKEN: `${API_BASE_URL}/auth/refresh-token`,
+    LOGOUT: `${API_BASE_URL}/auth/logout`,
   },
   USERS: {
     GET_ALL: `${API_BASE_URL}/users`,

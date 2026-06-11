@@ -1,32 +1,66 @@
 import { create } from "zustand";
-import { authApi } from "@/api/authApi";
+import { authService } from "@/features/auth/auth.service";
 
-// 🔥 Hàm an toàn để lấy User từ LocalStorage (chống sập web)
+// 🔥 Hàm an toàn để lấy User từ Storage (chống sập web)
 const getSafeUser = () => {
   try {
-    const userString = localStorage.getItem("user");
-    // Kiểm tra kỹ xem nó có bị lỗi kiểu chuỗi "undefined" hay không
-    if (!userString || userString === "undefined") {
+    let userString = localStorage.getItem("user");
+    if (!userString) {
+      userString = sessionStorage.getItem("user");
+    }
+    if (!userString || userString === "undefined" || userString === "null") {
       return null;
     }
     return JSON.parse(userString);
   } catch (error) {
-    console.warn(
-      "Lỗi khi đọc user từ localStorage, đã tự động dọn dẹp.",
-      error,
-    );
-    localStorage.removeItem("user"); // Dọn luôn cái rác gây lỗi
+    console.warn("Lỗi khi đọc user từ storage, đã tự động dọn dẹp.", error);
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     return null;
   }
 };
 
+const getSafeToken = () => {
+  let token = localStorage.getItem("token");
+  if (!token) {
+    token = sessionStorage.getItem("token");
+  }
+  if (!token || token === "undefined" || token === "null") {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    return null;
+  }
+  return token;
+};
+
+const getSafeRefreshToken = () => {
+  let rToken = localStorage.getItem("refreshToken");
+  if (!rToken) {
+    rToken = sessionStorage.getItem("refreshToken");
+  }
+  if (!rToken || rToken === "undefined" || rToken === "null") {
+    localStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("refreshToken");
+    return null;
+  }
+  return rToken;
+};
+
 export const useAuthStore = create((set) => ({
-  user: getSafeUser(), // Xài hàm an toàn ở đây
-  token: localStorage.getItem("token") || null,
+  user: getSafeUser(),
+  token: getSafeToken(),
+  refreshToken: getSafeRefreshToken(),
   isLoading: false,
+  isFetchingUser: false,
+
+  setFetchingUser: (status) => set({ isFetchingUser: status }),
 
   setUser: (newUser) => {
-    localStorage.setItem("user", JSON.stringify(newUser));
+    if (sessionStorage.getItem("token")) {
+      sessionStorage.setItem("user", JSON.stringify(newUser));
+    } else {
+      localStorage.setItem("user", JSON.stringify(newUser));
+    }
     set({ user: newUser });
   },
 
@@ -34,7 +68,7 @@ export const useAuthStore = create((set) => ({
   registerAction: async (userData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.register(userData);
+      const data = await authService.register(userData);
       set({ isLoading: false });
       return { success: true, message: data.message };
     } catch (error) {
@@ -45,17 +79,20 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGIN
-  loginAction: async (credentials) => {
+  loginAction: async (credentials, rememberMe = false) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.login(credentials);
+      const data = await authService.login(credentials);
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem("token", data.token);
+      storage.setItem("refreshToken", data.refreshToken);
+      storage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -71,7 +108,7 @@ export const useAuthStore = create((set) => ({
   verifyOTPAction: async (verificationData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.verifyOTP(verificationData);
+      const data = await authService.verifyOTP(verificationData);
 
       setTimeout(() => {
         set({ isLoading: false });
@@ -88,7 +125,7 @@ export const useAuthStore = create((set) => ({
   // RESEND OTP
   resendOTPAction: async (email) => {
     try {
-      const data = await authApi.resendOTP({ email });
+      const data = await authService.resendOTP({ email });
       return { success: true, message: data.message };
     } catch (error) {
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
@@ -100,14 +137,16 @@ export const useAuthStore = create((set) => ({
   socialLoginAction: async (socialData) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.socialLogin(socialData);
+      const data = await authService.socialLogin(socialData);
 
       localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       set({
         user: data.user,
         token: data.token,
+        refreshToken: data.refreshToken,
         isLoading: false,
       });
 
@@ -123,7 +162,7 @@ export const useAuthStore = create((set) => ({
   forgotPasswordAction: async (email) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.forgotPassword({ email });
+      const data = await authService.forgotPassword({ email });
       set({ isLoading: false });
       return { success: true, message: data.message };
     } catch (error) {
@@ -137,7 +176,7 @@ export const useAuthStore = create((set) => ({
   verifyResetOtpAction: async (email, otp) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.verifyResetOtp({ email, otp });
+      const data = await authService.verifyResetOtp({ email, otp });
       set({ isLoading: false });
       // Trả về resetToken để component lưu lại mang sang trang ResetPassword
       return { success: true, resetToken: data.resetToken };
@@ -152,7 +191,7 @@ export const useAuthStore = create((set) => ({
   resetPasswordAction: async (email, resetToken, newPassword) => {
     set({ isLoading: true });
     try {
-      const data = await authApi.resetPassword({
+      const data = await authService.resetPassword({
         email,
         resetToken,
         newPassword,
@@ -167,10 +206,24 @@ export const useAuthStore = create((set) => ({
   },
 
   // LOGOUT
-  logoutAction: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  logoutAction: async () => {
+    try {
+      const currentRefreshToken = getSafeRefreshToken();
+      if (currentRefreshToken) {
+        await authService.logout({ refreshToken: currentRefreshToken });
+      }
+    } catch (error) {
+      console.error("Lỗi khi logout backend:", error);
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("user");
 
-    set({ user: null, token: null });
+      set({ user: null, token: null, refreshToken: null });
+    }
   },
 }));

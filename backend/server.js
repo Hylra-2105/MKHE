@@ -16,6 +16,7 @@ import cors from "cors";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/modules/auth/auth.routes.js";
 import userRoutes from "./src/modules/users/user.routes.js";
+import productRoutes from "./src/modules/products/product.routes.js";
 
 connectDB();
 
@@ -50,6 +51,9 @@ app.use("/api/auth", authRoutes);
 
 // API liên quan đến Users
 app.use("/api/users", userRoutes);
+
+// API liên quan đến Products
+app.use("/api/products", productRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,6 +1,6 @@
 import User from "./user.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
-import { createVietnameseRegex } from "../../utils/helpers.js";
+import { createVietnameseRegex, isValidEmail } from "../../utils/helpers.js";
 import { sendBlockAccountEmail } from "../../utils/email.js";
 
 // admin lấy danh sách users
@@ -27,7 +27,7 @@ export const getAllUsers = async (req, res) => {
     const totalUsers = await User.countDocuments(query);
     const users = await User.find(query)
       .collation({ locale: "vi", strength: 2 })
-      .select("-password -otp -refreshToken")
+      .select("-password -refreshToken")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
       id,
       { $set: updateData },
       { returnDocument: "after", runValidators: true },
-    ).select("-password -otp -refreshToken");
+    ).select("-password -refreshToken");
 
     if (!updatedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
 
@@ -153,9 +153,6 @@ export const updateMyProfile = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.otp;
-    delete userData.otpExpires;
-    delete userData.resetPasswordOtp;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
     delete userData.refreshToken;
@@ -188,9 +185,6 @@ export const uploadAvatar = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.otp;
-    delete userData.otpExpires;
-    delete userData.resetPasswordOtp;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
     delete userData.refreshToken;
@@ -199,5 +193,70 @@ export const uploadAvatar = async (req, res) => {
   } catch (error) {
     console.error("Upload Avatar Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// admin create user
+export const createUser = async (req, res) => {
+  try {
+    // Lấy dữ liệu
+    let { name, email, password, role } = req.body;
+
+    // 2. Kiểm tra các trường bắt buộc
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "MISSING_FIELDS" });
+    }
+
+    // Chuẩn hóa dữ liệu
+    name = name.trim();
+
+    // Kiểm tra độ dài mật khẩu
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ success: false, message: "PASSWORD_TOO_SHORT" });
+    }
+
+    // Kiểm tra định dạng email hợp lệ
+    if (!isValidEmail(email)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "INVALID_EMAIL_FORMAT" });
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "EMAIL_ALREADY_EXISTS" });
+    }
+
+    // Tạo tài khoản mới
+    const newUser = new User({
+      name,
+      email,
+      password,
+      role: role || "Customer",
+      isVerified: true,
+      provider: "local",
+    });
+
+    await newUser.save();
+
+    // Ẩn password trước khi trả về Frontend
+    const userData = newUser.toObject();
+    delete userData.password;
+
+    return res.status(201).json({
+      success: true,
+      message: "USER_CREATED_SUCCESS",
+      user: userData,
+    });
+  } catch (error) {
+    console.error("Error in [ADMIN] createUser:", error);
+    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
   }
 };

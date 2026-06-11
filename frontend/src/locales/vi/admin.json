@@ -7,10 +7,11 @@
     "delete_account": "Xóa tài khoản",
     "lock_account": "Khóa tài khoản",
     "unlock_account": "Mở khóa tài khoản",
-    "cancel": "Hủy",
+    "cancel": "Hủy bỏ",
     "save_info": "Lưu thông tin",
     "saving": "Đang lưu...",
     "edit": "Chỉnh sửa",
+    "create": "Tạo tài khoản",
     "search_placeholder": "Nhập để tìm kiếm...",
     "no_results": "Không tìm thấy kết quả",
     "delete_permanently": "Xóa vĩnh viễn",
@@ -18,12 +19,15 @@
     "confirm_unlock": "Mở khóa ngay"
   },
   "users": {
-    "title": "Quản lý người dùng",
-    "subtitle": "Xem danh sách, tìm kiếm và cấp quyền hệ thống",
+    "title": "Quản lý Người dùng",
+    "subtitle": "Xem danh sách, tìm kiếm và phân quyền hệ thống",
     "add_member": "+ Thêm thành viên",
-    "detail_title": "Hồ sơ người dùng",
+    "add_new": "Thêm thành viên mới",
+    "detail_title": "Hồ sơ Người dùng",
     "basic_info": "Thông tin cơ bản",
     "fullname": "Họ và tên",
+    "email": "Địa chỉ Email",
+    "password": "Mật khẩu",
     "email_readonly": "Địa chỉ Email (Chỉ đọc)",
     "shipping_contact": "Địa chỉ giao hàng & Liên hệ",
     "phone": "Số điện thoại",
@@ -36,14 +40,21 @@
     "address": "Địa chỉ chi tiết",
     "address_placeholder": "Số nhà, tên đường, phường/xã...",
     "bio": "Tiểu sử / Ghi chú",
-    "bio_placeholder": "Thêm ghi chú về khách hàng này...",
+    "bio_placeholder": "Thêm ghi chú...",
+    "bio_admin_placeholder": "Thêm ghi chú về khách hàng này (Chỉ admin xem)...",
+    "bio_user_placeholder": "Giới thiệu bản thân hoặc ghi chú cá nhân của bạn...",
     "bio_empty": "Chưa có thông tin giới thiệu.",
-    "block_reason_label": "Lý do áp dụng hình phạt vi phạm"
+    "bio_empty_admin": "Chưa có ghi chú nội bộ nào cho khách hàng này.",
+    "bio_empty_user": "Bạn chưa cập nhật tiểu sử hoặc ghi chú cá nhân.",
+    "block_reason_label": "Lý do xử phạt",
+    "role": "Vai trò (Phân quyền)",
+    "fullname_placeholder": "Họ và tên",
+    "email_placeholder": "ví dụ: example@gmail.com"
   },
   "pagination": {
     "showing_page": "Đang hiển thị trang",
     "prev": "Trước",
-    "next": "Tiếp"
+    "next": "Tiếp theo"
   },
   "errors": {
     "FORBIDDEN_ACCESS": "Bạn không có quyền truy cập tính năng này!",
@@ -60,7 +71,7 @@
     "actions": "Thao tác",
     "loading": "Đang tải dữ liệu...",
     "no_user": "Không tìm thấy người dùng phù hợp.",
-    "view": "Xem chi tiết",
+    "view": "Xem",
     "block": "Khóa"
   },
   "filter": {
@@ -75,28 +86,34 @@
   },
   "messages": {
     "update_success": "Cập nhật thông tin người dùng thành công!",
+    "create_success": "Tạo tài khoản thành công!",
+    "pass_short": "Mật khẩu phải có ít nhất 6 ký tự!",
     "server_error": "Lỗi kết nối máy chủ! Vui lòng thử lại sau.",
     "update_success_log": "Cập nhật thành công (Dev log):",
-    "update_error_log": "Lỗi khi lưu dữ liệu lên backend:",
+    "update_error_log": "Lỗi khi lưu dữ liệu về backend:",
     "USER_UPDATE_SUCCESS": "Cập nhật thông tin người dùng thành công!",
-    "USER_NOT_FOUND": "Không tìm thấy người dùng này trong hệ thống!",
+    "USER_CREATED_SUCCESS": "Tạo tài khoản thành công!",
+    "EMAIL_ALREADY_EXISTS": "Email này đã được đăng ký trên hệ thống!",
+    "MISSING_FIELDS": "Vui lòng điền đầy đủ các thông tin bắt buộc!",
+    "USER_NOT_FOUND": "Không tìm thấy người dùng này trên hệ thống!",
     "SERVER_ERROR": "Lỗi máy chủ nội bộ. Vui lòng thử lại sau!",
-    "INVALID_TOKEN": "Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại!",
+    "INVALID_TOKEN": "Phiên đăng nhập không hợp lệ hoặc đã hết hạn!",
     "UNAUTHORIZED": "Bạn không có quyền thực hiện hành động này!",
-    "confirm_delete_title": "Xác nhận xóa tài khoản?",
-    "confirm_delete": "Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này không? Hành động này không thể hoàn tác!",
-    "confirm_lock_title": "Khóa tài khoản người dùng?",
-    "confirm_lock_desc": "Tài khoản bị khóa sẽ không thể đăng nhập hoặc mua sắm trên hệ thống. Vui lòng chọn lý do xử lý vi phạm:",
+    "confirm_delete_title": "Xác nhận Xóa tài khoản?",
+    "confirm_delete": "Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Hành động này không thể hoàn tác!",
+    "confirm_lock_title": "Khóa tài khoản Người dùng?",
+    "confirm_lock_desc": "Tài khoản bị khóa sẽ không thể đăng nhập hoặc mua sắm trên hệ thống. Vui lòng chọn lý do vi phạm:",
     "lock_success": "Đã khóa tài khoản người dùng thành công!",
-    "unlock_success": "Đã mở khóa tài khoản người dùng và kích hoạt lại thành công!",
+    "unlock_success": "Đã mở khóa và khôi phục hoạt động tài khoản thành công!",
     "confirm_unlock_title": "Mở khóa tài khoản?",
-    "confirm_unlock_desc": "Bạn có chắc chắn muốn kích hoạt lại tài khoản này? Người dùng sẽ có thể đăng nhập lại bình thường."
+    "confirm_unlock_desc": "Bạn có chắc chắn muốn khôi phục hoạt động cho tài khoản này? Người dùng sẽ có thể đăng nhập lại bình thường.",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "reasons": {
-    "spam_comments": "Spam bình luận / Đánh giá sản phẩm ảo",
-    "boom_orders": "Bùng đơn hàng nhiều lần không lý do (Boomer)",
+    "spam_comments": "Bình luận rác / Đánh giá sản phẩm giả mạo",
+    "boom_orders": "Boom hàng (Hủy đơn nhiều lần không lý do)",
     "fake_info": "Cung cấp thông tin hồ sơ/địa chỉ giả mạo",
-    "policy_violation": "Vi phạm điều khoản chính sách chung của hệ thống",
-    "fraud_activity": "Hành vi gian lận / Trục lợi mã khuyến mãi"
+    "policy_violation": "Vi phạm điều khoản và chính sách chung",
+    "fraud_activity": "Hành vi gian lận / Lạm dụng mã giảm giá"
   }
 }

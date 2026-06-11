@@ -1,3 +1,8 @@
+export const isValidEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 export const createVietnameseRegex = (keyword) => {
   if (!keyword) return "";
   let str = keyword.toLowerCase();
