@@ -10,6 +10,8 @@ const ProductFilter = ({
   handleSearch,
   dnaFilter, // Thêm prop mới
   handleDnaChange, // Thêm prop mới
+  vendorFilter,
+  handleVendorChange,
 }) => {
   const { t } = useTranslation("product");
 
@@ -28,6 +30,16 @@ const ProductFilter = ({
     { value: "KHMER", label: t("culturalDNA.KHMER", "Mã gen Khmer") },
     { value: "KINH", label: t("culturalDNA.KINH", "Mã gen Kinh") },
     { value: "OTHER", label: t("culturalDNA.OTHER", "Khác / Đa bản sắc") },
+  ];
+
+  const vendorOptions = [
+    { value: "", label: "Tất cả Đối tác" },
+    { value: "HTX Châu Giang", label: "HTX Châu Giang" },
+    { value: "HTX Văn Giáo", label: "HTX Văn Giáo" },
+    { value: "Cô Ba Khăn Rằn", label: "Cô Ba Khăn Rằn" },
+    { value: "Gốm Phnôm Pi", label: "Gốm Phnôm Pi" },
+    { value: "Hanhsilk", label: "Hanhsilk" },
+    { value: "Khác", label: "Khác" },
   ];
 
   return (
@@ -58,7 +70,7 @@ const ProductFilter = ({
           // nên phải gói nó lại thành event giả { target: { value: val } } để khớp hàm cũ
           onChange={(val) => handleCategoryChange({ target: { value: val } })}
           placeholder={t("filter.all_categories")}
-          className="w-full md:w-48 lg:w-56"
+          className="w-full md:w-36 lg:w-44"
           triggerClassName="h-10 px-3 rounded"
           optionClassName="text-sm"
         />
@@ -68,7 +80,17 @@ const ProductFilter = ({
           options={dnaOptions}
           onChange={(val) => handleDnaChange({ target: { value: val } })}
           placeholder={t("filter.all_dna", "Tất cả Mã gen")}
-          className="w-full md:w-48 lg:w-56"
+          className="w-full md:w-36 lg:w-44"
+          triggerClassName="h-10 px-3 rounded"
+          optionClassName="text-sm"
+        />
+
+        <Dropdown
+          value={vendorFilter}
+          options={vendorOptions}
+          onChange={(val) => handleVendorChange({ target: { value: val } })}
+          placeholder="Tất cả Đối tác"
+          className="w-full md:w-40 lg:w-48"
           triggerClassName="h-10 px-3 rounded"
           optionClassName="text-sm"
         />

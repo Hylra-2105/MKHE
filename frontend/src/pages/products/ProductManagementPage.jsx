@@ -29,8 +29,9 @@ const ProductManagementPage = () => {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
 
-  // State cho bộ lọc mã gen
+  // State cho bộ lọc mã gen và nhà cung cấp
   const [dnaFilter, setDnaFilter] = useState("");
+  const [vendorFilter, setVendorFilter] = useState("");
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -43,6 +44,8 @@ const ProductManagementPage = () => {
         categoryFilter,
         dnaFilter,
         "ADMIN_ALL",
+        false, // inStock
+        vendorFilter
       );
 
       if (res.success) {
@@ -55,7 +58,7 @@ const ProductManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, appliedSearch, categoryFilter, dnaFilter, t]);
+  }, [page, limit, appliedSearch, categoryFilter, dnaFilter, vendorFilter, t]);
 
   useEffect(() => {
     fetchProducts();
@@ -76,6 +79,11 @@ const ProductManagementPage = () => {
   const handleDnaChange = (e) => {
     setPage(1);
     setDnaFilter(e.target.value);
+  };
+
+  const handleVendorChange = (e) => {
+    setPage(1);
+    setVendorFilter(e.target.value);
   };
 
   const handleEditProduct = (product) => {
@@ -124,6 +132,8 @@ const ProductManagementPage = () => {
         handleSearch={handleSearch}
         dnaFilter={dnaFilter}
         handleDnaChange={handleDnaChange}
+        vendorFilter={vendorFilter}
+        handleVendorChange={handleVendorChange}
       />
 
       <ProductTable
