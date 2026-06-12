@@ -7,6 +7,8 @@ import { productApi } from "@/api/productApi";
 import { useTranslation } from "react-i18next";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { draftDB } from "@/utils/db";
+import { compressGLB } from "@/utils/glbCompressor";
+import { compressImage } from "@/utils/imageCompressor";
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
@@ -21,7 +23,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: "",
     sku: "",
-    vendor: "", // Dùng Dropdown
+    vendor: "", // Sử dụng Dropdown có sẵn
     description: "",
     categoryMatrix: "B2C_Mass_Premium",
     culturalDNA: "OTHER",
@@ -34,17 +36,28 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   // --- STATE CHO ẢNH & FILE 3D ---
   const fileInputRef = useRef(null);
-  const fileInput3DRef = useRef(null); // Ref cho input 3D ẩn
+  const fileInput3DRef = useRef(null); 
   
   const [imageFiles, setImageFiles] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   
   const [file3D, setFile3D] = useState(null);
-  const [isDragging3D, setIsDragging3D] = useState(false); // State kéo thả 3D
+  const [isDragging3D, setIsDragging3D] = useState(false); 
+  const [isCompressing3D, setIsCompressing3D] = useState(false);
 
   // --- STATE CHO LIGHTBOX ---
   const [activeLightboxUrl, setActiveLightboxUrl] = useState(null);
+
+  // --- DEBOUNCE CHO BẢN ĐỒ ---
+  const [debouncedGpsLocation, setDebouncedGpsLocation] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedGpsLocation(formData.gpsLocation);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [formData.gpsLocation]);
 
   // --- CÁC MẢNG DỮ LIỆU DROPDOWN ---
   const categories = [
@@ -82,7 +95,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
           if (saved.file3D) setFile3D(saved.file3D);
 
           if (saved.imageFiles && saved.imageFiles.length > 0) {
-            const urls = saved.imageFiles.map((file) => URL.createObjectURL(file));
+            const urls = saved.imageFiles.map((file) => ({
+              url: URL.createObjectURL(file),
+              type: file.type
+            }));
             setPreviewUrls(urls);
           }
         }
@@ -94,8 +110,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   }, [isOpen]);
 
   useEffect(() => {
-    return () => previewUrls.forEach((url) => URL.revokeObjectURL(url));
-  }, []);
+    return () => previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
+  }, [previewUrls]);
 
   // ================= AUTO-SAVE LOGIC =================
   useEffect(() => {
@@ -130,7 +146,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const handleDrop = (e) => { e.preventDefault(); setIsDragging(false); processFiles(e.dataTransfer.files); };
   const handleFileInput = (e) => processFiles(e.target.files);
 
-  const processFiles = (files) => {
+  const processFiles = async (files) => {
     const fileArray = Array.from(files);
     const validFiles = [];
     const newPreviews = [];
@@ -139,20 +155,40 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       return toast.error(t("messages.max_images_error", { max: MAX_IMAGES, current: imageFiles.length }));
     }
 
-    fileArray.forEach((file) => {
-      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-        return toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        return toast.error(t("errors.image_too_large", "Kích thước file không được vượt quá 10MB"));
-      }
-      validFiles.push(file);
-      newPreviews.push({ url: URL.createObjectURL(file), type: file.type });
-    });
+    const toastId = toast.loading("Đang xử lý và tối ưu ảnh...");
 
-    setImageFiles((prev) => [...prev, ...validFiles]);
-    setPreviewUrls((prev) => [...prev, ...newPreviews]);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+    try {
+      for (const file of fileArray) {
+        if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+          toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
+          continue;
+        }
+
+        let processedFile = file;
+
+        if (file.type.startsWith("image/")) {
+          processedFile = await compressImage(file);
+        } else if (file.size > 100 * 1024 * 1024) {
+          // Video giới hạn 100MB
+          toast.error(`Video ${file.name} quá lớn (>100MB).`);
+          continue;
+        }
+
+        validFiles.push(processedFile);
+        newPreviews.push({ url: URL.createObjectURL(processedFile), type: processedFile.type });
+      }
+
+      setImageFiles((prev) => [...prev, ...validFiles]);
+      setPreviewUrls((prev) => [...prev, ...newPreviews]);
+      
+      if (validFiles.length > 0) toast.success("Xử lý file thành công!", { id: toastId });
+      else toast.dismiss(toastId);
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra khi xử lý file", { id: toastId });
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   const removeImage = (indexToRemove) => {
@@ -177,19 +213,36 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
   };
 
-  const process3DFile = (file) => {
+  const process3DFile = async (file) => {
     if (!file.name.endsWith('.glb') && !file.name.endsWith('.gltf')) {
       return toast.error("Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)");
     }
-    if (file.size > 5 * 1024 * 1024) {
-      return toast.error("Kích thước file 3D không được vượt quá 5MB để tối ưu tốc độ.");
+    
+    // Cảnh báo nếu file quá khủng khiếp (>150MB) có thể crash trình duyệt
+    if (file.size > 150 * 1024 * 1024) {
+      return toast.error("File 3D quá lớn (>150MB), có thể làm đứng trình duyệt. Vui lòng giảm bớt từ phần mềm 3D trước.");
     }
-    setFile3D(file);
-    if (fileInput3DRef.current) fileInput3DRef.current.value = "";
+
+    setIsCompressing3D(true);
+    const toastId = toast.loading(`Đang tối ưu file 3D (${(file.size / (1024 * 1024)).toFixed(1)}MB)... Quá trình này dùng CPU máy bạn, vui lòng không tắt trang!`, { duration: 30000 });
+
+    try {
+      // Chạy thuật toán nén Draco + WebP trực tiếp trên web
+      const compressedFile = await compressGLB(file);
+      setFile3D(compressedFile);
+      toast.success(`Tối ưu 3D thành công! Dung lượng giảm còn: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`, { id: toastId });
+    } catch (error) {
+      console.error(error);
+      toast.error(`Tối ưu 3D thất bại: ${error.message || "Lỗi cấu trúc file"}. Sẽ sử dụng file gốc.`, { id: toastId });
+      setFile3D(file);
+    } finally {
+      setIsCompressing3D(false);
+      if (fileInput3DRef.current) fileInput3DRef.current.value = "";
+    }
   };
 
   const remove3DFile = (e) => {
-    e.stopPropagation(); // Ngăn sự kiện click gọi lại fileInput3DRef
+    e.stopPropagation(); 
     setFile3D(null);
   };
 
@@ -202,7 +255,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
     if (formData.hasDPP) {
       if (!formData.artisanName || !formData.gpsLocation) {
-        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS.");
+        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Vị trí / Địa chỉ Làng nghề.");
       }
     }
 
@@ -218,6 +271,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       const newProductId = response.data._id;
 
       const uploadPromises = [];
+
       if (imageFiles.length > 0) {
         const uploadData = new FormData();
         imageFiles.forEach((file) => uploadData.append("images", file));
@@ -230,7 +284,14 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         uploadPromises.push(productApi.uploadProduct3D(newProductId, upload3DData));
       }
 
-      if (uploadPromises.length > 0) await Promise.allSettled(uploadPromises);
+      if (uploadPromises.length > 0) {
+        try {
+          await Promise.all(uploadPromises);
+        } catch (error) {
+          console.error("Upload error:", error);
+          toast.error(t("modal.3d_file.error_upload_both"));
+        }
+      }
 
       toast.success(t("messages.add_success"));
 
@@ -286,9 +347,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
               <ImageIcon className="w-4 h-4 text-mkhe-primary" />
               <label className="text-xs font-bold text-mkhe-text/70 uppercase">{t("modal.images_label")} ({previewUrls.length}/{MAX_IMAGES})</label>
             </div>
-            <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${isDragging ? "border-mkhe-primary bg-mkhe-primary/10 scale-[1.02]" : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5"}`}>
-              <UploadCloud className={`w-10 h-10 mb-3 ${isDragging ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-              <p className="text-sm text-center font-semibold text-mkhe-text/80">{t("modal.drag_drop_text")}</p>
+            <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${isDragging ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg" : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"}`}>
+              <div className="pointer-events-none flex flex-col items-center">
+                <UploadCloud className={`w-10 h-10 mb-3 ${isDragging ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
+                <p className="text-sm text-center font-semibold text-mkhe-text/80">{t("modal.drag_drop_text")}</p>
+              </div>
               <input type="file" ref={fileInputRef} onChange={handleFileInput} accept="image/*,video/*" multiple className="hidden" />
             </div>
             {previewUrls.length > 0 && (
@@ -341,8 +404,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 {/* DÒNG 3: NHÀ CUNG CẤP, GIÁ BÁN, TỒN KHO */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">Nhà cung cấp <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => updateField("vendor", val)} placeholder="Chọn Đối tác" className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => updateField("vendor", val)} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
@@ -366,8 +429,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   <div className="flex items-center gap-2">
                     <Fingerprint className="w-5 h-5 text-mkhe-primary" />
                     <div>
-                      <h3 className="text-sm font-bold text-mkhe-text">Khởi tạo Hộ chiếu số (DPP)</h3>
-                      <p className="text-[11px] text-mkhe-text/60">Tích hợp chip NFC và trải nghiệm văn hóa 3D</p>
+                      <h3 className="text-sm font-bold text-mkhe-text">{t("modal.dpp.create_title")}</h3>
+                      <p className="text-[11px] text-mkhe-text/60">{t("modal.dpp.desc")}</p>
                     </div>
                   </div>
                   {/* NÚT GẠT TOGGLE */}
@@ -378,52 +441,98 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 {/* FORM NHẬP LIỆU DPP */}
-                <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[500px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
+                <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[700px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Tên nghệ nhân chế tác <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder="VD: Mohamad, Cô Ba..." />
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
+                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" placeholder={t("modal.dpp.artisan_placeholder_add")} />
                     </div>
+                    
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Tọa độ GPS Làng nghề <span className="text-red-500">*</span></label>
-                      <input type="text" name="gpsLocation" value={formData.gpsLocation} onChange={handleChange} required={formData.hasDPP} className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder="VD: 10.823, 106.629" />
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
+                      <input 
+                        type="text" 
+                        name="gpsLocation" 
+                        value={formData.gpsLocation} 
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val.includes("http://") || val.includes("https://") || val.includes("maps.")) {
+                            toast.error("Không được dán link! Vui lòng chỉ nhập tên địa điểm hoặc địa chỉ bằng chữ.");
+                            return;
+                          }
+                          updateField("gpsLocation", val);
+                        }} 
+                        required={formData.hasDPP} 
+                        className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" 
+                        placeholder={t("modal.dpp.location_placeholder")} 
+                      />
                     </div>
                   </div>
+
+                  {/* MVP PREMIUM FEATURE: XEM TRƯỚC BẢN ĐỒ LÀNG NGHỀ */}
+                  {formData.hasDPP && debouncedGpsLocation && (
+                    <div className="mb-4 space-y-2 animate-in fade-in duration-300">
+                      <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 flex items-center gap-2">
+                        {t("modal.dpp.map_title")}
+                      </label>
+                      <div className="w-full h-64 rounded-xl overflow-hidden border border-mkhe-border/50 bg-mkhe-primary/5 shadow-inner relative">
+                        <iframe
+                          title="Admin GPS Preview"
+                          width="100%"
+                          height="100%"
+                          frameBorder="0"
+                          scrolling="no"
+                          marginHeight="0"
+                          marginWidth="0"
+                          src={`https://maps.google.com/maps?q=${encodeURIComponent(debouncedGpsLocation)}&hl=vi&z=14&output=embed`}
+                          className="w-full h-full"
+                        />
+                      </div>
+                      <p className="text-[10px] text-mkhe-text/50 italic ml-1">{t("modal.dpp.map_desc")}</p>
+                    </div>
+                  )}
                   
                   {/* KÉO THẢ FILE 3D XỊN XÒ */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1 flex items-center gap-1">
-                      <Box className="w-3 h-3" /> File mô hình 3D (.glb, .gltf) - Dưới 5MB
+                      <Box className="w-3 h-3" /> {t("modal.3d_file.label")}
                     </label>
                     <div
                       onDragOver={handleDragOver3D}
                       onDragLeave={handleDragLeave3D}
                       onDrop={handleDrop3D}
                       onClick={() => fileInput3DRef.current?.click()}
-                      className={`border border-dashed rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${
+                      className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${
                         isDragging3D
-                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-[1.02]"
-                          : "border-mkhe-border/50 bg-transparent hover:border-mkhe-primary hover:bg-mkhe-primary/5"
+                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg"
+                          : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"
                       }`}
                     >
                       <input type="file" ref={fileInput3DRef} onChange={handleFileInput3D} accept=".glb,.gltf" className="hidden" />
                       
-                      {file3D ? (
+                      {isCompressing3D ? (
+                        <div className="flex flex-col items-center gap-3 py-4 pointer-events-none">
+                          <div className="w-8 h-8 border-4 border-mkhe-primary border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-xs font-bold text-mkhe-primary animate-pulse text-center">
+                            {t("modal.3d_file.compressing").split(' (')[0]}<br/>({t("modal.3d_file.compressing").split(' (')[1]}
+                          </span>
+                        </div>
+                      ) : file3D ? (
                         <div className="flex items-center gap-3 w-full justify-between bg-mkhe-primary/10 p-2.5 rounded-lg border border-mkhe-primary/30">
-                          <div className="flex items-center gap-2 overflow-hidden">
+                          <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
                             <Box className="w-5 h-5 text-mkhe-primary shrink-0" />
                             <span className="text-sm text-mkhe-text font-medium truncate">{file3D.name}</span>
-                            <span className="text-xs text-mkhe-text/50 shrink-0">({(file3D.size / (1024 * 1024)).toFixed(2)} MB)</span>
+                            <span className="text-xs font-bold text-green-500 shrink-0">({(file3D.size / (1024 * 1024)).toFixed(2)} MB)</span>
                           </div>
-                          <button type="button" onClick={remove3DFile} className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-md transition-colors">
+                          <button type="button" onClick={remove3DFile} className="p-1.5 cursor-pointer hover:bg-red-500/20 text-red-500 rounded-md transition-colors z-10 relative">
                             <X className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center gap-2 py-3">
-                          <UploadCloud className={`w-6 h-6 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                          <span className="text-xs font-medium text-mkhe-text/70 text-center">
-                            {isDragging3D ? "Thả file 3D vào đây" : "Kéo thả hoặc click để chọn file 3D (.glb)"}
+                        <div className="flex flex-col items-center gap-2 py-3 pointer-events-none">
+                          <UploadCloud className={`w-8 h-8 mb-1 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
+                          <span className="text-xs font-medium text-mkhe-text/70 text-center px-4">
+                            {isDragging3D ? "Thả file 3D vào đây" : t("modal.3d_file.drag_drop")}
                           </span>
                         </div>
                       )}

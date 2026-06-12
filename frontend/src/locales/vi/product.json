@@ -73,8 +73,35 @@
     "mark_for_deletion": "Đánh dấu xóa",
     "delete_image": "Xóa tệp này",
     "restore_image": "Khôi phục",
-    "images_label": "Hình ảnh sản phẩm",
-    "processing": "Đang xử lý..."
+    "vendor": "Nhà cung cấp",
+    "select_vendor": "Chọn Đối tác",
+    "dpp": {
+      "update_title": "Cập nhật Hộ chiếu số (DPP)",
+      "create_title": "Khởi tạo Hộ chiếu số (DPP)",
+      "desc": "Tích hợp chip NFC và trải nghiệm văn hóa 3D",
+      "artisan_name": "Tên nghệ nhân chế tác",
+      "artisan_placeholder_add": "VD: Nghệ nhân Mohamad, Cô Ba...",
+      "artisan_placeholder_edit": "VD: Mohamad, Cô Ba...",
+      "location": "Vị trí / Địa chỉ Làng nghề",
+      "location_placeholder": "VD: Làng gốm Phnôm Pi, An Giang (Hoặc nhập tọa độ số)",
+      "location_placeholder_edit": "VD: 10.823, 106.629 hoặc Tên địa danh",
+      "map_title": "Bản đồ định vị (Mini Google Maps)",
+      "map_desc": "* Bản đồ sẽ tự động cập nhật sau khi bạn nhập xong địa chỉ hoặc tọa độ."
+    },
+    "processing": "Đang xử lý...",
+    "3d_file": {
+      "has_file": "Sản phẩm đã có file 3D",
+      "replace_file": "Kéo thả hoặc click vào đây để thay thế bằng file 3D khác",
+      "drag_drop": "Kéo thả hoặc click để chọn file 3D (Tự động nén siêu nhẹ)",
+      "click_view": "Click vào đây để xem/tải xuống file 3D",
+      "delete_btn": "Xóa file 3D này",
+      "restore_btn": "Khôi phục file 3D",
+      "compressing": "Đang chạy thuật toán nén 3D... (Có thể mất vài giây)",
+      "current_file": "File 3D hiện tại",
+      "label": "FILE MÔ HÌNH 3D (.GLB, .GLTF)",
+      "error_upload": "Lỗi upload file 3D",
+      "error_upload_both": "Lỗi upload ảnh hoặc file 3D"
+    }
   },
   "statuses": {
     "DRAFT": "Bản nháp (Đang ẩn)",

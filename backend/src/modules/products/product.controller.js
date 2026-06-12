@@ -247,14 +247,15 @@ export const uploadProductGallery = async (req, res) => {
     }
 
     const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-
     const imageUrls = req.files.map((file) => file.path);
-    product.images = [...(product.images || []), ...imageUrls];
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $push: { images: { $each: imageUrls } } },
+      { new: true }
+    );
     
-    await product.save();
-    return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", product);
+    if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload Gallery] Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -269,13 +270,14 @@ export const uploadProduct3D = async (req, res) => {
     }
 
     const { id } = req.params;
-    const product = await Product.findById(id);
-    if (!product) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-
-    product.file3D = req.file.path;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { file3D: req.file.path },
+      { new: true }
+    );
     
-    await product.save();
-    return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", product);
+    if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload 3D] Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -310,10 +312,13 @@ export const deleteProductImages = async (req, res) => {
       }
     }
 
-    product.images = product.images.filter((img) => !imagesToDelete.includes(img));
-    await product.save();
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $pull: { images: { $in: imagesToDelete } } },
+      { new: true }
+    );
 
-    return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", product);
+    return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
   }

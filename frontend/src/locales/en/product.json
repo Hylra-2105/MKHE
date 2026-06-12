@@ -61,8 +61,36 @@
     "mark_for_deletion": "Mark for Deletion",
     "delete_image": "Delete This File",
     "restore_image": "Restore",
+    "vendor": "Provider",
+    "select_vendor": "Select Provider",
+    "dpp": {
+      "update_title": "Update Digital Product Passport (DPP)",
+      "create_title": "Create Digital Product Passport (DPP)",
+      "desc": "Integrate NFC chip and 3D cultural experience",
+      "artisan_name": "Artisan Name",
+      "artisan_placeholder_add": "Ex: Artisan Mohamad, Co Ba...",
+      "artisan_placeholder_edit": "Ex: Mohamad, Co Ba...",
+      "location": "Location / Craft Village Address",
+      "location_placeholder": "Ex: Phnom Pi Pottery Village (Or enter coordinates)",
+      "location_placeholder_edit": "Ex: 10.823, 106.629 or Location Name",
+      "map_title": "Location Map (Mini Google Maps)",
+      "map_desc": "* Map will automatically update after you enter the address or coordinates."
+    },
     "processing": "Processing...",
-    "images_label": "Product Images/videos"
+    "images_label": "Product Images/videos",
+    "3d_file": {
+      "has_file": "Product already has a 3D file",
+      "replace_file": "Drag & drop or click here to replace with another 3D file",
+      "drag_drop": "Drag & drop or click to select a 3D file (Auto ultra-compression)",
+      "click_view": "Click here to view/download the 3D file",
+      "delete_btn": "Delete this 3D file",
+      "restore_btn": "Restore 3D file",
+      "compressing": "Running 3D compression algorithm... (May take a few seconds)",
+      "current_file": "Current 3D file",
+      "label": "3D MODEL FILE (.GLB, .GLTF)",
+      "error_upload": "Error uploading 3D file",
+      "error_upload_both": "Error uploading image or 3D file"
+    }
   },
   "statuses": {
     "DRAFT": "Draft (Hidden)",
