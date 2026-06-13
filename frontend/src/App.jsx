@@ -151,7 +151,7 @@ function App() {
           />
         </Route>
 
-        <Route path="/dpp/:id" element={<DPPPage />} />
+        <Route path="/dpp/:uid" element={<DPPPage />} />
 
         <Route path="/403" element={<ForbiddenPage />} />
         <Route path="*" element={<NotFoundPage />} />

@@ -10,12 +10,15 @@ import {
   Fingerprint,
   Box,
   ExternalLink,
+  Cpu,
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
+import NFCManagement from "./NFCManagement";
 import { productApi } from "@/api/productApi";
 import { useTranslation } from "react-i18next";
+import { isVideoMedia } from "@/utils/validators";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
@@ -26,6 +29,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const { t } = useTranslation("product");
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [activeTab, setActiveTab] = useState("info"); // "info" | "nfc"
 
   const [formData, setFormData] = useState({
     name: "",
@@ -122,6 +126,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       setFile3D(null);
       setIsDeleted3D(false);
       setShowDeleteConfirm(false);
+      setActiveTab("info");
     }
   }, [product, isOpen]);
 
@@ -388,7 +393,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
-      <div className="relative bg-[var(--color-mkhe-bg)] w-full max-w-5xl rounded-2xl shadow-2xl overflow-visible border border-[var(--color-mkhe-border)]/30 flex flex-col max-h-[90vh]">
+      <div className="relative bg-[var(--color-mkhe-bg)] w-full max-w-6xl rounded-2xl shadow-2xl overflow-visible border border-[var(--color-mkhe-border)]/30 flex flex-col max-h-[90vh]">
         {/* HEADER */}
         <div className="flex items-center justify-between mx-6 pt-6 pb-5 border-b border-[var(--color-mkhe-border)]/50 shrink-0">
           <div className="flex items-center gap-2">
@@ -457,10 +462,10 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                   {keptImages.map((url, index) => (
                     <div
                       key={`kept-${index}`}
-                      className="relative group rounded-lg overflow-hidden border border-mkhe-border/30 aspect-square cursor-pointer hover:border-mkhe-primary transition-colors"
+                      className="relative group rounded-xl overflow-hidden border border-[var(--color-mkhe-border)] aspect-square bg-[var(--color-mkhe-border)]/5 flex items-center justify-center cursor-pointer hover:border-mkhe-primary transition-colors"
                       onClick={() => setActiveLightboxUrl(url)}
                     >
-                      {url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes('mkhe_videos') ? (
+                      {isVideoMedia(url) ? (
                         <video src={url} className="w-full h-full object-cover" muted />
                       ) : (
                         <img
@@ -571,9 +576,40 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
             )}
           </div>
 
-          {/* CỘT PHẢI: FORM THÔNG TIN */}
-          <div className="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
-            <form id="edit-product-form" onSubmit={handleSubmit} className="space-y-6">
+          {/* CỘT PHẢI: FORM THÔNG TIN & NFC */}
+          <div className="flex-1 flex flex-col overflow-hidden relative">
+            {/* TABS */}
+            <div className="flex border-b border-[var(--color-mkhe-border)]/20 px-6 pt-2 shrink-0">
+              <button
+                type="button"
+                className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
+                  activeTab === "info"
+                    ? "border-mkhe-primary text-mkhe-primary"
+                    : "border-transparent text-mkhe-text/60 hover:text-mkhe-text"
+                }`}
+                onClick={() => setActiveTab("info")}
+              >
+                {t("modal.tab_general", "Thông tin chung")}
+              </button>
+              {formData.hasDPP && (
+                <button
+                  type="button"
+                  className={`px-4 py-3 text-sm font-bold border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
+                    activeTab === "nfc"
+                      ? "border-mkhe-primary text-mkhe-primary"
+                      : "border-transparent text-mkhe-text/60 hover:text-mkhe-text"
+                  }`}
+                  onClick={() => setActiveTab("nfc")}
+                >
+                  <Cpu className="w-4 h-4" />
+                  {t("modal.tab_nfc", "Hộ chiếu số (NFC)")}
+                </button>
+              )}
+            </div>
+
+            <div className="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
+              <div className={activeTab === "info" ? "block" : "hidden"}>
+                <form id="edit-product-form" onSubmit={handleSubmit} className="space-y-6">
               
               {/* KHỐI 1: THÔNG TIN CƠ BẢN */}
               <div className="space-y-4">
@@ -777,7 +813,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 </div>
               </div>
             </form>
+            </div>
+
+            {/* TAB NFC */}
+            {activeTab === "nfc" && formData.hasDPP && (
+              <div className="animate-in fade-in duration-200">
+                <NFCManagement productId={product._id} />
+              </div>
+            )}
+            
           </div>
+        </div>
         </div>
 
         {/* FOOTER BUTTONS */}
@@ -829,12 +875,12 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
               >
                 <X className="w-6 h-6" />
               </button>
-              {(activeLightboxUrl.type?.startsWith("video/") || (typeof activeLightboxUrl === 'string' && (activeLightboxUrl.match(/\.(mp4|webm|ogg|mov)$/i) || activeLightboxUrl.includes('mkhe_videos')))) ? (
+              {(activeLightboxUrl.type?.startsWith("video/") || (typeof activeLightboxUrl === 'string' && isVideoMedia(activeLightboxUrl))) ? (
                 <video
                   src={activeLightboxUrl.url || activeLightboxUrl}
                   controls
                   autoPlay
-                  className="max-w-full max-h-[85vh] rounded-xl object-contain shadow-2xl"
+                  className="max-w-full max-h-[90vh] rounded-lg"
                 />
               ) : (
                 <img

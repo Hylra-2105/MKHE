@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "heritage": "문화유산",
+    "craft_villages": "공예 마을",
+    "shop": "상점",
+    "storytelling": "스토리텔링",
+    "values": "가치"
+  },
+  "user_menu": {
+    "profile": "프로필",
+    "admin": "관리자 대시보드",
+    "logout": "로그아웃",
+    "manage_users": "사용자 관리",
+    "analytics": "분석",
+    "admin_area": "관리자 영역",
+    "staff_area": "직원 영역",
+    "manage_products": "제품 관리"
+  },
+  "guest_menu": {
+    "login": "로그인"
+  },
+  "messages": {
+    "logout_success": "성공적으로 로그아웃되었습니다!"
+  },
+  "settings": {
+    "language": "언어",
+    "theme": "테마",
+    "light": "라이트",
+    "dark": "다크",
+    "back": "뒤로"
+  },
+  "languages": {
+    "vi": "베트남어",
+    "en": "영어",
+    "zh": "중국어",
+    "ko": "한국어",
+    "ja": "일본어"
+  }
+}

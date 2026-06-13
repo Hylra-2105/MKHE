@@ -1,28 +1,29 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { productApi } from "@/api/productApi";
-import { Loader2, AlertCircle, ArrowLeft, Hexagon, Sparkles, Box, Image as ImageIcon } from "lucide-react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { dppApi } from "@/api/dppApi";
+import { Loader2, AlertCircle, Hexagon, Sparkles, Box, Image as ImageIcon, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import ModelViewer3D from "./ModelViewer3D";
 import ArtisanCertificate from "./ArtisanCertificate";
 import LocationMap from "./LocationMap";
+import { isVideoMedia } from "@/utils/validators";
 
 const DPPContainer = () => {
-  const { id } = useParams();
+  const { uid } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation("dpp");
-
-  // Kiểm tra URL có phải là video không
-  const isVideoMedia = (url) => {
-    if (!url) return false;
-    return url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes("/video/");
-  };
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("3d");
+  const [verificationFailed, setVerificationFailed] = useState(false);
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  // uid comes from params, hash from searchParams
+  const hash = searchParams.get("hash");
 
   // Gom nhóm video lên đầu khi xem
   const sortedImages = useMemo(() => {
@@ -69,15 +70,24 @@ const DPPContainer = () => {
     const fetchDPPData = async () => {
       try {
         setLoading(true);
-        const response = await productApi.getProductById(id);
-        if (!response.success) {
-          setError(response.message || t("container.errorFetch"));
+
+        if (!uid || !hash) {
+          setVerificationFailed(true);
+          setLoading(false);
           return;
         }
-        if (response.success && response.data?.hasDPP) {
-          setProduct(response.data);
-          // Mặc định load 3D trước nếu có, nếu không thì load 2D
-          setViewMode(response.data.file3D ? "3d" : "2d");
+
+        const verifyRes = await dppApi.verifyDPP(uid, hash);
+        
+        if (!verifyRes.success) {
+          setVerificationFailed(true);
+          setLoading(false);
+          return;
+        }
+
+        if (verifyRes.data) {
+          setProduct(verifyRes.data);
+          setViewMode(verifyRes.data.file3D ? "3d" : "2d");
         } else {
           setError(t("container.errorNoDPP"));
         }
@@ -88,8 +98,8 @@ const DPPContainer = () => {
         setLoading(false);
       }
     };
-    if (id) fetchDPPData();
-  }, [id, t]);
+    if (uid) fetchDPPData();
+  }, [uid, hash, t]);
 
   if (loading) {
     return (
@@ -101,6 +111,31 @@ const DPPContainer = () => {
         <p className="text-mkhe-primary font-bold tracking-[0.3em] uppercase text-xs animate-pulse">
           {t("container.authenticating")}
         </p>
+      </div>
+    );
+  }
+
+  // HIỂN THỊ MÀN HÌNH ĐỎ NẾU XÁC THỰC NFC THẤT BẠI
+  if (verificationFailed) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-68px)] space-y-6 text-center px-4 bg-red-900/10">
+        <div className="p-6 bg-red-500/20 border-2 border-red-500/50 rounded-full relative animate-pulse">
+          <div className="absolute inset-0 bg-red-500/30 blur-2xl rounded-full" />
+          <AlertCircle className="w-16 h-16 text-red-500 relative z-10" />
+        </div>
+        <div className="space-y-3 relative z-10">
+          <h2 className="text-3xl font-black text-red-500 tracking-wider font-logo">{t("container.warningTitle")}</h2>
+          <p className="text-xl font-bold text-mkhe-text uppercase tracking-widest border-b border-red-500/30 pb-4 inline-block">{t("container.warningSubtitle")}</p>
+          <p className="text-sm text-mkhe-text/70 max-w-md mx-auto leading-relaxed pt-2">
+            {t("container.warningDesc")}
+          </p>
+        </div>
+        <button 
+          onClick={() => navigate("/")} 
+          className="mt-4 px-8 py-4 bg-red-500 text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 relative z-10"
+        >
+          {t("container.backHome")}
+        </button>
       </div>
     );
   }
@@ -144,7 +179,7 @@ const DPPContainer = () => {
            <div className="w-2 h-2 rounded-full bg-mkhe-primary animate-pulse" />
            <span className="text-[10px] font-bold text-mkhe-text/90 uppercase tracking-[0.2em]">{t("container.passport")}</span>
            <span className="text-mkhe-text/30 px-1">|</span>
-           <span className="text-[10px] text-mkhe-text/60 font-mono tracking-wider">{t("container.id")}: {product.sku || product.productId || id}</span>
+           <span className="text-[10px] text-mkhe-text/60 font-mono tracking-wider">{t("container.id")}: {product.sku || product.productId || uid}</span>
         </div>
       </div>
 

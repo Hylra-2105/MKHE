@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { getLastNameInitial, isVideoUrl } from "@/utils/validators";
+import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
 import GeneralInfoTab from "./GeneralInfoTab";
 import ChangePasswordModal from "./ChangePasswordModal";
 
@@ -35,7 +35,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (user?.avatar) {
       setAvatarPreview(user.avatar);
-      setIsPreviewVideo(isVideoUrl(user.avatar));
+      setIsPreviewVideo(isVideoMedia(user.avatar));
     }
   }, [user?.avatar]);
 
@@ -122,7 +122,7 @@ const UserProfile = () => {
 
       // Hoàn tác UI khi lỗi
       setAvatarPreview(user?.avatar || "");
-      setIsPreviewVideo(isVideoUrl(user?.avatar));
+      setIsPreviewVideo(isVideoMedia(user?.avatar));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

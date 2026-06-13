@@ -6,7 +6,12 @@
     "passport": "Passport",
     "id": "ID",
     "errorNoDPP": "This product has not been issued a Digital Heritage Passport.",
-    "errorFetch": "Unable to load Digital Passport data. Please try again later."
+    "errorFetch": "Unable to load Digital Passport data. Please try again later.",
+    "viewImage": "View Image",
+    "view3D": "3D Model",
+    "warningTitle": "WARNING",
+    "warningSubtitle": "UNAUTHENTICATED PRODUCT",
+    "warningDesc": "This NFC identifier does not exist, has been forged, or has not been activated by MKHE. Please contact customer support for assistance."
   },
   "certificate": {
     "title": "Craftsmanship Certificate",

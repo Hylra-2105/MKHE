@@ -1,0 +1,57 @@
+{
+  "otp": {
+    "verified": "账户验证成功！",
+    "invalid_length": "请输入全部6位数字！",
+    "title": "确认您的身份",
+    "description": "我们已发送验证码至"
+  },
+  "errors": {
+    "pass_short": "密码必须至少为 6 个字符",
+    "pass_mismatch": "密码不匹配",
+    "invalid_file_type": "请选择有效的图像或视频文件！",
+    "video_too_large": "视频上传不得超过10MB！",
+    "image_too_large": "图片上传不得超过5MB！"
+  },
+  "messages": {
+    "update_success": "更新成功！",
+    "change_pass_success": "密码更新成功！",
+    "otp_sent_success": "OTP 发送成功！",
+    "otp_send_error": "发送 OTP 时出错"
+  },
+  "auth": {
+    "new_password": "新密码",
+    "confirm_new_password": "确认密码"
+  },
+  "profile": {
+    "title": "个人简介",
+    "general_info": "一般信息",
+    "change_password": "更改密码",
+    "update_avatar": "更新头像",
+    "drag_drop": "将图像/视频拖放到此处",
+    "click_browse": "或点击浏览文件",
+    "support_img": "支持：JPG、PNG、WEBP（最大 5MB）",
+    "support_video": "视频 MP4、WEBM（最大 30MB）",
+    "new_password": "创建新密码",
+    "update_password": "更改密码",
+    "change_password_desc": "请输入您帐户的新密码。"
+  },
+  "buttons": {
+    "verifying": "正在验证...",
+    "submit": "提交",
+    "resend": "重新发送",
+    "saving": "保存..."
+  },
+  "labels": {
+    "not_received": "没有收到代码？",
+    "resend": "重新发送"
+  },
+  "common": {
+    "cancel": "取消",
+    "edit": "编辑",
+    "save_info": "保存信息"
+  },
+  "INVALID_OR_EXPIRED_OTP": "OTP 代码无效或过期。",
+  "PASSWORD_MUST_BE_DIFFERENT": "新密码必须与当前密码不同。",
+  "USER_NOT_FOUND": "未找到用户帐户。",
+  "SERVER_ERROR": "发生意外错误。请稍后重试。"
+}

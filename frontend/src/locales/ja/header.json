@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "heritage": "遺産",
+    "craft_villages": "工芸村",
+    "shop": "ショップ",
+    "storytelling": "ストーリーテリング",
+    "values": "価値観"
+  },
+  "user_menu": {
+    "profile": "プロフィール",
+    "admin": "管理ダッシュボード",
+    "logout": "ログアウト",
+    "manage_users": "ユーザー管理",
+    "analytics": "分析",
+    "admin_area": "管理エリア",
+    "staff_area": "スタッフエリア",
+    "manage_products": "製品管理"
+  },
+  "guest_menu": {
+    "login": "ログイン"
+  },
+  "messages": {
+    "logout_success": "ログアウトしました！"
+  },
+  "settings": {
+    "language": "言語",
+    "theme": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "back": "戻る"
+  },
+  "languages": {
+    "vi": "ベトナム語",
+    "en": "英語",
+    "zh": "中国語",
+    "ko": "韓国語",
+    "ja": "日本語"
+  }
+}

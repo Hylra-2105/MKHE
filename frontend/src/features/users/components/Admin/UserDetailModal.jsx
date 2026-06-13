@@ -20,7 +20,7 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import {
   getLastNameInitial,
   isValidPhoneInput,
-  isVideoUrl,
+  isVideoMedia,
 } from "@/utils/validators";
 import useLocations from "@/hooks/useLocations";
 import EditableField from "@/features/users/components/Admin/EditableField";
@@ -259,7 +259,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 h-full">
             {/* CỘT TRÁI */}
             <div className="md:col-span-4 bg-[var(--color-mkhe-primary)]/5 p-8 border-r border-[var(--color-mkhe-border)]/20 flex flex-col items-center text-center sticky top-0 h-max transition-colors">
-              {user.avatar && isVideoUrl(user.avatar) ? (
+              {user.avatar && isVideoMedia(user.avatar) ? (
                 <video
                   src={user.avatar}
                   autoPlay

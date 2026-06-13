@@ -1,0 +1,57 @@
+{
+  "otp": {
+    "verified": "アカウント認証が成功しました!",
+    "invalid_length": "6桁すべてを入力してください。",
+    "title": "本人確認をする",
+    "description": "確認コードを送信しました"
+  },
+  "errors": {
+    "pass_short": "パスワードは6文字以上である必要があります",
+    "pass_mismatch": "パスワードが一致しません",
+    "invalid_file_type": "有効な画像またはビデオ ファイルを選択してください。",
+    "video_too_large": "ビデオのアップロードは 10MB を超えてはなりません。",
+    "image_too_large": "画像のアップロードは 5MB を超えてはなりません。"
+  },
+  "messages": {
+    "update_success": "アップデートが成功しました！",
+    "change_pass_success": "パスワードが正常に更新されました。",
+    "otp_sent_success": "OTP が正常に送信されました。",
+    "otp_send_error": "OTP 送信エラー"
+  },
+  "auth": {
+    "new_password": "新しいパスワード",
+    "confirm_new_password": "パスワードを認証する"
+  },
+  "profile": {
+    "title": "個人プロフィール",
+    "general_info": "一般情報",
+    "change_password": "パスワードを変更する",
+    "update_avatar": "アバターを更新する",
+    "drag_drop": "ここに画像/ビデオをドラッグ アンド ドロップします",
+    "click_browse": "またはクリックしてファイルを参照します",
+    "support_img": "サポート：JPG、PNG、WEBP（最大5MB）",
+    "support_video": "動画 MP4、WEBM (最大 30MB)",
+    "new_password": "新しいパスワードを作成する",
+    "update_password": "パスワードを変更する",
+    "change_password_desc": "アカウントの新しいパスワードを入力してください。"
+  },
+  "buttons": {
+    "verifying": "確認中...",
+    "submit": "提出する",
+    "resend": "再送信",
+    "saving": "保存中..."
+  },
+  "labels": {
+    "not_received": "コードを受け取っていませんか?",
+    "resend": "再送信"
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "save_info": "情報の保存"
+  },
+  "INVALID_OR_EXPIRED_OTP": "OTP コードが無効または期限切れです。",
+  "PASSWORD_MUST_BE_DIFFERENT": "新しいパスワードは現在のパスワードとは異なる必要があります。",
+  "USER_NOT_FOUND": "ユーザーアカウントが見つかりません。",
+  "SERVER_ERROR": "予期しないエラーが発生しました。後でもう一度試してください。"
+}

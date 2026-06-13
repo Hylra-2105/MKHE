@@ -27,5 +27,12 @@
     "light": "Sáng",
     "dark": "Tối",
     "back": "Quay lại"
+  },
+  "languages": {
+    "vi": "Tiếng Việt",
+    "en": "Tiếng Anh",
+    "zh": "Tiếng Trung",
+    "ko": "Tiếng Hàn",
+    "ja": "Tiếng Nhật"
   }
 }

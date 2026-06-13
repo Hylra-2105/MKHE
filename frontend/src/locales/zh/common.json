@@ -1,0 +1,16 @@
+{
+  "SERVER_ERROR": "内部服务器错误。请稍后再试！",
+  "error_default": "发生错误。请再试一次。",
+  "success": "成功",
+  "loading": "加载中...",
+  "error": "错误",
+  "warning": "警告",
+  "info": "信息",
+  "INVALID_DATA": "无效数据。请检查您的输入。",
+  "ACCOUNT_ALREADY_VERIFIED": "该帐户已被验证。",
+  "PASSWORD_TOO_SHORT": "密码长度必须至少为 6 个字符。",
+  "INVALID_EMAIL_FORMAT": "电子邮件格式无效。请输入有效的电子邮件。",
+  "REGISTER_SUCCESS": "注册成功！",
+  "PASSWORD_MUST_BE_DIFFERENT": "新密码必须与旧密码不同。",
+  "TOO_MANY_OTP_REQUESTS": "您请求 OTP 的次数过多。请15分钟后重试。"
+}

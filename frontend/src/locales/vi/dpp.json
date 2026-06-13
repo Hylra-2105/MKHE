@@ -8,7 +8,10 @@
     "errorNoDPP": "Sản phẩm này chưa được cấp Hộ chiếu số Di sản.",
     "errorFetch": "Không thể tải dữ liệu Hộ chiếu số. Vui lòng thử lại sau.",
     "viewImage": "Xem Ảnh",
-    "view3D": "Mô Hình 3D"
+    "view3D": "Mô Hình 3D",
+    "warningTitle": "CẢNH BÁO",
+    "warningSubtitle": "SẢN PHẨM KHÔNG XÁC THỰC",
+    "warningDesc": "Mã định danh NFC này không tồn tại, đã bị giả mạo hoặc chưa được kích hoạt bởi MKHE. Vui lòng liên hệ với bộ phận CSKH để được hỗ trợ."
   },
   "certificate": {
     "title": "Chứng nhận Chế tác",

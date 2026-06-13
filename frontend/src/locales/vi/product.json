@@ -27,6 +27,11 @@
     "add_title": "Thêm Sản phẩm Mới",
     "edit_title": "Chỉnh sửa Sản phẩm",
     "trash_title": "Thùng rác Sản phẩm",
+    "tab_general": "Thông tin chung",
+    "tab_nfc": "Hộ chiếu số (NFC)",
+    "gallery_label": "Ảnh/Video sản phẩm",
+    "drag_drop_text": "Kéo thả ảnh/video vào đây",
+    "click_to_select": "hoặc click để chọn file",
 
     "name": "Tên sản phẩm",
     "name_placeholder": "Ví dụ: Túi Tote Thổ Cẩm Kẻ Sọc",
@@ -136,7 +141,27 @@
     "gallery_delete_error": "Lỗi khi xóa tệp!",
     "max_images_error": "Chỉ được tải lên tối đa {{max}} tệp. Hiện có {{current}} tệp.",
     "invalid_file_type": "Loại tệp không hợp lệ! Chỉ chấp nhận ảnh và video.",
-    "image_too_large": "Kích thước tệp quá lớn! Tối đa 5MB cho mỗi tệp."
+    "image_too_large": "Kích thước tệp quá lớn! Tối đa 5MB cho mỗi tệp.",
+    "load_nfc_error": "Lỗi khi tải danh sách mã NFC",
+    "generate_nfc_error": "Lỗi khi cấp phát mã NFC",
+    "generate_nfc_success": "Đã cấp phát {{count}} mã NFC mới!",
+    "copy_link_error": "Lỗi khi copy link NFC",
+    "copy_link_success": "Đã copy link xác thực NFC!",
+    "update_tag_error": "Lỗi khi cập nhật trạng thái thẻ",
+    "activate_success": "Kích hoạt thành công mã {{uid}}",
+    "activate_error": "Kích hoạt thất bại"
+  },
+  "nfc": {
+    "management_title": "Quản lý mã NFC",
+    "management_desc": "Mỗi thẻ NFC sẽ được cấp một mã UID và Hash định danh duy nhất cho sản phẩm này.",
+    "generate": "CẤP PHÁT MÃ",
+    "generating": "ĐANG TẠO...",
+    "no_tags": "Sản phẩm này chưa được cấp mã NFC nào.",
+    "uid": "UID",
+    "url": "URL Ghi Thẻ (NFC Tools)",
+    "status": "Trạng thái",
+    "actions": "Thao tác",
+    "confirm_written": "Xác nhận đã ghi"
   },
   "culturalDNA": {
     "CHAM": "Mã gen Chăm",

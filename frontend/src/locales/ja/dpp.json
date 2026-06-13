@@ -1,0 +1,35 @@
+{
+  "container": {
+    "authenticating": "認証中...",
+    "errorTitle": "取得に失敗しました",
+    "backHome": "ホームに戻る",
+    "passport": "パスポート",
+    "id": "ID",
+    "errorNoDPP": "この製品にはデジタル遺産パスポートが発行されていません。",
+    "errorFetch": "デジタルパスポートのデータを読み込めません。後でもう一度試してください。",
+    "viewImage": "画像を見る",
+    "view3D": "3Dモデル",
+    "warningTitle": "警告",
+    "warningSubtitle": "非正規品",
+    "warningDesc": "この NFC 識別子は存在しないか、偽造されているか、MKHE によってアクティブ化されていません。サポートが必要な場合は、カスタマー サポートにお問い合わせください。"
+  },
+  "certificate": {
+    "title": "職人技証明書",
+    "artisan": "職人・クリエイター",
+    "defaultArtisan": "メコンの職人",
+    "culturalDNA": "文化的DNA",
+    "updating": "更新中",
+    "category": "カテゴリ"
+  },
+  "map": {
+    "title": "地理的位置",
+    "openApp": "アプリを開く",
+    "openAppTooltip": "Google マップで開く",
+    "mapTitle": "原点マップ"
+  },
+  "model": {
+    "initializing": "3D 空間を初期化しています...",
+    "arExperience": "AR体験",
+    "alt": "3Dモデル"
+  }
+}

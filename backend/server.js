@@ -17,6 +17,8 @@ import connectDB from "./src/config/db.js";
 import authRoutes from "./src/modules/auth/auth.routes.js";
 import userRoutes from "./src/modules/users/user.routes.js";
 import productRoutes from "./src/modules/products/product.routes.js";
+import nfcRoutes from "./src/modules/nfc/nfc.routes.js";
+import dppRoutes from "./src/modules/dpp/dpp.routes.js";
 
 connectDB();
 
@@ -54,6 +56,12 @@ app.use("/api/users", userRoutes);
 
 // API liên quan đến Products
 app.use("/api/products", productRoutes);
+
+// API liên quan đến NFC Tags
+app.use("/api/nfc-tags", nfcRoutes);
+
+// API liên quan đến DPP
+app.use("/api/dpp", dppRoutes);
 
 const PORT = process.env.PORT || 5000;
 
