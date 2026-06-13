@@ -1,0 +1,35 @@
+{
+  "container": {
+    "authenticating": "인증 중...",
+    "errorTitle": "검색 실패",
+    "backHome": "홈으로 돌아가기",
+    "passport": "여권",
+    "id": "ID",
+    "errorNoDPP": "이 제품은 디지털 헤리티지 여권이 발급되지 않았습니다.",
+    "errorFetch": "디지털 여권 데이터를 로드할 수 없습니다. 나중에 다시 시도해 주세요.",
+    "viewImage": "이미지 보기",
+    "view3D": "3D 모델",
+    "warningTitle": "경고",
+    "warningSubtitle": "인증되지 않은 제품",
+    "warningDesc": "이 NFC 식별자는 존재하지 않거나 위조되었거나 MKHE에 의해 활성화되지 않았습니다. 도움이 필요하면 고객지원팀에 문의하세요."
+  },
+  "certificate": {
+    "title": "장인기술증명서",
+    "artisan": "장인 / 창작자",
+    "defaultArtisan": "메콩 장인",
+    "culturalDNA": "문화 DNA",
+    "updating": "업데이트 중",
+    "category": "범주"
+  },
+  "map": {
+    "title": "지리적 위치",
+    "openApp": "앱 열기",
+    "openAppTooltip": "Google 지도에서 열기",
+    "mapTitle": "원산지 지도"
+  },
+  "model": {
+    "initializing": "3D 공간 초기화 중...",
+    "arExperience": "AR 체험",
+    "alt": "3D 모델"
+  }
+}

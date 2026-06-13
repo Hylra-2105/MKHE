@@ -1,5 +1,6 @@
 import React from "react";
 import { Star, ShoppingCart } from "lucide-react";
+import { isVideoMedia } from "@/utils/validators";
 import { useTranslation } from "react-i18next";
 
 const DnaCard = ({ 
@@ -56,17 +57,34 @@ const DnaCard = ({
               transition: "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
             }}
           >
-            {/* ẢNH SẢN PHẨM SẠCH SẼ, TRƠN TRU */}
-            {item.image || item.thumbnail || (item.images && item.images.length > 0) ? (
-              <img
-                src={item.image || item.thumbnail || item.images[0]}
-                alt={item.name}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-[#A6714A]/40 to-[#3B1F0C]/80" />
-            )}
+            {/* ẢNH/VIDEO SẢN PHẨM SẠCH SẼ, TRƠN TRU */}
+            {(() => {
+              const srcUrl = item.image || item.thumbnail || (item.images && item.images.length > 0 ? item.images[0] : null);
+              if (!srcUrl) return <div className="w-full h-full bg-gradient-to-br from-[#A6714A]/40 to-[#3B1F0C]/80" />;
+              
+              const isVideo = isVideoMedia(srcUrl);
+              
+              if (isVideo) {
+                return (
+                  <video
+                    src={srcUrl}
+                    className="w-full h-full object-cover transition-transform duration-700"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                );
+              }
+              return (
+                <img
+                  src={srcUrl}
+                  alt={item.name}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700"
+                />
+              );
+            })()}
 
             {/* MINI POPUP PANEL (CHỈ HIỆN KHI HOVER) */}
             <div 

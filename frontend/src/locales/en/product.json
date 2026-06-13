@@ -3,6 +3,11 @@
     "title": "Product Management",
     "subtitle": "Build commercial catalogs and manage the B2B/B2C matrix",
     "add_btn": "+ Add Product",
+    "tab_general": "General Info",
+    "tab_nfc": "Digital Passport (NFC)",
+    "gallery_label": "Product Images/Videos",
+    "drag_drop_text": "Drag and drop images/videos here",
+    "click_to_select": "or click to select files",
     "page_text": "Page",
     "trash_btn": "Trash"
   },
@@ -125,7 +130,27 @@
     "gallery_delete_error": "Error deleting file!",
     "max_images_error": "You can upload a maximum of {{max}} files. Currently selected: {{current}}.",
     "invalid_file_type": "Invalid file type! Only images and videos are allowed.",
-    "image_too_large": "File size is too large! Maximum size is 5MB per file."
+    "image_too_large": "File size is too large! Maximum size is 5MB per file.",
+    "load_nfc_error": "Error loading NFC tags",
+    "generate_nfc_error": "Error generating NFC tags",
+    "generate_nfc_success": "Successfully generated {{count}} new NFC tags!",
+    "copy_link_error": "Error copying NFC link",
+    "copy_link_success": "NFC verification link copied!",
+    "update_tag_error": "Error updating tag status",
+    "activate_success": "Successfully activated tag {{uid}}",
+    "activate_error": "Activation failed"
+  },
+  "nfc": {
+    "management_title": "NFC Tag Management",
+    "management_desc": "Each NFC tag will be issued a unique UID and Hash identifier for this product.",
+    "generate": "GENERATE TAGS",
+    "generating": "GENERATING...",
+    "no_tags": "No NFC tags have been generated for this product yet.",
+    "uid": "UID",
+    "url": "Write URL (NFC Tools)",
+    "status": "Status",
+    "actions": "Actions",
+    "confirm_written": "Confirm Written"
   },
   "culturalDNA": {
     "CHAM": "Cham Genetic Code",

@@ -1,0 +1,23 @@
+{
+  "title": "계정 확인",
+  "description": "이메일로 전송된 6자리 OTP를 입력하세요.",
+  "btn_submit": "OTP 확인",
+  "btn_verifying": "확인 중...",
+  "not_received": "코드를 받지 못하셨나요?",
+  "resend": "코드 재전송",
+  "back_to_register": "등록으로 돌아가기",
+  "msg_empty": "OTP 6자리를 모두 입력해주세요!",
+  "msg_success": "축하해요! 확인에 성공했습니다.",
+  "msg_error_default": "유효하지 않거나 만료된 OTP입니다!",
+  "INVALID_OTP": "OTP가 잘못되었습니다!",
+  "EXPIRED_OTP": "OTP가 만료되었습니다. 새 OTP를 요청하세요!",
+  "INVALID_OR_EXPIRED_OTP": "OTP가 유효하지 않거나 만료되었습니다. 새 OTP를 요청하세요!",
+  "SERVER_ERROR": "서버 오류입니다. 나중에 다시 시도해 주세요!",
+  "VERIFY_SUCCESS": "계정 확인이 완료되었습니다!",
+  "RESEND_SUCCESS": "OTP가 성공적으로 재전송되었습니다! 이메일을 확인해주세요.",
+  "btn_processing": "처리 중...",
+  "messages": {
+    "otp_sent_success": "OTP가 Gmail로 전송되었습니다!",
+    "otp_send_error": "OTP 전송 오류: {{message}}"
+  }
+}

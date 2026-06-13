@@ -80,7 +80,8 @@ export const maskEmail = (email) => {
   );
 };
 
-export const isVideoUrl = (url) => {
+export const isVideoMedia = (url) => {
   if (!url) return false;
-  return !!url.match(/\.(mp4|webm|ogg)$/i);
+  if (typeof url !== 'string') return false;
+  return !!url.match(/\.(mp4|webm|ogg|mov)$/i) || url.includes("/video/") || url.includes('mkhe_videos') || url.startsWith('data:video');
 };

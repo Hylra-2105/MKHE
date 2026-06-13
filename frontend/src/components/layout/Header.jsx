@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { applyTheme } from "@/utils/theme";
-import { isVideoUrl } from "@/utils/validators";
+import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
 import { useTranslation } from "react-i18next";
@@ -18,10 +18,11 @@ import {
 } from "lucide-react";
 
 const LANGUAGES = [
-  { code: "vi", label: "Tiếng Việt", short: "VI" },
-  { code: "en", label: "English", short: "EN" },
-  { code: "zh", label: "中文", short: "ZH" },
-  { code: "ko", label: "한국어", short: "KO" },
+  { code: "vi", labelKey: "languages.vi", short: "VI" },
+  { code: "en", labelKey: "languages.en", short: "EN" },
+  { code: "zh", labelKey: "languages.zh", short: "ZH" },
+  { code: "ko", labelKey: "languages.ko", short: "KO" },
+  { code: "ja", labelKey: "languages.ja", short: "JA" },
 ];
 
 export default function Header() {
@@ -37,7 +38,7 @@ export default function Header() {
   const isAdminOrStaff = isAdmin || isStaff;
 
   // AVATAR CÓ PHẢI LÀ VIDEO KHÔNG
-  const isAvatarVideo = isVideoUrl(user?.avatar);
+  const isAvatarVideo = isVideoMedia(user?.avatar);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("main");
@@ -343,7 +344,7 @@ export default function Header() {
                               : "opacity-80"
                           }
                         >
-                          {lang.label}
+                          {t(lang.labelKey)}
                         </span>
                         {i18n.language === lang.code && (
                           <Check className="w-4 h-4 text-mkhe-primary" />

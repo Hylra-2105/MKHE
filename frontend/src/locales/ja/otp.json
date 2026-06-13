@@ -1,0 +1,23 @@
+{
+  "title": "アカウントの認証",
+  "description": "メールに送信された 6 桁の OTP を入力してください:",
+  "btn_submit": "OTP を確認する",
+  "btn_verifying": "確認中...",
+  "not_received": "コードを受け取っていませんか?",
+  "resend": "コードを再送信する",
+  "back_to_register": "登録に戻る",
+  "msg_empty": "OTP の 6 桁をすべて入力してください。",
+  "msg_success": "おめでとう！検証が成功しました。",
+  "msg_error_default": "OTP が無効か期限切れです。",
+  "INVALID_OTP": "OTP が無効です!",
+  "EXPIRED_OTP": "OTP の有効期限が切れました。新しい OTP をリクエストしてください。",
+  "INVALID_OR_EXPIRED_OTP": "OTP が無効または期限切れです。新しい OTP をリクエストしてください。",
+  "SERVER_ERROR": "サーバー エラー。後でもう一度お試しください。",
+  "VERIFY_SUCCESS": "アカウント認証が成功しました!",
+  "RESEND_SUCCESS": "OTP が正常に再送信されました。メールをご確認ください。",
+  "btn_processing": "処理...",
+  "messages": {
+    "otp_sent_success": "OTP が Gmail に送信されました。",
+    "otp_send_error": "OTP 送信エラー: {{message}}"
+  }
+}

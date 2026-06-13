@@ -1,0 +1,16 @@
+{
+  "SERVER_ERROR": "内部サーバーエラー。後でもう一度試してください。",
+  "error_default": "エラーが発生しました。もう一度試してください。",
+  "success": "成功",
+  "loading": "読み込み中...",
+  "error": "エラー",
+  "warning": "警告",
+  "info": "情報",
+  "INVALID_DATA": "無効なデータです。入力内容を確認してください。",
+  "ACCOUNT_ALREADY_VERIFIED": "このアカウントはすでに認証されています。",
+  "PASSWORD_TOO_SHORT": "パスワードは 6 文字以上である必要があります。",
+  "INVALID_EMAIL_FORMAT": "無効な電子メール形式です。有効な電子メールを入力してください。",
+  "REGISTER_SUCCESS": "登録が成功しました！",
+  "PASSWORD_MUST_BE_DIFFERENT": "新しいパスワードは古いパスワードとは異なる必要があります。",
+  "TOO_MANY_OTP_REQUESTS": "OTP を要求した回数が多すぎます。 15分後にもう一度試してください。"
+}
