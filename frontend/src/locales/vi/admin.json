@@ -58,7 +58,8 @@
   },
   "errors": {
     "FORBIDDEN_ACCESS": "Bạn không có quyền truy cập tính năng này!",
-    "fetch_failed": "Đã xảy ra lỗi khi tải danh sách người dùng!"
+    "fetch_failed": "Đã xảy ra lỗi khi tải danh sách người dùng!",
+    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
   },
   "table": {
     "avatar": "Ảnh đại diện",

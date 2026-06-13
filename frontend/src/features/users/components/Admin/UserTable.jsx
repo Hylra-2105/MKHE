@@ -67,6 +67,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                       }
                       alt="avatar"
                       loading="lazy"
+                      referrerPolicy="no-referrer"
                       className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
                     />
                   )}

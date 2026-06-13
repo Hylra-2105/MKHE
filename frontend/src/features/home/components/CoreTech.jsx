@@ -34,8 +34,7 @@ const CoreTech = () => {
             {t("tech.title", "Đánh thức Di sản bằng Công nghệ Đương đại")}
           </h2>
           <p className="text-lg text-mkhe-text/75 mb-10 leading-relaxed">
-            Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa
-            khóa số để bước vào thế giới của nghệ thuật thủ công ngàn năm.
+            {t("core_tech.desc")}
           </p>
           <div className="space-y-6">
             {features.map((item, idx) => (

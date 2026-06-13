@@ -2,7 +2,8 @@
   "dna": {
     "title": "Các Sản Phẩm Văn Hóa",
     "subtitle": "Khám phá những tinh hoa thủ công đặc trưng",
-    "view_all": "Xem toàn bộ"
+    "view_all": "Xem toàn bộ",
+    "buy_now": "Mua ngay"
   },
   "hero": {
     "tag": "Heritage & Elegance",
@@ -20,7 +21,8 @@
       "about": "Về chúng tôi",
       "b2b": "Bộ sưu tập B2B",
       "b2c": "Thời trang B2C",
-      "heritage": "Hành trình Di sản"
+      "heritage": "Hành trình Di sản",
+      "explore_details": "Khám phá chi tiết"
     },
     "support": {
       "title": "Hỗ trợ",
@@ -39,5 +41,8 @@
     "badge": "Sắp ra mắt",
     "title": "Board Game: Đại Lộ Di Sản",
     "desc": "Một trải nghiệm giải trí tương tác hoàn toàn mới. Cùng đón chờ hành trình khám phá văn hóa đa chiều qua từng ô cờ sắp được MKHE hé lộ!"
+  },
+  "core_tech": {
+    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
   }
 }

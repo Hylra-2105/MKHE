@@ -1,25 +1,32 @@
 import React from "react";
 import { Star, ShoppingCart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const DnaCard = ({ 
   item, 
   idx, 
   itemsPerView, 
   isHoveredCard, 
-  isDimmed, 
+  isDimmed,
+  isMobile,
   onHover, 
   onLeave 
 }) => {
+  const { t } = useTranslation("home");
+
   // === TÍNH TOÁN HIỆU ỨNG 2D/3D ===
+  // Vẫn giữ hiệu ứng cong/nghiêng 3D trên mobile để đẹp mắt
   const rotateY = isHoveredCard ? 0 : (idx % 2 === 0 ? -10 : 10);
   const skewAngle = isHoveredCard ? 0 : (idx % 2 === 0 ? -6 : 6);
-  const cardScale = isHoveredCard ? 1.25 : 1; 
+  // NHƯNG Không phóng to (scale/translateZ) trên mobile để tránh vỡ layout ngang
+  const cardScale = isHoveredCard && !isMobile ? 1.25 : 1; 
+  const translateZ = isHoveredCard && !isMobile ? '100px' : '0';
   const cardZIndex = isHoveredCard ? 50 : 1;
-  const cardOpacity = isDimmed ? 0.4 : 1; 
+  const cardOpacity = isDimmed && !isMobile ? 0.4 : 1;  
 
   return (
     <div
-      className="flex-shrink-0 px-2 md:px-2 group cursor-pointer"
+      className="flex-shrink-0 px-2 sm:px-3 lg:px-4 group cursor-pointer"
       style={{ 
         width: `${100 / itemsPerView}%`,
         zIndex: cardZIndex, 
@@ -30,19 +37,18 @@ const DnaCard = ({
       onMouseLeave={onLeave}
       onClick={() => {
         // CHỖ NÀY ĐỂ CHUYỂN SANG TRANG DETAIL
-        console.log("Chuyển hướng sang trang chi tiết của sản phẩm:", item.name);
       }}
     >
       <div
         className="max-w-[500px] mx-auto"
         style={{
-          transform: `rotateY(${rotateY}deg) scale(${cardScale}) translateZ(${isHoveredCard ? '100px' : '0'})`,
+          transform: `rotateY(${rotateY}deg) scale(${cardScale}) translateZ(${translateZ})`,
           transition: "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
         }}
       >
         <div className="relative aspect-[9/13]">
           <div
-            className={`absolute inset-0 rounded-2xl mb-10 shadow-2xl border bg-gradient-to-br from-mkhe-bg/30 to-mkhe-bg/10 overflow-hidden transition-all duration-500
+            className={`absolute inset-0 rounded-2xl mb-6 md:mb-8 shadow-2xl border bg-gradient-to-br from-mkhe-bg/30 to-mkhe-bg/10 overflow-hidden transition-all duration-500
               ${isHoveredCard ? 'border-mkhe-primary shadow-[0_30px_60px_rgba(212,163,115,0.4)]' : 'border-[#D4A373]/30'}
             `}
             style={{
@@ -90,12 +96,11 @@ const DnaCard = ({
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      console.log("Thêm vào giỏ hàng:", item.name);
                     }} 
                     className="w-full bg-mkhe-primary hover:bg-[#C38D64] text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <ShoppingCart className="w-4 h-4" />
-                    Mua ngay
+                    {t("dna.buy_now")}
                   </button>
                 </div>
               </div>

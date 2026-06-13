@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowRight, MapPin, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import Fireflies from "./Fireflies";
 
 // Đã import đủ 3 bức ảnh của cha
@@ -9,6 +10,7 @@ import langdetkhanranImg from "@/assets/images/lang-det-khan-ran.png";
 import langnghemaytreImg from "@/assets/images/lang-nghe-may-tre.png";
 
 const HeritageStory = () => {
+  const { t } = useTranslation("home");
   const [activeTab, setActiveTab] = useState(0);
 
   // Đã gài đúng ảnh cho từng Tỉnh
@@ -114,24 +116,24 @@ const HeritageStory = () => {
         ======================================== */}
         <div className="relative z-20">
           {/* THANH ĐIỀU HƯỚNG TỈNH THÀNH (TABS) */}
-          <div className="flex flex-wrap justify-center gap-4 md:gap-12 border-b border-mkhe-primary/20 pb-6 mb-12">
+          <div className="flex flex-nowrap justify-center gap-1 sm:gap-4 md:gap-12 border-b border-mkhe-primary/20 pb-4 mb-8 md:pb-6 md:mb-12 px-1">
             {journeyData.map((tab, index) => {
               const isActive = activeTab === index;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(index)}
-                  className={`relative flex items-center cursor-pointer gap-3 px-4 py-2 transition-all duration-300 ${
+                  className={`relative flex items-center justify-center cursor-pointer gap-1.5 md:gap-3 px-2 sm:px-4 py-2 transition-all duration-300 ${
                     isActive
                       ? "text-mkhe-primary"
                       : "text-mkhe-text/60 hover:text-mkhe-text"
                   }`}
                 >
                   <MapPin
-                    className={`w-5 h-5 ${isActive ? "opacity-100" : "opacity-0 hidden md:block"}`}
+                    className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isActive ? "opacity-100 hidden sm:block" : "opacity-0 hidden md:block"}`}
                   />
-                  <div className="text-left">
-                    <h3 className={`font-logo text-xl md:text-2xl font-bold`}>
+                  <div className="text-center md:text-left">
+                    <h3 className={`font-logo text-sm sm:text-lg md:text-2xl font-bold whitespace-nowrap`}>
                       {tab.province}
                     </h3>
                     <p className="text-xs md:text-sm font-medium hidden md:block">
@@ -184,7 +186,7 @@ const HeritageStory = () => {
                   className="group relative flex flex-col items-center lg:items-start text-mkhe-primary hover:text-[#C38D64] transition-colors"
                 >
                   <span className="text-sm font-bold uppercase tracking-widest mb-2 opacity-80">
-                    Khám phá chi tiết
+                    {t("footer.explore.explore_details")}
                   </span>
                   <span className="flex items-center gap-3 text-2xl font-logo font-bold">
                     {journeyData[activeTab].province}

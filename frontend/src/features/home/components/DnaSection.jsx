@@ -11,8 +11,9 @@ const DnaSection = ({ title, data, isReverse = false }) => {
   );
 
   const getItemsPerView = (width) => {
-    if (width < 640) return 1;
-    if (width < 1024) return 3;
+    if (width < 450) return 2;
+    if (width < 700) return 3;
+    if (width < 1000) return 4;
     return 5;
   };
 
@@ -131,14 +132,14 @@ const DnaSection = ({ title, data, isReverse = false }) => {
   if (data.length === 0) return null;
 
   return (
-    <div className="mb-5">
+    <div className="mb-2 md:mb-5">
       {/* HEADER */}
-      <div className="max-w-[1100px] mx-auto flex items-end justify-between mb-8 px-4">
+      <div className="max-w-[1100px] mx-auto flex items-end justify-between mb-2 md:mb-4 px-4">
         <div className="flex flex-col gap-1">
-          <h3 className="text-3xl md:text-4xl font-bold uppercase tracking-widest font-logo text-transparent bg-clip-text bg-gradient-to-r from-mkhe-primary via-[#D4A373] to-[#C38D64] drop-shadow-sm">
+          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-widest font-logo text-transparent bg-clip-text bg-gradient-to-r from-mkhe-primary via-[#D4A373] to-[#C38D64] drop-shadow-sm">
             {title}
           </h3>
-          <button className="group flex items-center gap-1.5 text-mkhe-text/60 text-sm md:text-base font-medium hover:text-mkhe-primary transition-colors mt-1 w-fit cursor-pointer">
+          <button className="group flex items-center gap-1.5 text-mkhe-text/60 text-xs md:text-sm font-medium hover:text-mkhe-primary transition-colors mt-1 w-fit cursor-pointer">
             {t("dna.view_all", "Xem toàn bộ")}
             <span className="transform group-hover:translate-x-1 transition-transform">
               &gt;
@@ -165,7 +166,7 @@ const DnaSection = ({ title, data, isReverse = false }) => {
 
       {/* KHU VỰC SLIDER */}
       <div
-        className="max-w-[1100px] mx-auto py-12 -my-12 px-4 select-none overflow-hidden"
+        className="max-w-[1100px] mx-auto py-2 -my-2 md:py-6 md:-my-6 px-4 select-none overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -183,9 +184,9 @@ const DnaSection = ({ title, data, isReverse = false }) => {
         <div
           style={{ perspective: "1200px", perspectiveOrigin: "center center" }}
         >
-          {/* Tăng nhẹ lớp đệm pt-16 pb-28 để chừa hẳn không gian cho thẻ scale bự hẳn lên */}
+          {/* Responsive padding: ít hơn trên mobile vì không có hiệu ứng phóng to (scale 1.25) */}
           <div
-            className="flex items-end pt-16 pb-28"
+            className="flex items-end pt-2 pb-4 md:pt-6 md:pb-12"
             style={{
               transform: `translateX(calc(-${currentIndex * (100 / itemsPerView)}% + ${dragOffset}px))`,
               transition:
@@ -204,6 +205,7 @@ const DnaSection = ({ title, data, isReverse = false }) => {
                 itemsPerView={itemsPerView}
                 isHoveredCard={hoveredCard === idx}
                 isDimmed={hoveredCard !== null && hoveredCard !== idx}
+                isMobile={windowWidth < 768}
                 onHover={() => setHoveredCard(idx)}
                 onLeave={() => setHoveredCard(null)}
               />

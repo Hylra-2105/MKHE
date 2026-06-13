@@ -32,6 +32,8 @@ import NotFoundPage from "./pages/errors/NotFoundPage";
 
 import ProfilePage from "@/pages/users/ProfilePage";
 
+import DPPPage from "@/pages/dpp/DPPPage";
+
 function App() {
   const setUser = useAuthStore((state) => state.setUser);
   const token = useAuthStore((state) => state.token);
@@ -41,9 +43,6 @@ function App() {
   const isInitialMount = React.useRef(true);
 
   useEffect(() => {
-    // Chỉ fetch 1 LẦN DUY NHẤT khi người dùng tải lại trang (F5)
-    // Nếu người dùng vừa mới đăng nhập, token thay đổi từ null -> string, ta KHÔNG fetch lại nữa
-    // vì lúc đăng nhập backend đã trả về thông tin user mới nhất rồi.
     if (isInitialMount.current) {
       isInitialMount.current = false;
       
@@ -151,6 +150,8 @@ function App() {
             }
           />
         </Route>
+
+        <Route path="/dpp/:id" element={<DPPPage />} />
 
         <Route path="/403" element={<ForbiddenPage />} />
         <Route path="*" element={<NotFoundPage />} />
