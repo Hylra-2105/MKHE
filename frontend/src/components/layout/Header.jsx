@@ -192,6 +192,7 @@ export default function Header() {
                   <img
                     src={user.avatar}
                     alt="avatar"
+                    referrerPolicy="no-referrer"
                     className="w-full h-full object-cover"
                   />
                 )

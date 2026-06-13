@@ -221,7 +221,6 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
             />
           ) : (
             <div className="p-4 bg-[var(--color-mkhe-input)]/50 rounded-xl border border-[var(--color-mkhe-border)]/90 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">
-              // Phân biệt thông báo khi trống theo role
               {editForm.bio ||
                 (isAdminView
                   ? t("users.bio_empty_admin")

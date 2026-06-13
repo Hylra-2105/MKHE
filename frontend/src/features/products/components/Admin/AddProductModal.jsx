@@ -215,7 +215,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   const process3DFile = async (file) => {
     if (!file.name.endsWith('.glb') && !file.name.endsWith('.gltf')) {
-      return toast.error("Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)");
+      return toast.error(t("errors.error_3d_format", { ns: "admin" }));
     }
     
     // Cảnh báo nếu file quá khủng khiếp (>150MB) có thể crash trình duyệt

@@ -1,0 +1,32 @@
+{
+  "container": {
+    "authenticating": "Authenticating...",
+    "errorTitle": "Truy xuất thất bại",
+    "backHome": "Quay về Trang chủ",
+    "passport": "Passport",
+    "id": "ID",
+    "errorNoDPP": "Sản phẩm này chưa được cấp Hộ chiếu số Di sản.",
+    "errorFetch": "Không thể tải dữ liệu Hộ chiếu số. Vui lòng thử lại sau.",
+    "viewImage": "Xem Ảnh",
+    "view3D": "Mô Hình 3D"
+  },
+  "certificate": {
+    "title": "Chứng nhận Chế tác",
+    "artisan": "Nghệ nhân / Nhà sáng tạo",
+    "defaultArtisan": "Nghệ nhân Mekong",
+    "culturalDNA": "DNA Văn hóa",
+    "updating": "Đang cập nhật",
+    "category": "Phân hạng"
+  },
+  "map": {
+    "title": "Vị trí Địa lý",
+    "openApp": "Mở App",
+    "openAppTooltip": "Mở trong Google Maps",
+    "mapTitle": "Bản đồ xuất xứ"
+  },
+  "model": {
+    "initializing": "Khởi tạo không gian 3D...",
+    "arExperience": "Trải nghiệm AR Thực tế",
+    "alt": "Mô hình 3D"
+  }
+}

@@ -29,7 +29,7 @@ const CulturalDNA = () => {
           KINH: Array.isArray(kinhData) ? kinhData : kinhData?.items || [],
         });
       } catch (error) {
-        console.error("Lỗi khi tải sản phẩm", error);
+        // Do nothing
       } finally {
         setLoading(false);
       }

@@ -1,0 +1,30 @@
+{
+  "container": {
+    "authenticating": "Authenticating...",
+    "errorTitle": "Retrieval Failed",
+    "backHome": "Back to Home",
+    "passport": "Passport",
+    "id": "ID",
+    "errorNoDPP": "This product has not been issued a Digital Heritage Passport.",
+    "errorFetch": "Unable to load Digital Passport data. Please try again later."
+  },
+  "certificate": {
+    "title": "Craftsmanship Certificate",
+    "artisan": "Artisan / Creator",
+    "defaultArtisan": "Mekong Artisan",
+    "culturalDNA": "Cultural DNA",
+    "updating": "Updating",
+    "category": "Category"
+  },
+  "map": {
+    "title": "Geographical Location",
+    "openApp": "Open App",
+    "openAppTooltip": "Open in Google Maps",
+    "mapTitle": "Origin Map"
+  },
+  "model": {
+    "initializing": "Initializing 3D space...",
+    "arExperience": "AR Experience",
+    "alt": "3D Model"
+  }
+}

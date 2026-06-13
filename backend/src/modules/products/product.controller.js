@@ -138,7 +138,17 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id);
+    
+    // Tìm kiếm bằng Mongoose ObjectId (nếu ID dài 24 ký tự hex) HOẶC bằng mã SKU
+    let product;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(id);
+    } 
+    
+    // Nếu không tìm thấy bằng ObjectId hoặc ID không phải định dạng hex, thử tìm theo SKU
+    if (!product) {
+      product = await Product.findOne({ sku: id.toUpperCase() });
+    }
 
     if (!product) {
       return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
