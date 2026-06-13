@@ -1,8 +1,8 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
-
 import dotenv from "dotenv";
+
 dotenv.config();
 
 // Cấu hình chìa khóa kết nối với Cloudinary lấy từ file .env
@@ -16,13 +16,25 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
-    // Tự động phân loại thư mục lưu trữ: video sẽ vào 'videos', ảnh vào 'avatars'
     const isVideo = file.mimetype.startsWith("video/");
+    // Nhận diện file 3D dựa trên đuôi file hoặc mimetype
+    const is3D = file.originalname.endsWith(".glb") || file.originalname.endsWith(".gltf") || file.mimetype.startsWith("model/");
+
+    let folderName = "mkhe_avatars";
+    let resourceType = "image";
+
+    if (isVideo) {
+      folderName = "mkhe_videos";
+      resourceType = "video";
+    } else if (is3D) {
+      folderName = "mkhe_3d";
+      resourceType = "raw"; 
+    }
 
     return {
-      folder: isVideo ? "mkhe_videos" : "mkhe_avatars",
-      resource_type: isVideo ? "video" : "image", 
-      public_id: `${Date.now()}-${file.originalname.split(".")[0]}`, // Đặt tên file tránh trùng lặp
+      folder: folderName,
+      resource_type: resourceType,
+      public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
     };
   },
 });
@@ -31,14 +43,12 @@ const storage = new CloudinaryStorage({
 const fileFilter = (req, file, cb) => {
   const isImage = file.mimetype.startsWith("image/");
   const isVideo = file.mimetype.startsWith("video/");
+  const is3D = file.originalname.endsWith(".glb") || file.originalname.endsWith(".gltf") || file.mimetype.startsWith("model/");
 
-  if (isImage || isVideo) {
-    cb(null, true); // File hợp lệ, cho đi tiếp
+  if (isImage || isVideo || is3D) {
+    cb(null, true);
   } else {
-    cb(
-      new Error("Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."),
-      false,
-    ); // File lỗi, chặn lại
+    cb(new Error("INVALID_FILE_FORMAT"), false); 
   }
 };
 
@@ -47,7 +57,7 @@ export const uploadCloud = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024,
+    fileSize: 100 * 1024 * 1024, // Nâng giới hạn lên 100MB
   },
 });
 

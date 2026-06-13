@@ -23,7 +23,7 @@ const HeroBanner = () => {
 
   return (
     <>
-      <section className="relative min-h-[90vh] bg-mkhe-bg overflow-hidden flex items-center pt-32 pb-20">
+      <section className="relative min-h-[90vh] bg-mkhe-bg overflow-hidden flex items-center pt-12 pb-20">
         {/* =========================================
             STRIPE-STYLE COLORFUL GRADIENT STRIPES
         ========================================== */}

@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "heritage": "遗产",
+    "craft_villages": "手工艺村",
+    "shop": "商店",
+    "storytelling": "品牌故事",
+    "values": "价值观"
+  },
+  "user_menu": {
+    "profile": "个人资料",
+    "admin": "管理员面板",
+    "logout": "退出登录",
+    "manage_users": "管理用户",
+    "analytics": "数据分析",
+    "admin_area": "管理区",
+    "staff_area": "员工区",
+    "manage_products": "管理产品"
+  },
+  "guest_menu": {
+    "login": "登录"
+  },
+  "messages": {
+    "logout_success": "成功退出登录！"
+  },
+  "settings": {
+    "language": "语言",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "back": "返回"
+  },
+  "languages": {
+    "vi": "越南语",
+    "en": "英语",
+    "zh": "中文",
+    "ko": "韩语",
+    "ja": "日语"
+  }
+}

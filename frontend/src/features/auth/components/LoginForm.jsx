@@ -79,14 +79,13 @@ export default function LoginForm() {
         }
       }
     } catch (error) {
-      console.error("Lỗi đăng nhập Google:", error);
       if (
         error.code === "auth/popup-closed-by-user" ||
         error.code === "auth/cancelled-popup-request"
       ) {
         return; // Người dùng tự đóng popup
       }
-      toast.error(t("error_social_login") || "Đăng nhập bằng Google thất bại!");
+      toast.error(t("error_social_login"));
     } finally {
       setIsGoogleLoading(false);
     }

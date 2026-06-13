@@ -1,0 +1,43 @@
+{
+  "dna": {
+    "title": "文化产品",
+    "subtitle": "探索独特工艺的精髓",
+    "view_all": "查看全部"
+  },
+  "hero": {
+    "tag": "传承与优雅",
+    "title_1": "当地认同感得到提升的地方",
+    "title_highlight": "创造性思维。",
+    "subtitle": "通过当代工艺探索精致的遗产。用数字技术唤醒身份。",
+    "cta_explore": "探索系列",
+    "cta_about": "MKHE 故事",
+    "watch_video": "观看视频"
+  },
+  "footer": {
+    "brand_desc": "通过当代工艺和数字技术保护和弘扬越南文化遗产。",
+    "explore": {
+      "title": "探索",
+      "about": "关于我们",
+      "b2b": "B2B系列",
+      "b2c": "B2C时尚",
+      "heritage": "遗产之旅"
+    },
+    "support": {
+      "title": "支持",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "nfc": "NFC 扫描指南",
+      "tracking": "订单追踪"
+    },
+    "contact": {
+      "title": "接触",
+      "address": "芹苴, 越南, 94100"
+    },
+    "rights": "版权所有。"
+  },
+  "boardgame": {
+    "badge": "即将推出",
+    "title": "棋盘游戏：遗产大道",
+    "desc": "全新的互动娱乐体验。敬请期待MKHE即将为您揭晓的穿越各个广场的多维文化之旅！"
+  }
+}

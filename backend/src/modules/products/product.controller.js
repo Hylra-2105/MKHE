@@ -15,29 +15,45 @@ export const createProduct = async (req, res) => {
       price,
       stock,
       images,
+      vendor,
+      hasDPP,
+      artisanName,
+      gpsLocation,
+      file3D,
     } = req.body;
 
-    // 1. Validate cơ bản
-    if (!name || !sku || !categoryMatrix || price === undefined) {
+    // Validate cơ bản 
+    if (!name || !sku || !categoryMatrix || price === undefined || !vendor) {
       return errorResponse(res, 400, "MISSING_REQUIRED_FIELDS");
     }
 
-    // 2. Kiểm tra SKU đã tồn tại chưa
+    // Validate Hộ chiếu số
+    if (hasDPP) {
+      if (!artisanName) return errorResponse(res, 400, "ARTISAN_NAME_REQUIRED");
+      if (!gpsLocation) return errorResponse(res, 400, "GPS_LOCATION_REQUIRED");
+    }
+
+    // 3. Kiểm tra SKU đã tồn tại chưa
     const existingProduct = await Product.findOne({ sku: sku.toUpperCase() });
     if (existingProduct) {
       return errorResponse(res, 400, "SKU_ALREADY_EXISTS");
     }
 
-    // 3. Tạo sản phẩm mới
+    // Tạo sản phẩm mới
     const newProduct = new Product({
       name,
       sku: sku.toUpperCase(),
       description,
       categoryMatrix,
-      culturalDNA: culturalDNA || "OTHER", // Hứng dữ liệu mã gen văn hóa
+      culturalDNA: culturalDNA || "OTHER",
+      vendor, 
       price: Number(price),
       stock: Number(stock) || 0,
       images: images || [],
+      hasDPP: hasDPP || false,
+      artisanName: hasDPP ? artisanName : undefined,
+      gpsLocation: hasDPP ? gpsLocation : undefined,
+      file3D: hasDPP ? file3D : undefined,
     });
 
     await newProduct.save();
@@ -45,8 +61,8 @@ export const createProduct = async (req, res) => {
     return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
     console.error("Error in createProduct:", error);
-    if (error.name === "ValidationError") {
-      return errorResponse(res, 400, "VALIDATION_ERROR");
+    if (error.name === "ValidationError" || error.message.includes("REQUIRED")) {
+      return errorResponse(res, 400, error.message || "VALIDATION_ERROR");
     }
     return errorResponse(res, 500, "SERVER_ERROR");
   }
@@ -60,16 +76,15 @@ export const getProducts = async (req, res) => {
     const search = req.query.search || "";
     const category = req.query.category || "";
     const culturalDNA = req.query.culturalDNA || "";
+    const vendor = req.query.vendor || "";
 
-    // === THÊM 2 THAM SỐ MỚI ĐỂ LỌC CHO GUEST ===
     const status = req.query.status || "";
-    const inStock = req.query.inStock === "true"; // Nếu FE truyền inStock=true thì mới lọc
+    const inStock = req.query.inStock === "true"; 
 
     const skip = (page - 1) * limit;
 
     let query = {};
 
-    // 1. Nếu có từ khóa search
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
@@ -78,42 +93,25 @@ export const getProducts = async (req, res) => {
       ];
     }
 
-    // 2. Nếu có chọn Phân loại ma trận
-    if (category) {
-      query.categoryMatrix = category;
-    }
+    if (category) query.categoryMatrix = category;
+    if (culturalDNA) query.culturalDNA = culturalDNA;
+    if (vendor) query.vendor = vendor; 
 
-    // 3. Lọc theo Mã gen văn hóa
-    if (culturalDNA) {
-      query.culturalDNA = culturalDNA;
-    }
-
-    // === 4. LỌC TRẠNG THÁI (STATUS) ===
-    // Nếu FE truyền status cụ thể: Lọc chính xác
-    // Nếu FE truyền status="" (empty): Lấy ACTIVE + PUBLISHED (guest/user safe)
-    // Nếu FE không truyền status: Lấy ACTIVE + PUBLISHED (default safe)
     if (status) {
-      // Status được truyền và không rỗng
       if (status === "ADMIN_ALL") {
-        // Special case: Admin lấy tất cả trừ HIDDEN
         query.status = { $ne: "HIDDEN" };
       } else {
-        // Lọc status cụ thể
         query.status = status;
       }
     } else {
-      // Default: Lấy PUBLISHED hoặc ACTIVE (safe cho guest/user)
       query.status = { $in: ["ACTIVE", "PUBLISHED"] };
     }
 
-    // === 5. LỌC TỒN KHO (CHỈ LẤY HÀNG CÒN) ===
-    // Luôn filter inStock cho guest/user safety
     if (inStock !== false) {
       query.stock = { $gt: 0 };
     }
 
     const totalProducts = await Product.countDocuments(query);
-
     const products = await Product.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -140,8 +138,17 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
-
-    const product = await Product.findById(id);
+    
+    // Tìm kiếm bằng Mongoose ObjectId (nếu ID dài 24 ký tự hex) HOẶC bằng mã SKU
+    let product;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(id);
+    } 
+    
+    // Nếu không tìm thấy bằng ObjectId hoặc ID không phải định dạng hex, thử tìm theo SKU
+    if (!product) {
+      product = await Product.findOne({ sku: id.toUpperCase() });
+    }
 
     if (!product) {
       return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
@@ -160,6 +167,11 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
+    const product = await Product.findById(id);
+    if (!product) {
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
     if (updates.sku) {
       updates.sku = updates.sku.toUpperCase();
       const existingProduct = await Product.findOne({
@@ -171,20 +183,15 @@ export const updateProduct = async (req, res) => {
       }
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
-      returnDocument: "after",
-      runValidators: true,
-    });
+    Object.assign(product, updates);
 
-    if (!updatedProduct) {
-      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-    }
+    const updatedProduct = await product.save();
 
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
-    if (error.name === "ValidationError") {
-      return errorResponse(res, 400, "VALIDATION_ERROR");
+    if (error.name === "ValidationError" || error.message.includes("REQUIRED")) {
+      return errorResponse(res, 400, error.message || "VALIDATION_ERROR");
     }
     return errorResponse(res, 500, "SERVER_ERROR");
   }
@@ -194,20 +201,14 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-
     const deletedProduct = await Product.findByIdAndUpdate(
       id,
       { status: "HIDDEN" },
       { returnDocument: "after" },
     );
-
-    if (!deletedProduct) {
-      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-    }
-
+    if (!deletedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
-    console.error("Error in deleteProduct:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
@@ -229,7 +230,6 @@ export const getDeletedProducts = async (req, res) => {
       pagination: { total, page, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error("Error in getDeletedProducts:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
@@ -237,89 +237,76 @@ export const getDeletedProducts = async (req, res) => {
 export const restoreProduct = async (req, res) => {
   try {
     const { id } = req.params;
-
     const restoredProduct = await Product.findOneAndUpdate(
       { _id: id, status: "HIDDEN" },
       { status: "DRAFT" },
       { returnDocument: "after" },
     );
-
-    if (!restoredProduct) {
-      return errorResponse(res, 404, "PRODUCT_NOT_FOUND_IN_TRASH");
-    }
-
-    return successResponse(
-      res,
-      200,
-      "PRODUCT_RESTORED_SUCCESS",
-      restoredProduct,
-    );
+    if (!restoredProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND_IN_TRASH");
+    return successResponse(res, 200, "PRODUCT_RESTORED_SUCCESS", restoredProduct);
   } catch (error) {
-    console.error("Error in restoreProduct:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
-// [POST] /api/products/:id/upload-gallery - Upload multiple images cho sản phẩm
+// [POST] /api/products/:id/upload-gallery - Upload multiple images
 export const uploadProductGallery = async (req, res) => {
   try {
-    console.log("[Upload Gallery] Request received");
-    console.log("[Upload Gallery] Files:", req.files?.length);
-
     if (!req.files || req.files.length === 0) {
-      console.error("[Upload Gallery] No files provided");
       return errorResponse(res, 400, "MISSING_FILE");
     }
 
     const { id } = req.params;
-    console.log("[Upload Gallery] Product ID:", id);
-
     const imageUrls = req.files.map((file) => file.path);
-    console.log("[Upload Gallery] Image URLs:", imageUrls);
-
-    const product = await Product.findById(id);
-    if (!product) {
-      console.error("[Upload Gallery] Product not found:", id);
-      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-    }
-
-    console.log(
-      "[Upload Gallery] Current images count:",
-      product.images?.length,
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $push: { images: { $each: imageUrls } } },
+      { new: true }
     );
-
-    product.images = [...(product.images || []), ...imageUrls];
-    console.log("[Upload Gallery] New images count:", product.images.length);
-
-    await product.save();
-    console.log("[Upload Gallery] Product saved successfully");
-
-    return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", product);
+    
+    if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
-    console.error("[Upload Gallery] Error:", error.message || error);
-    console.error("[Upload Gallery] Error stack:", error.stack);
+    console.error("[Upload Gallery] Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
-// [DELETE] /api/products/:id/delete-images - Xóa images từ Cloudinary + Database
+// [POST] /api/products/:id/upload-3d - Upload 3D file
+export const uploadProduct3D = async (req, res) => {
+  try {
+    if (!req.file) {
+      return errorResponse(res, 400, "MISSING_FILE");
+    }
+
+    const { id } = req.params;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { file3D: req.file.path },
+      { new: true }
+    );
+    
+    if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", updatedProduct);
+  } catch (error) {
+    console.error("[Upload 3D] Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// [DELETE] /api/products/:id/delete-images
 export const deleteProductImages = async (req, res) => {
   try {
     const { id } = req.params;
     const { imagesToDelete } = req.body;
 
-    if (
-      !imagesToDelete ||
-      !Array.isArray(imagesToDelete) ||
-      imagesToDelete.length === 0
-    ) {
+    if (!imagesToDelete || !Array.isArray(imagesToDelete) || imagesToDelete.length === 0) {
       return errorResponse(res, 400, "NO_IMAGES_TO_DELETE");
     }
 
     const product = await Product.findById(id);
     if (!product) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
 
-    const deletionErrors = [];
     for (const imageUrl of imagesToDelete) {
       try {
         const urlParts = imageUrl.split("/");
@@ -329,36 +316,20 @@ export const deleteProductImages = async (req, res) => {
         const resourceType = isVideo ? "video" : "image";
         const publicId = `${folder}/${publicIdWithExt.split(".")[0]}`;
 
-        console.log(`[Delete Image] Attempting to delete: ${publicId} as ${resourceType}`);
-
-        const deleteResult = await cloudinary.uploader.destroy(publicId, {
-          type: "upload",
-          resource_type: resourceType,
-        });
-        console.log(`[Delete Image] Cloudinary delete result:`, deleteResult);
+        await cloudinary.uploader.destroy(publicId, { type: "upload", resource_type: resourceType });
       } catch (error) {
-        console.error(
-          `[Delete Image] Failed to delete ${imageUrl}:`,
-          error.message || error,
-        );
-        deletionErrors.push(imageUrl);
+        console.error(`[Delete Image] Failed to delete ${imageUrl}`);
       }
     }
 
-    product.images = product.images.filter(
-      (img) => !imagesToDelete.includes(img),
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      { $pull: { images: { $in: imagesToDelete } } },
+      { new: true }
     );
-    await product.save();
 
-    if (deletionErrors.length > 0) {
-      console.warn(
-        `[Delete Image] Partially successful. Failed to delete ${deletionErrors.length}/${imagesToDelete.length} images from Cloudinary`,
-      );
-    }
-
-    return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", product);
+    return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
-    console.error("[Delete Images] Fatal error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

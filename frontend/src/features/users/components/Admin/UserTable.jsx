@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { getLastNameInitial, isVideoUrl } from "@/utils/validators";
+import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
 import { Eye } from "lucide-react";
 
 const UserTable = ({ users, loading, onViewUser, currentUser }) => {
@@ -50,7 +50,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                 className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
                 <td className="p-4">
-                  {user.avatar && isVideoUrl(user.avatar) ? (
+                  {user.avatar && isVideoMedia(user.avatar) ? (
                     <video
                       src={user.avatar}
                       autoPlay
@@ -67,6 +67,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                       }
                       alt="avatar"
                       loading="lazy"
+                      referrerPolicy="no-referrer"
                       className="w-10 h-10 rounded-full object-cover border border-mkhe-border/50 shadow-sm"
                     />
                   )}

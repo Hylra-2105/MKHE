@@ -1,0 +1,35 @@
+{
+  "container": {
+    "authenticating": "正在验证...",
+    "errorTitle": "检索失败",
+    "backHome": "返回首页",
+    "passport": "护照",
+    "id": "ID",
+    "errorNoDPP": "该产品尚未获得数字遗产护照。",
+    "errorFetch": "无法加载数字护照数据。请稍后重试。",
+    "viewImage": "查看图片",
+    "view3D": "3D模型",
+    "warningTitle": "警告",
+    "warningSubtitle": "未经认证的产品",
+    "warningDesc": "该 NFC 标识符不存在、已被伪造或未被 MKHE 激活。请联系客户支持寻求帮助。"
+  },
+  "certificate": {
+    "title": "工艺证书",
+    "artisan": "工匠/创造者",
+    "defaultArtisan": "湄公河工匠",
+    "culturalDNA": "文化基因",
+    "updating": "更新中",
+    "category": "类别"
+  },
+  "map": {
+    "title": "地理位置",
+    "openApp": "打开应用程序",
+    "openAppTooltip": "在 Google 地图中打开",
+    "mapTitle": "原产地地图"
+  },
+  "model": {
+    "initializing": "正在初始化 3D 空间...",
+    "arExperience": "增强现实体验",
+    "alt": "3D模型"
+  }
+}

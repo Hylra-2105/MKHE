@@ -28,5 +28,12 @@
     "light": "Light",
     "dark": "Dark",
     "back": "Back"
+  },
+  "languages": {
+    "vi": "Vietnamese",
+    "en": "English",
+    "zh": "Chinese",
+    "ko": "Korean",
+    "ja": "Japanese"
   }
 }

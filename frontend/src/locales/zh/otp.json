@@ -1,0 +1,23 @@
+{
+  "title": "账户验证",
+  "description": "请输入发送到您的电子邮件的 6 位 OTP：",
+  "btn_submit": "验证一次性密码",
+  "btn_verifying": "正在验证...",
+  "not_received": "没有收到代码？",
+  "resend": "重新发送代码",
+  "back_to_register": "返回注册",
+  "msg_empty": "请输入 OTP 的全部 6 位数字！",
+  "msg_success": "恭喜！验证成功。",
+  "msg_error_default": "OTP 无效或过期！",
+  "INVALID_OTP": "一次性密码无效！",
+  "EXPIRED_OTP": "OTP 已过期，请申请新的！",
+  "INVALID_OR_EXPIRED_OTP": "OTP 无效或过期，请申请新的 OTP！",
+  "SERVER_ERROR": "服务器错误，请稍后重试！",
+  "VERIFY_SUCCESS": "账户验证成功！",
+  "RESEND_SUCCESS": "OTP 重新发送成功！请检查您的电子邮件。",
+  "btn_processing": "加工...",
+  "messages": {
+    "otp_sent_success": "OTP 已发送至您的 Gmail！",
+    "otp_send_error": "发送 OTP 时出错：{{message}}"
+  }
+}
