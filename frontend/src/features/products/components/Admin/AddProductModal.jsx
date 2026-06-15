@@ -24,6 +24,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     name: "",
     sku: "",
     vendor: "", // Sử dụng Dropdown có sẵn
+    craftVillage: "",
+    material: [],
     description: "",
     categoryMatrix: "B2C_Mass_Premium",
     culturalDNA: "OTHER",
@@ -82,6 +84,27 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     { value: "Gốm Phnôm Pi", label: "Gốm Phnôm Pi" },
     { value: "Hanhsilk", label: "Hanhsilk" },
   ];
+
+  const predefinedMaterials = [
+    { value: "Thổ cẩm", label: t("materials.brocade", "Thổ cẩm") },
+    { value: "Lụa", label: t("materials.silk", "Lụa") },
+    { value: "Gốm", label: t("materials.ceramic", "Gốm") },
+    { value: "Da bò", label: t("materials.leather", "Da bò") },
+    { value: "Khóa đồng", label: t("materials.copper", "Khóa đồng") },
+    { value: "Bạc", label: t("materials.silver", "Bạc") },
+    { value: "Gỗ", label: t("materials.wood", "Gỗ") }
+  ];
+
+  // Xử lý thay đổi material (checkbox)
+  const toggleMaterial = (mat) => {
+    setFormData((prev) => {
+      const current = prev.material || [];
+      if (current.includes(mat)) {
+        return { ...prev, material: current.filter((m) => m !== mat) };
+      }
+      return { ...prev, material: [...current, mat] };
+    });
+  };
 
   // ================= LOAD DRAFT TỪ INDEXEDDB =================
   useEffect(() => {
@@ -181,11 +204,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       setImageFiles((prev) => [...prev, ...validFiles]);
       setPreviewUrls((prev) => [...prev, ...newPreviews]);
       
-      if (validFiles.length > 0) toast.success("Xử lý file thành công!", { id: toastId });
+      if (validFiles.length > 0) toast.success(t("messages.processing_images_success", "Xử lý file thành công!"), { id: toastId, duration: 3000 });
       else toast.dismiss(toastId);
     } catch (error) {
-      console.error(error);
-      toast.error("Có lỗi xảy ra khi xử lý file", { id: toastId });
+      toast.error(t("messages.processing_images_error", "Có lỗi xảy ra khi xử lý file"), { id: toastId, duration: 3000 });
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -197,7 +219,6 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
 
-  // ================= KÉO THẢ & XỬ LÝ FILE 3D (.GLB) =================
   const handleDragOver3D = (e) => { e.preventDefault(); setIsDragging3D(true); };
   const handleDragLeave3D = (e) => { e.preventDefault(); setIsDragging3D(false); };
   const handleDrop3D = (e) => {
@@ -218,22 +239,20 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       return toast.error(t("errors.error_3d_format", { ns: "admin" }));
     }
     
-    // Cảnh báo nếu file quá khủng khiếp (>150MB) có thể crash trình duyệt
     if (file.size > 150 * 1024 * 1024) {
-      return toast.error("File 3D quá lớn (>150MB), có thể làm đứng trình duyệt. Vui lòng giảm bớt từ phần mềm 3D trước.");
+      return toast.error(t("messages.file_3d_too_large", "File 3D quá lớn (>150MB)..."));
     }
 
     setIsCompressing3D(true);
-    const toastId = toast.loading(`Đang tối ưu file 3D (${(file.size / (1024 * 1024)).toFixed(1)}MB)... Quá trình này dùng CPU máy bạn, vui lòng không tắt trang!`, { duration: 30000 });
+    const toastId = toast.loading(t("messages.optimizing_3d", "Đang tối ưu file 3D...", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
 
     try {
-      // Chạy thuật toán nén Draco + WebP trực tiếp trên web
       const compressedFile = await compressGLB(file);
       setFile3D(compressedFile);
-      toast.success(`Tối ưu 3D thành công! Dung lượng giảm còn: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`, { id: toastId });
+      toast.success(t("messages.optimize_3d_success", "Tối ưu 3D thành công! Dung lượng giảm còn: {{size}}MB", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
     } catch (error) {
       console.error(error);
-      toast.error(`Tối ưu 3D thất bại: ${error.message || "Lỗi cấu trúc file"}. Sẽ sử dụng file gốc.`, { id: toastId });
+      toast.error(t("messages.optimize_3d_error", "Tối ưu 3D thất bại: {{error}}", { error: error.message || "Lỗi cấu trúc file" }), { id: toastId, duration: 3000 });
       setFile3D(file);
     } finally {
       setIsCompressing3D(false);
@@ -310,7 +329,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   const resetForm = () => {
     setFormData({
-      name: "", sku: "", vendor: "", description: "", categoryMatrix: "B2C_Mass_Premium",
+      name: "", sku: "", vendor: "", craftVillage: "", material: [], description: "", categoryMatrix: "B2C_Mass_Premium",
       culturalDNA: "OTHER", price: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "",
     });
     setImageFiles([]); setFile3D(null);
@@ -401,11 +420,35 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   </div>
                 </div>
 
-                {/* DÒNG 3: NHÀ CUNG CẤP, GIÁ BÁN, TỒN KHO */}
+                {/* DÒNG 3: NHÀ CUNG CẤP & LÀNG NGHỀ */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
                     <Dropdown value={formData.vendor} options={vendors} onChange={(val) => updateField("vendor", val)} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                  </div>
+                  <div className="space-y-1 col-span-6">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
+                    <input type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
+                  </div>
+                </div>
+
+                {/* DÒNG 4: GIÁ BÁN, TỒN KHO & CHẤT LIỆU */}
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="space-y-1 col-span-6">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.material", "Chất liệu")}</label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {predefinedMaterials.map((mat) => (
+                        <label key={mat.value} className="flex items-center gap-1 cursor-pointer bg-mkhe-primary/5 px-2 py-1.5 border border-mkhe-border/30 rounded-lg hover:bg-mkhe-primary/10 transition-colors">
+                          <input 
+                            type="checkbox" 
+                            checked={formData.material.includes(mat.value)}
+                            onChange={() => toggleMaterial(mat.value)}
+                            className="accent-mkhe-primary w-3.5 h-3.5 cursor-pointer"
+                          />
+                          <span className="text-xs text-mkhe-text font-medium">{mat.label}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>

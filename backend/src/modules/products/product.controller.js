@@ -20,6 +20,8 @@ export const createProduct = async (req, res) => {
       artisanName,
       gpsLocation,
       file3D,
+      craftVillage,
+      material,
     } = req.body;
 
     // Validate cơ bản 
@@ -46,6 +48,8 @@ export const createProduct = async (req, res) => {
       description,
       categoryMatrix,
       culturalDNA: culturalDNA || "OTHER",
+      craftVillage: craftVillage || "",
+      material: material || [],
       vendor, 
       price: Number(price),
       stock: Number(stock) || 0,
@@ -330,6 +334,100 @@ export const deleteProductImages = async (req, res) => {
 
     return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// [GET] /api/products/shop - Lấy danh sách sản phẩm cho trang Shop (bảo vệ B2B)
+export const getShopProducts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const { search, category, culturalDNA, craftVillage, material } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    let query = {
+      status: "PUBLISHED"
+    };
+
+    // --- LOGIC BẢO MẬT B2B ---
+    // Khách vãng lai (!req.user) HOẶC user là Guest -> Chỉ xem B2C
+    if (!req.user || req.user.role === "Guest") {
+      query.categoryMatrix = { $in: ["B2C_Premium", "B2C_Mass_Premium"] };
+    }
+
+    let andConditions = [];
+
+    if (search) {
+      const searchRegex = createVietnameseRegex(search);
+      andConditions.push({
+        $or: [
+          { name: { $regex: searchRegex, $options: "i" } },
+          { sku: { $regex: searchRegex, $options: "i" } },
+        ]
+      });
+    }
+
+    // Các bộ lọc
+    // Chú ý: Nếu Guest truyền bộ lọc B2B_Luxury, nó sẽ ghi đè categoryMatrix thành "B2B_Luxury".
+    // Nên ta phải cẩn thận: nếu Guest truyền bộ lọc B2B, ta bỏ qua hoặc trả về rỗng.
+    if (category) {
+      if (!req.user || req.user.role === "Guest") {
+        if (!category.startsWith("B2B_")) {
+          query.categoryMatrix = category;
+        } else {
+          // Khách muốn tìm B2B -> Ép tìm kiếm vô nghĩa
+          query.categoryMatrix = "NO_ACCESS";
+        }
+      } else {
+         query.categoryMatrix = category;
+      }
+    }
+    
+    if (culturalDNA) query.culturalDNA = culturalDNA;
+    
+    if (craftVillage) {
+      const cvRegex = createVietnameseRegex(craftVillage);
+      andConditions.push({
+        $or: [
+          { craftVillage: { $regex: cvRegex, $options: "i" } },
+          { vendor: { $regex: cvRegex, $options: "i" } }
+        ]
+      });
+    }
+    
+    // Tìm material (có chứa trong mảng)
+    const materialQuery = req.query.material || req.query["material[]"];
+    if (materialQuery) {
+      const materialList = Array.isArray(materialQuery) ? materialQuery : materialQuery.split(",");
+      const materialRegexes = materialList.map(m => new RegExp(`^${m.trim()}$`, "i"));
+      query.material = { $in: materialRegexes };
+    }
+
+    if (andConditions.length > 0) {
+      query.$and = andConditions;
+    }
+
+    const totalProducts = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    return successResponse(res, 200, "GET_SHOP_PRODUCTS_SUCCESS", {
+      pagination: {
+        totalItems: totalProducts,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+      data: products,
+    });
+  } catch (error) {
+    console.error("Error in getShopProducts:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

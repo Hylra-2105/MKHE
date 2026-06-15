@@ -1,0 +1,122 @@
+import React, { useState } from "react";
+import { formatNumber, getImageUrl } from "@/utils/formatters";
+import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
+
+// Import hàm kiểm tra video từ validators đã có sẵn
+import { isVideoMedia } from "@/utils/validators";
+
+const ProductGrid = ({ products, loading }) => {
+  if (loading && (!products || products.length === 0)) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+        {[...Array(12)].map((_, i) => (
+          <div key={i} className="animate-pulse bg-mkhe-border/10 rounded-3xl aspect-[4/5]"></div>
+        ))}
+      </div>
+    );
+  }
+
+  if (!loading && (!products || products.length === 0)) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 text-mkhe-text/50">
+        <Star className="w-16 h-16 mb-6 opacity-20 animate-pulse" />
+        <p className="text-xl font-light tracking-widest uppercase">Không tìm thấy sản phẩm</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative pb-12 min-h-[400px]">
+      {/* Lớp phủ loading mượt mà, giữ nguyên layout */}
+      {loading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-mkhe-bg/50 backdrop-blur-[2px] rounded-3xl transition-all">
+          <div className="animate-spin">
+            <div className="w-12 h-12 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
+          </div>
+        </div>
+      )}
+      
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 transition-opacity duration-300 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
+      {products.map((product) => {
+        const mainMedia = product.images && product.images.length > 0 ? product.images[0] : null;
+        const mediaUrl = getImageUrl(mainMedia);
+        const isVideo = mainMedia ? isVideoMedia(mainMedia) : false;
+
+        return (
+          <div 
+            key={product._id}
+            className="group relative flex flex-col gap-4 cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:z-10"
+          >
+            {/* Image/Video container */}
+            <div className="relative w-full overflow-hidden rounded-3xl bg-mkhe-border/10 shadow-sm group-hover:shadow-xl transition-shadow duration-500 aspect-[4/5]">
+              {mediaUrl ? (
+                isVideo ? (
+                  <video 
+                    src={mediaUrl}
+                    autoPlay 
+                    muted 
+                    loop 
+                    playsInline
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out"
+                  />
+                ) : (
+                  <img 
+                    src={mediaUrl} 
+                    alt={product.name}
+                    onError={(e) => {
+                      e.target.onerror = null; 
+                      e.target.src = "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=600&q=80"; 
+                    }}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out"
+                  />
+                )
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-mkhe-primary/5">
+                  <Star className="w-12 h-12 text-mkhe-text/20" />
+                </div>
+              )}
+
+
+
+              {/* Badges TOP LEFT */}
+              <div className="absolute top-4 left-4 flex flex-col gap-3">
+                {product.hasDPP && (
+                  <div className="bg-mkhe-primary/90 text-white p-2 rounded-full shadow-lg backdrop-blur-md transform transition-transform group-hover:rotate-12" title="Hộ chiếu số">
+                    <Fingerprint className="w-4 h-4" />
+                  </div>
+                )}
+                {isVideo && (
+                  <div className="bg-black/50 text-white p-2 rounded-full shadow-lg backdrop-blur-md" title="Video">
+                    <PlayCircle className="w-4 h-4" />
+                  </div>
+                )}
+              </div>
+
+              {/* Vendor & Category TOP RIGHT */}
+              <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                {product.vendor && (
+                  <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
+                    <span className="text-[10px] font-bold text-white tracking-[0.1em]">{product.vendor}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Info BLOCK - Outside */}
+            <div className="flex flex-col gap-1 px-1">
+              <h3 className="text-base md:text-lg font-medium text-mkhe-text line-clamp-2 transition-colors group-hover:text-mkhe-primary leading-snug min-h-[3rem] md:min-h-[3.375rem]">
+                {product.name}
+              </h3>
+              <p className="text-lg font-bold text-mkhe-primary mt-1">
+                {formatNumber(product.price)}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    </div>
+  );
+};
+
+export default ProductGrid;

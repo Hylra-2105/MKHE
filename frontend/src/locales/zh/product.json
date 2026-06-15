@@ -14,7 +14,9 @@
   "filter": {
     "search_placeholder": "按产品名称或 SKU 搜索...",
     "search_btn": "搜索",
-    "all_categories": "所有类别"
+    "all_categories": "所有类别",
+    "all_dna": "所有基因密码",
+    "all_vendors": "所有提供商"
   },
   "table": {
     "name": "产品名称",
@@ -30,6 +32,12 @@
   },
   "modal": {
     "add_title": "添加新产品",
+    "tab_general": "一般信息",
+    "tab_nfc": "数字护照（NFC）",
+    "cultural_dna": "文化基因",
+    "craft_village": "工艺村",
+    "craft_village_placeholder": "例如：Chau Phong 编织村...",
+    "material": "材料",
     "name": "产品名称",
     "name_placeholder": "示例：条纹锦缎手提袋",
     "sku": "存货单位",
@@ -136,8 +144,19 @@
     "copy_link_error": "复制 NFC 链接时出错",
     "copy_link_success": "NFC 验证链接已复制！",
     "update_tag_error": "更新标签状态时出错",
-    "activate_success": "成功激活标签{{uid}}",
-    "activate_error": "激活失败"
+    "activate_success": "成功激活标签 {{uid}}",
+    "activate_error": "激活失败",
+    "processing_images": "正在处理和优化图像...",
+    "processing_images_success": "文件处理成功！",
+    "processing_images_error": "处理文件时发生错误",
+    "video_too_large": "视频 {{name}} 太大（>100MB）。",
+    "missing_fields": "请填写名称、SKU、价格和供应商。",
+    "missing_dpp_fields": "数字护照需要工匠名称和 GPS 坐标。",
+    "no_link_allowed": "不要粘贴链接！请仅输入位置名称或坐标。",
+    "file_3d_too_large": "3D 文件太大（>150MB），可能会导致浏览器无响应。请先使用 3D 软件减小文件大小。",
+    "optimizing_3d": "正在优化 3D 文件 ({{size}}MB)... 这将使用您的 CPU，请不要关闭页面！",
+    "optimize_3d_success": "3D 优化成功！大小减小到：{{size}}MB",
+    "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。"
   },
   "nfc": {
     "management_title": "NFC标签管理",
@@ -149,12 +168,23 @@
     "url": "写入 URL（NFC 工具）",
     "status": "地位",
     "actions": "行动",
-    "confirm_written": "确认已写"
+    "confirm_written": "确认已写",
+    "pending": "待处理",
+    "active": "活跃"
   },
   "culturalDNA": {
-    "CHAM": "占族遗传密码",
-    "KHMER": "高棉遗传密码",
-    "KINH": "金遗传密码",
+    "CHAM": "占族文化基因",
+    "KHMER": "高棉文化基因",
+    "KINH": "京族文化基因",
     "OTHER": "其他/多民族"
+  },
+  "materials": {
+    "brocade": "锦缎",
+    "silk": "丝绸",
+    "ceramic": "陶瓷",
+    "leather": "牛皮",
+    "copper": "黄铜锁",
+    "silver": "银",
+    "wood": "木材"
   }
 }

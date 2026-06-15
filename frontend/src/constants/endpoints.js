@@ -22,4 +22,7 @@ export const ENDPOINTS = {
     UPDATE: `${API_BASE_URL}/users`,
     DELETE: `${API_BASE_URL}/users`,
   },
+  SHOP: {
+    GET_PRODUCTS: `${API_BASE_URL}/products/shop`,
+  },
 };

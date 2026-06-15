@@ -33,7 +33,7 @@ const ProductFilter = ({
   ];
 
   const vendorOptions = [
-    { value: "", label: "Tất cả Đối tác" },
+    { value: "", label: t("filter.all_vendors", "Tất cả Đối tác") },
     { value: "HTX Châu Giang", label: "HTX Châu Giang" },
     { value: "HTX Văn Giáo", label: "HTX Văn Giáo" },
     { value: "Cô Ba Khăn Rằn", label: "Cô Ba Khăn Rằn" },
@@ -89,7 +89,7 @@ const ProductFilter = ({
           value={vendorFilter}
           options={vendorOptions}
           onChange={(val) => handleVendorChange({ target: { value: val } })}
-          placeholder="Tất cả Đối tác"
+          placeholder={t("filter.all_vendors", "Tất cả Đối tác")}
           className="w-full md:w-40 lg:w-48"
           triggerClassName="h-10 px-3 rounded"
           optionClassName="text-sm"

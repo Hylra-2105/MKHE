@@ -14,7 +14,9 @@
   "filter": {
     "search_placeholder": "製品名またはSKUで検索...",
     "search_btn": "検索",
-    "all_categories": "すべてのカテゴリ"
+    "all_categories": "すべてのカテゴリ",
+    "all_dna": "すべての遺伝コード",
+    "all_vendors": "すべてのプロバイダー"
   },
   "table": {
     "name": "製品名",
@@ -30,6 +32,12 @@
   },
   "modal": {
     "add_title": "新しい製品を追加",
+    "tab_general": "一般情報",
+    "tab_nfc": "デジタルパスポート（NFC）",
+    "cultural_dna": "文化 DNA",
+    "craft_village": "工芸村",
+    "craft_village_placeholder": "例：チャウポン織物村...",
+    "material": "材料",
     "name": "製品名",
     "name_placeholder": "例：ストライプブロケードトートバッグ",
     "sku": "SKU",
@@ -137,7 +145,18 @@
     "copy_link_success": "NFC 検証リンクがコピーされました。",
     "update_tag_error": "タグステータスの更新中にエラーが発生しました",
     "activate_success": "タグ {{uid}} が正常にアクティブ化されました",
-    "activate_error": "アクティベーションに失敗しました"
+    "activate_error": "アクティベーションに失敗しました",
+    "processing_images": "画像を処理および最適化しています...",
+    "processing_images_success": "ファイルが正常に処理されました！",
+    "processing_images_error": "ファイルの処理中にエラーが発生しました",
+    "video_too_large": "ビデオ {{name}} は大きすぎます（100MB以上）。",
+    "missing_fields": "名前、SKU、価格、およびプロバイダーを入力してください。",
+    "missing_dpp_fields": "デジタルパスポートには職人の名前とGPS座標が必要です。",
+    "no_link_allowed": "リンクを貼り付けないでください！場所の名前または座標のみを入力してください。",
+    "file_3d_too_large": "3D ファイルが大きすぎる（150MB以上）ため、ブラウザがフリーズする可能性があります。先に 3D ソフトウェアで縮小してください。",
+    "optimizing_3d": "3D ファイル（{{size}}MB）を最適化しています... これには CPU が使用されます。ページを閉じないでください！",
+    "optimize_3d_success": "3D 最適化が成功しました！サイズが縮小されました：{{size}}MB",
+    "optimize_3d_error": "3D 最適化に失敗しました：{{error}}。元のファイルが使用されます。"
   },
   "nfc": {
     "management_title": "NFCタグ管理",
@@ -149,12 +168,23 @@
     "url": "URLの書き込み（NFCツール）",
     "status": "状態",
     "actions": "アクション",
-    "confirm_written": "書面による確認"
+    "confirm_written": "書面による確認",
+    "pending": "保留中",
+    "active": "アクティブ"
   },
   "culturalDNA": {
-    "CHAM": "チャムの遺伝コード",
-    "KHMER": "クメールの遺伝暗号",
-    "KINH": "キンの遺伝コード",
+    "CHAM": "チャムの文化 DNA",
+    "KHMER": "クメールの文化 DNA",
+    "KINH": "キンの文化 DNA",
     "OTHER": "その他・多民族"
+  },
+  "materials": {
+    "brocade": "錦織",
+    "silk": "シルク",
+    "ceramic": "セラミック",
+    "leather": "牛革",
+    "copper": "真鍮ロック",
+    "silver": "銀",
+    "wood": "木材"
   }
 }

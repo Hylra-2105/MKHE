@@ -162,11 +162,11 @@ const NFCManagement = ({ productId }) => {
                     <td className="p-3">
                       {isPending ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-500/20 text-yellow-600 dark:text-yellow-400">
-                          PENDING
+                          {t("nfc.pending", "PENDING")}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/20 text-green-600 dark:text-green-400">
-                           ACTIVE
+                           {t("nfc.active", "ACTIVE")}
                         </span>
                       )}
                     </td>
