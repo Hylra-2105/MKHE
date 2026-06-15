@@ -52,7 +52,7 @@ export default function AuthHeader() {
   }, []);
 
   return (
-    <header className="flex justify-between items-center px-8 py-4 bg-mkhe-input border-b border-mkhe-border transition-colors duration-300">
+    <header className="relative z-[100] flex justify-between items-center px-8 py-4 bg-mkhe-input border-b border-mkhe-border transition-colors duration-300">
       {/* LOGO */}
       <Link
         to="/home"

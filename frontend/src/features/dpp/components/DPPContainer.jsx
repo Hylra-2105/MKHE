@@ -8,6 +8,10 @@ import ModelViewer3D from "./ModelViewer3D";
 import ArtisanCertificate from "./ArtisanCertificate";
 import LocationMap from "./LocationMap";
 import { isVideoMedia } from "@/utils/validators";
+import { useAuthStore } from "@/stores/useAuthStore";
+import toast from "react-hot-toast";
+import AuthBottomSheet from "./AuthBottomSheet";
+import WelcomeToast from "./WelcomeToast";
 
 const DPPContainer = () => {
   const { uid } = useParams();
@@ -19,6 +23,20 @@ const DPPContainer = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("3d");
   const [verificationFailed, setVerificationFailed] = useState(false);
+
+  // Thêm state xử lý Auth & Voucher
+  const user = useAuthStore((state) => state.user);
+  const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const [isClaimed, setIsClaimed] = useState(() => {
+    return localStorage.getItem("claimed_welcome_mkhe") === "true";
+  });
+  
+  const ctaRef = React.useRef(null);
+  const scrollToCTA = () => {
+    if (ctaRef.current) {
+      ctaRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -64,6 +82,32 @@ const DPPContainer = () => {
       }
     }
     setDragOffset(0);
+  };
+
+  const handleClaimVoucher = () => {
+    if (isClaimed) return;
+    
+    if (user) {
+      // User is already logged in
+      setIsClaimed(true);
+      localStorage.setItem("claimed_welcome_mkhe", "true");
+      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
+    } else {
+      // User is not logged in, open bottom sheet
+      setBottomSheetOpen(true);
+    }
+  };
+
+  const handleAuthSuccess = (isNewUser) => {
+    setBottomSheetOpen(false);
+    setIsClaimed(true);
+    localStorage.setItem("claimed_welcome_mkhe", "true");
+    
+    if (isNewUser) {
+      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
+    } else {
+      toast.success(t("o2o.msg_returning_user"), { duration: 4000 });
+    }
   };
 
   useEffect(() => {
@@ -115,24 +159,29 @@ const DPPContainer = () => {
     );
   }
 
-  // HIỂN THỊ MÀN HÌNH ĐỎ NẾU XÁC THỰC NFC THẤT BẠI
+  // HIỂN THỊ MÀN HÌNH CẢNH BÁO NẾU XÁC THỰC NFC THẤT BẠI
   if (verificationFailed) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-68px)] space-y-6 text-center px-4 bg-red-900/10">
-        <div className="p-6 bg-red-500/20 border-2 border-red-500/50 rounded-full relative animate-pulse">
-          <div className="absolute inset-0 bg-red-500/30 blur-2xl rounded-full" />
-          <AlertCircle className="w-16 h-16 text-red-500 relative z-10" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center bg-mkhe-bg transition-colors duration-300">
+        <div className="flex justify-center mb-6 relative">
+          <AlertCircle className="w-20 h-20 text-mkhe-primary opacity-80" strokeWidth={1.2} />
         </div>
-        <div className="space-y-3 relative z-10">
-          <h2 className="text-3xl font-black text-red-500 tracking-wider font-logo">{t("container.warningTitle")}</h2>
-          <p className="text-xl font-bold text-mkhe-text uppercase tracking-widest border-b border-red-500/30 pb-4 inline-block">{t("container.warningSubtitle")}</p>
-          <p className="text-sm text-mkhe-text/70 max-w-md mx-auto leading-relaxed pt-2">
-            {t("container.warningDesc")}
-          </p>
-        </div>
+        
+        <h1 className="text-4xl md:text-5xl font-logo font-bold text-gradient-gold mb-3 tracking-wider py-2">
+          {t("container.warningTitle")}
+        </h1>
+        
+        <h2 className="text-lg md:text-xl font-semibold mb-3 text-mkhe-text/90 uppercase tracking-widest">
+          {t("container.warningSubtitle")}
+        </h2>
+        
+        <p className="text-mkhe-text/60 mb-8 text-sm leading-relaxed max-w-md mx-auto italic">
+          {t("container.warningDesc")}
+        </p>
+        
         <button 
           onClick={() => navigate("/")} 
-          className="mt-4 px-8 py-4 bg-red-500 text-white text-xs font-bold uppercase tracking-widest rounded-full hover:bg-red-600 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)] transition-all duration-300 relative z-10"
+          className="inline-flex items-center justify-center bg-mkhe-primary text-white px-8 py-3 rounded-md hover:opacity-90 transition-opacity font-semibold tracking-wider text-xs md:text-sm uppercase shadow-lg cursor-pointer"
         >
           {t("container.backHome")}
         </button>
@@ -142,18 +191,22 @@ const DPPContainer = () => {
 
   if (error || !product) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen space-y-6 text-center px-4">
-        <div className="p-6 bg-red-500/10 border border-red-500/20 rounded-full relative">
-          <div className="absolute inset-0 bg-red-500/20 blur-xl rounded-full" />
-          <AlertCircle className="w-12 h-12 text-red-400 relative z-10" />
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center bg-mkhe-bg transition-colors duration-300">
+        <div className="flex justify-center mb-6 relative">
+          <AlertCircle className="w-16 h-16 text-mkhe-primary opacity-60" strokeWidth={1.5} />
         </div>
-        <div className="space-y-2">
-          <h2 className="text-xl font-bold text-mkhe-text tracking-wider">{t("container.errorTitle")}</h2>
-          <p className="text-mkhe-text/60 max-w-sm leading-relaxed">{error}</p>
-        </div>
+        
+        <h2 className="text-2xl font-bold text-mkhe-text/90 tracking-wider mb-2 py-1">
+          {t("container.errorTitle")}
+        </h2>
+        
+        <p className="text-mkhe-text/60 mb-8 text-sm leading-relaxed max-w-sm mx-auto">
+          {error}
+        </p>
+        
         <button 
           onClick={() => navigate("/")} 
-          className="px-8 py-4 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text text-xs font-bold uppercase tracking-widest rounded-full hover:bg-mkhe-text/10 hover:border-mkhe-primary transition-all duration-300 relative z-10"
+          className="inline-flex items-center justify-center bg-mkhe-primary text-white px-8 py-3 rounded-md hover:opacity-90 transition-opacity font-semibold tracking-wider text-xs md:text-sm uppercase shadow-lg cursor-pointer"
         >
           {t("container.backHome")}
         </button>
@@ -163,6 +216,8 @@ const DPPContainer = () => {
 
   return (
     <div className="relative min-h-[calc(100vh-68px)] text-mkhe-text overflow-hidden font-sans pb-24 selection:bg-mkhe-primary/30">
+      {!isClaimed && <WelcomeToast onToastClick={scrollToCTA} />}
+      
       {/* 1. DYNAMIC AMBIENT BACKGROUND */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200%] md:w-[100%] h-[70vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-mkhe-primary/15 via-mkhe-bg/40 to-transparent pointer-events-none opacity-80" />
       
@@ -240,6 +295,8 @@ const DPPContainer = () => {
                                controls
                                playsInline
                                preload="metadata"
+                               muted
+                               loop
                                className="w-full h-full object-contain drop-shadow-2xl"
                              />
                            ) : (
@@ -308,7 +365,7 @@ const DPPContainer = () => {
           
           <div className="flex items-center justify-between mb-5">
              <p className="text-[9px] font-bold text-mkhe-primary uppercase tracking-[0.3em] opacity-90">
-               {t("container.id")}: {product.sku || product.productId || id}
+               {t("container.id")}: {product.sku || product.productId || uid}
              </p>
              <Sparkles className="w-4 h-4 text-mkhe-primary/60" />
           </div>
@@ -334,7 +391,44 @@ const DPPContainer = () => {
         {/* Khối Bản đồ */}
         <LocationMap gpsLocation={product.gpsLocation} />
         
+        {/* CTA Banner: Nhận ưu đãi O2O */}
+        <div className="mt-8 mb-4" ref={ctaRef}>
+          <div className="relative bg-mkhe-bg/40 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-mkhe-border/30 overflow-hidden text-center transition-all duration-500 hover:border-mkhe-primary/40">
+            <div className="absolute inset-0 bg-gradient-to-br from-mkhe-primary/10 to-transparent opacity-50 pointer-events-none" />
+            <div className="relative z-10 space-y-4">
+              <div className="flex justify-center">
+                <Sparkles className={`w-8 h-8 ${isClaimed ? 'text-mkhe-text/40' : 'text-mkhe-primary'}`} />
+              </div>
+              <div>
+                <h3 className={`text-xl font-bold uppercase tracking-widest font-logo mb-1 ${isClaimed ? 'text-mkhe-text/60' : 'text-mkhe-text'}`}>
+                  {t("o2o.new_member")}
+                </h3>
+                <p className="text-sm text-mkhe-text/70">
+                  {t("o2o.cta_subtitle")}
+                </p>
+              </div>
+              <button
+                onClick={handleClaimVoucher}
+                disabled={isClaimed}
+                className={`w-full py-4 px-6 rounded-full cursor-pointer font-bold uppercase tracking-widest text-xs transition-all duration-500 flex items-center justify-center gap-2 ${
+                  isClaimed 
+                    ? "bg-mkhe-text/5 text-mkhe-text/50 border border-mkhe-border/30 shadow-inner"
+                    : "bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
+                }`}
+              >
+                {isClaimed ? t("o2o.voucher_saved") : t("o2o.get_voucher")}
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* Auth Bottom Sheet */}
+      <AuthBottomSheet 
+        isOpen={isBottomSheetOpen} 
+        onClose={() => setBottomSheetOpen(false)} 
+        onSuccess={handleAuthSuccess} 
+      />
     </div>
   );
 };
