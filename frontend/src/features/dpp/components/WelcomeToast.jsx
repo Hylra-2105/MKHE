@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const WelcomeToast = ({ onToastClick }) => {
+  const { t } = useTranslation("dpp");
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const WelcomeToast = ({ onToastClick }) => {
         >
           <div className="bg-mkhe-bg/80 backdrop-blur-md border border-mkhe-border/50 shadow-xl px-5 py-3 rounded-full flex items-center gap-2">
             <span className="text-sm font-semibold text-mkhe-text">
-              ✨ Ưu đãi 10% cho Thành viên mới. Chạm để xem.
+              {t("o2o.toast_welcome")}
             </span>
           </div>
         </motion.div>

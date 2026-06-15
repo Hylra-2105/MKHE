@@ -7,7 +7,7 @@ export default function ForbiddenPage() {
   const { t } = useTranslation("errors");
 
   return (
-    <div className="min-h-screen bg-mkhe-bg flex flex-col items-center justify-center text-mkhe-text px-6 transition-colors duration-300">
+    <div className="absolute inset-0 bg-mkhe-bg flex flex-col items-center justify-center text-mkhe-text px-6 transition-colors duration-300">
       {/* ... (phần code bên trong giữ nguyên) ... */}
       <div className="text-center max-w-lg">
         <div className="flex justify-center mb-8 relative">
@@ -19,7 +19,7 @@ export default function ForbiddenPage() {
           />
         </div>
 
-        <h1 className="text-6xl font-logo font-bold text-gradient-gold mb-4 tracking-wider">
+        <h1 className="text-6xl font-logo font-bold text-gradient-gold mb-4 tracking-wider py-2">
           {t("403")}
         </h1>
 

@@ -31,5 +31,16 @@
     "initializing": "Khởi tạo không gian 3D...",
     "arExperience": "Trải nghiệm AR Thực tế",
     "alt": "Mô hình 3D"
+  },
+  "o2o": {
+    "toast_welcome": "✨ Ưu đãi 10% cho Thành viên mới. Chạm để xem.",
+    "new_member": "Thành viên mới",
+    "login_to_save_voucher": "Đăng nhập để lưu mã ưu đãi",
+    "login_to_save_voucher_suffix": "và trải nghiệm mua sắm đẳng cấp.",
+    "cta_subtitle": "Khám phá Bộ sưu tập Di sản & Nhận ưu đãi 10%",
+    "voucher_saved": "✓ Đã lưu mã WELCOME_MKHE",
+    "get_voucher": "Nhận mã WELCOME_MKHE",
+    "msg_new_user": "Chào mừng thành viên mới! Mã WELCOME_MKHE đã được kích hoạt.",
+    "msg_returning_user": "Mừng bạn quay lại! Ưu đãi 10% (mã WELCOME_MKHE) đã được áp dụng."
   }
 }

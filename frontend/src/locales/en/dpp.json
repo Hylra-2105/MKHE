@@ -31,5 +31,16 @@
     "initializing": "Initializing 3D space...",
     "arExperience": "AR Experience",
     "alt": "3D Model"
+  },
+  "o2o": {
+    "toast_welcome": "✨ 10% off for New Members. Tap to view.",
+    "new_member": "New Member",
+    "login_to_save_voucher": "Login to save",
+    "login_to_save_voucher_suffix": "voucher and enjoy premium shopping.",
+    "cta_subtitle": "Discover the Heritage Collection & Get 10% off",
+    "voucher_saved": "✓ WELCOME_MKHE Code Saved",
+    "get_voucher": "Get WELCOME_MKHE Code",
+    "msg_new_user": "Welcome new member! WELCOME_MKHE code has been activated.",
+    "msg_returning_user": "Welcome back! Your 10% offer (WELCOME_MKHE) has been applied."
   }
 }

@@ -9,7 +9,7 @@ import { X, Sparkles } from "lucide-react";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 const AuthBottomSheet = ({ isOpen, onClose, onSuccess }) => {
-  const { t } = useTranslation(["login", "common"]);
+  const { t } = useTranslation(["dpp", "login", "common"]);
   const { socialLoginAction } = useAuthStore();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -102,10 +102,10 @@ const AuthBottomSheet = ({ isOpen, onClose, onSuccess }) => {
                   <Sparkles className="w-8 h-8 text-mkhe-primary" />
                 </div>
                 <h3 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-mkhe-text via-mkhe-text/90 to-mkhe-primary/60 font-logo">
-                  Thành Viên Mới
+                  {t("o2o.new_member")}
                 </h3>
                 <p className="text-sm text-mkhe-text/70 leading-relaxed max-w-xs mx-auto">
-                  Đăng nhập để lưu mã ưu đãi <strong className="text-mkhe-primary">WELCOME_MKHE</strong> và trải nghiệm mua sắm đẳng cấp.
+                  {t("o2o.login_to_save_voucher")} <strong className="text-mkhe-primary">{t("o2o.voucher_code")}</strong> {t("o2o.login_to_save_voucher_suffix")}
                 </p>
               </div>
 
