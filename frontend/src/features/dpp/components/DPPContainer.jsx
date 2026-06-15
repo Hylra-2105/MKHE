@@ -8,6 +8,10 @@ import ModelViewer3D from "./ModelViewer3D";
 import ArtisanCertificate from "./ArtisanCertificate";
 import LocationMap from "./LocationMap";
 import { isVideoMedia } from "@/utils/validators";
+import { useAuthStore } from "@/stores/useAuthStore";
+import toast from "react-hot-toast";
+import AuthBottomSheet from "./AuthBottomSheet";
+import WelcomeToast from "./WelcomeToast";
 
 const DPPContainer = () => {
   const { uid } = useParams();
@@ -19,6 +23,20 @@ const DPPContainer = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("3d");
   const [verificationFailed, setVerificationFailed] = useState(false);
+
+  // Thêm state xử lý Auth & Voucher
+  const user = useAuthStore((state) => state.user);
+  const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const [isClaimed, setIsClaimed] = useState(() => {
+    return localStorage.getItem("claimed_welcome_mkhe") === "true";
+  });
+  
+  const ctaRef = React.useRef(null);
+  const scrollToCTA = () => {
+    if (ctaRef.current) {
+      ctaRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -64,6 +82,32 @@ const DPPContainer = () => {
       }
     }
     setDragOffset(0);
+  };
+
+  const handleClaimVoucher = () => {
+    if (isClaimed) return;
+    
+    if (user) {
+      // User is already logged in
+      setIsClaimed(true);
+      localStorage.setItem("claimed_welcome_mkhe", "true");
+      toast.success("Chào mừng thành viên mới! Mã WELCOME_MKHE đã được kích hoạt.", { duration: 4000 });
+    } else {
+      // User is not logged in, open bottom sheet
+      setBottomSheetOpen(true);
+    }
+  };
+
+  const handleAuthSuccess = (isNewUser) => {
+    setBottomSheetOpen(false);
+    setIsClaimed(true);
+    localStorage.setItem("claimed_welcome_mkhe", "true");
+    
+    if (isNewUser) {
+      toast.success("Chào mừng thành viên mới! Mã WELCOME_MKHE đã được kích hoạt.", { duration: 4000 });
+    } else {
+      toast.success("Mừng bạn quay lại! Ưu đãi 10% (mã WELCOME_MKHE) đã được áp dụng.", { duration: 4000 });
+    }
   };
 
   useEffect(() => {
@@ -163,6 +207,8 @@ const DPPContainer = () => {
 
   return (
     <div className="relative min-h-[calc(100vh-68px)] text-mkhe-text overflow-hidden font-sans pb-24 selection:bg-mkhe-primary/30">
+      <WelcomeToast onToastClick={scrollToCTA} />
+      
       {/* 1. DYNAMIC AMBIENT BACKGROUND */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200%] md:w-[100%] h-[70vh] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-mkhe-primary/15 via-mkhe-bg/40 to-transparent pointer-events-none opacity-80" />
       
@@ -334,7 +380,44 @@ const DPPContainer = () => {
         {/* Khối Bản đồ */}
         <LocationMap gpsLocation={product.gpsLocation} />
         
+        {/* CTA Banner: Nhận ưu đãi O2O */}
+        <div className="mt-8 mb-4" ref={ctaRef}>
+          <div className="relative bg-mkhe-bg/40 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-mkhe-border/30 overflow-hidden text-center transition-all duration-500 hover:border-mkhe-primary/40">
+            <div className="absolute inset-0 bg-gradient-to-br from-mkhe-primary/10 to-transparent opacity-50 pointer-events-none" />
+            <div className="relative z-10 space-y-4">
+              <div className="flex justify-center">
+                <Sparkles className={`w-8 h-8 ${isClaimed ? 'text-mkhe-text/40' : 'text-mkhe-primary'}`} />
+              </div>
+              <div>
+                <h3 className={`text-xl font-bold uppercase tracking-widest font-logo mb-1 ${isClaimed ? 'text-mkhe-text/60' : 'text-mkhe-text'}`}>
+                  Thành viên mới
+                </h3>
+                <p className="text-sm text-mkhe-text/70">
+                  Khám phá Bộ sưu tập Di sản & Nhận ưu đãi 10%
+                </p>
+              </div>
+              <button
+                onClick={handleClaimVoucher}
+                disabled={isClaimed}
+                className={`w-full py-4 px-6 rounded-full cursor-pointer font-bold uppercase tracking-widest text-xs transition-all duration-500 flex items-center justify-center gap-2 ${
+                  isClaimed 
+                    ? "bg-mkhe-text/5 text-mkhe-text/50 border border-mkhe-border/30 shadow-inner"
+                    : "bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
+                }`}
+              >
+                {isClaimed ? "✓ Đã lưu mã WELCOME_MKHE" : "Nhận mã WELCOME_MKHE"}
+              </button>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {/* Auth Bottom Sheet */}
+      <AuthBottomSheet 
+        isOpen={isBottomSheetOpen} 
+        onClose={() => setBottomSheetOpen(false)} 
+        onSuccess={handleAuthSuccess} 
+      />
     </div>
   );
 };
