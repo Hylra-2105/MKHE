@@ -6,12 +6,16 @@ import { useTranslation } from "react-i18next";
 // Import hàm kiểm tra video từ validators đã có sẵn
 import { isVideoMedia } from "@/utils/validators";
 
-const ProductGrid = ({ products, loading }) => {
+const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
   const { t } = useTranslation("product");
+
+  const gridColsClass = isDesktopFilterOpen 
+    ? 'min-[1024px]:grid-cols-3 min-[1200px]:grid-cols-4' 
+    : 'min-[900px]:grid-cols-4';
 
   if (loading && (!products || products.length === 0)) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
+      <div className={`grid grid-cols-2 min-[600px]:grid-cols-3 ${gridColsClass} gap-4 sm:gap-6 pb-12`}>
         {[...Array(12)].map((_, i) => (
           <div key={i} className="animate-pulse bg-mkhe-border/10 rounded-3xl aspect-[4/5]"></div>
         ))}
@@ -39,7 +43,7 @@ const ProductGrid = ({ products, loading }) => {
         </div>
       )}
       
-      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 transition-opacity duration-300 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
+      <div className={`grid grid-cols-2 min-[600px]:grid-cols-3 ${gridColsClass} gap-4 sm:gap-8 transition-opacity duration-300 ${loading ? 'opacity-60 pointer-events-none' : 'opacity-100'}`}>
       {products.map((product) => {
         const mainMedia = product.images && product.images.length > 0 ? product.images[0] : null;
         const mediaUrl = getImageUrl(mainMedia);
@@ -107,7 +111,7 @@ const ProductGrid = ({ products, loading }) => {
 
             {/* Info BLOCK - Outside */}
             <div className="flex flex-col gap-1 px-1">
-              <h3 className="text-base md:text-lg font-medium text-mkhe-text line-clamp-2 transition-colors group-hover:text-mkhe-primary leading-snug min-h-[3rem] md:min-h-[3.375rem]">
+              <h3 className="text-base md:text-lg font-medium text-mkhe-text line-clamp-1 h-6 transition-colors group-hover:text-mkhe-primary leading-snug" title={product.name}>
                 {product.name}
               </h3>
               <p className="text-lg font-bold text-mkhe-primary mt-1">

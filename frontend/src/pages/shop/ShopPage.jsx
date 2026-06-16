@@ -81,7 +81,8 @@ const ShopPage = () => {
 
   useEffect(() => {
     fetchProducts();
-    // Re-fetch khi URL params thay đổi
+    // Scroll to top when page/filters change
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [searchParams]);
 
   return (

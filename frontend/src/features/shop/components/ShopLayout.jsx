@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const ShopLayout = ({ children, filters, onFilterChange }) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
   const { t } = useTranslation("product");
 
   return (
@@ -20,21 +21,31 @@ const ShopLayout = ({ children, filters, onFilterChange }) => {
       </div>
 
       {/* CỘT BỘ LỌC (DESKTOP) & GRID (ALL) */}
-      <div className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 flex items-start gap-12">
+      <div className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 flex items-start gap-12 transition-all duration-300">
         
         {/* SIDEBAR DESKTOP */}
-        <aside className="hidden lg:block w-72 shrink-0 sticky top-24 h-[calc(100vh-8rem)] bg-transparent border-r border-mkhe-border/10 pr-4">
-          <ShopFilters filters={filters} onFilterChange={onFilterChange} onCloseMobile={() => {}} />
-        </aside>
+        {isDesktopFilterOpen && (
+          <aside className="hidden lg:block w-72 shrink-0 sticky top-24 h-[calc(100vh-8rem)] bg-transparent border-r border-mkhe-border/10 pr-4 animate-in slide-in-from-left-4 fade-in duration-300">
+            <ShopFilters filters={filters} onFilterChange={onFilterChange} onCloseMobile={() => setIsDesktopFilterOpen(false)} />
+          </aside>
+        )}
 
         {/* MAIN CONTENT */}
         <main className="flex-1 w-full flex flex-col min-h-0">
-          {/* HEADER MOBILE FILTER */}
-          <div className="flex items-center justify-between lg:hidden mb-8">
-            <h2 className="text-xl font-serif text-mkhe-primary">{t("shop.layout.mobile_products")}</h2>
+          {/* HEADER FILTER BUTTONS */}
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-xl font-serif text-mkhe-primary lg:hidden">{t("shop.layout.mobile_products")}</h2>
+            {/* Dành không gian trống cho Desktop nếu cần */}
+            <div className="hidden lg:block"></div>
             <button 
-              onClick={() => setIsMobileFilterOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 bg-mkhe-primary text-white rounded-full text-sm font-medium transition-transform active:scale-95 shadow-md"
+              onClick={() => {
+                if (window.innerWidth >= 1024) {
+                  setIsDesktopFilterOpen(!isDesktopFilterOpen);
+                } else {
+                  setIsMobileFilterOpen(true);
+                }
+              }}
+              className="flex items-center gap-2 px-5 py-2.5 bg-mkhe-primary text-white rounded-full text-sm font-medium transition-transform active:scale-95 shadow-md cursor-pointer"
             >
               <Filter className="w-4 h-4" />
               <span>{t("shop.layout.mobile_filter")}</span>
@@ -43,12 +54,17 @@ const ShopLayout = ({ children, filters, onFilterChange }) => {
 
           {/* GRID */}
           <div className="flex-1">
-            {children}
+            {React.Children.map(children, child => {
+              if (React.isValidElement(child)) {
+                return React.cloneElement(child, { isDesktopFilterOpen });
+              }
+              return child;
+            })}
           </div>
         </main>
       </div>
 
-      {/* DRAWER MOBILE FILTER */}
+      {/* DRAWER MOBILE FILTER (MOBILE ONLY) */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div 

@@ -83,12 +83,18 @@ const ShopFilters = ({ filters, onFilterChange, onCloseMobile }) => {
 
   return (
     <div className="flex flex-col h-full bg-transparent overflow-y-auto custom-scrollbar font-sans">
-      <div className="flex items-center justify-between p-6 border-b border-mkhe-border/10 lg:hidden">
+      <div 
+        className="flex items-center justify-between p-6 border-b border-mkhe-border/30 lg:hidden sticky top-0 z-10 bg-mkhe-bg"
+      >
         <div className="flex items-center gap-2">
           <Filter className="w-5 h-5 text-mkhe-text" />
           <h2 className="font-serif text-xl text-mkhe-text">{t("product:shop.filters.title")}</h2>
         </div>
-        <button onClick={onCloseMobile} className="p-2 bg-mkhe-border/10 rounded-full text-mkhe-text hover:bg-mkhe-border/20 transition-colors">
+        <button 
+          onClick={onCloseMobile}
+          className="p-2 bg-mkhe-border/10 rounded-full text-mkhe-text hover:bg-mkhe-border/20 transition-colors cursor-pointer"
+          title={t("common:close")}
+        >
           <X className="w-4 h-4" />
         </button>
       </div>
