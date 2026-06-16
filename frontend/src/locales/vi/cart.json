@@ -1,0 +1,25 @@
+{
+  "title": "Giỏ hàng",
+  "empty": "Giỏ hàng của bạn đang trống",
+  "continue_shopping": "Tiếp tục mua sắm",
+  "select_all": "Chọn tất cả",
+  "remove_item": "Xóa sản phẩm",
+  "total": "Tổng cộng:",
+  "checkout": "Thanh toán ngay",
+  "remove_confirm": "Bạn có chắc muốn bỏ sản phẩm này khỏi giỏ?",
+  "voucher_placeholder": "🎟️ Chọn Mã Ưu Đãi",
+  "coming_soon": "Sắp ra mắt",
+  "edit": "Sửa",
+  "done": "Hoàn tất",
+  "cancel": "Hủy",
+  "delete": "Xóa",
+  "remove_multiple_confirm": "Bạn có chắc muốn xóa {{count}} sản phẩm đã chọn khỏi giỏ?",
+  "delete_selected": "Xóa {{count}} sản phẩm",
+  "toast": {
+    "stock_limit": "Chỉ còn {{maxStock}} sản phẩm trong kho",
+    "quantity_updated": "Đã cập nhật số lượng trong giỏ hàng",
+    "out_of_stock": "Sản phẩm đã hết hàng",
+    "added": "Đã thêm vào giỏ hàng",
+    "removed": "Đã xóa khỏi giỏ hàng"
+  }
+}

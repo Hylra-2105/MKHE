@@ -25,4 +25,9 @@ export const ENDPOINTS = {
   SHOP: {
     GET_PRODUCTS: `${API_BASE_URL}/products/shop`,
   },
+  CART: {
+    GET: `${API_BASE_URL}/cart`,
+    SYNC: `${API_BASE_URL}/cart/sync`,
+    ITEMS: `${API_BASE_URL}/cart/items`,
+  },
 };

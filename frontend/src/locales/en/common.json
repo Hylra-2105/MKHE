@@ -12,20 +12,5 @@
   "INVALID_EMAIL_FORMAT": "Invalid email format. Please enter a valid email.",
   "REGISTER_SUCCESS": "Registration successful!",
   "PASSWORD_MUST_BE_DIFFERENT": "The new password must be different from the old password.",
-  "TOO_MANY_OTP_REQUESTS": "You have requested OTP too many times. Please try again after 15 minutes.",
-  "cart": {
-    "title": "Shopping Cart",
-    "empty": "Your cart is empty",
-    "continue_shopping": "Continue Shopping",
-    "remove_item": "Remove Item",
-    "total": "Total:",
-    "checkout": "Checkout Now",
-    "toast": {
-      "stock_limit": "Only {{maxStock}} items left in stock",
-      "quantity_updated": "Cart quantity updated",
-      "out_of_stock": "Product is out of stock",
-      "added": "Added to cart",
-      "removed": "Removed from cart"
-    }
-  }
+  "TOO_MANY_OTP_REQUESTS": "You have requested OTP too many times. Please try again after 15 minutes."
 }

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
 import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
@@ -31,6 +32,7 @@ export default function Header() {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const logoutAction = useAuthStore((state) => state.logoutAction);
+  const { items, toggleCart } = useCartStore();
 
   // Check if user is admin or staff
   const isAdmin = user?.role === "Admin";
@@ -163,11 +165,16 @@ export default function Header() {
             <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative">
+            <button 
+              onClick={toggleCart}
+              className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
+            >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
-                0
-              </span>
+              {items.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {items.length}
+                </span>
+              )}
             </button>
           </>
         )}

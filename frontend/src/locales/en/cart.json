@@ -1,0 +1,25 @@
+{
+  "title": "Shopping Cart",
+  "empty": "Your cart is empty",
+  "continue_shopping": "Continue Shopping",
+  "select_all": "Select All",
+  "remove_item": "Remove item",
+  "total": "Total:",
+  "checkout": "Checkout",
+  "remove_confirm": "Are you sure you want to remove this item from your cart?",
+  "voucher_placeholder": "🎟️ Select Promo Code",
+  "coming_soon": "Coming soon",
+  "edit": "Edit",
+  "done": "Done",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "remove_multiple_confirm": "Are you sure you want to remove {{count}} selected items from your cart?",
+  "delete_selected": "Delete {{count}} items",
+  "toast": {
+    "stock_limit": "Only {{maxStock}} items left in stock",
+    "quantity_updated": "Cart quantity updated",
+    "out_of_stock": "Product is out of stock",
+    "added": "Added to cart",
+    "removed": "Removed from cart"
+  }
+}

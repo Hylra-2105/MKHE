@@ -1,0 +1,25 @@
+{
+  "title": "购物车",
+  "empty": "您的购物车是空的",
+  "continue_shopping": "继续购物",
+  "select_all": "全选",
+  "remove_item": "移除项目",
+  "total": "总计:",
+  "checkout": "结账",
+  "remove_confirm": "您确定要从购物车中移除此项目吗？",
+  "voucher_placeholder": "🎟️ 选择优惠码",
+  "coming_soon": "敬请期待",
+  "edit": "编辑",
+  "done": "完成",
+  "cancel": "取消",
+  "delete": "删除",
+  "remove_multiple_confirm": "您确定要从购物车中删除选中的 {{count}} 件商品吗？",
+  "delete_selected": "删除 {{count}} 件商品",
+  "toast": {
+    "stock_limit": "库存仅剩 {{maxStock}} 件",
+    "quantity_updated": "购物车数量已更新",
+    "out_of_stock": "商品已缺货",
+    "added": "已添加到购物车",
+    "removed": "已从购物车移除"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "title": "장바구니",
+  "empty": "장바구니가 비어 있습니다",
+  "continue_shopping": "쇼핑 계속하기",
+  "select_all": "모두 선택",
+  "remove_item": "항목 제거",
+  "total": "합계:",
+  "checkout": "결제",
+  "remove_confirm": "이 항목을 장바구니에서 삭제하시겠습니까?",
+  "voucher_placeholder": "🎟️ 프로모션 코드 선택",
+  "coming_soon": "출시 예정",
+  "edit": "편집",
+  "done": "완료",
+  "cancel": "취소",
+  "delete": "삭제",
+  "remove_multiple_confirm": "선택한 {{count}}개의 상품을 장바구니에서 삭제하시겠습니까?",
+  "delete_selected": "{{count}}개 상품 삭제",
+  "toast": {
+    "stock_limit": "재고가 {{maxStock}}개 남았습니다",
+    "quantity_updated": "장바구니 수량이 업데이트되었습니다",
+    "out_of_stock": "상품이 품절되었습니다",
+    "added": "장바구니에 추가되었습니다",
+    "removed": "장바구니에서 제거되었습니다"
+  }
+}

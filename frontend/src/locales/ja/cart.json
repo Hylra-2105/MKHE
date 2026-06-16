@@ -1,0 +1,25 @@
+{
+  "title": "ショッピングカート",
+  "empty": "カートは空です",
+  "continue_shopping": "買い物を続ける",
+  "select_all": "すべて選択",
+  "remove_item": "アイテムを削除",
+  "total": "合計:",
+  "checkout": "チェックアウト",
+  "remove_confirm": "このアイテムをカートから削除してもよろしいですか？",
+  "voucher_placeholder": "🎟️ プロモコードを選択",
+  "coming_soon": "近日公開",
+  "edit": "編集",
+  "done": "完了",
+  "cancel": "キャンセル",
+  "delete": "削除",
+  "remove_multiple_confirm": "選択した{{count}}個のアイテムをカートから削除してもよろしいですか？",
+  "delete_selected": "{{count}}個のアイテムを削除",
+  "toast": {
+    "stock_limit": "在庫は残り{{maxStock}}個です",
+    "quantity_updated": "カートの数量が更新されました",
+    "out_of_stock": "在庫切れです",
+    "added": "カートに追加されました",
+    "removed": "カートから削除されました"
+  }
+}
