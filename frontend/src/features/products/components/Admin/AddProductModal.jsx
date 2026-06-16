@@ -9,6 +9,7 @@ import { formatNumber, parseNumber } from "@/utils/formatters";
 import { draftDB } from "@/utils/db";
 import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
@@ -26,7 +27,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     vendor: "", // Sử dụng Dropdown có sẵn
     craftVillage: "",
     material: [],
-    description: "",
+    story: "",
     categoryMatrix: "B2C_Mass_Premium",
     culturalDNA: "OTHER",
     price: "",
@@ -461,8 +462,12 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.description")}</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm resize-none" placeholder={t("modal.description_placeholder")} />
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">{t("modal.story")}</label>
+                  <RichTextEditor 
+                    value={formData.story} 
+                    onChange={(content) => setFormData(prev => ({ ...prev, story: content }))}
+                    placeholder={t("modal.story_placeholder")}
+                  />
                 </div>
               </div>
 

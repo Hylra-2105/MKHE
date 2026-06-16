@@ -47,8 +47,6 @@
     "price_placeholder": "250000",
     "stock": "Số lượng tồn kho",
     "stock_placeholder": "100",
-    "description": "Mô tả tóm tắt sản phẩm",
-    "description_placeholder": "Nhập thông tin mô tả chi tiết phục vụ hiển thị bán hàng...",
     "status": "Trạng thái hiển thị",
     "cancel": "Hủy",
     "create": "Tạo mới",
@@ -96,7 +94,9 @@
       "label": "FILE MÔ HÌNH 3D (.GLB, .GLTF)",
       "error_upload": "Lỗi upload file 3D",
       "error_upload_both": "Lỗi upload ảnh hoặc file 3D"
-    }
+    },
+    "story": "Câu chuyện sản phẩm",
+    "story_placeholder": "Nhập câu chuyện chi tiết về sản phẩm (hỗ trợ in đậm, in nghiêng, chia đoạn...)"
   },
   "statuses": {
     "DRAFT": "Bản nháp (Đang ẩn)",

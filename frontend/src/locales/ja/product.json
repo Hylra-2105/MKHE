@@ -47,8 +47,6 @@
     "price_placeholder": "250000",
     "stock": "在庫数",
     "stock_placeholder": "100",
-    "description": "製品の簡単な説明",
-    "description_placeholder": "表示および販売のために詳細な製品情報を入力します...",
     "cancel": "キャンセル",
     "create": "作成する",
     "save": "保存",
@@ -102,7 +100,9 @@
       "label": "3D モデル ファイル (.GLB、.GLTF)",
       "error_upload": "3D ファイルのアップロード中にエラーが発生しました",
       "error_upload_both": "画像または 3D ファイルのアップロード中にエラーが発生しました"
-    }
+    },
+    "story": "製品ストーリー",
+    "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）"
   },
   "statuses": {
     "DRAFT": "ドラフト (非表示)",

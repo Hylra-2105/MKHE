@@ -47,8 +47,6 @@
     "price_placeholder": "250000",
     "stock": "재고 수량",
     "stock_placeholder": "100",
-    "description": "간단한 제품 설명",
-    "description_placeholder": "전시 및 판매를 위한 자세한 상품정보를 입력하세요.",
     "cancel": "취소",
     "create": "만들다",
     "save": "구하다",
@@ -102,7 +100,9 @@
       "label": "3D 모델 파일(.GLB, .GLTF)",
       "error_upload": "3D 파일 업로드 오류",
       "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다."
-    }
+    },
+    "story": "제품 스토리",
+    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
   },
   "statuses": {
     "DRAFT": "초안(숨김)",

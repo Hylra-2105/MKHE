@@ -42,8 +42,6 @@
     "price_placeholder": "250000",
     "stock": "Stock Quantity",
     "stock_placeholder": "100",
-    "description": "Short Product Description",
-    "description_placeholder": "Enter detailed product information for display and sales purposes...",
     "cancel": "Cancel",
     "create": "Create",
     "save": "Save",
@@ -97,7 +95,9 @@
       "label": "3D MODEL FILE (.GLB, .GLTF)",
       "error_upload": "Error uploading 3D file",
       "error_upload_both": "Error uploading image or 3D file"
-    }
+    },
+    "story": "Product Story",
+    "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)"
   },
   "statuses": {
     "DRAFT": "Draft (Hidden)",

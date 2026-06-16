@@ -18,6 +18,7 @@ import Dropdown from "@/components/ui/Dropdown";
 import NFCManagement from "./NFCManagement";
 import { productApi } from "@/api/productApi";
 import { useTranslation } from "react-i18next";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 import { isVideoMedia } from "@/utils/validators";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { compressGLB } from "@/utils/glbCompressor";
@@ -95,14 +96,22 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     { value: "OUT_OF_STOCK", label: t("statuses.OUT_OF_STOCK") },
   ];
 
-  const vendors = [
+  const baseVendors = [
     { value: "HTX Châu Giang", label: "HTX Châu Giang" },
     { value: "HTX Văn Giáo", label: "HTX Văn Giáo" },
     { value: "Cô Ba Khăn Rằn", label: "Cô Ba Khăn Rằn" },
     { value: "Gốm Phnôm Pi", label: "Gốm Phnôm Pi" },
     { value: "Hanhsilk", label: "Hanhsilk" },
+    { value: "Mộc Chợ Thủ", label: "Mộc Chợ Thủ" },
     { value: "MKHE", label: "MKHE" }
   ];
+
+  const vendors = React.useMemo(() => {
+    if (formData.vendor && !baseVendors.find(v => v.value === formData.vendor)) {
+      return [...baseVendors, { value: formData.vendor, label: formData.vendor }];
+    }
+    return baseVendors;
+  }, [formData.vendor]);
 
   const predefinedMaterials = [
     { value: "Thổ cẩm", label: t("materials.brocade", "Thổ cẩm") },
@@ -133,7 +142,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         vendor: product.vendor || "",
         craftVillage: product.craftVillage || "",
         material: product.material || [],
-        description: product.description || "",
+        story: product.story || "",
         categoryMatrix: product.categoryMatrix || "B2B_Luxury",
         culturalDNA: product.culturalDNA || "OTHER",
         price: product.price || "",
@@ -708,8 +717,12 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.description")}</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm resize-none" />
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">{t("modal.story")}</label>
+                  <RichTextEditor 
+                    value={formData.story} 
+                    onChange={(content) => setFormData(prev => ({ ...prev, story: content }))}
+                    placeholder={t("modal.story_placeholder")}
+                  />
                 </div>
               </div>
 

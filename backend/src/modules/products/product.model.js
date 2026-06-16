@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
-    description: {
+    story: {
       type: String,
     },
     categoryMatrix: {

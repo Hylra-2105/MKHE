@@ -9,7 +9,7 @@ export const createProduct = async (req, res) => {
     const {
       name,
       sku,
-      description,
+      story,
       categoryMatrix,
       culturalDNA,
       price,
@@ -45,7 +45,7 @@ export const createProduct = async (req, res) => {
     const newProduct = new Product({
       name,
       sku: sku.toUpperCase(),
-      description,
+      story,
       categoryMatrix,
       culturalDNA: culturalDNA || "OTHER",
       craftVillage: craftVillage || "",
@@ -117,7 +117,7 @@ export const getProducts = async (req, res) => {
 
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -225,7 +225,7 @@ export const getDeletedProducts = async (req, res) => {
 
     const total = await Product.countDocuments({ status: "HIDDEN" });
     const trashedProducts = await Product.find({ status: "HIDDEN" })
-      .sort({ updatedAt: -1 })
+      .sort({ updatedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit);
 

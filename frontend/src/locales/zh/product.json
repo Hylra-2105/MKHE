@@ -47,8 +47,6 @@
     "price_placeholder": "250000",
     "stock": "库存数量",
     "stock_placeholder": "100",
-    "description": "产品简短描述",
-    "description_placeholder": "输入详细的产品信息用于展示和销售目的...",
     "cancel": "取消",
     "create": "创造",
     "save": "节省",
@@ -102,7 +100,9 @@
       "label": "3D 模型文件（.GLB、.GLTF）",
       "error_upload": "上传 3D 文件时出错",
       "error_upload_both": "上传图像或 3D 文件时出错"
-    }
+    },
+    "story": "产品故事",
+    "story_placeholder": "输入详细的产品故事（支持粗体、斜体、格式化...）"
   },
   "statuses": {
     "DRAFT": "草稿（隐藏）",
