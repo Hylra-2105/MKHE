@@ -11,6 +11,7 @@ import {
   deleteProductImages,
   uploadProduct3D,
   getShopProducts,
+  getShopProductById,
 } from "./product.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { verifyTokenOptional } from "../../middlewares/verifyTokenOptional.js";
@@ -73,6 +74,7 @@ router.delete(
 
 // route sản phẩm cho trang Shop (Guest & B2B filtering)
 router.get("/shop", verifyTokenOptional, getShopProducts);
+router.get("/shop/:id", verifyTokenOptional, getShopProductById);
 
 // route sản phẩm người dùng thấy (Admin list)
 router.get("/", getProducts);

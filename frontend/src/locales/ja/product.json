@@ -209,6 +209,23 @@
       "header_subtitle": "一つ一つの作品は文化的な物語であり、職人の手と100年の歴史を持つ工芸村の魂によって織り成されています。",
       "mobile_products": "商品",
       "mobile_filter": "フィルター"
+    },
+    "detail": {
+      "category": "カテゴリー",
+      "material": "素材",
+      "village": "工芸村",
+      "quantity": "数量:",
+      "out_of_stock": "在庫切れ",
+      "add_to_cart": "カートに追加",
+      "buy_now": "今すぐ購入",
+      "story": "遺産の物語",
+      "show_less": "一部を表示",
+      "read_more": "続きを読む",
+      "in_stock": "在庫あり：{{count}}点",
+      "sold_out": "売り切れ",
+      "sku": "SKUコード",
+      "back": "戻る",
+      "nfc_badge": "NFCデジタルパスポート統合製品"
     }
   }
 }

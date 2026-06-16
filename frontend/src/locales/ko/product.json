@@ -209,6 +209,23 @@
       "header_subtitle": "각 작품은 장인의 손길과 백년 된 공예 마을의 영혼으로 짜여진 문화적 이야기입니다.",
       "mobile_products": "상품",
       "mobile_filter": "필터"
+    },
+    "detail": {
+      "category": "범주",
+      "material": "재료",
+      "village": "공예 마을",
+      "quantity": "수량:",
+      "out_of_stock": "품절",
+      "add_to_cart": "장바구니에 담기",
+      "buy_now": "지금 구매",
+      "story": "유산 이야기",
+      "show_less": "간략히 보기",
+      "read_more": "더 읽기",
+      "in_stock": "{{count}}개의 상품이 준비되어 있습니다",
+      "sold_out": "품절되었습니다",
+      "sku": "SKU 코드",
+      "back": "돌아가기",
+      "nfc_badge": "NFC 디지털 여권 통합 상품"
     }
   }
 }

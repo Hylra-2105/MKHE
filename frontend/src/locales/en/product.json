@@ -31,8 +31,10 @@
     "tab_nfc": "Digital Passport (NFC)",
     "cultural_dna": "Cultural DNA",
     "craft_village": "Craft Village",
-    "craft_village_placeholder": "Ex: Chau Phong Weaving Village...",
+    "craft_village_placeholder": "e.g., Chau Phong weaving village...",
     "material": "Material",
+    "story": "Product Story",
+    "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)",
     "name": "Product Name",
     "name_placeholder": "Example: Striped Brocade Tote Bag",
     "sku": "SKU",
@@ -95,9 +97,7 @@
       "label": "3D MODEL FILE (.GLB, .GLTF)",
       "error_upload": "Error uploading 3D file",
       "error_upload_both": "Error uploading image or 3D file"
-    },
-    "story": "Product Story",
-    "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)"
+    }
   },
   "statuses": {
     "DRAFT": "Draft (Hidden)",
@@ -204,6 +204,23 @@
       "header_subtitle": "Each piece is a cultural story, woven by the hands of artisans and the soul of century-old craft villages.",
       "mobile_products": "Products",
       "mobile_filter": "Filter"
+    },
+    "detail": {
+      "category": "Category",
+      "material": "Material",
+      "village": "Craft Village",
+      "quantity": "Quantity:",
+      "out_of_stock": "Out of Stock",
+      "add_to_cart": "Add to Cart",
+      "buy_now": "Buy Now",
+      "story": "Heritage Story",
+      "show_less": "Show Less",
+      "read_more": "Read More",
+      "in_stock": "{{count}} items in stock",
+      "sold_out": "Sold Out",
+      "sku": "SKU",
+      "back": "Go Back",
+      "nfc_badge": "Integrated with NFC Digital Passport"
     }
   }
 }

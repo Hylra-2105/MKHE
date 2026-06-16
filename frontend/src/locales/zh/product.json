@@ -209,6 +209,23 @@
       "header_subtitle": "每一件作品都是一个文化故事，由工匠的双手和百年手工艺村的灵魂编织而成。",
       "mobile_products": "产品",
       "mobile_filter": "筛选"
+    },
+    "detail": {
+      "category": "类别",
+      "material": "材料",
+      "village": "手工艺村",
+      "quantity": "数量：",
+      "out_of_stock": "缺货",
+      "add_to_cart": "加入购物车",
+      "buy_now": "立即购买",
+      "story": "遗产故事",
+      "show_less": "收起",
+      "read_more": "阅读更多",
+      "in_stock": "有 {{count}} 件商品",
+      "sold_out": "已售罄",
+      "sku": "SKU代码",
+      "back": "返回",
+      "nfc_badge": "集成NFC数字护照的产品"
     }
   }
 }

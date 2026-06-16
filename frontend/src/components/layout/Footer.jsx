@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from "react-icons/fa";
 
 const Footer = () => {
   // Trỏ đúng vào namespace "home" như cha yêu cầu
@@ -28,20 +28,12 @@ const Footer = () => {
               <FaFacebook className="w-5 h-5 cursor-pointer" />
             </a>
             <a
-              href="https://instagram.com/your-page"
+              href="https://www.tiktok.com/@mkheagency?is_from_webapp=1&sender_device=pc"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:opacity-80 transition-opacity"
             >
-              <FaInstagram className="w-5 h-5 cursor-pointer" />
-            </a>
-            <a
-              href="https://linkedin.com/company/your-company"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-80 transition-opacity"
-            >
-              <FaLinkedin className="w-5 h-5 cursor-pointer" />
+              <FaTiktok className="w-5 h-5 cursor-pointer" />
             </a>
           </div>
         </div>
