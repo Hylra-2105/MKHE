@@ -5,7 +5,7 @@ import { successResponse, errorResponse } from "../../utils/response.js";
 // GET /api/cart
 export const getCart = async (req, res) => {
   try {
-    let cart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug");
+    let cart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug craftVillage category");
     if (!cart) {
       cart = await Cart.create({ user: req.user.id, items: [] });
     }
@@ -36,7 +36,7 @@ export const syncCart = async (req, res) => {
     }
 
     if (!localItems || localItems.length === 0) {
-      const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug");
+      const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug craftVillage category");
       return successResponse(res, 200, "CART_SYNCED", populatedCart);
     }
 
@@ -68,7 +68,7 @@ export const syncCart = async (req, res) => {
 
     await cart.save();
     
-    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug");
+    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug craftVillage category");
     return successResponse(res, 200, "CART_SYNCED", populatedCart);
   } catch (error) {
     console.error("[syncCart] Error:", error);
@@ -107,7 +107,7 @@ export const updateCartItem = async (req, res) => {
 
     await cart.save();
 
-    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug");
+    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug craftVillage category");
     return successResponse(res, 200, "CART_ITEM_UPDATED", populatedCart);
   } catch (error) {
     console.error("[updateCartItem] Error:", error);
@@ -128,7 +128,7 @@ export const removeCartItem = async (req, res) => {
     cart.items = cart.items.filter(i => i.product.toString() !== productId.toString());
     await cart.save();
 
-    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug");
+    const populatedCart = await Cart.findOne({ user: req.user.id }).populate("items.product", "name price images stock slug craftVillage category");
     return successResponse(res, 200, "CART_ITEM_REMOVED", populatedCart);
   } catch (error) {
     console.error("[removeCartItem] Error:", error);

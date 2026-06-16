@@ -14,6 +14,9 @@ export const useCartStore = create(
       isCartOpen: false,
       loadingItems: [],
       selectedItems: [],
+      selectedVoucher: null,
+
+      setSelectedVoucher: (voucher) => set({ selectedVoucher: voucher }),
 
       toggleSelectItem: (productId) => set((state) => ({
         selectedItems: state.selectedItems.includes(productId)
@@ -87,7 +90,7 @@ export const useCartStore = create(
             return state;
           }
 
-          toast.success(i18n.t("cart:toast.added"));
+          toast.success(i18n.t("cart:toast.added", { ns: "cart", defaultValue: "Thêm vào giỏ hàng thành công!" }));
           shouldSync = true;
           return {
             items: [...state.items, { product, quantity: addQuantity }],
@@ -123,7 +126,7 @@ export const useCartStore = create(
           items: state.items.filter((item) => item.product._id !== productId),
           selectedItems: state.selectedItems.filter((id) => id !== productId),
         }));
-        toast.success(i18n.t("cart:toast.removed"));
+        toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
       },
 
       removeMultipleFromCart: async (productIds) => {
@@ -141,7 +144,7 @@ export const useCartStore = create(
           items: state.items.filter((item) => !productIds.includes(item.product._id)),
           selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
         }));
-        toast.success(i18n.t("cart:toast.removed"));
+        toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
       },
 
       updateQuantity: (productId, quantity) => {
@@ -173,6 +176,7 @@ export const useCartStore = create(
               const item = get().items.find((i) => i.product._id === productId);
               if (item) {
                 await updateCartItemApi(productId, item.quantity);
+                toast.success(i18n.t("cart:toast.update_success", { ns: "cart", defaultValue: "Đã cập nhật số lượng!" }));
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);
@@ -190,6 +194,24 @@ export const useCartStore = create(
         return items
           .filter((item) => selectedItems.includes(item.product._id))
           .reduce((total, item) => total + item.product.price * item.quantity, 0);
+      },
+
+      getDiscountedTotal: () => {
+        const total = get().getCartTotal();
+        const voucher = get().selectedVoucher;
+        if (!voucher) return total;
+
+        if (voucher.type === "FIXED_AMOUNT") {
+          return Math.max(0, total - voucher.discountValue);
+        }
+        if (voucher.type === "PERCENTAGE") {
+          let discount = (total * voucher.discountValue) / 100;
+          if (voucher.maxDiscount && discount > voucher.maxDiscount) {
+            discount = voucher.maxDiscount;
+          }
+          return Math.max(0, total - discount);
+        }
+        return total; // FREE_SHIP does not reduce item total, just shipping fee
       },
 
       getCartCount: () => {

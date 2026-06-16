@@ -4,13 +4,15 @@ import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl } from "@/utils/formatters";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import VoucherSelectorDrawer from "../vouchers/VoucherSelectorDrawer";
 
 const MiniCartDrawer = () => {
-  const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart } = useCartStore();
+  const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, getDiscountedTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart, selectedVoucher, setSelectedVoucher } = useCartStore();
   const navigate = useNavigate();
   const { t } = useTranslation(["cart"]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [isVoucherSelectorOpen, setIsVoucherSelectorOpen] = useState(false);
 
   useEffect(() => {
     if (isCartOpen) {
@@ -238,22 +240,43 @@ const MiniCartDrawer = () => {
               </button>
             ) : (
               <>
-                {/* Voucher Placeholder */}
-                <div className="w-full flex items-center justify-between p-3 border-2 border-dashed border-mkhe-border/30 rounded-xl bg-mkhe-bg/50 cursor-not-allowed group">
-                  <div className="flex items-center gap-2 text-mkhe-text/50">
-                    <Ticket className="w-5 h-5" />
-                    <span className="font-medium">{t("voucher_placeholder", "🎟️ Chọn Mã Ưu Đãi")}</span>
+                {/* Voucher Selector Trigger */}
+                <div 
+                  onClick={() => setIsVoucherSelectorOpen(true)}
+                  className="w-full flex items-center justify-between p-3 border hover:border-mkhe-primary/50 border-mkhe-border/30 rounded-xl bg-mkhe-bg/50 cursor-pointer group transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <Ticket className={`w-5 h-5 ${selectedVoucher ? "text-mkhe-primary" : "text-mkhe-text/50"}`} />
+                    <span className={`font-medium ${selectedVoucher ? "text-mkhe-primary" : "text-mkhe-text/50"}`}>
+                      {selectedVoucher ? `${t("voucher.selected", { defaultValue: "Đã chọn:" })} ${selectedVoucher.code}` : t("voucher.select_placeholder", { defaultValue: "🎟️ Chọn Mã Ưu Đãi" })}
+                    </span>
                   </div>
-                  <span className="text-xs font-semibold px-2 py-1 bg-mkhe-border/10 text-mkhe-text/40 rounded-full group-hover:bg-mkhe-border/20 transition-colors">
-                    {t("coming_soon", "Sắp ra mắt")}
+                  <span className="text-sm font-semibold text-mkhe-primary group-hover:underline">
+                    {selectedVoucher ? t("voucher.change", { defaultValue: "Thay đổi" }) : t("voucher.select", { defaultValue: "Chọn mã" })}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-mkhe-text/80 text-lg">{t("total", "Tổng cộng:")}</span>
-                  <span className="text-2xl font-sans font-semibold text-mkhe-primary">
-                    {formatNumber(getCartTotal())} đ
-                  </span>
+                <div className="flex flex-col gap-1 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-mkhe-text/60 text-sm">{t("subtotal", { defaultValue: "Tạm tính:" })}</span>
+                    <span className="font-sans font-medium text-mkhe-text/80">
+                      {formatNumber(getCartTotal())} đ
+                    </span>
+                  </div>
+                  {selectedVoucher && (
+                    <div className="flex items-center justify-between text-mkhe-primary">
+                      <span className="text-sm">{t("discount", { defaultValue: "Giảm giá:" })}</span>
+                      <span className="font-sans font-medium">
+                        -{formatNumber(getCartTotal() - getDiscountedTotal())} đ
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 border-t border-mkhe-border/10 mt-1">
+                    <span className="text-mkhe-text/80 text-lg">{t("total", "Tổng cộng:")}</span>
+                    <span className="text-2xl font-sans font-semibold text-mkhe-primary">
+                      {formatNumber(getDiscountedTotal())} đ
+                    </span>
+                  </div>
                 </div>
                 
                 <button 
@@ -271,6 +294,15 @@ const MiniCartDrawer = () => {
           </div>
         )}
       </div>
+
+      <VoucherSelectorDrawer 
+        isOpen={isVoucherSelectorOpen}
+        onClose={() => setIsVoucherSelectorOpen(false)}
+        cartItems={items.filter(i => selectedItems.includes(i.product._id))}
+        cartTotal={getCartTotal()}
+        selectedVoucherId={selectedVoucher?._id}
+        onSelectVoucher={setSelectedVoucher}
+      />
     </div>
   );
 };
