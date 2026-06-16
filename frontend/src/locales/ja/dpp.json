@@ -31,5 +31,16 @@
     "initializing": "3D 空間を初期化しています...",
     "arExperience": "AR体験",
     "alt": "3Dモデル"
+  },
+  "o2o": {
+    "toast_welcome": "✨ 新規会員は10%オフ。タップして表示。",
+    "new_member": "新規会員",
+    "login_to_save_voucher": "ログインして保存",
+    "login_to_save_voucher_suffix": "クーポンを利用して、上質なショッピングをお楽しみください。",
+    "cta_subtitle": "ヘリテージコレクションを発見＆10%オフ",
+    "voucher_saved": "✓ WELCOME_MKHE コードを保存しました",
+    "get_voucher": "WELCOME_MKHE コードを取得",
+    "msg_new_user": "新規会員の皆様、歓迎します！WELCOME_MKHEコードが有効化されました。",
+    "msg_returning_user": "お帰りなさい！10%のオファー（WELCOME_MKHE）が適用されました。"
   }
 }

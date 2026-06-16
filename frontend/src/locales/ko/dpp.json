@@ -31,5 +31,16 @@
     "initializing": "3D 공간 초기화 중...",
     "arExperience": "AR 체험",
     "alt": "3D 모델"
+  },
+  "o2o": {
+    "toast_welcome": "✨ 신규 회원 10% 할인. 탭하여 보기.",
+    "new_member": "신규 회원",
+    "login_to_save_voucher": "로그인하고",
+    "login_to_save_voucher_suffix": "할인 코드를 저장하여 프리미엄 쇼핑을 즐기세요.",
+    "cta_subtitle": "헤리티지 컬렉션을 발견하고 10% 할인을 받으세요",
+    "voucher_saved": "✓ WELCOME_MKHE 코드 저장됨",
+    "get_voucher": "WELCOME_MKHE 코드 받기",
+    "msg_new_user": "신규 회원을 환영합니다! WELCOME_MKHE 코드가 활성화되었습니다.",
+    "msg_returning_user": "환영합니다! 10% 혜택(WELCOME_MKHE)이 적용되었습니다."
   }
 }

@@ -31,5 +31,16 @@
     "initializing": "正在初始化 3D 空间...",
     "arExperience": "增强现实体验",
     "alt": "3D模型"
+  },
+  "o2o": {
+    "toast_welcome": "✨ 新会员享 10% 优惠。点击查看。",
+    "new_member": "新会员",
+    "login_to_save_voucher": "登录以保存",
+    "login_to_save_voucher_suffix": "优惠码，享受尊贵购物体验。",
+    "cta_subtitle": "探索传统系列，享 10% 优惠",
+    "voucher_saved": "✓ 已保存 WELCOME_MKHE 优惠码",
+    "get_voucher": "获取 WELCOME_MKHE 优惠码",
+    "msg_new_user": "欢迎新会员！WELCOME_MKHE 优惠码已激活。",
+    "msg_returning_user": "欢迎回来！您的 10% 优惠（WELCOME_MKHE）已应用。"
   }
 }

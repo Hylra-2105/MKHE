@@ -60,6 +60,9 @@ const ModelViewer3D = ({ src, alt }) => {
         camera-orbit="0deg 75deg 120%"
         style={{ width: "100%", height: "100%", backgroundColor: "transparent", zIndex: 10 }}
       >
+        {/* Ẩn thanh tiến trình đen mặc định của model-viewer */}
+        <div slot="progress-bar"></div>
+
         {/* Nút bấm hiển thị khi có AR (Chỉ hiện trên điện thoại hỗ trợ) */}
         <button 
           slot="ar-button" 
