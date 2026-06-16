@@ -186,5 +186,29 @@
     "copper": "黄铜锁",
     "silver": "银",
     "wood": "木材"
+  },
+  "shop": {
+    "fetch_error": "无法获取产品列表。",
+    "not_found": "未找到产品",
+    "digital_passport": "数字护照",
+    "video": "视频",
+    "filters": {
+      "title": "筛选",
+      "search_title": "搜索产品",
+      "search_placeholder": "产品名称, SKU...",
+      "craft_village_title": "工艺村 / 产地",
+      "craft_village_placeholder": "按工艺村搜索...",
+      "material_title": "材质",
+      "cultural_dna_title": "文化基因",
+      "category_title": "类别",
+      "all": "全部",
+      "clear_filters": "清除筛选"
+    },
+    "layout": {
+      "header_title": "遗产系列",
+      "header_subtitle": "每一件作品都是一个文化故事，由工匠的双手和百年手工艺村的灵魂编织而成。",
+      "mobile_products": "产品",
+      "mobile_filter": "筛选"
+    }
   }
 }

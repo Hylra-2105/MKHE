@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { formatNumber, getImageUrl } from "@/utils/formatters";
 import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 // Import hàm kiểm tra video từ validators đã có sẵn
 import { isVideoMedia } from "@/utils/validators";
 
 const ProductGrid = ({ products, loading }) => {
+  const { t } = useTranslation("product");
+
   if (loading && (!products || products.length === 0)) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12">
@@ -20,7 +23,7 @@ const ProductGrid = ({ products, loading }) => {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-mkhe-text/50">
         <Star className="w-16 h-16 mb-6 opacity-20 animate-pulse" />
-        <p className="text-xl font-light tracking-widest uppercase">Không tìm thấy sản phẩm</p>
+        <p className="text-xl font-light tracking-widest uppercase">{t("shop.not_found")}</p>
       </div>
     );
   }
@@ -81,12 +84,12 @@ const ProductGrid = ({ products, loading }) => {
               {/* Badges TOP LEFT */}
               <div className="absolute top-4 left-4 flex flex-col gap-3">
                 {product.hasDPP && (
-                  <div className="bg-mkhe-primary/90 text-white p-2 rounded-full shadow-lg backdrop-blur-md transform transition-transform group-hover:rotate-12" title="Hộ chiếu số">
+                  <div className="bg-mkhe-primary/90 text-white p-2 rounded-full shadow-lg backdrop-blur-md transform transition-transform group-hover:rotate-12" title={t("shop.digital_passport")}>
                     <Fingerprint className="w-4 h-4" />
                   </div>
                 )}
                 {isVideo && (
-                  <div className="bg-black/50 text-white p-2 rounded-full shadow-lg backdrop-blur-md" title="Video">
+                  <div className="bg-black/50 text-white p-2 rounded-full shadow-lg backdrop-blur-md" title={t("shop.video")}>
                     <PlayCircle className="w-4 h-4" />
                   </div>
                 )}

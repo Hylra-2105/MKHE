@@ -186,5 +186,29 @@
     "copper": "真鍮ロック",
     "silver": "銀",
     "wood": "木材"
+  },
+  "shop": {
+    "fetch_error": "商品一覧を取得できませんでした。",
+    "not_found": "商品が見つかりません",
+    "digital_passport": "デジタルパスポート",
+    "video": "ビデオ",
+    "filters": {
+      "title": "フィルター",
+      "search_title": "商品検索",
+      "search_placeholder": "商品名, SKU...",
+      "craft_village_title": "工芸村 / 産地",
+      "craft_village_placeholder": "工芸村で検索...",
+      "material_title": "素材",
+      "cultural_dna_title": "文化のDNA",
+      "category_title": "カテゴリー",
+      "all": "すべて",
+      "clear_filters": "フィルターをクリア"
+    },
+    "layout": {
+      "header_title": "ヘリテージコレクション",
+      "header_subtitle": "一つ一つの作品は文化的な物語であり、職人の手と100年の歴史を持つ工芸村の魂によって織り成されています。",
+      "mobile_products": "商品",
+      "mobile_filter": "フィルター"
+    }
   }
 }

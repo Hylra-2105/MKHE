@@ -58,7 +58,6 @@
     "confirm_restore_title": "Restore Product?",
     "confirm_restore_desc": "Are you sure you want to restore \"{{name}}\" to the product list?",
     "confirm_restore_btn": "Restore",
-
     "gallery_label": "Product Images/Videos",
     "drag_drop_text": "Drag and drop images/videos here",
     "click_to_select": "or click to select files",
@@ -182,5 +181,29 @@
     "copper": "Brass Lock",
     "silver": "Silver",
     "wood": "Wood"
+  },
+  "shop": {
+    "fetch_error": "Failed to fetch products.",
+    "not_found": "NO PRODUCTS FOUND",
+    "digital_passport": "Digital Passport",
+    "video": "Video",
+    "filters": {
+      "title": "Filters",
+      "search_title": "Search Products",
+      "search_placeholder": "Product name, SKU...",
+      "craft_village_title": "Craft Village / Origin",
+      "craft_village_placeholder": "Search by craft village...",
+      "material_title": "Material",
+      "cultural_dna_title": "Cultural DNA",
+      "category_title": "Category",
+      "all": "All",
+      "clear_filters": "CLEAR FILTERS"
+    },
+    "layout": {
+      "header_title": "Heritage Collection",
+      "header_subtitle": "Each piece is a cultural story, woven by the hands of artisans and the soul of century-old craft villages.",
+      "mobile_products": "Products",
+      "mobile_filter": "Filter"
+    }
   }
 }

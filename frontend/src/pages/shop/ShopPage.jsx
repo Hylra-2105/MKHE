@@ -4,9 +4,11 @@ import ShopLayout from "@/features/shop/components/ShopLayout";
 import ProductGrid from "@/features/shop/components/ProductGrid";
 import Pagination from "@/components/ui/Pagination";
 import { shopService } from "@/features/shop/shop.service";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 
 const ShopPage = () => {
+  const { t } = useTranslation("product");
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +73,7 @@ const ShopPage = () => {
         });
       }
     } catch (error) {
-      toast.error("Không thể tải danh sách sản phẩm.");
+      toast.error(t("shop.fetch_error"));
     } finally {
       setLoading(false);
     }
