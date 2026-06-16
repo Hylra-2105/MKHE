@@ -3,18 +3,15 @@
     "title": "Product Management",
     "subtitle": "Build commercial catalogs and manage the B2B/B2C matrix",
     "add_btn": "+ Add Product",
-    "tab_general": "General Info",
-    "tab_nfc": "Digital Passport (NFC)",
-    "gallery_label": "Product Images/Videos",
-    "drag_drop_text": "Drag and drop images/videos here",
-    "click_to_select": "or click to select files",
     "page_text": "Page",
     "trash_btn": "Trash"
   },
   "filter": {
     "search_placeholder": "Search by product name or SKU...",
     "search_btn": "Search",
-    "all_categories": "All Categories"
+    "all_categories": "All Categories",
+    "all_dna": "All DNA Codes",
+    "all_vendors": "All Vendors"
   },
   "table": {
     "name": "Product Name",
@@ -30,6 +27,12 @@
   },
   "modal": {
     "add_title": "Add New Product",
+    "tab_general": "General Info",
+    "tab_nfc": "Digital Passport (NFC)",
+    "cultural_dna": "Cultural DNA",
+    "craft_village": "Craft Village",
+    "craft_village_placeholder": "Ex: Chau Phong Weaving Village...",
+    "material": "Material",
     "name": "Product Name",
     "name_placeholder": "Example: Striped Brocade Tote Bag",
     "sku": "SKU",
@@ -39,8 +42,6 @@
     "price_placeholder": "250000",
     "stock": "Stock Quantity",
     "stock_placeholder": "100",
-    "description": "Short Product Description",
-    "description_placeholder": "Enter detailed product information for display and sales purposes...",
     "cancel": "Cancel",
     "create": "Create",
     "save": "Save",
@@ -55,7 +56,6 @@
     "confirm_restore_title": "Restore Product?",
     "confirm_restore_desc": "Are you sure you want to restore \"{{name}}\" to the product list?",
     "confirm_restore_btn": "Restore",
-
     "gallery_label": "Product Images/Videos",
     "drag_drop_text": "Drag and drop images/videos here",
     "click_to_select": "or click to select files",
@@ -95,7 +95,9 @@
       "label": "3D MODEL FILE (.GLB, .GLTF)",
       "error_upload": "Error uploading 3D file",
       "error_upload_both": "Error uploading image or 3D file"
-    }
+    },
+    "story": "Product Story",
+    "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)"
   },
   "statuses": {
     "DRAFT": "Draft (Hidden)",
@@ -138,7 +140,18 @@
     "copy_link_success": "NFC verification link copied!",
     "update_tag_error": "Error updating tag status",
     "activate_success": "Successfully activated tag {{uid}}",
-    "activate_error": "Activation failed"
+    "activate_error": "Activation failed",
+    "processing_images": "Processing and optimizing images...",
+    "processing_images_success": "Files processed successfully!",
+    "processing_images_error": "An error occurred while processing files",
+    "video_too_large": "Video {{name}} is too large (>100MB).",
+    "missing_fields": "Please fill in Name, SKU, Price, and Vendor.",
+    "missing_dpp_fields": "Digital Passport requires Artisan Name and GPS Coordinates.",
+    "no_link_allowed": "Do not paste links! Please enter location name or coordinates only.",
+    "file_3d_too_large": "3D file is too large (>150MB), which may freeze the browser. Please reduce it using 3D software first.",
+    "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
+    "optimize_3d_success": "3D optimization successful! Size reduced to: {{size}}MB",
+    "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used."
   },
   "nfc": {
     "management_title": "NFC Tag Management",
@@ -150,12 +163,47 @@
     "url": "Write URL (NFC Tools)",
     "status": "Status",
     "actions": "Actions",
-    "confirm_written": "Confirm Written"
+    "confirm_written": "Confirm Written",
+    "pending": "PENDING",
+    "active": "ACTIVE"
   },
   "culturalDNA": {
-    "CHAM": "Cham Genetic Code",
-    "KHMER": "Khmer Genetic Code",
-    "KINH": "Kinh Genetic Code",
+    "CHAM": "Cham Heritage",
+    "KHMER": "Khmer Heritage",
+    "KINH": "Kinh Heritage",
     "OTHER": "Other / Multi-ethnic"
+  },
+  "materials": {
+    "brocade": "Brocade",
+    "silk": "Silk",
+    "ceramic": "Ceramic",
+    "leather": "Cow Leather",
+    "copper": "Brass Lock",
+    "silver": "Silver",
+    "wood": "Wood"
+  },
+  "shop": {
+    "fetch_error": "Failed to fetch products.",
+    "not_found": "NO PRODUCTS FOUND",
+    "digital_passport": "Digital Passport",
+    "video": "Video",
+    "filters": {
+      "title": "Filters",
+      "search_title": "Search Products",
+      "search_placeholder": "Product name, SKU...",
+      "craft_village_title": "Craft Village / Origin",
+      "craft_village_placeholder": "Search by craft village...",
+      "material_title": "Material",
+      "cultural_dna_title": "Cultural DNA",
+      "category_title": "Category",
+      "all": "All",
+      "clear_filters": "CLEAR FILTERS"
+    },
+    "layout": {
+      "header_title": "Heritage Collection",
+      "header_subtitle": "Each piece is a cultural story, woven by the hands of artisans and the soul of century-old craft villages.",
+      "mobile_products": "Products",
+      "mobile_filter": "Filter"
+    }
   }
 }

@@ -72,9 +72,9 @@ const CulturalDNA = () => {
         </div>
       ) : (
         <div className="relative z-10 space-y-16">
-          <DnaSection title="Chăm" data={products.CHAM} />
-          <DnaSection title="Khmer" data={products.KHMER} isReverse={true} />
-          <DnaSection title="Kinh" data={products.KINH} />
+          <DnaSection title="Chăm" data={products.CHAM} dnaType="CHAM" />
+          <DnaSection title="Khmer" data={products.KHMER} isReverse={true} dnaType="KHMER" />
+          <DnaSection title="Kinh" data={products.KINH} dnaType="KINH" />
         </div>
       )}
     </section>

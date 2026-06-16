@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import DnaCard from "./DnaCard";
 
-const DnaSection = ({ title, data, isReverse = false }) => {
+const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
   const { t } = useTranslation("home");
+  const navigate = useNavigate();
 
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1200,
@@ -139,10 +141,13 @@ const DnaSection = ({ title, data, isReverse = false }) => {
           <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-widest font-logo text-transparent bg-clip-text bg-gradient-to-r from-mkhe-primary via-[#D4A373] to-[#C38D64] drop-shadow-sm">
             {title}
           </h3>
-          <button className="group flex items-center gap-1.5 text-mkhe-text/60 text-xs md:text-sm font-medium hover:text-mkhe-primary transition-colors mt-1 w-fit cursor-pointer">
+          <button 
+            onClick={() => navigate(`/shop?culturalDNA=${dnaType}`)}
+            className="group flex items-center gap-2 px-4 py-2 mt-2 border border-mkhe-primary/30 rounded-full text-mkhe-primary/80 text-xs md:text-sm font-medium hover:bg-mkhe-primary hover:text-white transition-all duration-300 w-fit cursor-pointer"
+          >
             {t("dna.view_all", "Xem toàn bộ")}
             <span className="transform group-hover:translate-x-1 transition-transform">
-              &gt;
+              →
             </span>
           </button>
         </div>

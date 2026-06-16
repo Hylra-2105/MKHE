@@ -374,10 +374,11 @@ const DPPContainer = () => {
             {product.name?.normalize("NFC")}
           </h1>
           
-          {product.description && (
-            <p className="text-sm text-mkhe-text/60 leading-relaxed font-light">
-              {product.description.normalize("NFC")}
-            </p>
+          {product.story && (
+            <div 
+              className="text-sm text-mkhe-text/60 leading-relaxed font-light [&>p]:mb-3 last:[&>p]:mb-0 [&>strong]:text-mkhe-text [&>strong]:font-bold [&>em]:italic"
+              dangerouslySetInnerHTML={{ __html: product.story }}
+            />
           )}
         </div>
 

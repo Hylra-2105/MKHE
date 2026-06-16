@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
-    description: {
+    story: {
       type: String,
     },
     categoryMatrix: {
@@ -28,6 +28,16 @@ const productSchema = new mongoose.Schema(
       enum: ["CHAM", "KHMER", "KINH", "OTHER"],
       default: "OTHER",
     },
+    craftVillage: {
+      type: String,
+      trim: true,
+    },
+    material: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     vendor: {
       type: String,
       required: true,

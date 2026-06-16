@@ -16,11 +16,11 @@ export default function Pagination({ page, setPage, totalPages, loading }) {
 
       {/* KHUNG CỐ ĐỊNH: Chiều rộng không đổi, chống giật tuyệt đối */}
       <div className="flex items-center justify-end w-[200px] gap-1">
-        {/* Nút Previous (<) - Luôn hiện, chỉ mờ đi và đổi chuột khi disabled */}
+        {/* Nút Previous (<) - Ẩn khi ở trang 1 để gọn giao diện theo ý user */}
         <button
           onClick={() => setPage(page - 1)}
           disabled={page === 1 || loading}
-          className="w-8 h-8 flex items-center justify-center rounded font-bold text-mkhe-primary hover:bg-mkhe-primary/20 cursor-pointer transition-colors disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          className={`w-8 h-8 flex items-center justify-center rounded font-medium text-mkhe-primary hover:bg-mkhe-primary/20 cursor-pointer transition-colors disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent ${page === 1 ? "invisible" : ""}`}
         >
           &lt;
         </button>
@@ -45,10 +45,10 @@ export default function Pagination({ page, setPage, totalPages, loading }) {
                 key={p}
                 onClick={() => setPage(p)}
                 disabled={loading}
-                className={`w-8 h-8 flex items-center justify-center transition-all duration-300 ${
+                className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${
                   isActive
-                    ? "text-xl font-bold text-mkhe-primary scale-110"
-                    : "text-base font-medium text-mkhe-text/50 hover:text-mkhe-primary cursor-pointer"
+                    ? "text-base font-semibold text-mkhe-primary"
+                    : "text-base font-normal text-mkhe-text/50 hover:text-mkhe-primary cursor-pointer hover:-translate-y-0.5"
                 } bg-transparent border-none focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 {p}
@@ -56,11 +56,11 @@ export default function Pagination({ page, setPage, totalPages, loading }) {
             );
           })}
 
-        {/* Nút Next (>) - Luôn hiện, chỉ mờ đi và đổi chuột khi disabled */}
+        {/* Nút Next (>) - Ẩn khi ở trang cuối để gọn giao diện */}
         <button
           onClick={() => setPage(page + 1)}
           disabled={page === totalPages || loading}
-          className="w-8 h-8 flex items-center justify-center rounded font-bold text-mkhe-primary hover:bg-mkhe-primary/20 cursor-pointer transition-colors disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          className={`w-8 h-8 flex items-center justify-center rounded font-medium text-mkhe-primary hover:bg-mkhe-primary/20 cursor-pointer transition-colors disabled:opacity-20 disabled:cursor-not-allowed disabled:hover:bg-transparent ${page === totalPages ? "invisible" : ""}`}
         >
           &gt;
         </button>

@@ -24,6 +24,7 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 import HomePage from "./pages/home/HomePage";
+import ShopPage from "./pages/shop/ShopPage";
 import UserManagement from "./pages/users/UserManagementPage";
 import ProductManagementPage from "./pages/products/ProductManagementPage";
 
@@ -80,6 +81,7 @@ function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/shop" element={<ShopPage />} />
           <Route
             path="/admin/users"
             element={

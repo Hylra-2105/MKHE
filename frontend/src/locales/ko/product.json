@@ -14,7 +14,9 @@
   "filter": {
     "search_placeholder": "제품 이름 또는 SKU로 검색...",
     "search_btn": "찾다",
-    "all_categories": "모든 카테고리"
+    "all_categories": "모든 카테고리",
+    "all_dna": "모든 유전자 코드",
+    "all_vendors": "모든 제공업체"
   },
   "table": {
     "name": "제품명",
@@ -30,6 +32,12 @@
   },
   "modal": {
     "add_title": "새 제품 추가",
+    "tab_general": "일반 정보",
+    "tab_nfc": "디지털 여권(NFC)",
+    "cultural_dna": "문화 DNA",
+    "craft_village": "공예 마을",
+    "craft_village_placeholder": "예: 차우퐁 직조 마을...",
+    "material": "재료",
     "name": "제품명",
     "name_placeholder": "예: 줄무늬 브로케이드 토트백",
     "sku": "SKU",
@@ -39,8 +47,6 @@
     "price_placeholder": "250000",
     "stock": "재고 수량",
     "stock_placeholder": "100",
-    "description": "간단한 제품 설명",
-    "description_placeholder": "전시 및 판매를 위한 자세한 상품정보를 입력하세요.",
     "cancel": "취소",
     "create": "만들다",
     "save": "구하다",
@@ -94,7 +100,9 @@
       "label": "3D 모델 파일(.GLB, .GLTF)",
       "error_upload": "3D 파일 업로드 오류",
       "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다."
-    }
+    },
+    "story": "제품 스토리",
+    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
   },
   "statuses": {
     "DRAFT": "초안(숨김)",
@@ -135,9 +143,20 @@
     "generate_nfc_success": "{{count}} 새 NFC 태그가 성공적으로 생성되었습니다!",
     "copy_link_error": "NFC 링크를 복사하는 중에 오류가 발생했습니다.",
     "copy_link_success": "NFC 인증 링크가 복사되었습니다!",
-    "update_tag_error": "태그 상태를 업데이트하는 중에 오류가 발생했습니다.",
-    "activate_success": "{{uid}} 태그가 성공적으로 활성화되었습니다.",
-    "activate_error": "활성화 실패"
+    "update_tag_error": "태그 상태를 업데이트하는 중 오류가 발생했습니다.",
+    "activate_success": "태그 {{uid}}가 성공적으로 활성화되었습니다.",
+    "activate_error": "활성화 실패",
+    "processing_images": "이미지 처리 및 최적화 중...",
+    "processing_images_success": "파일이 성공적으로 처리되었습니다!",
+    "processing_images_error": "파일 처리 중 오류가 발생했습니다.",
+    "video_too_large": "비디오 {{name}}이(가) 너무 큽니다(>100MB).",
+    "missing_fields": "이름, SKU, 가격 및 공급업체를 입력하세요.",
+    "missing_dpp_fields": "디지털 여권에는 장인 이름과 GPS 좌표가 필요합니다.",
+    "no_link_allowed": "링크를 붙여넣지 마세요! 위치 이름이나 좌표만 입력하세요.",
+    "file_3d_too_large": "3D 파일이 너무 큽니다(>150MB). 브라우저가 정지될 수 있습니다. 3D 소프트웨어를 사용하여 먼저 줄이세요.",
+    "optimizing_3d": "3D 파일({{size}}MB)을 최적화하는 중... CPU를 사용합니다. 페이지를 닫지 마세요!",
+    "optimize_3d_success": "3D 최적화 성공! 크기가 축소되었습니다: {{size}}MB",
+    "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다."
   },
   "nfc": {
     "management_title": "NFC 태그 관리",
@@ -149,12 +168,47 @@
     "url": "URL 쓰기(NFC 도구)",
     "status": "상태",
     "actions": "행위",
-    "confirm_written": "서면 확인"
+    "confirm_written": "서면 확인",
+    "pending": "대기 중",
+    "active": "활성"
   },
   "culturalDNA": {
-    "CHAM": "참 유전자 코드",
-    "KHMER": "크메르 유전자 코드",
-    "KINH": "킨 유전자 코드",
+    "CHAM": "참 문화 DNA",
+    "KHMER": "크메르 문화 DNA",
+    "KINH": "킨 문화 DNA",
     "OTHER": "기타 / 다민족"
+  },
+  "materials": {
+    "brocade": "브로케이드",
+    "silk": "실크",
+    "ceramic": "세라믹",
+    "leather": "소가죽",
+    "copper": "황동 자물쇠",
+    "silver": "은",
+    "wood": "목재"
+  },
+  "shop": {
+    "fetch_error": "상품 목록을 불러올 수 없습니다.",
+    "not_found": "상품을 찾을 수 없습니다",
+    "digital_passport": "디지털 여권",
+    "video": "비디오",
+    "filters": {
+      "title": "필터",
+      "search_title": "상품 검색",
+      "search_placeholder": "상품명, SKU...",
+      "craft_village_title": "공예 마을 / 원산지",
+      "craft_village_placeholder": "공예 마을로 검색...",
+      "material_title": "재질",
+      "cultural_dna_title": "문화 DNA",
+      "category_title": "카테고리",
+      "all": "전체",
+      "clear_filters": "필터 지우기"
+    },
+    "layout": {
+      "header_title": "헤리티지 컬렉션",
+      "header_subtitle": "각 작품은 장인의 손길과 백년 된 공예 마을의 영혼으로 짜여진 문화적 이야기입니다.",
+      "mobile_products": "상품",
+      "mobile_filter": "필터"
+    }
   }
 }
