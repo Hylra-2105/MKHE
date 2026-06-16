@@ -35,6 +35,8 @@
     "craft_village": "Làng nghề",
     "craft_village_placeholder": "VD: Làng dệt Châu Phong...",
     "material": "Chất liệu",
+    "story": "Câu chuyện sản phẩm",
+    "story_placeholder": "Nhập câu chuyện chi tiết về sản phẩm (hỗ trợ in đậm, in nghiêng, chia đoạn...)",
     "gallery_label": "Hình ảnh/video của sản phẩm",
     "drag_drop_text": "Kéo thả ảnh/video vào đây",
     "click_to_select": "hoặc click để chọn",
@@ -94,9 +96,7 @@
       "label": "FILE MÔ HÌNH 3D (.GLB, .GLTF)",
       "error_upload": "Lỗi upload file 3D",
       "error_upload_both": "Lỗi upload ảnh hoặc file 3D"
-    },
-    "story": "Câu chuyện sản phẩm",
-    "story_placeholder": "Nhập câu chuyện chi tiết về sản phẩm (hỗ trợ in đậm, in nghiêng, chia đoạn...)"
+    }
   },
   "statuses": {
     "DRAFT": "Bản nháp (Đang ẩn)",
@@ -205,6 +205,23 @@
       "header_subtitle": "Mỗi tác phẩm là một câu chuyện văn hóa, được dệt nên từ đôi bàn tay nghệ nhân và linh hồn của những làng nghề trăm tuổi.",
       "mobile_products": "Sản phẩm",
       "mobile_filter": "Lọc"
+    },
+    "detail": {
+      "category": "Danh mục",
+      "material": "Chất liệu",
+      "village": "Làng nghề",
+      "quantity": "Số lượng:",
+      "out_of_stock": "Hết hàng",
+      "add_to_cart": "Thêm vào giỏ",
+      "buy_now": "Mua ngay",
+      "story": "Câu chuyện di sản",
+      "show_less": "Thu gọn",
+      "read_more": "Đọc tiếp câu chuyện",
+      "in_stock": "{{count}} sản phẩm có sẵn",
+      "sold_out": "Đã bán hết",
+      "sku": "Mã SKU",
+      "back": "Trở về",
+      "nfc_badge": "Sản phẩm tích hợp Hộ chiếu số NFC"
     }
   }
 }

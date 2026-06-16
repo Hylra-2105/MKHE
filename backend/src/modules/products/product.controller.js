@@ -165,6 +165,45 @@ export const getProductById = async (req, res) => {
   }
 };
 
+// [GET] /api/products/shop/:id - Lấy chi tiết 1 sản phẩm cho E-com (có check status và B2B)
+export const getShopProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Tìm kiếm bằng Mongoose ObjectId hoặc bằng mã SKU
+    let product;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(id);
+    } 
+    
+    if (!product) {
+      product = await Product.findOne({ sku: id.toUpperCase() });
+    }
+
+    if (!product) {
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
+    // Chỉ trả về nếu sản phẩm đang PUBLISHED (hoặc ACTIVE)
+    if (!["PUBLISHED", "ACTIVE"].includes(product.status)) {
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
+    // Phân quyền hiển thị (B2B Security)
+    const isB2B = ["B2B_Luxury", "B2B_Standard"].includes(product.categoryMatrix);
+    const isGuest = !req.user || req.user.role === "Guest";
+
+    if (isB2B && isGuest) {
+      return errorResponse(res, 403, "FORBIDDEN"); // Khách vãng lai không xem được B2B
+    }
+
+    return successResponse(res, 200, "GET_PRODUCT_SUCCESS", product);
+  } catch (error) {
+    console.error("Error in getShopProductById:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
 // [PUT] /api/products/:id - Cập nhật thông tin sản phẩm
 export const updateProduct = async (req, res) => {
   try {

@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { formatNumber, getImageUrl } from "@/utils/formatters";
 import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 // Import hàm kiểm tra video từ validators đã có sẵn
 import { isVideoMedia } from "@/utils/validators";
 
 const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
   const { t } = useTranslation("product");
+  const navigate = useNavigate();
 
   const gridColsClass = isDesktopFilterOpen 
     ? 'min-[1024px]:grid-cols-3 min-[1200px]:grid-cols-4' 
@@ -52,6 +54,7 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
         return (
           <div 
             key={product._id}
+            onClick={() => navigate(`/shop/${product._id}`)}
             className="group relative flex flex-col gap-4 cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:z-10"
           >
             {/* Image/Video container */}

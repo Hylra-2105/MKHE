@@ -32,7 +32,13 @@ export const productApi = {
     return response.data;
   },
 
-  // Lấy chi tiết sản phẩm
+  // Lấy chi tiết sản phẩm cho trang E-com
+  getShopProductById: async (productId) => {
+    const response = await axiosClient.get(`/products/shop/${productId}`);
+    return response.data;
+  },
+
+  // Lấy chi tiết sản phẩm (Admin)
   getProductById: async (productId) => {
     const response = await axiosClient.get(`/products/${productId}`);
     return response.data;
