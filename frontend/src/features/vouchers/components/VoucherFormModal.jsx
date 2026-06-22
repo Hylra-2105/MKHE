@@ -67,7 +67,24 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
         try {
           const parsedDraft = JSON.parse(draft);
           setFormData(parsedDraft);
-          toast.success(t("voucher.restore_success"));
+          
+          const isDraftEmpty = 
+            (!parsedDraft.code) &&
+            (parsedDraft.type === "PERCENTAGE" || !parsedDraft.type) &&
+            (!parsedDraft.discountValue) &&
+            (!parsedDraft.maxDiscount) &&
+            (!parsedDraft.minOrderValue) &&
+            (!parsedDraft.usageLimit) &&
+            (!parsedDraft.gachaDropRate) &&
+            (!parsedDraft.applicableCategories || parsedDraft.applicableCategories.length === 0) &&
+            (!parsedDraft.applicableVillages || parsedDraft.applicableVillages.length === 0) &&
+            (!parsedDraft.startDate) &&
+            (!parsedDraft.endDate) &&
+            (!parsedDraft.title);
+
+          if (!isDraftEmpty) {
+            toast.success(t("voucher.restore_success"));
+          }
         } catch (e) {
           localStorage.removeItem("mkhe_voucher_draft");
         }

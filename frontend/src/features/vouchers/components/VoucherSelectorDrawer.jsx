@@ -65,8 +65,14 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
     const getDiscountAmount = (voucher) => {
       if (voucher.type === "FIXED_AMOUNT") return voucher.discountValue;
       if (voucher.type === "PERCENTAGE") {
-        const calculated = (cartTotal * voucher.discountValue) / 100;
-        return voucher.maxDiscount ? Math.min(calculated, voucher.maxDiscount) : calculated;
+        if (cartTotal > 0) {
+          const calculated = (cartTotal * voucher.discountValue) / 100;
+          return voucher.maxDiscount ? Math.min(calculated, voucher.maxDiscount) : calculated;
+        } else {
+          // When cart is empty, sort by maximum potential discount
+          if (voucher.maxDiscount) return voucher.maxDiscount;
+          return ((voucher.minOrderValue || 500000) * voucher.discountValue) / 100;
+        }
       }
       return 0;
     };

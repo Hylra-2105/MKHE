@@ -15,10 +15,21 @@ const MiniCartDrawer = () => {
   const [isVoucherSelectorOpen, setIsVoucherSelectorOpen] = useState(false);
 
   useEffect(() => {
+    if (selectedItems.length === 0 && selectedVoucher) {
+      setSelectedVoucher(null);
+    }
+  }, [selectedItems, selectedVoucher, setSelectedVoucher]);
+
+  useEffect(() => {
     if (isCartOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
+      setIsEditMode(false);
+      setItemToDelete(null);
+      if (selectedItems.length === 0) {
+        setSelectedVoucher(null);
+      }
     }
     return () => {
       document.body.style.overflow = "unset";
@@ -204,7 +215,7 @@ const MiniCartDrawer = () => {
               <div className="flex gap-3">
                 <button 
                   onClick={() => setItemToDelete(null)}
-                  className="flex-1 py-2.5 rounded-xl border border-mkhe-border/20 font-medium text-mkhe-text hover:bg-mkhe-border/10 transition-colors"
+                  className="flex-1 py-2.5 rounded-xl border border-mkhe-border/20 font-medium text-mkhe-text hover:bg-mkhe-border/10 transition-colors cursor-pointer"
                 >
                   {t("cancel", "Hủy")}
                 </button>
@@ -218,7 +229,7 @@ const MiniCartDrawer = () => {
                     }
                     setItemToDelete(null);
                   }}
-                  className="flex-1 py-2.5 rounded-xl bg-red-500 font-medium text-white shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors"
+                  className="flex-1 py-2.5 rounded-xl bg-red-500 font-medium text-white shadow-lg shadow-red-500/20 hover:bg-red-600 transition-colors cursor-pointer"
                 >
                   {t("delete", "Xóa")}
                 </button>
