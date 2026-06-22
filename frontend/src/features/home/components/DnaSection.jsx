@@ -146,9 +146,6 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
             className="group flex items-center gap-2 px-4 py-2 mt-2 border border-mkhe-primary/30 rounded-full text-mkhe-primary/80 text-xs md:text-sm font-medium hover:bg-mkhe-primary hover:text-white transition-all duration-300 w-fit cursor-pointer"
           >
             {t("dna.view_all", "Xem toàn bộ")}
-            <span className="transform group-hover:translate-x-1 transition-transform">
-              →
-            </span>
           </button>
         </div>
 

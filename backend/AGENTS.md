@@ -1,6 +1,7 @@
 # AGENTS.md — MKHE Backend
 
 > **AI agents MUST read and strictly follow every rule in this file before writing any code.**
+> **AI agents MUST also update this file with any new architectural decisions, modules, or API routes after completing a task.**
 > This file governs all code generation, architecture decisions, and backend tooling choices.
 
 ---
@@ -45,10 +46,15 @@ backend/
 │   │   ├── auth/
 │   │   │   ├── auth.controller.js  ← All auth handlers (register, login, OTP, etc.)
 │   │   │   └── auth.routes.js      ← /api/auth/* routes
-│   │   └── users/
-│   │       ├── user.controller.js  ← getAllUsers, updateUser, deleteUser
-│   │       ├── user.model.js       ← Mongoose User schema + pre-save hook + matchPassword()
-│   │       └── user.routes.js      ← /api/users/* routes (all Admin-only)
+│   │   ├── cart/            ← Shopping cart functionality
+│   │   ├── dpp/             ← Digital Product Passport functionality
+│   │   ├── nfc/             ← NFC tag management
+│   │   ├── products/        ← Product management
+│   │   ├── users/
+│   │   │   ├── user.controller.js  ← profile, uploadAvatar, getAllUsers, updateUser, deleteUser
+│   │   │   ├── user.model.js       ← Mongoose User schema + pre-save hook + matchPassword()
+│   │   │   └── user.routes.js      ← /api/users/* routes
+│   │   └── vouchers/        ← Voucher functionality
 │   └── utils/
 │       ├── email.js         ← sendVerificationEmail(), sendPasswordResetEmail(), sendBlockAccountEmail()
 │       ├── helpers.js       ← createVietnameseRegex() — accent-aware search helper
@@ -172,15 +178,22 @@ All routes are under `/api/auth`. The `normalizeEmailMiddleware` is applied on a
 | POST | `/verify-reset-otp` | — | `verifyResetOtp` | Verify reset OTP → return resetToken |
 | POST | `/reset-password` | `normalizeEmail` | `resetPassword` | Use resetToken to set new password |
 | POST | `/logout` | `verifyToken` | `logoutUser` | Clear refreshToken in DB |
+| POST | `/send-change-password-otp` | `verifyToken`, `otpLimiter` | `sendChangePasswordOtp` | Send OTP for logged-in user to change password |
+| POST | `/verify-change-password-otp` | `verifyToken` | `verifyChangePasswordOtp` | Verify OTP for changing password |
+| PUT | `/change-password-otp` | `verifyToken` | `changePasswordWithOtp` | Change password using verified OTP |
+| GET | `/me` | `verifyToken` | `getMe` | Get current user info |
+| POST | `/refresh-token` | — | `refreshToken` | Refresh access token |
 
-### Users — `GET|PUT|DELETE /api/users/*`
+### Users — `GET|PUT|DELETE|POST /api/users/*`
 
-All routes require `verifyToken` + `checkRole(["Admin"])`.
+Most routes require `verifyToken` + `checkRole(["Admin"])`, but profile routes only require `verifyToken`.
 
-| Method | Path | Handler | Description |
-|--------|------|---------|-------------|
-| GET | `/` | `getAllUsers` | Paginated list with search + role filter |
-| PUT | `/:id` | `updateUser` | Update user fields (block/unblock, profile) |
+| Method | Path | Middleware | Handler | Description |
+|--------|------|------------|---------|-------------|
+| PUT | `/profile` | `verifyToken`, `normalizeEmail` | `updateMyProfile` | Update own profile info (name, bio, phone, etc.) |
+| POST | `/upload-avatar` | `verifyToken`, `uploadCloud` | `uploadAvatar` | Upload avatar image to Cloudinary |
+| GET | `/` | `verifyToken`, `checkRole` | `getAllUsers` | [Admin] Paginated list with search + role filter |
+| PUT | `/:id` | `verifyToken`, `checkRole`, `normalizeEmail` | `updateUser` | [Admin] Update user fields (block/unblock, profile) |
 | DELETE | `/:id` | `deleteUser` | Hard-delete user by ID |
 
 #### `GET /api/users` Query Params

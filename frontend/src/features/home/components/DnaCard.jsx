@@ -2,6 +2,7 @@ import React from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { isVideoMedia } from "@/utils/validators";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const DnaCard = ({ 
   item, 
@@ -14,6 +15,7 @@ const DnaCard = ({
   onLeave 
 }) => {
   const { t } = useTranslation("home");
+  const navigate = useNavigate();
 
   // === TÍNH TOÁN HIỆU ỨNG 2D/3D ===
   // Vẫn giữ hiệu ứng cong/nghiêng 3D trên mobile để đẹp mắt
@@ -37,7 +39,7 @@ const DnaCard = ({
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
       onClick={() => {
-        // CHỖ NÀY ĐỂ CHUYỂN SANG TRANG DETAIL
+        navigate(`/shop/${item._id}`);
       }}
     >
       <div
@@ -82,6 +84,11 @@ const DnaCard = ({
                   alt={item.name}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.onerror = null; // Prevent infinite loop if fallback also fails
+                    const fallbackName = item.name ? encodeURIComponent(item.name.substring(0, 15)) : "No+Image";
+                    e.target.src = `https://placehold.co/800x800/D4A373/FFFFFF.png?text=${fallbackName}`;
+                  }}
                 />
               );
             })()}

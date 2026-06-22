@@ -14,7 +14,8 @@
     "analytics": "分析",
     "admin_area": "管理エリア",
     "staff_area": "スタッフエリア",
-    "manage_products": "製品管理"
+    "manage_products": "製品管理",
+    "manage_vouchers": "バウチャー管理"
   },
   "guest_menu": {
     "login": "ログイン"

@@ -125,6 +125,22 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
             }));
             setPreviewUrls(urls);
           }
+          
+          const isDraftEmpty = 
+            (!saved.formData.name) &&
+            (!saved.formData.sku) &&
+            (!saved.formData.vendor) &&
+            (!saved.formData.craftVillage) &&
+            (!saved.formData.material || saved.formData.material.length === 0) &&
+            (!saved.formData.story) &&
+            (!saved.formData.price) &&
+            (!saved.formData.stock) &&
+            (!saved.imageFiles || saved.imageFiles.length === 0) &&
+            (!saved.file3D);
+
+          if (!isDraftEmpty) {
+            toast.success(t("messages.draft_restore_success"), { id: "draft-restore", duration: 3000 });
+          }
         }
       } catch (e) {
         console.error("Lỗi load bản nháp:", e);

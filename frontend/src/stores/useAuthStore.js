@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { authService } from "@/features/auth/auth.service";
+import { useCartStore } from "./useCartStore";
 
 // 🔥 Hàm an toàn để lấy User từ Storage (chống sập web)
 const getSafeUser = () => {
@@ -96,6 +97,9 @@ export const useAuthStore = create((set) => ({
         isLoading: false,
       });
 
+      // Bắt đầu đồng bộ giỏ hàng
+      useCartStore.getState().syncCartToServer();
+
       return { success: true, message: data.message };
     } catch (error) {
       set({ isLoading: false });
@@ -149,6 +153,9 @@ export const useAuthStore = create((set) => ({
         refreshToken: data.refreshToken,
         isLoading: false,
       });
+
+      // Bắt đầu đồng bộ giỏ hàng
+      useCartStore.getState().syncCartToServer();
 
       return { success: true, message: "LOGIN_SUCCESS" };
     } catch (error) {
@@ -224,6 +231,9 @@ export const useAuthStore = create((set) => ({
       sessionStorage.removeItem("user");
 
       set({ user: null, token: null, refreshToken: null });
+      
+      // Xoá giỏ hàng khi đăng xuất để tránh lưu lại dữ liệu của người dùng trước
+      useCartStore.getState().clearCart();
     }
   },
 }));

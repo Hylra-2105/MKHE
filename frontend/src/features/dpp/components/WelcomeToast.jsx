@@ -51,7 +51,7 @@ const WelcomeToast = ({ onToastClick }) => {
         >
           <div className="bg-mkhe-bg/80 backdrop-blur-md border border-mkhe-border/50 shadow-xl px-5 py-3 rounded-full flex items-center gap-2">
             <span className="text-sm font-semibold text-mkhe-text">
-              {t("o2o.toast_welcome")}
+              {t("o2o.toast_secret")}
             </span>
           </div>
         </motion.div>

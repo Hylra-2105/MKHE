@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
 import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
@@ -31,6 +32,7 @@ export default function Header() {
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const logoutAction = useAuthStore((state) => state.logoutAction);
+  const { items, toggleCart } = useCartStore();
 
   // Check if user is admin or staff
   const isAdmin = user?.role === "Admin";
@@ -163,11 +165,16 @@ export default function Header() {
             <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors">
               <Search className="w-5 h-5" />
             </button>
-            <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative">
+            <button 
+              onClick={toggleCart}
+              className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
+            >
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
-                0
-              </span>
+              {items.length > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {items.length}
+                </span>
+              )}
             </button>
           </>
         )}
@@ -251,6 +258,19 @@ export default function Header() {
                           }`}
                         >
                           {t("user_menu.manage_products")}
+                        </Link>
+
+                        {/* Cả Admin và Staff đều thấy Quản lý Voucher */}
+                        <Link
+                          to="/admin/vouchers"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            location.pathname.startsWith("/admin/vouchers")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          {t("user_menu.manage_vouchers")}
                         </Link>
 
                         {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
@@ -385,8 +405,11 @@ export default function Header() {
                             : "opacity-70"
                         }
                       >
-                        {lang.label}
+                        {t(lang.labelKey)}
                       </span>
+                      {i18n.language === lang.code && (
+                        <Check className="w-3 h-3 text-mkhe-primary" />
+                      )}
                     </button>
                   ))}
                 </div>

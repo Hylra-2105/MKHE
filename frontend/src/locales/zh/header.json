@@ -14,7 +14,8 @@
     "analytics": "数据分析",
     "admin_area": "管理区",
     "staff_area": "员工区",
-    "manage_products": "管理产品"
+    "manage_products": "管理产品",
+    "manage_vouchers": "优惠券管理"
   },
   "guest_menu": {
     "login": "登录"

@@ -16,6 +16,7 @@ import productVI from "./locales/vi/product.json";
 import homeVI from "./locales/vi/home.json";
 import commonVI from "./locales/vi/common.json";
 import dppVI from "./locales/vi/dpp.json";
+import cartVI from "./locales/vi/cart.json";
 
 // EN
 
@@ -31,6 +32,7 @@ import productEN from "./locales/en/product.json";
 import homeEN from "./locales/en/home.json";
 import commonEN from "./locales/en/common.json";
 import dppEN from "./locales/en/dpp.json";
+import cartEN from "./locales/en/cart.json";
 
 // ZH
 
@@ -46,6 +48,7 @@ import productZH from "./locales/zh/product.json";
 import homeZH from "./locales/zh/home.json";
 import commonZH from "./locales/zh/common.json";
 import dppZH from "./locales/zh/dpp.json";
+import cartZH from "./locales/zh/cart.json";
 
 // KO
 
@@ -61,6 +64,7 @@ import productKO from "./locales/ko/product.json";
 import homeKO from "./locales/ko/home.json";
 import commonKO from "./locales/ko/common.json";
 import dppKO from "./locales/ko/dpp.json";
+import cartKO from "./locales/ko/cart.json";
 
 // JA
 
@@ -76,6 +80,7 @@ import productJA from "./locales/ja/product.json";
 import homeJA from "./locales/ja/home.json";
 import commonJA from "./locales/ja/common.json";
 import dppJA from "./locales/ja/dpp.json";
+import cartJA from "./locales/ja/cart.json";
 
 
 const resources = {
@@ -92,6 +97,7 @@ const resources = {
     home: homeVI,
     common: commonVI,
     dpp: dppVI,
+    cart: cartVI,
   },
   en: {
     login: loginEN,
@@ -106,6 +112,7 @@ const resources = {
     home: homeEN,
     common: commonEN,
     dpp: dppEN,
+    cart: cartEN,
   },
   zh: {
     login: loginZH,
@@ -120,6 +127,7 @@ const resources = {
     home: homeZH,
     common: commonZH,
     dpp: dppZH,
+    cart: cartZH,
   },
   ko: {
     login: loginKO,
@@ -134,6 +142,7 @@ const resources = {
     home: homeKO,
     common: commonKO,
     dpp: dppKO,
+    cart: cartKO,
   },
   ja: {
     login: loginJA,
@@ -148,6 +157,7 @@ const resources = {
     home: homeJA,
     common: commonJA,
     dpp: dppJA,
+    cart: cartJA,
   },
 };
 
@@ -170,6 +180,7 @@ i18n
       "home",
       "common",
       "dpp",
+      "cart",
     ],
     defaultNS: "user",
     interpolation: {

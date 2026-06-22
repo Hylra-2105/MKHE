@@ -141,6 +141,7 @@
     "optimize_3d_success": "Tối ưu 3D thành công! Dung lượng giảm còn: {{size}}MB",
     "optimize_3d_error": "Tối ưu 3D thất bại: {{error}}. Sẽ sử dụng file gốc.",
     "restore_success": "Đã khôi phục sản phẩm thành công!",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
     "restore_error": "Lỗi khi khôi phục sản phẩm!",
     "max_images_error": "Chỉ được tải lên tối đa {{max}} tệp. Hiện có {{current}} tệp.",
     "invalid_file_type": "Loại tệp không hợp lệ! Chỉ chấp nhận ảnh và video.",

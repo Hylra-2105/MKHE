@@ -14,7 +14,8 @@
     "analytics": "분석",
     "admin_area": "관리자 영역",
     "staff_area": "직원 영역",
-    "manage_products": "제품 관리"
+    "manage_products": "제품 관리",
+    "manage_vouchers": "바우처 관리"
   },
   "guest_menu": {
     "login": "로그인"

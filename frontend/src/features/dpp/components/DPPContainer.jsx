@@ -10,6 +10,7 @@ import LocationMap from "./LocationMap";
 import { isVideoMedia } from "@/utils/validators";
 import { useAuthStore } from "@/stores/useAuthStore";
 import toast from "react-hot-toast";
+import { checkNfcClaimApi, claimNfcGachaApi } from "@/api/voucherApi";
 import AuthBottomSheet from "./AuthBottomSheet";
 import WelcomeToast from "./WelcomeToast";
 
@@ -27,9 +28,8 @@ const DPPContainer = () => {
   // Thêm state xử lý Auth & Voucher
   const user = useAuthStore((state) => state.user);
   const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
-  const [isClaimed, setIsClaimed] = useState(() => {
-    return localStorage.getItem("claimed_welcome_mkhe") === "true";
-  });
+  const [isClaimed, setIsClaimed] = useState(false);
+  const [wonVoucher, setWonVoucher] = useState(null);
   
   const ctaRef = React.useRef(null);
   const scrollToCTA = () => {
@@ -84,30 +84,63 @@ const DPPContainer = () => {
     setDragOffset(0);
   };
 
-  const handleClaimVoucher = () => {
+  useEffect(() => {
+    if (user && uid) {
+      checkNfcClaimApi(uid)
+        .then((res) => {
+          if (res.data?.success && res.data?.data?.claimed) {
+            setIsClaimed(true);
+            setWonVoucher(res.data.data.voucher);
+          } else {
+            setIsClaimed(false);
+            setWonVoucher(null);
+          }
+        })
+        .catch(console.error);
+    } else {
+      setIsClaimed(false);
+      setWonVoucher(null);
+    }
+  }, [user, uid]);
+
+  const claimVoucherApiCall = async () => {
+    try {
+      const res = await claimNfcGachaApi(uid);
+      setIsClaimed(true);
+      setWonVoucher(res.data.data.voucher);
+      toast.success(t("o2o.msg_gacha_success", { title: res.data.data.voucher.title }), { duration: 5000, icon: '🎉' });
+    } catch (error) {
+      const msg = error.response?.data?.message;
+      if (msg === "NFC_ALREADY_CLAIMED") {
+        toast.error(t("o2o.err_already_claimed"));
+      } else if (msg === "NO_REWARDS_AVAILABLE") {
+        toast.error(t("o2o.err_no_rewards"));
+      } else if (msg === "ALL_REWARDS_CLAIMED") {
+        toast.error(t("o2o.err_all_claimed"));
+      } else if (msg === "BAD_LUCK") {
+        setIsClaimed(true); // Mark as claimed so they can't scan again
+        toast.error(t("o2o.err_bad_luck"), { icon: '😢' });
+      } else {
+        toast.error(msg || t("o2o.err_generic"));
+      }
+    }
+  };
+
+  const handleClaimVoucher = async () => {
     if (isClaimed) return;
     
     if (user) {
       // User is already logged in
-      setIsClaimed(true);
-      localStorage.setItem("claimed_welcome_mkhe", "true");
-      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
+      await claimVoucherApiCall();
     } else {
       // User is not logged in, open bottom sheet
       setBottomSheetOpen(true);
     }
   };
 
-  const handleAuthSuccess = (isNewUser) => {
+  const handleAuthSuccess = async (isNewUser) => {
     setBottomSheetOpen(false);
-    setIsClaimed(true);
-    localStorage.setItem("claimed_welcome_mkhe", "true");
-    
-    if (isNewUser) {
-      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
-    } else {
-      toast.success(t("o2o.msg_returning_user"), { duration: 4000 });
-    }
+    await claimVoucherApiCall();
   };
 
   useEffect(() => {
@@ -402,10 +435,10 @@ const DPPContainer = () => {
               </div>
               <div>
                 <h3 className={`text-xl font-bold uppercase tracking-widest font-logo mb-1 ${isClaimed ? 'text-mkhe-text/60' : 'text-mkhe-text'}`}>
-                  {t("o2o.new_member")}
+                  {isClaimed ? t("o2o.claimed_title") : t("o2o.gacha_title")}
                 </h3>
                 <p className="text-sm text-mkhe-text/70">
-                  {t("o2o.cta_subtitle")}
+                  {isClaimed ? t("o2o.claimed_desc") : t("o2o.gacha_desc")}
                 </p>
               </div>
               <button
@@ -417,7 +450,7 @@ const DPPContainer = () => {
                     : "bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
                 }`}
               >
-                {isClaimed ? t("o2o.voucher_saved") : t("o2o.get_voucher")}
+                {isClaimed && wonVoucher ? t("o2o.btn_saved_code", { code: wonVoucher.code }) : isClaimed ? t("o2o.btn_claimed") : !user ? t("o2o.btn_login") : t("o2o.btn_spin")}
               </button>
             </div>
           </div>
