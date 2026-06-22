@@ -18,6 +18,7 @@ import commonVI from "./locales/vi/common.json";
 import dppVI from "./locales/vi/dpp.json";
 import cartVI from "./locales/vi/cart.json";
 import checkoutVI from "./locales/vi/checkout.json";
+import historyVI from "./locales/vi/history.json";
 
 // EN
 
@@ -35,6 +36,7 @@ import commonEN from "./locales/en/common.json";
 import dppEN from "./locales/en/dpp.json";
 import cartEN from "./locales/en/cart.json";
 import checkoutEN from "./locales/en/checkout.json";
+import historyEN from "./locales/en/history.json";
 
 // ZH
 
@@ -52,6 +54,7 @@ import commonZH from "./locales/zh/common.json";
 import dppZH from "./locales/zh/dpp.json";
 import cartZH from "./locales/zh/cart.json";
 import checkoutZH from "./locales/zh/checkout.json";
+import historyZH from "./locales/zh/history.json";
 
 // KO
 
@@ -69,6 +72,7 @@ import commonKO from "./locales/ko/common.json";
 import dppKO from "./locales/ko/dpp.json";
 import cartKO from "./locales/ko/cart.json";
 import checkoutKO from "./locales/ko/checkout.json";
+import historyKO from "./locales/ko/history.json";
 
 // JA
 
@@ -86,6 +90,7 @@ import commonJA from "./locales/ja/common.json";
 import dppJA from "./locales/ja/dpp.json";
 import cartJA from "./locales/ja/cart.json";
 import checkoutJA from "./locales/ja/checkout.json";
+import historyJA from "./locales/ja/history.json";
 
 
 const resources = {
@@ -104,6 +109,7 @@ const resources = {
     dpp: dppVI,
     cart: cartVI,
     checkout: checkoutVI,
+    history: historyVI,
   },
   en: {
     login: loginEN,
@@ -120,6 +126,7 @@ const resources = {
     dpp: dppEN,
     cart: cartEN,
     checkout: checkoutEN,
+    history: historyEN,
   },
   zh: {
     login: loginZH,
@@ -136,6 +143,7 @@ const resources = {
     dpp: dppZH,
     cart: cartZH,
     checkout: checkoutZH,
+    history: historyZH,
   },
   ko: {
     login: loginKO,
@@ -152,6 +160,7 @@ const resources = {
     dpp: dppKO,
     cart: cartKO,
     checkout: checkoutKO,
+    history: historyKO,
   },
   ja: {
     login: loginJA,
@@ -168,6 +177,7 @@ const resources = {
     dpp: dppJA,
     cart: cartJA,
     checkout: checkoutJA,
+    history: historyJA,
   },
 };
 
@@ -192,6 +202,7 @@ i18n
       "dpp",
       "cart",
       "checkout",
+      "history"
     ],
     defaultNS: "user",
     interpolation: {

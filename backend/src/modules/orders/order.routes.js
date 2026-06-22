@@ -2,7 +2,7 @@ import express from "express";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { validate } from "../../middlewares/validate.js";
 import { checkoutSchema, sendCheckoutOtpSchema } from "./order.schema.js";
-import { checkout, sendCheckoutOtp, getMyOrderStats } from "./order.controller.js";
+import { checkout, sendCheckoutOtp, getMyOrderStats, getMyOrders, getOrderById, cancelOrder } from "./order.controller.js";
 
 const router = express.Router();
 
@@ -10,6 +10,10 @@ const router = express.Router();
 router.use(verifyToken);
 
 router.get("/my-stats", getMyOrderStats);
+router.get("/me", getMyOrders);
+router.get("/me/:id", getOrderById);
+router.put("/me/:id/cancel", cancelOrder);
+
 router.post("/send-checkout-otp", validate(sendCheckoutOtpSchema), sendCheckoutOtp);
 router.post("/checkout", validate(checkoutSchema), checkout);
 

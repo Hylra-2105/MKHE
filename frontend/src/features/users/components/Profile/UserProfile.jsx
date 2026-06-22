@@ -10,17 +10,28 @@ import {
   Loader2,
   UploadCloud,
   X,
+  ShoppingBag,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
 import GeneralInfoTab from "./GeneralInfoTab";
 import ChangePasswordModal from "./ChangePasswordModal";
-
+import OrderHistoryTab from "@/features/orders/components/History/OrderHistoryTab";
+import { useLocation, useNavigate } from "react-router-dom";
 const UserProfile = () => {
-  const { t } = useTranslation("user");
+  const { t } = useTranslation(["user", "history"]);
 
   const { user, setUser, isFetchingUser } = useAuthStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = searchParams.get("tab") || "general";
+
+  const handleTabChange = (tab) => {
+    navigate(`/profile${tab === "general" ? "" : `?tab=${tab}`}`);
+  };
 
   // Quản lý state cho avatar
   const fileInputRef = useRef(null);
@@ -194,9 +205,28 @@ const UserProfile = () => {
           </div>
 
           <div className="w-full space-y-3">
-            <button className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm bg-mkhe-primary text-white shadow-sm cursor-default">
+            <button
+              onClick={() => handleTabChange("general")}
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer ${
+                activeTab === "general"
+                  ? "bg-mkhe-primary text-white"
+                  : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
+              }`}
+            >
               <User className="w-5 h-5" />
               <span>{t("profile.general_info")}</span>
+            </button>
+
+            <button
+              onClick={() => handleTabChange("orders")}
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 ${
+                activeTab === "orders"
+                  ? "bg-mkhe-primary text-white"
+                  : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
+              }`}
+            >
+              <ShoppingBag className="w-5 h-5" />
+              <span>{t("history:title", { defaultValue: "Đơn hàng của tôi" })}</span>
             </button>
 
             {hasPassword && (
@@ -216,7 +246,11 @@ const UserProfile = () => {
 
 
         <div className="flex-1 flex flex-col bg-[var(--color-mkhe-input)] transition-colors">
-          <GeneralInfoTab user={user} />
+          {activeTab === "general" ? (
+            <GeneralInfoTab user={user} />
+          ) : (
+            <OrderHistoryTab />
+          )}
         </div>
       </div>
 
