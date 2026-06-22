@@ -213,8 +213,72 @@ export const createVoucher = async (req, res) => {
 // @access  Private/Admin|Staff
 export const getAllAdminVouchers = async (req, res) => {
   try {
-    const vouchers = await Voucher.find({}).sort({ createdAt: -1 });
-    return successResponse(res, 200, "GET_VOUCHERS_SUCCESS", vouchers);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const search = req.query.search || "";
+    const status = req.query.status || "ALL";
+    const type = req.query.type || "ALL";
+    const skip = (page - 1) * limit;
+
+    let query = {};
+
+    if (search) {
+      query.$or = [
+        { code: { $regex: search, $options: "i" } },
+        { title: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    if (type !== "ALL") {
+      query.type = type;
+    }
+
+    if (status !== "ALL") {
+      const now = new Date();
+      if (status === "RUNNING") {
+        query.isActive = true;
+        query.startDate = { $lte: now };
+        query.endDate = { $gte: now };
+        query.$expr = {
+          $or: [
+            { $eq: ["$usageLimit", null] },
+            { $lt: ["$usedCount", "$usageLimit"] }
+          ]
+        };
+      } else if (status === "UPCOMING") {
+        query.isActive = true;
+        query.startDate = { $gt: now };
+      } else if (status === "EXPIRED") {
+        query.endDate = { $lt: now };
+      } else if (status === "OUT_OF_STOCK") {
+        query.$expr = {
+          $and: [
+            { $ne: ["$usageLimit", null] },
+            { $gte: ["$usedCount", "$usageLimit"] }
+          ]
+        };
+      } else if (status === "INACTIVE") {
+        query.isActive = false;
+      }
+    }
+
+    const total = await Voucher.countDocuments(query);
+    const vouchers = await Voucher.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({
+      success: true,
+      message: "GET_VOUCHERS_SUCCESS",
+      data: vouchers,
+      pagination: {
+        page,
+        limit,
+        totalItems: total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error("Lỗi getAllAdminVouchers:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

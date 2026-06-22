@@ -14,7 +14,8 @@ export const useVoucherStore = create((set, get) => ({
     set({ isLoadingPublic: true });
     try {
       const response = await getPublicVouchersApi();
-      set({ publicVouchers: response.data, isLoadingPublic: false });
+      const dataArray = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      set({ publicVouchers: dataArray, isLoadingPublic: false });
     } catch (error) {
       console.error("Lỗi fetch public vouchers:", error);
       set({ isLoadingPublic: false });
@@ -25,7 +26,8 @@ export const useVoucherStore = create((set, get) => ({
     set({ isLoadingWallet: true });
     try {
       const response = await getUserWalletApi();
-      set({ walletVouchers: response.data, isLoadingWallet: false });
+      const dataArray = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+      set({ walletVouchers: dataArray, isLoadingWallet: false });
     } catch (error) {
       console.error("Lỗi fetch wallet vouchers:", error);
       set({ isLoadingWallet: false });

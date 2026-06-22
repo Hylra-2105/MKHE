@@ -119,6 +119,7 @@
   "voucher": {
     "title": "Voucher Management",
     "subtitle": "Create and manage discount codes for customers",
+    "search_placeholder": "Search by code, title...",
     "create_new": "Create New",
     "voucher_code": "Code",
     "discount_amount": "Discount",
@@ -144,6 +145,8 @@
     "type_percentage": "Percentage Discount (%)",
     "type_fixed": "Fixed Amount Discount (VND)",
     "type_freeship": "Free Shipping",
+    "status_all": "All statuses",
+    "type_all": "All types",
     "restore_success": "Restored unsaved data",
     "load_options_error": "Could not load Category/Village options",
     "time_empty_error": "Please select both start and end times",

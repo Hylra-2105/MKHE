@@ -125,6 +125,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
             }));
             setPreviewUrls(urls);
           }
+          
+          toast.success(t("messages.draft_restore_success"), { id: "draft-restore", duration: 3000 });
         }
       } catch (e) {
         console.error("Lỗi load bản nháp:", e);

@@ -1,6 +1,6 @@
 import React from "react";
 import { formatNumber } from "@/utils/formatters";
-import { QrCode, CheckCircle2 } from "lucide-react";
+import { QrCode, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const VoucherCard = ({ 
@@ -114,8 +114,8 @@ const VoucherCard = ({
       </div>
 
       {isSelected && (
-        <div className="absolute top-2 right-2 text-mkhe-primary">
-          <CheckCircle2 className="w-5 h-5 fill-current text-white" />
+        <div className="absolute top-2 right-2 bg-mkhe-primary rounded-full p-1 shadow-sm border border-mkhe-bg">
+          <Check className="w-3 h-3 text-white stroke-[3]" />
         </div>
       )}
     </div>

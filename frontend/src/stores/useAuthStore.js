@@ -231,6 +231,9 @@ export const useAuthStore = create((set) => ({
       sessionStorage.removeItem("user");
 
       set({ user: null, token: null, refreshToken: null });
+      
+      // Xoá giỏ hàng khi đăng xuất để tránh lưu lại dữ liệu của người dùng trước
+      useCartStore.getState().clearCart();
     }
   },
 }));

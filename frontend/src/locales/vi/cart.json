@@ -5,6 +5,8 @@
   "select_all": "Chọn tất cả",
   "remove_item": "Xóa sản phẩm",
   "total": "Tổng cộng:",
+  "subtotal": "Tạm tính:",
+  "discount": "Giảm giá:",
   "checkout": "Thanh toán ngay",
   "remove_confirm": "Bạn có chắc muốn bỏ sản phẩm này khỏi giỏ?",
   "voucher_placeholder": "🎟️ Chọn Mã Ưu Đãi",
@@ -23,6 +25,10 @@
     "removed": "Đã xóa khỏi giỏ hàng"
   },
   "voucher": {
+    "selected": "Đã chọn:",
+    "select_placeholder": "🎟️ Chọn Mã Ưu Đãi",
+    "change": "Thay đổi",
+    "select": "Chọn mã",
     "currency_symbol": "đ",
     "currency_code": "VNĐ",
     "max_discount_val": "Tối đa: {{val}}đ",

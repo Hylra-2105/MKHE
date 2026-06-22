@@ -65,7 +65,7 @@ const MiniCartDrawer = () => {
             )}
             <button 
               onClick={() => setCartOpen(false)}
-              className="p-2 hover:bg-mkhe-border/10 rounded-full transition-colors text-mkhe-text/60 hover:text-mkhe-text"
+              className="p-2 hover:bg-mkhe-border/10 rounded-full transition-colors text-mkhe-text/60 hover:text-mkhe-text cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>

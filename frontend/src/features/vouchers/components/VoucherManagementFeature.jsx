@@ -1,36 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Ticket, Calendar, TrendingDown, Tag, Box } from "lucide-react";
 import { getAdminVouchersApi } from "@/api/voucherApi";
 import { formatNumber } from "@/utils/formatters";
 import toast from "react-hot-toast";
 import VoucherFormModal from "./VoucherFormModal";
+import Dropdown from "@/components/ui/Dropdown";
 
 const VoucherManagementFeature = () => {
-  const { t } = useTranslation(["admin"]);
+  const { t } = useTranslation(["admin", "common"]);
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(4);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchVouchers = async () => {
+  const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    setAppliedSearch(search);
+  };
+
+  const fetchVouchers = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await getAdminVouchersApi();
+      const res = await getAdminVouchersApi(page, limit, appliedSearch, statusFilter, typeFilter);
       if (res.data && res.data.success) {
         setVouchers(res.data.data || []);
+        setTotalPages(res.data.pagination?.totalPages || 1);
       } else {
-        setVouchers(res.data || []); // Fallback just in case
+        setVouchers(res.data || []); 
       }
     } catch (error) {
       toast.error(t("voucher.fetch_error"));
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, limit, appliedSearch, statusFilter, typeFilter, t]);
 
   useEffect(() => {
     fetchVouchers();
-  }, []);
+  }, [fetchVouchers]);
+
+  // Pagination display
+  const pageNumbers = [page - 1, page, page + 1];
 
   const getStatusBadge = (voucher) => {
     const now = new Date();
@@ -53,11 +72,11 @@ const VoucherManagementFeature = () => {
   };
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 font-sans">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col font-sans">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-serif text-mkhe-text font-bold mb-2">{t("voucher.title")}</h1>
-          <p className="text-mkhe-text/60">{t("voucher.subtitle")}</p>
+          <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">{t("voucher.title")}</h1>
+          <p className="text-sm text-mkhe-text/60 italic">{t("voucher.subtitle")}</p>
         </div>
         <button 
           onClick={() => setIsDrawerOpen(true)}
@@ -68,12 +87,63 @@ const VoucherManagementFeature = () => {
         </button>
       </div>
 
+      {/* Toolbar */}
+      <div className="bg-mkhe-bg p-3 md:p-4 rounded shadow mb-6 flex flex-col xl:flex-row xl:items-center gap-4 border border-mkhe-border/30">
+        <form onSubmit={handleSearch} className="flex-1 flex gap-2 w-full">
+          <input
+            type="text"
+            placeholder={t("voucher.search_placeholder")}
+            className="w-full h-10 px-3 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="h-10 w-28 md:w-40 bg-mkhe-primary text-white px-4 md:px-6 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold whitespace-nowrap"
+          >
+            {t("filter.search")}
+          </button>
+        </form>
+        
+        <div className="flex flex-col md:flex-row gap-3 w-full xl:w-auto">
+          <Dropdown
+            value={statusFilter}
+            options={[
+              { value: "ALL", label: t("voucher.status_all") },
+              { value: "RUNNING", label: t("voucher.running") },
+              { value: "UPCOMING", label: t("voucher.badge_upcoming") },
+              { value: "EXPIRED", label: t("voucher.expired") },
+              { value: "OUT_OF_STOCK", label: t("voucher.out_of_stock") }
+            ]}
+            onChange={(val) => { setStatusFilter(val); setPage(1); }}
+            placeholder={t("voucher.status_all")}
+            className="w-full md:w-56"
+            triggerClassName="h-10 px-3 rounded"
+            optionClassName="text-sm"
+          />
+
+          <Dropdown
+            value={typeFilter}
+            options={[
+              { value: "ALL", label: t("voucher.type_all") },
+              { value: "PERCENTAGE", label: t("voucher.type_percentage") },
+              { value: "FIXED_AMOUNT", label: t("voucher.type_fixed") },
+              { value: "FREE_SHIP", label: t("voucher.type_freeship") }
+            ]}
+            onChange={(val) => { setTypeFilter(val); setPage(1); }}
+            placeholder={t("voucher.type_all")}
+            className="w-full md:w-60"
+            triggerClassName="h-10 px-3 rounded"
+            optionClassName="text-sm"
+          />
+        </div>
+      </div>
+
       {/* Table */}
-      <div className="bg-mkhe-input rounded-2xl shadow-sm border border-mkhe-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className={`bg-mkhe-bg rounded shadow overflow-x-auto overflow-y-hidden border border-mkhe-border/30 h-[440px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
-              <tr className="bg-mkhe-bg/50 border-b border-mkhe-border/10 text-sm text-mkhe-text/70 uppercase tracking-wider">
+              <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
                 <th className="p-4 font-semibold">{t("voucher.voucher_code")}</th>
                 <th className="p-4 font-semibold">{t("voucher.discount_amount")}</th>
                 <th className="p-4 font-semibold">{t("voucher.applicable_conditions")}</th>
@@ -83,12 +153,17 @@ const VoucherManagementFeature = () => {
                 <th className="p-4 font-semibold">{t("voucher.status")}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-mkhe-border/10">
-              {loading ? (
-                <tr>
-                  <td colSpan="7" className="p-8 text-center text-mkhe-text/50">{t("voucher.loading")}</td>
+            <tbody className="text-mkhe-text relative">
+              {loading && (
+                <tr className="absolute inset-0 h-full flex items-center justify-center bg-mkhe-bg/50 backdrop-blur-sm pointer-events-none z-10">
+                  <td colSpan="7" className="text-center">
+                    <div className="inline-block animate-spin">
+                      <div className="w-8 h-8 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
+                    </div>
+                  </td>
                 </tr>
-              ) : vouchers.length === 0 ? (
+              )}
+              {!loading && vouchers.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="p-8 text-center text-mkhe-text/50">
                     <Ticket className="w-12 h-12 mx-auto mb-3 opacity-20" />
@@ -96,8 +171,8 @@ const VoucherManagementFeature = () => {
                   </td>
                 </tr>
               ) : (
-                vouchers.map(voucher => (
-                  <tr key={voucher._id} className="hover:bg-mkhe-bg/30 transition-colors">
+                vouchers.map((voucher) => (
+                  <tr key={voucher._id} className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0 group">
                     <td className="p-4">
                       <div className="font-bold text-mkhe-primary mb-1">{voucher.code}</div>
                       {voucher.isO2O && (
@@ -166,7 +241,66 @@ const VoucherManagementFeature = () => {
             </tbody>
           </table>
         </div>
-      </div>
+
+      {/* DIVIDER */}
+      <div className="h-px bg-mkhe-border/30 my-7"></div>
+
+      {/* PAGINATION */}
+      {totalPages > 0 && (
+        <div className="flex justify-between items-center">
+          <span className="text-sm text-mkhe-text/60">
+            {t("pagination.showing_page")} <span className="font-bold text-mkhe-primary">{page}</span> / {totalPages}
+          </span>
+
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1 || loading}
+              className={`px-2 py-1 rounded transition-colors mr-2 ${
+                page === 1
+                  ? "invisible"
+                  : "text-mkhe-primary cursor-pointer hover:bg-mkhe-primary/20"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              &lt;
+            </button>
+
+            {pageNumbers.map((pageNum) => {
+              const isValid = pageNum >= 1 && pageNum <= totalPages;
+              const isActive = page === pageNum;
+
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => isValid && setPage(pageNum)}
+                  disabled={loading || !isValid}
+                  className={`w-10 h-10 flex justify-center items-center transition-all duration-300 mx-1 ${
+                    !isValid
+                      ? "invisible w-8"
+                      : isActive
+                        ? "text-2xl text-mkhe-primary scale-80 cursor-pointer"
+                        : "text-base font-medium cursor-pointer text-mkhe-text/50 hover:text-mkhe-primary"
+                  } bg-transparent border-none focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages || loading}
+              className={`px-2 py-1 rounded transition-colors font-bold ml-2 ${
+                page === totalPages
+                  ? "invisible"
+                  : "text-mkhe-primary cursor-pointer hover:bg-mkhe-primary/20"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      )}
 
       <VoucherFormModal 
         isOpen={isDrawerOpen} 

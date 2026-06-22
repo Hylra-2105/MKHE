@@ -121,7 +121,7 @@ const AuthBottomSheet = ({ isOpen, onClose, onSuccess }) => {
                   <GoogleIcon className="w-6 h-6" />
                 )}
                 <span className="text-base font-bold text-mkhe-text tracking-wide">
-                  {isGoogleLoading ? t("btn_processing") : t("google", "Tiếp tục với Google")}
+                  {isGoogleLoading ? t("login:btn_processing") : t("login:google", "Tiếp tục với Google")}
                 </span>
               </button>
             </div>

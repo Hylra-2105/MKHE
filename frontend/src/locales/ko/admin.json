@@ -119,6 +119,7 @@
   "voucher": {
     "title": "바우처 관리",
     "subtitle": "고객을 위한 할인 코드 생성 및 관리",
+    "search_placeholder": "코드, 제목으로 검색...",
     "create_new": "새로 생성",
     "voucher_code": "코드",
     "discount_amount": "할인",
@@ -144,6 +145,8 @@
     "type_percentage": "비율 할인 (%)",
     "type_fixed": "고정 금액 할인 (VND)",
     "type_freeship": "무료 배송",
+    "status_all": "모든 상태",
+    "type_all": "모든 유형",
     "restore_success": "저장되지 않은 데이터 복원됨",
     "load_options_error": "카테고리/마을 옵션을 로드할 수 없습니다",
     "time_empty_error": "시작 및 종료 시간을 모두 선택하세요",

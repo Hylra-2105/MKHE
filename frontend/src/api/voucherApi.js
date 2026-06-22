@@ -10,6 +10,7 @@ export const checkNfcClaimApi = (dppId) => axiosClient.get(ENDPOINTS.VOUCHERS.CH
 export const claimNfcGachaApi = (dppId) => axiosClient.post(ENDPOINTS.VOUCHERS.CLAIM_NFC, { dppId });
 
 // Admin/Staff APIs
-export const getAdminVouchersApi = () => axiosClient.get(ENDPOINTS.VOUCHERS.ADMIN);
+export const getAdminVouchersApi = (page = 1, limit = 5, search = "", status = "ALL", type = "ALL") => 
+  axiosClient.get(ENDPOINTS.VOUCHERS.ADMIN, { params: { page, limit, search, status, type } });
 export const createVoucherApi = (data) => axiosClient.post(ENDPOINTS.VOUCHERS.ADMIN, data);
 export const getVoucherOptionsApi = () => axiosClient.get(ENDPOINTS.VOUCHERS.OPTIONS);

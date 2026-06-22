@@ -405,8 +405,11 @@ export default function Header() {
                             : "opacity-70"
                         }
                       >
-                        {lang.label}
+                        {t(lang.labelKey)}
                       </span>
+                      {i18n.language === lang.code && (
+                        <Check className="w-3 h-3 text-mkhe-primary" />
+                      )}
                     </button>
                   ))}
                 </div>

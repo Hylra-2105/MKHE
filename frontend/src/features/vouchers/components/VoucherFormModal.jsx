@@ -348,35 +348,39 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                 </div>
               </div>
 
-              <div>
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.usage_limit_label")}</label>
-                <input 
-                  type="number" 
-                  name="usageLimit"
-                  min="1"
-                  placeholder={t("voucher.leave_empty_for_unlimited")}
-                  value={formData.usageLimit}
-                  onChange={handleChange}
-                  className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.usage_limit_label")}</label>
+                  <input 
+                    type="number" 
+                    name="usageLimit"
+                    min="1"
+                    placeholder={t("voucher.leave_empty_for_unlimited")}
+                    value={formData.usageLimit}
+                    onChange={handleChange}
+                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                  />
+                </div>
 
-              <div>
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.gacha_drop_rate")}</label>
-                <input 
-                  type="number" 
-                  name="dropRate"
-                  min="0"
-                  max="100"
-                  placeholder={t("voucher.drop_rate_placeholder")}
-                  value={formData.dropRate}
-                  onChange={handleChange}
-                  className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                />
+                <div>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.gacha_drop_rate")}</label>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      name="dropRate"
+                      min="0"
+                      max="100"
+                      placeholder={t("voucher.drop_rate_placeholder")}
+                      value={formData.dropRate}
+                      onChange={handleChange}
+                      className="w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-bold">%</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            
             <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2 border-[var(--color-mkhe-border)]/20 text-gradient-gold">{t("voucher.conditions_channels")}</h3>
 

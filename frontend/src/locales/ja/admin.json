@@ -119,6 +119,7 @@
   "voucher": {
     "title": "バウチャー管理",
     "subtitle": "顧客向けの割引コードの作成と管理",
+    "search_placeholder": "コード、タイトルで検索...",
     "create_new": "新規作成",
     "voucher_code": "コード",
     "discount_amount": "割引",
@@ -144,6 +145,8 @@
     "type_percentage": "パーセンテージ割引（％）",
     "type_fixed": "定額割引（VND）",
     "type_freeship": "送料無料",
+    "status_all": "すべてのステータス",
+    "type_all": "すべてのタイプ",
     "restore_success": "未保存のデータを復元しました",
     "load_options_error": "カテゴリ/村のオプションを読み込めませんでした",
     "time_empty_error": "開始時間と終了時間の両方を選択してください",
