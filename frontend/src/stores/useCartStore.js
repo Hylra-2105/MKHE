@@ -52,7 +52,8 @@ export const useCartStore = create(
         }
       },
 
-      addToCart: async (product, quantity = 1) => {
+      addToCart: async (product, quantity = 1, options = {}) => {
+        const { silent = false } = options;
         const token = useAuthStore.getState().token;
         const maxStock = product.stock;
         
@@ -67,11 +68,11 @@ export const useCartStore = create(
             finalQuantity = newQuantity;
             
             if (existingItem.quantity === maxStock) {
-              toast.error(i18n.t("cart:toast.stock_limit", { maxStock }));
+              if (!silent) toast.error(i18n.t("cart:toast.stock_limit", { maxStock }));
               return state;
             }
 
-            toast.success(i18n.t("cart:toast.quantity_updated"));
+            if (!silent) toast.success(i18n.t("cart:toast.quantity_updated"));
             shouldSync = true;
             return {
               items: state.items.map((item) =>
@@ -79,23 +80,23 @@ export const useCartStore = create(
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
-              isCartOpen: true,
+              isCartOpen: !silent,
             };
           }
 
           const addQuantity = Math.min(quantity, maxStock);
           finalQuantity = addQuantity;
           if (addQuantity === 0) {
-            toast.error(i18n.t("cart:toast.out_of_stock"));
+            if (!silent) toast.error(i18n.t("cart:toast.out_of_stock"));
             return state;
           }
 
-          toast.success(i18n.t("cart:toast.added", { ns: "cart", defaultValue: "Thêm vào giỏ hàng thành công!" }));
+          if (!silent) toast.success(i18n.t("cart:toast.added", { ns: "cart", defaultValue: "Thêm vào giỏ hàng thành công!" }));
           shouldSync = true;
           return {
             items: [...state.items, { product, quantity: addQuantity }],
             selectedItems: state.selectedItems.includes(product._id) ? state.selectedItems : [...state.selectedItems, product._id],
-            isCartOpen: true,
+            isCartOpen: !silent,
           };
         });
 
@@ -129,7 +130,7 @@ export const useCartStore = create(
         toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
       },
 
-      removeMultipleFromCart: async (productIds) => {
+      removeMultipleFromCart: async (productIds, silent = false) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
@@ -144,7 +145,9 @@ export const useCartStore = create(
           items: state.items.filter((item) => !productIds.includes(item.product._id)),
           selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
         }));
-        toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
+        if (!silent) {
+          toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
+        }
       },
 
       updateQuantity: (productId, quantity) => {

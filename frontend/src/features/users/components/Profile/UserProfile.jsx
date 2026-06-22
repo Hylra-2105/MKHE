@@ -170,7 +170,7 @@ const UserProfile = () => {
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-4 relative">
-      <h1 className="text-2xl font-bold text-mkhe-text mb-6">
+      <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-6">
         {t("profile.title")}
       </h1>
 

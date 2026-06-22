@@ -17,6 +17,7 @@ import homeVI from "./locales/vi/home.json";
 import commonVI from "./locales/vi/common.json";
 import dppVI from "./locales/vi/dpp.json";
 import cartVI from "./locales/vi/cart.json";
+import checkoutVI from "./locales/vi/checkout.json";
 
 // EN
 
@@ -33,6 +34,7 @@ import homeEN from "./locales/en/home.json";
 import commonEN from "./locales/en/common.json";
 import dppEN from "./locales/en/dpp.json";
 import cartEN from "./locales/en/cart.json";
+import checkoutEN from "./locales/en/checkout.json";
 
 // ZH
 
@@ -49,6 +51,7 @@ import homeZH from "./locales/zh/home.json";
 import commonZH from "./locales/zh/common.json";
 import dppZH from "./locales/zh/dpp.json";
 import cartZH from "./locales/zh/cart.json";
+import checkoutZH from "./locales/zh/checkout.json";
 
 // KO
 
@@ -65,6 +68,7 @@ import homeKO from "./locales/ko/home.json";
 import commonKO from "./locales/ko/common.json";
 import dppKO from "./locales/ko/dpp.json";
 import cartKO from "./locales/ko/cart.json";
+import checkoutKO from "./locales/ko/checkout.json";
 
 // JA
 
@@ -81,6 +85,7 @@ import homeJA from "./locales/ja/home.json";
 import commonJA from "./locales/ja/common.json";
 import dppJA from "./locales/ja/dpp.json";
 import cartJA from "./locales/ja/cart.json";
+import checkoutJA from "./locales/ja/checkout.json";
 
 
 const resources = {
@@ -98,6 +103,7 @@ const resources = {
     common: commonVI,
     dpp: dppVI,
     cart: cartVI,
+    checkout: checkoutVI,
   },
   en: {
     login: loginEN,
@@ -113,6 +119,7 @@ const resources = {
     common: commonEN,
     dpp: dppEN,
     cart: cartEN,
+    checkout: checkoutEN,
   },
   zh: {
     login: loginZH,
@@ -128,6 +135,7 @@ const resources = {
     common: commonZH,
     dpp: dppZH,
     cart: cartZH,
+    checkout: checkoutZH,
   },
   ko: {
     login: loginKO,
@@ -143,6 +151,7 @@ const resources = {
     common: commonKO,
     dpp: dppKO,
     cart: cartKO,
+    checkout: checkoutKO,
   },
   ja: {
     login: loginJA,
@@ -158,6 +167,7 @@ const resources = {
     common: commonJA,
     dpp: dppJA,
     cart: cartJA,
+    checkout: checkoutJA,
   },
 };
 
@@ -181,6 +191,7 @@ i18n
       "common",
       "dpp",
       "cart",
+      "checkout",
     ],
     defaultNS: "user",
     interpolation: {

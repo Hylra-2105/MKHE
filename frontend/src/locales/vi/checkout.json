@@ -1,0 +1,71 @@
+{
+  "title": "Thanh toán",
+  "errors": {
+    "out_of_stock_deleted": "Sản phẩm đã xóa do hết hàng.",
+    "no_items": "Không có sản phẩm nào để thanh toán.",
+    "missing_info": "Vui lòng nhập đầy đủ thông tin giao hàng.",
+    "invalid_otp": "Mã OTP không hợp lệ.",
+    "order_failed": "Lỗi khi đặt hàng.",
+    "otp_failed": "Lỗi khi gửi mã OTP.",
+    "address_failed": "Lỗi khi thêm địa chỉ."
+  },
+  "success": {
+    "order_placed": "Đặt hàng thành công!",
+    "otp_sent": "Mã OTP đã được gửi thành công!",
+    "address_added": "Thêm địa chỉ thành công!"
+  },
+  "actions": {
+    "back": "Quay lại"
+  },
+  "shipping_info": {
+    "title": "Thông tin giao hàng",
+    "address_title": "Địa chỉ nhận hàng",
+    "change_btn": "Thay đổi",
+    "add_info_btn": "Thêm thông tin giao hàng",
+    "full_name": "Họ và tên",
+    "full_name_placeholder": "Nhập họ tên",
+    "phone": "Số điện thoại",
+    "phone_placeholder": "Nhập số điện thoại",
+    "address": "Địa chỉ giao hàng",
+    "address_placeholder": "Nhập địa chỉ chi tiết (nhập để tìm kiếm...)"
+  },
+  "payment_method": {
+    "title": "Phương thức thanh toán",
+    "cod_banned": "Tính năng COD tạm khóa do tỷ lệ hủy đơn cao ({{rate}}%). Vui lòng thanh toán trước.",
+    "cod": "Thanh toán khi nhận hàng (COD)",
+    "bank_transfer": "Chuyển khoản ngân hàng (VietQR)"
+  },
+  "summary": {
+    "title": "Tóm tắt đơn hàng",
+    "qty": "SL",
+    "select_voucher": "Chọn Mã Ưu Đãi",
+    "select_btn": "Chọn mã",
+    "subtotal": "Tạm tính:",
+    "shipping_fee": "Phí vận chuyển:",
+    "free": "Miễn phí",
+    "total": "Tổng cộng:",
+    "sending_otp": "Đang gửi OTP...",
+    "confirm_btn": "XÁC NHẬN ĐẶT HÀNG",
+    "processing": "ĐANG XỬ LÝ...",
+    "ordering": "ĐANG ĐẶT HÀNG..."
+  },
+  "otp": {
+    "title": "Xác thực OTP",
+    "sent_to": "Mã OTP đã được gửi đến email",
+    "instruction": "Vui lòng nhập mã để hoàn tất đơn hàng.",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "not_received": "Không nhận được mã?",
+    "sending": "Đang gửi...",
+    "resend": "Gửi lại"
+  },
+  "address_book": {
+    "title": "Sổ Địa Chỉ",
+    "select": "Chọn",
+    "empty": "Chưa có địa chỉ nào.",
+    "add_new": "Thêm địa chỉ mới",
+    "add_btn": "Thêm",
+    "back": "Trở về sổ địa chỉ",
+    "default": "Mặc định"
+  }
+}

@@ -33,7 +33,11 @@
     "support_video": "비디오 MP4, WEBM(최대 30MB)",
     "new_password": "새 비밀번호 만들기",
     "update_password": "비밀번호 변경",
-    "change_password_desc": "귀하의 계정에 대한 새 비밀번호를 입력하십시오."
+    "change_password_desc": "계정의 새 비밀번호를 입력하세요.",
+    "contact_shipping": "연락처 및 배송",
+    "default_address": "기본 주소",
+    "address_placeholder": "주소를 입력하세요...",
+    "no_address": "기본 주소를 설정하지 않았습니다. 수정하려면 편집을 클릭하세요."
   },
   "buttons": {
     "verifying": "확인 중...",

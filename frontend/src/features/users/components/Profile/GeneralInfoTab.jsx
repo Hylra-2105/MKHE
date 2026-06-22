@@ -4,12 +4,12 @@ import toast from "react-hot-toast";
 import { User, MapPin, Edit2, Check, XCircle } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { userApi } from "@/api/userApi";
-import useLocations from "@/hooks/useLocations";
 import { isValidPhoneInput } from "@/utils/validators";
 import EditableField from "@/features/users/components/Admin/EditableField";
+import AddressMap from "@/features/orders/components/Checkout/AddressMap";
 
 const GeneralInfoTab = ({ user, isAdminView = false }) => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation(["admin", "user"]);
   const { setUser } = useAuthStore();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -17,68 +17,91 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   const [originalEditForm, setOriginalEditForm] = useState({});
   const [isSaving, setIsSaving] = useState(false);
 
-  const { countries, availableStates, dialCode } = useLocations(
-    editForm?.country || user?.country || "",
-  );
+  // States for Address Autocomplete
+  const [addressInput, setAddressInput] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isUserTyping, setIsUserTyping] = useState(false);
 
   useEffect(() => {
     if (user) {
+      const defaultAddr = user.addresses?.find(a => a.isDefault);
       const initialForm = {
         name: user.name || "",
         phone: user.phone || "",
-        country: user.country || "",
-        city: user.city || "",
-        address: user.address || "",
         bio: user.bio || "",
       };
       setEditForm(initialForm);
       setOriginalEditForm(initialForm);
+      
+      if (defaultAddr) {
+        setAddressInput(defaultAddr.addressText || "");
+        setCoordinates(defaultAddr.coordinates || null);
+      } else {
+        setAddressInput("");
+        setCoordinates(null);
+      }
       setIsEditing(false);
     }
   }, [user]);
 
-  // Định dạng số điện thoại
-  let displayPhone = editForm.phone || "";
-  if (dialCode) {
-    while (displayPhone.startsWith(dialCode)) {
-      displayPhone = displayPhone.substring(dialCode.length).trim();
+  // Goong Maps Autocomplete effect
+  useEffect(() => {
+    if (!isUserTyping || !isEditing) return;
+    const handler = setTimeout(async () => {
+      if (!addressInput || addressInput.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+      try {
+        const apiKey = import.meta.env.VITE_GOONG_API_KEY;
+        if (!apiKey) return;
+        const res = await fetch(`https://rsapi.goong.io/Place/AutoComplete?api_key=${apiKey}&input=${encodeURIComponent(addressInput)}`);
+        const data = await res.json();
+        if (data.predictions) setSuggestions(data.predictions);
+      } catch (e) {
+        console.error("Geocoding error:", e);
+      }
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [addressInput, isUserTyping, isEditing]);
+
+  const handleSelectSuggestion = async (place) => {
+    setAddressInput(place.description);
+    setSuggestions([]);
+    setIsDropdownOpen(false);
+    try {
+      const apiKey = import.meta.env.VITE_GOONG_API_KEY;
+      const res = await fetch(`https://rsapi.goong.io/Place/Detail?place_id=${place.place_id}&api_key=${apiKey}`);
+      const data = await res.json();
+      if (data.result && data.result.geometry) {
+        const { lat, lng } = data.result.geometry.location;
+        setCoordinates({ lat, lng });
+        setIsUserTyping(false);
+      }
+    } catch (e) {
+      console.error(e);
     }
-  }
-  if (displayPhone.startsWith("0")) {
-    displayPhone = displayPhone.substring(1).trim();
-  }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     let finalValue = value;
 
     if (name === "phone") {
-      if (dialCode) {
-        while (finalValue.startsWith(dialCode)) {
-          finalValue = finalValue.substring(dialCode.length).trim();
-        }
-      }
-      if (finalValue.startsWith("0")) {
-        finalValue = finalValue.substring(1).trim();
-      }
       if (!isValidPhoneInput(finalValue)) return;
     }
 
-    setEditForm((prev) => {
-      const newForm = { ...prev, [name]: finalValue };
-      if (name === "country") newForm.city = "";
-      return newForm;
-    });
+    setEditForm((prev) => ({ ...prev, [name]: finalValue }));
   };
 
   const handleSave = async () => {
-    let dataToSave = { ...editForm };
-
-    if (displayPhone && dialCode) {
-      dataToSave.phone = `${dialCode}${displayPhone}`;
-    } else {
-      dataToSave.phone = displayPhone;
-    }
+    let dataToSave = { 
+      ...editForm,
+      addressText: addressInput,
+      coordinates: coordinates
+    };
 
     setIsSaving(true);
 
@@ -86,19 +109,15 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
       const response = await userApi.updateProfile(dataToSave);
 
       if (response.success) {
-        // Cập nhật store sau khi lưu
         setUser(response.data);
         setOriginalEditForm({ ...editForm, phone: response.data.phone });
-
         setIsEditing(false);
         toast.success(t("messages.update_success", { ns: "user" }));
       }
     } catch (error) {
       console.error("Lỗi update profile:", error);
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(
-        t(errorMsg, { ns: "common" }) || t(errorMsg)
-      );
+      toast.error(t(errorMsg, { ns: "common" }) || t(errorMsg));
     } finally {
       setIsSaving(false);
     }
@@ -106,8 +125,20 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
 
   const handleCancel = () => {
     setEditForm(originalEditForm);
+    const defaultAddr = user.addresses?.find(a => a.isDefault);
+    if (defaultAddr) {
+      setAddressInput(defaultAddr.addressText || "");
+      setCoordinates(defaultAddr.coordinates || null);
+    } else {
+      setAddressInput("");
+      setCoordinates(null);
+    }
     setIsEditing(false);
+    setIsUserTyping(false);
+    setSuggestions([]);
   };
+
+  const defaultAddress = user?.addresses?.find(a => a.isDefault);
 
   return (
     <>
@@ -137,69 +168,75 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
           </div>
         </div>
 
-
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
             <MapPin className="w-4 h-4" />{" "}
-            {t("users.shipping_contact")}
+            {t("profile.contact_shipping", { ns: "user" })}
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
-            <EditableField
-              label={t("users.country")}
-              name="country"
-              value={editForm.country}
-              isEditing={isEditing}
-              onChange={handleInputChange}
-              placeholder={t("users.country_placeholder")}
-              options={countries}
-              t={t}
-            />
-            <EditableField
-              label={t("users.city")}
-              name="city"
-              value={editForm.city}
-              isEditing={isEditing}
-              onChange={handleInputChange}
-              placeholder={
-                editForm.country
-                  ? t("users.city_placeholder")
-                  : t("users.city_disabled")
-              }
-              options={availableStates}
-              disabled={
-                isEditing && (!editForm.country || availableStates.length === 0)
-              }
-              t={t}
-            />
-          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
             <EditableField
               label={t("users.phone")}
               name="phone"
-              value={displayPhone}
+              value={editForm.phone}
               isEditing={isEditing}
               onChange={handleInputChange}
-              placeholder={
-                editForm.country
-                  ? t("users.phone_placeholder")
-                  : t("users.city_disabled")
-              }
-              prefix={dialCode}
-              disabled={isEditing && !editForm.country}
+              placeholder={t("users.phone_placeholder")}
             />
           </div>
-          <EditableField
-            label={t("users.address")}
-            name="address"
-            value={editForm.address}
-            isEditing={isEditing}
-            onChange={handleInputChange}
-            placeholder={t("users.address_placeholder")}
-            isTextArea
-            t={t}
-          />
-        </div>
 
+          <div className="mt-4">
+            <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-2">
+              {t("profile.default_address", { ns: "user" })}
+            </label>
+            
+            {isEditing ? (
+              <div className="relative">
+                <textarea
+                  value={addressInput} 
+                  onChange={(e) => {
+                    setAddressInput(e.target.value);
+                    setIsUserTyping(true);
+                    if (!isDropdownOpen) setIsDropdownOpen(true);
+                  }}
+                  onFocus={() => { if (suggestions.length > 0) setIsDropdownOpen(true); }}
+                  onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+                  className="w-full p-3 border border-mkhe-border/20 rounded-md focus:outline-none focus:ring-1 focus:ring-mkhe-primary bg-mkhe-bg"
+                  placeholder={t("profile.address_placeholder", { ns: "user" })}
+                  rows="2"
+                />
+                {isDropdownOpen && suggestions.length > 0 && (
+                  <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto bg-mkhe-bg border border-mkhe-border/20 rounded-md shadow-lg">
+                    {suggestions.map((place) => (
+                      <li 
+                        key={place.place_id} 
+                        onClick={() => handleSelectSuggestion(place)}
+                        className="px-4 py-3 hover:bg-mkhe-primary/10 cursor-pointer text-sm border-b border-mkhe-border/10"
+                      >
+                        {place.description}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                
+                {addressInput && addressInput.length >= 5 && (
+                  <AddressMap 
+                    address={addressInput}
+                    coordinates={coordinates}
+                    onLocationChange={(coords) => setCoordinates(coords)} 
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="p-4 bg-mkhe-primary/5 border border-mkhe-primary/20 rounded-xl text-sm text-mkhe-text/80 min-h-[50px] flex items-center">
+                {defaultAddress ? (
+                  <span>{defaultAddress.addressText}</span>
+                ) : (
+                  <span className="italic opacity-60">{t("profile.no_address", { ns: "user" })}</span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4">
@@ -212,7 +249,6 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               onChange={handleInputChange}
               rows="3"
               className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
-              // Phân biệt placeholder theo role
               placeholder={
                 isAdminView
                   ? t("users.bio_admin_placeholder")
@@ -230,40 +266,38 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
         </div>
       </div>
 
-
-
-        <div className="p-4 flex justify-end items-center bg-[var(--color-mkhe-input)]/30 shrink-0 rounded-br-2xl transition-colors">
-          <div className="flex gap-3">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/60 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <XCircle className="w-4 h-4" /> {t("common.cancel")}
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
-                >
-                  <Check className="w-4 h-4" />{" "}
-                  {isSaving
-                    ? t("common.saving")
-                    : t("common.save_info")}
-                </button>
-              </>
-            ) : (
+      <div className="p-4 flex justify-end items-center bg-[var(--color-mkhe-input)]/30 shrink-0 rounded-br-2xl transition-colors">
+        <div className="flex gap-3">
+          {isEditing ? (
+            <>
               <button
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
+                onClick={handleCancel}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/60 transition-all cursor-pointer disabled:opacity-50"
               >
-                <Edit2 className="w-4 h-4" /> {t("common.edit")}
+                <XCircle className="w-4 h-4" /> {t("common.cancel")}
               </button>
-            )}
-          </div>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
+              >
+                <Check className="w-4 h-4" />{" "}
+                {isSaving
+                  ? t("common.saving")
+                  : t("common.save_info")}
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
+            >
+              <Edit2 className="w-4 h-4" /> {t("common.edit")}
+            </button>
+          )}
         </div>
+      </div>
     </>
   );
 };

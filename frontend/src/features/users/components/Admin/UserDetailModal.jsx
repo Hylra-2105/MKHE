@@ -22,7 +22,6 @@ import {
   isValidPhoneInput,
   isVideoMedia,
 } from "@/utils/validators";
-import useLocations from "@/hooks/useLocations";
 import EditableField from "@/features/users/components/Admin/EditableField";
 
 const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
@@ -41,18 +40,11 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   // Lý do khóa mặc định (sẽ lấy từ key i18n đầu tiên)
   const [blockReason, setBlockReason] = useState("spam_comments");
 
-  const { countries, availableStates, dialCode } = useLocations(
-    isOpen ? editForm?.country || user?.country || "" : "",
-  );
-
   useEffect(() => {
     if (user && isOpen) {
       const initialForm = {
         name: user.name || "",
         phone: user.phone || "",
-        country: user.country || "",
-        city: user.city || "",
-        address: user.address || "",
         bio: user.bio || "",
         isBlocked: user.isBlocked ?? false,
       };
@@ -87,16 +79,8 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     if (e.target === e.currentTarget) onClose();
   };
 
-  // XỬ LÝ SĐT: Tính toán số SẠCH ngay trước khi render
+  // Không format prefix nữa
   let displayPhone = editForm.phone || "";
-  if (dialCode) {
-    while (displayPhone.startsWith(dialCode)) {
-      displayPhone = displayPhone.substring(dialCode.length).trim();
-    }
-  }
-  if (displayPhone.startsWith("0")) {
-    displayPhone = displayPhone.substring(1).trim();
-  }
   // ==========================================
 
   const handleInputChange = (e) => {
@@ -104,33 +88,14 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     let finalValue = value;
 
     if (name === "phone") {
-      if (dialCode) {
-        while (finalValue.startsWith(dialCode)) {
-          finalValue = finalValue.substring(dialCode.length).trim();
-        }
-      }
-      if (finalValue.startsWith("0")) {
-        finalValue = finalValue.substring(1).trim();
-      }
       if (!isValidPhoneInput(finalValue)) return;
     }
 
-    setEditForm((prev) => {
-      const newForm = { ...prev, [name]: finalValue };
-      if (name === "country") newForm.city = "";
-      return newForm;
-    });
+    setEditForm((prev) => ({ ...prev, [name]: finalValue }));
   };
 
   const handleSave = async () => {
     let dataToSave = { ...editForm };
-
-    if (displayPhone && dialCode) {
-      dataToSave.phone = `${dialCode}${displayPhone}`;
-    } else {
-      dataToSave.phone = displayPhone;
-    }
-
     setIsSaving(true);
     try {
       const response = await axiosClient.put(`/users/${user._id}`, dataToSave);
@@ -345,64 +310,18 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
 
               <div>
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 flex items-center gap-2 transition-colors">
-                  <MapPin className="w-4 h-4" /> {t("users.shipping_contact")}
+                  <MapPin className="w-4 h-4" /> Liên hệ
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-                  <EditableField
-                    label={t("users.country")}
-                    name="country"
-                    value={editForm.country}
-                    isEditing={isEditing}
-                    onChange={handleInputChange}
-                    placeholder={t("users.country_placeholder")}
-                    options={countries}
-                    t={t}
-                  />
-                  <EditableField
-                    label={t("users.city")}
-                    name="city"
-                    value={editForm.city}
-                    isEditing={isEditing}
-                    onChange={handleInputChange}
-                    placeholder={
-                      editForm.country
-                        ? t("users.city_placeholder")
-                        : t("users.city_disabled")
-                    }
-                    options={availableStates}
-                    disabled={
-                      isEditing &&
-                      (!editForm.country || availableStates.length === 0)
-                    }
-                    t={t}
-                  />
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
                   <EditableField
                     label={t("users.phone")}
                     name="phone"
-                    value={displayPhone}
+                    value={editForm.phone}
                     isEditing={isEditing}
                     onChange={handleInputChange}
-                    placeholder={
-                      editForm.country
-                        ? t("users.phone_placeholder")
-                        : t("users.city_disabled")
-                    }
-                    prefix={dialCode}
-                    disabled={isEditing && !editForm.country}
+                    placeholder={t("users.phone_placeholder")}
                   />
                 </div>
-                <EditableField
-                  label={t("users.address")}
-                  name="address"
-                  value={editForm.address}
-                  isEditing={isEditing}
-                  onChange={handleInputChange}
-                  placeholder={t("users.address_placeholder")}
-                  isTextArea
-                  t={t}
-                />
               </div>
 
               <div>

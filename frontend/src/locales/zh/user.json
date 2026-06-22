@@ -33,7 +33,11 @@
     "support_video": "视频 MP4、WEBM（最大 30MB）",
     "new_password": "创建新密码",
     "update_password": "更改密码",
-    "change_password_desc": "请输入您帐户的新密码。"
+    "change_password_desc": "请输入您的帐户新密码。",
+    "contact_shipping": "联系和送货",
+    "default_address": "默认地址",
+    "address_placeholder": "请输入您的地址...",
+    "no_address": "您尚未设置默认地址。单击编辑以更新。"
   },
   "buttons": {
     "verifying": "正在验证...",

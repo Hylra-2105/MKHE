@@ -24,6 +24,16 @@ export const userApi = {
     return response.data;
   },
 
+  addAddress: async (addressData) => {
+    const response = await axiosClient.post("/users/profile/addresses", addressData);
+    return response.data;
+  },
+
+  setDefaultAddress: async (addressId) => {
+    const response = await axiosClient.put(`/users/profile/addresses/${addressId}/default`);
+    return response.data;
+  },
+
   // Upload Avatar
   uploadAvatar: async (formData) => {
     const response = await axiosClient.post("/users/upload-avatar", formData, {

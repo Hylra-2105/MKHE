@@ -33,7 +33,11 @@
     "support_video": "Video MP4, WEBM (Max 30MB)",
     "new_password": "Create New Password",
     "update_password": "Change Password",
-    "change_password_desc": "Please enter a new password for your account."
+    "change_password_desc": "Please enter a new password for your account.",
+    "contact_shipping": "Contact & Shipping",
+    "default_address": "Default Address",
+    "address_placeholder": "Enter your address...",
+    "no_address": "You have not set a default address. Click Edit to update."
   },
   "buttons": {
     "verifying": "Verifying...",

@@ -1,0 +1,71 @@
+{
+  "title": "チェックアウト",
+  "errors": {
+    "out_of_stock_deleted": "在庫切れのため商品が削除されました。",
+    "no_items": "チェックアウトする商品がありません。",
+    "missing_info": "配送情報をすべて入力してください。",
+    "invalid_otp": "無効な OTP コードです。",
+    "order_failed": "注文時にエラーが発生しました。",
+    "otp_failed": "OTPの送信に失敗しました。",
+    "address_failed": "住所の追加に失敗しました。"
+  },
+  "success": {
+    "order_placed": "注文が正常に完了しました！",
+    "otp_sent": "OTPが正常に送信されました！",
+    "address_added": "住所が正常に追加されました！"
+  },
+  "actions": {
+    "back": "戻る"
+  },
+  "shipping_info": {
+    "title": "配送情報",
+    "address_title": "お届け先住所",
+    "change_btn": "変更",
+    "add_info_btn": "配送情報を追加",
+    "full_name": "フルネーム",
+    "full_name_placeholder": "フルネームを入力",
+    "phone": "電話番号",
+    "phone_placeholder": "電話番号を入力",
+    "address": "お届け先住所",
+    "address_placeholder": "詳細な住所を入力（入力して検索...）"
+  },
+  "payment_method": {
+    "title": "お支払い方法",
+    "cod_banned": "キャンセル率が高いため（{{rate}}%）、代金引換は一時的にロックされています。前払いをお願いします。",
+    "cod": "代金引換 (COD)",
+    "bank_transfer": "銀行振込 (VietQR)"
+  },
+  "summary": {
+    "title": "注文の概要",
+    "qty": "数量",
+    "select_voucher": "バウチャーを選択",
+    "select_btn": "選択",
+    "subtotal": "小計:",
+    "shipping_fee": "配送料:",
+    "free": "無料",
+    "total": "合計:",
+    "sending_otp": "OTP を送信中...",
+    "confirm_btn": "注文を確定",
+    "processing": "処理中...",
+    "ordering": "注文中..."
+  },
+  "otp": {
+    "title": "OTP 検証",
+    "sent_to": "OTP がメールに送信されました",
+    "instruction": "注文を完了するにはコードを入力してください。",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "not_received": "コードが届きませんか？",
+    "sending": "送信中...",
+    "resend": "再送信"
+  },
+  "address_book": {
+    "title": "アドレス帳",
+    "select": "選択",
+    "empty": "住所が見つかりません。",
+    "add_new": "新しい住所を追加",
+    "add_btn": "追加",
+    "back": "アドレス帳に戻る",
+    "default": "デフォルト"
+  }
+}

@@ -9,7 +9,7 @@
   "discount": "折扣:",
   "checkout": "立即结账",
   "remove_confirm": "您确定要将此商品从购物车中移除吗？",
-  "voucher_placeholder": "🎟️ 选择优惠券",
+  "voucher_placeholder": "选择优惠券",
   "coming_soon": "即将推出",
   "edit": "编辑",
   "done": "完成",
@@ -26,7 +26,7 @@
   },
   "voucher": {
     "selected": "已选择:",
-    "select_placeholder": "🎟️ 选择优惠券",
+    "select_placeholder": "选择优惠券",
     "change": "更改",
     "select": "选择代码",
     "currency_symbol": "VND",

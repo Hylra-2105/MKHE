@@ -150,9 +150,7 @@ export const loginUser = async (req, res) => {
         isVerified: user.isVerified,
         provider: user.provider,
         phone: user.phone,
-        country: user.country,
-        city: user.city,
-        address: user.address,
+        addresses: user.addresses,
         bio: user.bio,
       },
     });
@@ -270,9 +268,7 @@ export const socialLogin = async (req, res) => {
         isVerified: user.isVerified,
         provider: user.provider,
         phone: user.phone,
-        country: user.country,
-        city: user.city,
-        address: user.address,
+        addresses: user.addresses,
         bio: user.bio,
       },
     });

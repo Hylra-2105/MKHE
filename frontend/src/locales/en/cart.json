@@ -9,7 +9,7 @@
   "discount": "Discount:",
   "checkout": "Checkout Now",
   "remove_confirm": "Are you sure you want to remove this item from your cart?",
-  "voucher_placeholder": "🎟️ Select Voucher",
+  "voucher_placeholder": "Select Voucher",
   "coming_soon": "Coming soon",
   "edit": "Edit",
   "done": "Done",
@@ -26,7 +26,7 @@
   },
   "voucher": {
     "selected": "Selected:",
-    "select_placeholder": "🎟️ Select Voucher",
+    "select_placeholder": "Select Voucher",
     "change": "Change",
     "select": "Select code",
     "currency_symbol": "VND",
