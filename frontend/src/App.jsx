@@ -37,6 +37,9 @@ import ProfilePage from "@/pages/users/ProfilePage";
 
 import DPPPage from "@/pages/dpp/DPPPage";
 
+import CheckoutPage from "./pages/orders/CheckoutPage";
+import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
+
 function App() {
   const setUser = useAuthStore((state) => state.setUser);
   const token = useAuthStore((state) => state.token);
@@ -117,6 +120,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout/success"
+            element={
+              <ProtectedRoute>
+                <CheckoutSuccessPage />
               </ProtectedRoute>
             }
           />

@@ -1,0 +1,71 @@
+{
+  "title": "결제",
+  "errors": {
+    "out_of_stock_deleted": "재고 부족으로 인해 상품이 삭제되었습니다.",
+    "no_items": "결제할 상품이 없습니다.",
+    "missing_info": "배송 정보를 모두 입력해주세요.",
+    "invalid_otp": "잘못된 OTP 코드입니다.",
+    "order_failed": "주문 중 오류가 발생했습니다.",
+    "otp_failed": "OTP 전송에 실패했습니다.",
+    "address_failed": "주소 추가에 실패했습니다."
+  },
+  "success": {
+    "order_placed": "주문이 성공적으로 완료되었습니다!",
+    "otp_sent": "OTP가 성공적으로 전송되었습니다!",
+    "address_added": "주소가 성공적으로 추가되었습니다!"
+  },
+  "actions": {
+    "back": "뒤로 가기"
+  },
+  "shipping_info": {
+    "title": "배송 정보",
+    "address_title": "배송지 주소",
+    "change_btn": "변경",
+    "add_info_btn": "배송 정보 추가",
+    "full_name": "성명",
+    "full_name_placeholder": "성명 입력",
+    "phone": "전화번호",
+    "phone_placeholder": "전화번호 입력",
+    "address": "배송지 주소",
+    "address_placeholder": "상세 주소 입력 (입력하여 검색...)"
+  },
+  "payment_method": {
+    "title": "결제 수단",
+    "cod_banned": "취소율이 높아({{rate}}%) 결제가 일시적으로 제한되었습니다. 선결제를 이용해주세요.",
+    "cod": "도착 시 결제 (COD)",
+    "bank_transfer": "계좌 이체 (VietQR)"
+  },
+  "summary": {
+    "title": "주문 요약",
+    "qty": "수량",
+    "select_voucher": "바우처 선택",
+    "select_btn": "선택",
+    "subtotal": "소계:",
+    "shipping_fee": "배송비:",
+    "free": "무료",
+    "total": "총계:",
+    "sending_otp": "OTP 전송 중...",
+    "confirm_btn": "주문 확인",
+    "processing": "처리 중...",
+    "ordering": "주문 중..."
+  },
+  "otp": {
+    "title": "OTP 인증",
+    "sent_to": "OTP 코드가 이메일로 전송되었습니다",
+    "instruction": "주문을 완료하려면 코드를 입력하세요.",
+    "cancel": "취소",
+    "confirm": "확인",
+    "not_received": "코드를 받지 못하셨나요?",
+    "sending": "전송 중...",
+    "resend": "재전송"
+  },
+  "address_book": {
+    "title": "주소록",
+    "select": "선택",
+    "empty": "등록된 주소가 없습니다.",
+    "add_new": "새 주소 추가",
+    "add_btn": "추가",
+    "back": "주소록으로 돌아가기",
+    "default": "기본값"
+  }
+}

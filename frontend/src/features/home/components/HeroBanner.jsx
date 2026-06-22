@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Play, X } from "lucide-react";
+import { ChevronRight, Play, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // === IMPORT VIDEO ===
@@ -159,7 +159,7 @@ const HeroBanner = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button className="bg-gradient-to-r from-mkhe-primary to-[#D4A373] text-white px-8 py-3.5 md:py-4 rounded-full font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg shadow-mkhe-primary/30 cursor-pointer">
                   {t("hero.cta_explore", "Khám phá Bộ Sưu Tập")}{" "}
-                  <ArrowRight className="w-5 h-5" />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
                 <button className="bg-mkhe-bg/50 backdrop-blur-md text-mkhe-primary border-2 border-mkhe-primary/50 px-8 py-3.5 md:py-4 rounded-full font-bold hover:bg-mkhe-primary/10 transition flex items-center justify-center gap-2 shadow-sm cursor-pointer">
                   {t("hero.cta_about", "Câu chuyện MKHE")}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowRight, MapPin, Sparkles } from "lucide-react";
+import { ChevronRight, MapPin, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import Fireflies from "./Fireflies";
@@ -191,7 +191,7 @@ const HeritageStory = () => {
                   <span className="flex items-center gap-3 text-2xl font-logo font-bold">
                     {journeyData[activeTab].province}
                     <div className="w-10 h-10 rounded-full bg-mkhe-primary text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-lg shadow-mkhe-primary/30">
-                      <ArrowRight className="w-5 h-5" />
+                      <ChevronRight className="w-5 h-5" />
                     </div>
                   </span>
                 </button>

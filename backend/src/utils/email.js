@@ -157,3 +157,145 @@ export const sendChangePasswordEmail = async (toEmail, otp, lang = "vi") => {
   };
   await sendEmail(mailOptions);
 };
+
+/**
+ * Gửi email chứa OTP để xác nhận đặt hàng (Checkout)
+ */
+export const sendCheckoutOtpEmail = async (toEmail, otp, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "checkoutOtp.subject"),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${getTranslation(trans, "checkoutOtp.greeting")}</h2>
+        <p style="text-align: center;">${getTranslation(trans, "checkoutOtp.instruction")}</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <span style="background-color: #e5dcd3; padding: 15px 30px; border-radius: 8px; font-size: 32px; font-weight: bold; letter-spacing: 4px;">${otp}</span>
+        </div>
+        <p style="text-align: center; color: #d97706; font-size: 14px;">${getTranslation(trans, "checkoutOtp.ignored")}</p>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${getTranslation(trans, "checkoutOtp.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email hóa đơn sau khi đặt hàng thành công
+ */
+export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const subjectStr = getTranslation(trans, "invoice.subject") || "Xác nhận đơn hàng #{orderCode}";
+  const subject = subjectStr.replace("{orderCode}", order.orderCode);
+  
+  const formatMoney = (amount) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+  };
+
+  const itemsHtml = order.items.map(item => `
+    <tr>
+      <td style="padding: 12px; border-bottom: 1px solid #eee;">
+        <div style="display: flex; align-items: center;">
+          ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px; border: 1px solid #eee;" />` : ''}
+          <span style="font-weight: 500;">${item.name}</span>
+        </div>
+      </td>
+      <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
+      <td style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">${formatMoney(item.price)}</td>
+    </tr>
+  `).join("");
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: subject,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fff; overflow: hidden;">
+        <!-- Header -->
+        <div style="background-color: #f8f6f3; padding: 30px 20px; text-align: center; border-bottom: 3px solid #bc9c6a;">
+          <h1 style="color: #bc9c6a; margin: 0; font-size: 28px; font-family: Georgia, serif;">MKHE Heritage</h1>
+          <p style="margin-top: 10px; color: #666;">${getTranslation(trans, "invoice.greeting")}</p>
+        </div>
+        
+        <!-- Content -->
+        <div style="padding: 30px 20px;">
+          <p style="color: #333; font-size: 16px;">${getTranslation(trans, "invoice.intro")}</p>
+          
+          <!-- Order Info -->
+          <div style="background-color: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 20px; margin: 25px 0;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 5px 0; color: #666; width: 40%;">${getTranslation(trans, "invoice.orderCode")}:</td>
+                <td style="padding: 5px 0; font-weight: bold; color: #bc9c6a;">${order.orderCode}</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">${getTranslation(trans, "invoice.paymentMethod")}:</td>
+                <td style="padding: 5px 0; font-weight: bold;">${order.paymentMethod}</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0; color: #666;">${getTranslation(trans, "invoice.shippingInfo")}:</td>
+                <td style="padding: 5px 0;">
+                  <strong>${order.shippingInfo.name}</strong><br/>
+                  ${order.shippingInfo.phone}<br/>
+                  ${order.shippingInfo.address}
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Items -->
+          <h3 style="color: #333; margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px;">${getTranslation(trans, "invoice.items")}</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background-color: #f9f9f9; text-align: left;">
+                <th style="padding: 12px; color: #666;">${getTranslation(trans, "invoice.items")}</th>
+                <th style="padding: 12px; color: #666; text-align: center;">${getTranslation(trans, "invoice.qty")}</th>
+                <th style="padding: 12px; color: #666; text-align: right;">${getTranslation(trans, "invoice.price")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+
+          <!-- Summary -->
+          <div style="margin-top: 20px; text-align: right; border-top: 1px solid #eee; padding-top: 20px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 5px 12px; color: #666; text-align: right;">${getTranslation(trans, "invoice.subtotal")}:</td>
+                <td style="padding: 5px 12px; text-align: right; width: 120px;">${formatMoney(order.subtotal)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 12px; color: #666; text-align: right;">${getTranslation(trans, "invoice.shippingFee")}:</td>
+                <td style="padding: 5px 12px; text-align: right;">${formatMoney(order.shippingFee)}</td>
+              </tr>
+              ${order.discountAmount > 0 ? `
+              <tr>
+                <td style="padding: 5px 12px; color: #10b981; text-align: right;">${getTranslation(trans, "invoice.discountAmount")}:</td>
+                <td style="padding: 5px 12px; color: #10b981; text-align: right;">-${formatMoney(order.discountAmount)}</td>
+              </tr>
+              ` : ''}
+              <tr>
+                <td style="padding: 15px 12px 5px; color: #333; text-align: right; font-weight: bold; font-size: 18px; border-top: 1px dashed #ccc;">${getTranslation(trans, "invoice.totalAmount")}:</td>
+                <td style="padding: 15px 12px 5px; color: #bc9c6a; text-align: right; font-weight: bold; font-size: 18px; border-top: 1px dashed #ccc;">${formatMoney(order.totalAmount)}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #fcfbfa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 13px; margin: 0;">
+            ${getTranslation(trans, "invoice.footer", { time: getFormattedTime(lang) }).replace(/\\n/g, '<br/>')}
+          </p>
+        </div>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};

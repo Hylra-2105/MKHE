@@ -33,7 +33,11 @@
     "support_video": "動画 MP4、WEBM (最大 30MB)",
     "new_password": "新しいパスワードを作成する",
     "update_password": "パスワードを変更する",
-    "change_password_desc": "アカウントの新しいパスワードを入力してください。"
+    "change_password_desc": "アカウントの新しいパスワードを入力してください。",
+    "contact_shipping": "連絡先と配送",
+    "default_address": "デフォルトの住所",
+    "address_placeholder": "住所を入力してください...",
+    "no_address": "デフォルトの住所が設定されていません。編集をクリックして更新してください。"
   },
   "buttons": {
     "verifying": "確認中...",

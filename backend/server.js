@@ -21,6 +21,7 @@ import nfcRoutes from "./src/modules/nfc/nfc.routes.js";
 import dppRoutes from "./src/modules/dpp/dpp.routes.js";
 import cartRoutes from "./src/modules/cart/cart.routes.js";
 import voucherRoutes from "./src/modules/vouchers/voucher.routes.js";
+import orderRoutes from "./src/modules/orders/order.routes.js";
 
 connectDB();
 
@@ -70,6 +71,9 @@ app.use("/api/cart", cartRoutes);
 
 // API liên quan đến Vouchers
 app.use("/api/vouchers", voucherRoutes);
+
+// API liên quan đến Orders
+app.use("/api/orders", orderRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -81,7 +81,7 @@ export const updateUser = async (req, res) => {
     if (isBlocked === true && blockReason) {
       // Gọi async nhưng không await để không làm chậm response API
       // Lấy language từ user hoặc default vi
-      const userLang = updatedUser.language || "vi";
+      const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || updatedUser.language || "vi";
       sendBlockAccountEmail(updatedUser.email, blockReason, userLang).catch(
         (err) => {
           console.error("[⚠️ Email Error] Gửi mail thất bại:", {
@@ -128,7 +128,7 @@ export const updateMyProfile = async (req, res) => {
   try {
     // req.user được lấy từ verifyToken
     const userId = req.user.id;
-    const { name, phone, country, city, address, bio, avatar } = req.body;
+    const { name, phone, bio, avatar, addressText, coordinates } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -138,10 +138,29 @@ export const updateMyProfile = async (req, res) => {
     // Cập nhật thông tin (Chỉ cập nhật field nào được gửi lên)
     if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
-    if (country !== undefined) user.country = country;
-    if (city !== undefined) user.city = city;
-    if (address !== undefined) user.address = address;
     if (bio !== undefined) user.bio = bio;
+
+    // Cập nhật địa chỉ mặc định nếu có truyền lên
+    if (addressText && coordinates) {
+      const defaultAddressIndex = user.addresses.findIndex((a) => a.isDefault);
+      
+      if (defaultAddressIndex !== -1) {
+        // Có sẵn địa chỉ mặc định -> Ghi đè
+        user.addresses[defaultAddressIndex].addressText = addressText;
+        user.addresses[defaultAddressIndex].coordinates = coordinates;
+        user.addresses[defaultAddressIndex].receiverName = user.name;
+        user.addresses[defaultAddressIndex].receiverPhone = user.phone;
+      } else {
+        // Chưa có -> Tạo mới và push vào
+        user.addresses.push({
+          receiverName: user.name,
+          receiverPhone: user.phone,
+          addressText: addressText,
+          coordinates: coordinates,
+          isDefault: true
+        });
+      }
+    }
 
     // Nếu có gửi avatar mới lên -> Kích hoạt khiên bảo vệ
     if (avatar) {
@@ -258,5 +277,83 @@ export const createUser = async (req, res) => {
   } catch (error) {
     console.error("Error in [ADMIN] createUser:", error);
     return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+  }
+};
+
+// User thêm địa chỉ mới
+export const addAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { receiverName, receiverPhone, addressText, coordinates, isDefault } = req.body;
+
+    if (!receiverName || !receiverPhone || !addressText) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    const newAddress = {
+      receiverName,
+      receiverPhone,
+      addressText,
+      coordinates,
+      isDefault: false
+    };
+
+    // Nếu mảng rỗng hoặc user chọn isDefault = true
+    if (user.addresses.length === 0 || isDefault) {
+      newAddress.isDefault = true;
+      // Nếu là default, cập nhật tất cả địa chỉ cũ thành false
+      user.addresses.forEach(addr => addr.isDefault = false);
+    }
+
+    user.addresses.push(newAddress);
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 201, "ADDRESS_ADDED_SUCCESS", userData);
+  } catch (error) {
+    console.error("Add Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Cập nhật địa chỉ mặc định
+export const setDefaultAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { addressId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    let addressFound = false;
+    user.addresses.forEach(addr => {
+      if (addr._id.toString() === addressId) {
+        addr.isDefault = true;
+        addressFound = true;
+      } else {
+        addr.isDefault = false;
+      }
+    });
+
+    if (!addressFound) {
+      return errorResponse(res, 404, "ADDRESS_NOT_FOUND");
+    }
+
+    await user.save();
+    
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "SET_DEFAULT_ADDRESS_SUCCESS", userData);
+  } catch (error) {
+    console.error("Set Default Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

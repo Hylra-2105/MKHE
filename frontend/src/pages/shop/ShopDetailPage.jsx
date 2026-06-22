@@ -66,6 +66,15 @@ export default function ShopDetailPage() {
     addToCart(product, quantity);
   };
 
+  const handleBuyNow = () => {
+    if (!product || product.stock === 0) return;
+    navigate("/checkout", { 
+      state: { 
+        buyNowItem: { product, quantity } 
+      } 
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-mkhe-bg">
@@ -269,7 +278,7 @@ export default function ShopDetailPage() {
                   <span>{isOutOfStock ? t("shop.detail.out_of_stock", "Hết hàng") : t("shop.detail.add_to_cart", "Thêm vào giỏ")}</span>
                 </button>
                 <button
-                  onClick={handleAddToCart}
+                  onClick={handleBuyNow}
                   disabled={isOutOfStock}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 md:py-5 rounded-full font-medium text-lg shadow-lg transition-all ${
                     isOutOfStock 

@@ -9,7 +9,7 @@
   "discount": "割引:",
   "checkout": "レジに進む",
   "remove_confirm": "この商品をカートから削除してもよろしいですか？",
-  "voucher_placeholder": "🎟️ バウチャーを選択",
+  "voucher_placeholder": "バウチャーを選択",
   "coming_soon": "近日公開",
   "edit": "編集",
   "done": "完了",
@@ -26,7 +26,7 @@
   },
   "voucher": {
     "selected": "選択済み:",
-    "select_placeholder": "🎟️ バウチャーを選択",
+    "select_placeholder": "バウチャーを選択",
     "change": "変更",
     "select": "コードを選択",
     "currency_symbol": "VND",

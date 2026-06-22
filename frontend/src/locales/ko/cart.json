@@ -9,7 +9,7 @@
   "discount": "할인:",
   "checkout": "결제하기",
   "remove_confirm": "장바구니에서 이 항목을 제거하시겠습니까?",
-  "voucher_placeholder": "🎟️ 바우처 선택",
+  "voucher_placeholder": "바우처 선택",
   "coming_soon": "출시 예정",
   "edit": "편집",
   "done": "완료",
@@ -26,7 +26,7 @@
   },
   "voucher": {
     "selected": "선택됨:",
-    "select_placeholder": "🎟️ 바우처 선택",
+    "select_placeholder": "바우처 선택",
     "change": "변경",
     "select": "코드 선택",
     "currency_symbol": "VND",

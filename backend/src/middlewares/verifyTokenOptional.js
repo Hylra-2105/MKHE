@@ -16,7 +16,7 @@ export const verifyTokenOptional = async (req, res, next) => {
     // Check if user is blocked
     const user = await User.findById(decoded.id);
     if (user && !user.isBlocked) {
-      req.user = decoded;
+      req.user = user;
     }
   } catch (error) {
     // Nếu token hết hạn hoặc lỗi, phải trả về 401 để frontend tự động refresh token

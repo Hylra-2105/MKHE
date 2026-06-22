@@ -9,7 +9,7 @@
   "discount": "Giảm giá:",
   "checkout": "Thanh toán ngay",
   "remove_confirm": "Bạn có chắc muốn bỏ sản phẩm này khỏi giỏ?",
-  "voucher_placeholder": "🎟️ Chọn Mã Ưu Đãi",
+  "voucher_placeholder": "Chọn Mã Ưu Đãi",
   "coming_soon": "Sắp ra mắt",
   "edit": "Sửa",
   "done": "Hoàn tất",
@@ -26,7 +26,7 @@
   },
   "voucher": {
     "selected": "Đã chọn:",
-    "select_placeholder": "🎟️ Chọn Mã Ưu Đãi",
+    "select_placeholder": "Chọn Mã Ưu Đãi",
     "change": "Thay đổi",
     "select": "Chọn mã",
     "currency_symbol": "đ",

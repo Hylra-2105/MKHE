@@ -37,18 +37,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    country: {
-      type: String,
-      default: "",
-    },
-    city: {
-      type: String,
-      default: "",
-    },
-    address: {
-      type: String,
-      default: "",
-    },
+    // Đã xóa country, city, address vì dùng mảng addresses
+    addresses: [
+      {
+        receiverName: { type: String, required: true },
+        receiverPhone: { type: String, required: true },
+        addressText: { type: String, required: true },
+        coordinates: {
+          lat: { type: Number },
+          lng: { type: Number },
+        },
+        isDefault: { type: Boolean, default: false },
+      }
+    ],
     bio: {
       type: String,
       default: "",

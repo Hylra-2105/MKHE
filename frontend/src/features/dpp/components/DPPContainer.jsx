@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { dppApi } from "@/api/dppApi";
-import { Loader2, AlertCircle, Hexagon, Sparkles, Box, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, Hexagon, Sparkles, Box, Image as ImageIcon, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import ModelViewer3D from "./ModelViewer3D";
@@ -260,7 +260,7 @@ const DPPContainer = () => {
           onClick={() => navigate("/")} 
           className="p-3 bg-mkhe-bg/50 backdrop-blur-md cursor-pointer rounded-full border border-mkhe-border hover:bg-mkhe-bg hover:scale-105 transition-all duration-300 shadow-xl group"
         >
-          <ArrowLeft className="w-5 h-5 text-mkhe-text/70 group-hover:text-mkhe-primary transition-colors" />
+          <ChevronLeft className="w-5 h-5 text-mkhe-text/70 group-hover:text-mkhe-primary group-hover:-translate-x-1 transition-all duration-300" />
         </button>
         
         <div className="flex items-center gap-2 px-5 py-2.5 bg-mkhe-bg/50 backdrop-blur-md border border-mkhe-border rounded-full shadow-xl">

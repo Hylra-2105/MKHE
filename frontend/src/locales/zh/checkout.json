@@ -1,0 +1,71 @@
+{
+  "title": "结账",
+  "errors": {
+    "out_of_stock_deleted": "由于缺货，商品已被删除。",
+    "no_items": "没有可结账的商品。",
+    "missing_info": "请输入完整的送货信息。",
+    "invalid_otp": "OTP 代码无效。",
+    "order_failed": "下订单时出错。",
+    "otp_failed": "发送OTP失败。",
+    "address_failed": "添加地址失败。"
+  },
+  "success": {
+    "order_placed": "订单已成功提交！",
+    "otp_sent": "OTP发送成功！",
+    "address_added": "地址添加成功！"
+  },
+  "actions": {
+    "back": "返回"
+  },
+  "shipping_info": {
+    "title": "送货信息",
+    "address_title": "送货地址",
+    "change_btn": "更改",
+    "add_info_btn": "添加送货信息",
+    "full_name": "全名",
+    "full_name_placeholder": "输入全名",
+    "phone": "电话号码",
+    "phone_placeholder": "输入电话号码",
+    "address": "送货地址",
+    "address_placeholder": "输入详细地址（输入以搜索...）"
+  },
+  "payment_method": {
+    "title": "付款方式",
+    "cod_banned": "由于取消率高 ({{rate}}%)，货到付款暂时被锁定。请提前付款。",
+    "cod": "货到付款 (COD)",
+    "bank_transfer": "银行转账 (VietQR)"
+  },
+  "summary": {
+    "title": "订单摘要",
+    "qty": "数量",
+    "select_voucher": "选择优惠券",
+    "select_btn": "选择",
+    "subtotal": "小计:",
+    "shipping_fee": "运费:",
+    "free": "免费",
+    "total": "总计:",
+    "sending_otp": "正在发送 OTP...",
+    "confirm_btn": "确认订单",
+    "processing": "处理中...",
+    "ordering": "下单中..."
+  },
+  "otp": {
+    "title": "OTP 验证",
+    "sent_to": "OTP 已发送至电子邮件",
+    "instruction": "请输入代码以完成订单。",
+    "cancel": "取消",
+    "confirm": "确认",
+    "not_received": "没有收到代码？",
+    "sending": "发送中...",
+    "resend": "重新发送"
+  },
+  "address_book": {
+    "title": "地址簿",
+    "select": "选择",
+    "empty": "未找到地址。",
+    "add_new": "添加新地址",
+    "add_btn": "添加",
+    "back": "返回地址簿",
+    "default": "默认"
+  }
+}

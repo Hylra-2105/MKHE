@@ -232,13 +232,13 @@ export default function LoginForm() {
         disabled={isLoading || isGoogleLoading}
         className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {(isLoading || isGoogleLoading) ? (
+        {isGoogleLoading ? (
           <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
         ) : (
           <GoogleIcon />
         )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {(isLoading || isGoogleLoading) ? t("btn_processing") : t("google")}
+          {isGoogleLoading ? t("btn_processing") : t("google")}
         </span>
       </button>
 

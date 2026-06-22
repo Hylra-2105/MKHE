@@ -16,6 +16,12 @@ import {
   Check,
   ChevronRight,
   ChevronLeft,
+  User,
+  Users,
+  Package,
+  Ticket,
+  BarChart,
+  LogOut,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -218,12 +224,13 @@ export default function Header() {
                     <Link
                       to="/profile"
                       onClick={() => setIsDropdownOpen(false)}
-                      className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
                         location.pathname.startsWith("/profile")
                           ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                           : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                       }`}
                     >
+                      <User className="w-4 h-4" />
                       {t("user_menu.profile")}
                     </Link>
 
@@ -237,12 +244,13 @@ export default function Header() {
                           <Link
                             to="/admin/users"
                             onClick={() => setIsDropdownOpen(false)}
-                            className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
                               location.pathname.startsWith("/admin/users")
                                 ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                                 : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                             }`}
                           >
+                            <Users className="w-4 h-4" />
                             {t("user_menu.manage_users")}
                           </Link>
                         )}
@@ -251,12 +259,13 @@ export default function Header() {
                         <Link
                           to="/admin/products"
                           onClick={() => setIsDropdownOpen(false)}
-                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
                             location.pathname.startsWith("/admin/products")
                               ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                               : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                           }`}
                         >
+                          <Package className="w-4 h-4" />
                           {t("user_menu.manage_products")}
                         </Link>
 
@@ -264,12 +273,13 @@ export default function Header() {
                         <Link
                           to="/admin/vouchers"
                           onClick={() => setIsDropdownOpen(false)}
-                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
                             location.pathname.startsWith("/admin/vouchers")
                               ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                               : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                           }`}
                         >
+                          <Ticket className="w-4 h-4" />
                           {t("user_menu.manage_vouchers")}
                         </Link>
 
@@ -278,12 +288,13 @@ export default function Header() {
                           <Link
                             to="/admin/analysis"
                             onClick={() => setIsDropdownOpen(false)}
-                            className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
                               location.pathname.startsWith("/admin/analysis")
                                 ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                                 : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                             }`}
                           >
+                            <BarChart className="w-4 h-4" />
                             {t("user_menu.analytics")}
                           </Link>
                         )}
@@ -332,8 +343,9 @@ export default function Header() {
 
                     <button
                       onClick={handleLogout}
-                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 text-red-500 cursor-pointer hover:opacity-100 hover:bg-red-500/10 transition-colors"
+                      className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 text-red-500 cursor-pointer hover:opacity-100 hover:bg-red-500/10 transition-colors flex items-center gap-3"
                     >
+                      <LogOut className="w-4 h-4" />
                       {t("user_menu.logout")}
                     </button>
                   </div>
