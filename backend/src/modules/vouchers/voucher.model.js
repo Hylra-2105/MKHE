@@ -62,6 +62,12 @@ const voucherSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // true = Có thể dùng offline tại quầy
     },
+    dropRate: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
     isActive: {
       type: Boolean,
       default: true,

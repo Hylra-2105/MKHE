@@ -14,7 +14,8 @@
     "analytics": "Analytics",
     "admin_area": "Admin Area",
     "staff_area": "Staff Area",
-    "manage_products": "Manage Products"
+    "manage_products": "Manage Products",
+    "manage_vouchers": "Manage Vouchers"
   },
   "guest_menu": {
     "login": "Login"

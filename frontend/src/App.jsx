@@ -28,6 +28,7 @@ import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
 import UserManagement from "./pages/users/UserManagementPage";
 import ProductManagementPage from "./pages/products/ProductManagementPage";
+import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -98,6 +99,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <ProductManagementPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/vouchers"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <VoucherManagementPage />
               </ProtectedRoute>
             }
           />

@@ -13,7 +13,8 @@
     "logout": "Đăng xuất",
     "admin_area": "Khu vực quản trị",
     "staff_area": "Khu vực nhân viên",
-    "manage_products": "Quản lý Sản phẩm"
+    "manage_products": "Quản lý Sản phẩm",
+    "manage_vouchers": "Quản lý Voucher"
   },
   "guest_menu": {
     "login": "Đăng nhập"

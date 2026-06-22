@@ -5,7 +5,7 @@
 @theme {
   --color-mkhe-primary: #c5a059;
   --color-mkhe-primary-hover: #b38f4d;
-  --color-mkhe-bg: #f5f0ea; /* Mặc định Light */
+  --color-mkhe-bg: #f5f0ea;
   --color-mkhe-text: #2d1e12;
   --color-mkhe-input: #e4d5c7;
   --color-mkhe-border: #c8b6a6;
@@ -19,7 +19,6 @@
   --font-sans: "Inter", sans-serif;
 }
 
-/* Ghi đè biến màu khi ở Dark Mode */
 body.dark-mode {
   --color-mkhe-bg: #2d1c15;
   --color-mkhe-text: #d9c5b2;
@@ -28,52 +27,18 @@ body.dark-mode {
 }
 
 @layer base {
-  html,
-  body,
-  #root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    background-color: var(--color-mkhe-bg);
-    color: var(--color-mkhe-text);
-    transition:
-      background-color 0.3s,
-      color 0.3s;
-  }
-
-  /* Ảnh toggle */
-  body:not(.dark-mode) img[data-theme="dark"] {
-    display: none !important;
-  }
-  body.dark-mode img[data-theme="light"] {
-    display: none !important;
-  }
-
-  /* Overlay & Shadow */
-  body:not(.dark-mode) .theme-overlay {
-    @apply bg-white/20;
-  }
-  body.dark-mode .theme-overlay {
-    @apply bg-black/30;
-  }
-
-  .theme-shadow {
-    box-shadow: 0 0 50px
-      color-mix(in srgb, var(--color-mkhe-primary) 15%, transparent);
-  }
+  html, body, #root { height: 100%; margin: 0; padding: 0; }
+  body { background-color: var(--color-mkhe-bg); color: var(--color-mkhe-text); transition: background-color 0.3s, color 0.3s; }
+  body:not(.dark-mode) img[data-theme="dark"] { display: none !important; }
+  body.dark-mode img[data-theme="light"] { display: none !important; }
+  body:not(.dark-mode) .theme-overlay { @apply bg-white/20; }
+  body.dark-mode .theme-overlay { @apply bg-black/30; }
+  .theme-shadow { box-shadow: 0 0 50px color-mix(in srgb, var(--color-mkhe-primary) 15%, transparent); }
 }
 
 @layer utilities {
-  .text-gradient-gold {
-    @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark bg-clip-text text-transparent;
-  }
-  .bg-gradient-gold {
-    @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark 
-           hover:from-mkhe-gold-base hover:via-mkhe-gold-dark hover:to-mkhe-gold-darker;
-  }
+  .text-gradient-gold { @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark bg-clip-text text-transparent; }
+  .bg-gradient-gold { @apply bg-gradient-to-r from-mkhe-gold-light via-mkhe-gold-base to-mkhe-gold-dark hover:from-mkhe-gold-base hover:via-mkhe-gold-dark hover:to-mkhe-gold-darker; }
 }
 
 /* ========================================== */
@@ -144,52 +109,34 @@ body.dark-mode {
   }
 }
 
-/* ========================================== */
-/* CUSTOM SCROLLBAR (THANH CUỘN)              */
-/* ========================================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-mkhe-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-mkhe-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-mkhe-primary); }
 
-/* Thanh cuộn mặc định của toàn trang */
-::-webkit-scrollbar {
-  width: 8px; /* Độ rộng thanh cuộn */
-}
+.time-scroll { scrollbar-width: thin; scrollbar-color: var(--color-mkhe-border) transparent; }
+.time-scroll::-webkit-scrollbar { width: 6px; }
+.time-scroll::-webkit-scrollbar-track { background: transparent; }
+.time-scroll::-webkit-scrollbar-thumb { background-color: var(--color-mkhe-border); border-radius: 10px; }
 
-::-webkit-scrollbar-track {
-  background: var(--color-mkhe-bg); /* Nền thanh cuộn ăn theo Dark/Light */
-}
+.hide-time-scrollbar { -ms-overflow-style: none !important; scrollbar-width: none !important; }
+.hide-time-scrollbar::-webkit-scrollbar { display: none !important; width: 0 !important; }
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-mkhe-border); /* Màu cục lăn ăn theo Dark/Light */
-  border-radius: 4px;
-}
+/* =========================================
+   FLATPICKR OVERRIDES CHO THEME VÀNG CỦA MKHE
+   ========================================= */
+.flatpickr-calendar { background: var(--color-mkhe-bg) !important; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--color-mkhe-border) !important; color: var(--color-mkhe-text) !important; }
+.flatpickr-day, .flatpickr-weekday, span.flatpickr-weekday, .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month .numInputWrapper span.arrowUp:after, .flatpickr-current-month .numInputWrapper span.arrowDown:after { color: var(--color-mkhe-text) !important; fill: var(--color-mkhe-text) !important; }
+.flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover, .flatpickr-day.prevMonthDay, .flatpickr-day.nextMonthDay, .flatpickr-day.notAllowed, .flatpickr-day.notAllowed.prevMonthDay, .flatpickr-day.notAllowed.nextMonthDay { color: var(--color-mkhe-text) !important; opacity: 0.3 !important; }
+.flatpickr-calendar .flatpickr-day.selected, .flatpickr-calendar .flatpickr-day.startRange, .flatpickr-calendar .flatpickr-day.endRange, .flatpickr-calendar .flatpickr-day.selected.inRange, .flatpickr-calendar .flatpickr-day.startRange.inRange, .flatpickr-calendar .flatpickr-day.endRange.inRange, .flatpickr-calendar .flatpickr-day.selected:focus, .flatpickr-calendar .flatpickr-day.startRange:focus, .flatpickr-calendar .flatpickr-day.endRange:focus, .flatpickr-calendar .flatpickr-day.selected:hover, .flatpickr-calendar .flatpickr-day.startRange:hover, .flatpickr-calendar .flatpickr-day.endRange:hover, .flatpickr-calendar .flatpickr-day.selected.prevMonthDay, .flatpickr-calendar .flatpickr-day.startRange.prevMonthDay, .flatpickr-calendar .flatpickr-day.endRange.prevMonthDay, .flatpickr-calendar .flatpickr-day.selected.nextMonthDay, .flatpickr-calendar .flatpickr-day.startRange.nextMonthDay, .flatpickr-calendar .flatpickr-day.endRange.nextMonthDay { background: var(--color-mkhe-primary) !important; border-color: var(--color-mkhe-primary) !important; color: #fff !important; font-weight: bold !important; }
+.flatpickr-calendar .flatpickr-day:hover, .flatpickr-calendar .flatpickr-day:focus { background: rgba(212, 175, 55, 0.15) !important; border-color: rgba(212, 175, 55, 0.3) !important; }
+.flatpickr-calendar .flatpickr-months .flatpickr-month, .flatpickr-calendar .flatpickr-weekdays { background: var(--color-mkhe-input) !important; }
+.flatpickr-calendar .flatpickr-time input:hover, .flatpickr-calendar .flatpickr-time .flatpickr-am-pm:hover, .flatpickr-calendar .flatpickr-time input:focus, .flatpickr-calendar .flatpickr-time .flatpickr-am-pm:focus { background: rgba(212, 175, 55, 0.1) !important; }
+.flatpickr-calendar .flatpickr-time, .flatpickr-time input, .flatpickr-time .flatpickr-am-pm { color: var(--color-mkhe-text) !important; }
+.flatpickr-calendar .flatpickr-time { border-top: 1px solid var(--color-mkhe-border) !important; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(
-    --color-mkhe-primary
-  ); /* Rê chuột vào cục lăn sáng lên màu vàng */
-}
-
-/* Class hỗ trợ cho các khung nhỏ bên trong nếu cần thanh cuộn mỏng hơn */
-.time-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-mkhe-border) transparent;
-}
-.time-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.time-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-.time-scroll::-webkit-scrollbar-thumb {
-  background-color: var(--color-mkhe-border);
-  border-radius: 10px;
-}
-
-/* Class để giấu luôn thanh cuộn (nhưng vẫn cuộn được bằng chuột/tay) */
-.hide-time-scrollbar {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-}
-.hide-time-scrollbar::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-}
+/* =========================================
+   HIDE NUMBER INPUT SPIN BUTTONS
+   ========================================= */
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }

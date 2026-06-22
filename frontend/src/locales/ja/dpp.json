@@ -33,14 +33,29 @@
     "alt": "3Dモデル"
   },
   "o2o": {
-    "toast_welcome": "✨ 新規会員は10%オフ。タップして表示。",
+    "toast_welcome": "✨ 新規会員の皆様へ10%のオファー。タップして表示。",
+    "toast_secret": "✨ 秘密の特典が待っています。タップして発見。",
     "new_member": "新規会員",
     "login_to_save_voucher": "ログインして保存",
-    "login_to_save_voucher_suffix": "クーポンを利用して、上質なショッピングをお楽しみください。",
-    "cta_subtitle": "ヘリテージコレクションを発見＆10%オフ",
+    "login_to_save_voucher_suffix": "プレミアムショッピングをお楽しみください。",
+    "cta_subtitle": "ヘリテージコレクションを発見して10%オフ",
     "voucher_saved": "✓ WELCOME_MKHE コードを保存しました",
     "get_voucher": "WELCOME_MKHE コードを取得",
     "msg_new_user": "新規会員の皆様、歓迎します！WELCOME_MKHEコードが有効化されました。",
-    "msg_returning_user": "お帰りなさい！10%のオファー（WELCOME_MKHE）が適用されました。"
+    "msg_returning_user": "お帰りなさい！10%のオファー（WELCOME_MKHE）が適用されました。",
+    "msg_gacha_success": "おめでとうございます！ {{title}} を獲得しました。",
+    "err_already_claimed": "この商品のギフトはすでに受け取っています！",
+    "err_no_rewards": "現在利用できる割引コードはありません。",
+    "err_all_claimed": "ガチャギフトをすべて集めました！",
+    "err_bad_luck": "次回をお楽しみに！",
+    "err_generic": "現在コードを取得できません",
+    "claimed_title": "ギフト受け取り済み",
+    "gacha_title": "ガチャバウチャー",
+    "claimed_desc": "この商品のギフトはすでに受け取っています",
+    "gacha_desc": "ラッキードローですぐに特典を獲得",
+    "btn_saved_code": "✓ コード保存済み [{{code}}]",
+    "btn_claimed": "✓ ギフト受け取り済み",
+    "btn_login": "ログインして回す",
+    "btn_spin": "ガチャを回す"
   }
 }

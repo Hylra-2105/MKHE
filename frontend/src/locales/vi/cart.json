@@ -21,5 +21,25 @@
     "out_of_stock": "Sản phẩm đã hết hàng",
     "added": "Đã thêm vào giỏ hàng",
     "removed": "Đã xóa khỏi giỏ hàng"
+  },
+  "voucher": {
+    "currency_symbol": "đ",
+    "currency_code": "VNĐ",
+    "max_discount_val": "Tối đa: {{val}}đ",
+    "min_order_val": "Đơn từ: {{val}}đ",
+    "discount_fixed_val": "{{val}}đ",
+    "leave_empty_max_discount": "Để trống nếu không giới hạn mức giảm tối đa",
+    "buy_more_to_apply": "Mua thêm {{amount}} để áp dụng",
+    "invalid_category_village": "Giỏ hàng không có sản phẩm nào thuộc danh mục/làng nghề áp dụng",
+    "select_voucher": "Chọn Mã Ưu Đãi",
+    "no_vouchers_wallet": "Bạn chưa có mã giảm giá nào trong ví",
+    "discount_percentage_val": "Giảm {{value}}%",
+    "no_min_order": "Không giới hạn đơn tối thiểu",
+    "max_discount_card": "Tối đa {{value}}đ",
+    "applying": "Đang áp dụng",
+    "use_now": "Dùng ngay",
+    "scan_at_counter": "Mã quét tại quầy",
+    "use_online": "Dùng Online",
+    "min_order_card": "Đơn tối thiểu {{value}}đ"
   }
 }

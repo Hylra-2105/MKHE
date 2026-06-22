@@ -30,4 +30,15 @@ export const ENDPOINTS = {
     SYNC: `${API_BASE_URL}/cart/sync`,
     ITEMS: `${API_BASE_URL}/cart/items`,
   },
+  VOUCHERS: {
+    PUBLIC: `${API_BASE_URL}/vouchers/public`,
+    COLLECT: `${API_BASE_URL}/vouchers/collect`,
+    COLLECT_BY_CODE: `${API_BASE_URL}/vouchers/collect-by-code`,
+    WALLET: `${API_BASE_URL}/vouchers/wallet`,
+    REDEEM_OFFLINE: `${API_BASE_URL}/vouchers/redeem-offline`,
+    ADMIN: `${API_BASE_URL}/vouchers/admin`,
+    OPTIONS: `${API_BASE_URL}/vouchers/options`,
+    CHECK_NFC_CLAIM: `${API_BASE_URL}/vouchers/check-nfc-claim`,
+    CLAIM_NFC: `${API_BASE_URL}/vouchers/claim-nfc`,
+  },
 };

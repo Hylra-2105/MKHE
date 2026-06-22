@@ -4,7 +4,7 @@ import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl } from "@/utils/formatters";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import VoucherSelectorDrawer from "../vouchers/VoucherSelectorDrawer";
+import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
 
 const MiniCartDrawer = () => {
   const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, getDiscountedTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart, selectedVoucher, setSelectedVoucher } = useCartStore();

@@ -21,5 +21,25 @@
     "out_of_stock": "在庫切れです",
     "added": "カートに追加されました",
     "removed": "カートから削除されました"
+  },
+  "voucher": {
+    "currency_symbol": "VND",
+    "currency_code": "VND",
+    "max_discount_val": "最大：{{val}} VND",
+    "min_order_val": "最小注文：{{val}} VND",
+    "discount_fixed_val": "{{val}} VND",
+    "leave_empty_max_discount": "最大割引を無制限にする場合は空のままにします",
+    "buy_more_to_apply": "適用するにはあと {{amount}} 購入してください",
+    "invalid_category_village": "カートに対象カテゴリ/村の商品がありません",
+    "select_voucher": "バウチャーを選択",
+    "no_vouchers_wallet": "ウォレットにバウチャーがありません",
+    "discount_percentage_val": "{{value}}% 割引",
+    "no_min_order": "最小注文なし",
+    "max_discount_card": "最大 {{value}} VND",
+    "applying": "適用中",
+    "use_now": "今すぐ使用",
+    "scan_at_counter": "レジでスキャン",
+    "use_online": "オンラインで使用",
+    "min_order_card": "最小注文 {{value}} VND"
   }
 }

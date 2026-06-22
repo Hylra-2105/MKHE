@@ -33,14 +33,29 @@
     "alt": "3D Model"
   },
   "o2o": {
-    "toast_welcome": "✨ 10% off for New Members. Tap to view.",
+    "toast_welcome": "✨ 10% Off for New Members. Tap to view.",
+    "toast_secret": "✨ A secret privilege awaits. Tap to discover.",
     "new_member": "New Member",
-    "login_to_save_voucher": "Login to save",
-    "login_to_save_voucher_suffix": "voucher and enjoy premium shopping.",
-    "cta_subtitle": "Discover the Heritage Collection & Get 10% off",
+    "login_to_save_voucher": "Login to save offer",
+    "login_to_save_voucher_suffix": "and experience premium shopping.",
+    "cta_subtitle": "Discover Heritage Collection & Get 10% Off",
     "voucher_saved": "✓ WELCOME_MKHE Code Saved",
     "get_voucher": "Get WELCOME_MKHE Code",
     "msg_new_user": "Welcome new member! WELCOME_MKHE code has been activated.",
-    "msg_returning_user": "Welcome back! Your 10% offer (WELCOME_MKHE) has been applied."
+    "msg_returning_user": "Welcome back! Your 10% offer (WELCOME_MKHE) has been applied.",
+    "msg_gacha_success": "Congratulations! You received: {{title}}",
+    "err_already_claimed": "You have already claimed a gift from this product!",
+    "err_no_rewards": "Sorry, there are no discount codes available right now.",
+    "err_all_claimed": "You have collected all the Gacha gifts!",
+    "err_bad_luck": "Better luck next time!",
+    "err_generic": "Unable to claim code at this time",
+    "claimed_title": "Gift Claimed",
+    "gacha_title": "Gacha Voucher",
+    "claimed_desc": "You have already claimed a gift from this product",
+    "gacha_desc": "Lucky draw to get immediate offers",
+    "btn_saved_code": "✓ CODE SAVED [{{code}}]",
+    "btn_claimed": "✓ GIFT CLAIMED",
+    "btn_login": "Login to Spin",
+    "btn_spin": "Spin Gacha for Voucher"
   }
 }

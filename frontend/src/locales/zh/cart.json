@@ -21,5 +21,25 @@
     "out_of_stock": "商品已缺货",
     "added": "已添加到购物车",
     "removed": "已从购物车移除"
+  },
+  "voucher": {
+    "currency_symbol": "VND",
+    "currency_code": "VND",
+    "max_discount_val": "最高：{{val}} VND",
+    "min_order_val": "最低订单：{{val}} VND",
+    "discount_fixed_val": "{{val}} VND",
+    "leave_empty_max_discount": "若不限制最大折扣请留空",
+    "buy_more_to_apply": "再购买 {{amount}} 即可应用",
+    "invalid_category_village": "购物车中没有适用类别/村庄的商品",
+    "select_voucher": "选择代金券",
+    "no_vouchers_wallet": "您的钱包中没有代金券",
+    "discount_percentage_val": "折扣 {{value}}%",
+    "no_min_order": "无最低订单",
+    "max_discount_card": "最高 {{value}} VND",
+    "applying": "正在应用",
+    "use_now": "立即使用",
+    "scan_at_counter": "柜台扫描",
+    "use_online": "在线使用",
+    "min_order_card": "最低订单 {{value}} VND"
   }
 }

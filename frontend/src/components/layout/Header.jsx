@@ -260,6 +260,19 @@ export default function Header() {
                           {t("user_menu.manage_products")}
                         </Link>
 
+                        {/* Cả Admin và Staff đều thấy Quản lý Voucher */}
+                        <Link
+                          to="/admin/vouchers"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`block mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors ${
+                            location.pathname.startsWith("/admin/vouchers")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          {t("user_menu.manage_vouchers")}
+                        </Link>
+
                         {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
                         {user.role === "Admin" && (
                           <Link

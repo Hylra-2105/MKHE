@@ -21,7 +21,7 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
       const amountNeeded = formatNumber(voucher.minOrderValue - cartTotal);
       return {
         isEligible: false,
-        reason: t("voucher.buy_more_to_apply", { amount: amountNeeded, defaultValue: `Mua thêm ${((voucher.minOrderValue - cartTotal) / 1000).toLocaleString("vi-VN")}k để áp dụng` }),
+        reason: t("voucher.buy_more_to_apply", { amount: amountNeeded }),
       };
     }
 
@@ -45,7 +45,7 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
       if (!isItemValid) {
         return {
           isEligible: false,
-          reason: t("voucher.invalid_category_village", { defaultValue: "Giỏ hàng không có sản phẩm nào thuộc danh mục/làng nghề áp dụng" }),
+          reason: t("voucher.invalid_category_village"),
         };
       }
     }
@@ -88,7 +88,7 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
         <div className="flex items-center justify-between p-6 border-b border-mkhe-border/10 bg-mkhe-bg">
           <div className="flex items-center gap-3">
             <Ticket className="w-6 h-6 text-mkhe-primary" />
-            <h2 className="font-serif text-xl text-mkhe-text">{t("voucher.select_voucher", { defaultValue: "Chọn Mã Ưu Đãi" })}</h2>
+            <h2 className="font-serif text-xl text-mkhe-text">{t("voucher.select_voucher")}</h2>
           </div>
           <button 
             onClick={onClose}
@@ -107,7 +107,7 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
           ) : availableVouchers.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-mkhe-text/50">
               <Ticket className="w-16 h-16 mb-4 opacity-20" />
-              <p>{t("voucher.no_vouchers", { defaultValue: "Bạn chưa có mã giảm giá nào trong ví" })}</p>
+              <p>{t("voucher.no_vouchers_wallet")}</p>
             </div>
           ) : (
             <div className="space-y-4">

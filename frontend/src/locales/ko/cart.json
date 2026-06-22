@@ -21,5 +21,25 @@
     "out_of_stock": "상품이 품절되었습니다",
     "added": "장바구니에 추가되었습니다",
     "removed": "장바구니에서 제거되었습니다"
+  },
+  "voucher": {
+    "currency_symbol": "VND",
+    "currency_code": "VND",
+    "max_discount_val": "최대: {{val}} VND",
+    "min_order_val": "최소 주문: {{val}} VND",
+    "discount_fixed_val": "{{val}} VND",
+    "leave_empty_max_discount": "최대 할인을 무제한으로 하려면 비워두세요",
+    "buy_more_to_apply": "{{amount}} 더 구매하여 적용",
+    "invalid_category_village": "장바구니에 해당 카테고리/마을의 상품이 없습니다",
+    "select_voucher": "바우처 선택",
+    "no_vouchers_wallet": "지갑에 바우처가 없습니다",
+    "discount_percentage_val": "{{value}}% 할인",
+    "no_min_order": "최소 주문 없음",
+    "max_discount_card": "최대 {{value}} VND",
+    "applying": "적용 중",
+    "use_now": "지금 사용",
+    "scan_at_counter": "카운터에서 스캔",
+    "use_online": "온라인 사용",
+    "min_order_card": "최소 주문 {{value}} VND"
   }
 }
