@@ -226,7 +226,7 @@ export default function Header() {
                       to="/profile"
                       onClick={() => setIsDropdownOpen(false)}
                       className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                        location.pathname.startsWith("/profile")
+                        location.pathname.startsWith("/profile") && !location.search.includes("tab=orders")
                           ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                           : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                       }`}
