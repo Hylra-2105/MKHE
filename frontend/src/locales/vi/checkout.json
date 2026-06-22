@@ -12,7 +12,21 @@
   "success": {
     "order_placed": "Đặt hàng thành công!",
     "otp_sent": "Mã OTP đã được gửi thành công!",
-    "address_added": "Thêm địa chỉ thành công!"
+    "address_added": "Thêm địa chỉ thành công!",
+    "title": "Đặt hàng thành công!",
+    "thank_you_part1": "Cám ơn bạn đã mua sắm tại MKHE Heritage. Mã đơn hàng của bạn là",
+    "thank_you_part2": "Hóa đơn và chi tiết đơn hàng đã được gửi vào email của bạn.",
+    "qr_scan": "Quét mã QR để thanh toán",
+    "bank": "Ngân hàng",
+    "account_no": "Số tài khoản",
+    "account_name": "Chủ tài khoản",
+    "amount": "Số tiền",
+    "content": "Nội dung CK",
+    "note": "Vui lòng chuyển khoản đúng nội dung để hệ thống duyệt đơn tự động.",
+    "cod_method": "Phương thức thanh toán: COD",
+    "cod_note_part1": "Bạn sẽ thanh toán số tiền",
+    "cod_note_part2": "khi nhận được hàng.",
+    "continue_shopping": "Tiếp tục mua sắm"
   },
   "actions": {
     "back": "Quay lại"
@@ -27,7 +41,8 @@
     "phone": "Số điện thoại",
     "phone_placeholder": "Nhập số điện thoại",
     "address": "Địa chỉ giao hàng",
-    "address_placeholder": "Nhập địa chỉ chi tiết (nhập để tìm kiếm...)"
+    "address_placeholder": "Nhập địa chỉ chi tiết (nhập để tìm kiếm...)",
+    "email_notification": "Email nhận thông báo"
   },
   "payment_method": {
     "title": "Phương thức thanh toán",
@@ -47,7 +62,8 @@
     "sending_otp": "Đang gửi OTP...",
     "confirm_btn": "XÁC NHẬN ĐẶT HÀNG",
     "processing": "ĐANG XỬ LÝ...",
-    "ordering": "ĐANG ĐẶT HÀNG..."
+    "ordering": "ĐANG ĐẶT HÀNG...",
+    "discount": "Giảm giá (Voucher)"
   },
   "otp": {
     "title": "Xác thực OTP",

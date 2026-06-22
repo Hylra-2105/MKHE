@@ -59,7 +59,7 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
           </div>
           {discountAmount > 0 && (
             <div className="flex justify-between text-green-500">
-              <span>Giảm giá (Voucher):</span>
+              <span>{t("summary.discount")}:</span>
               <span>-{formatMoney(discountAmount)}</span>
             </div>
           )}

@@ -9,6 +9,8 @@ import { Toaster } from "react-hot-toast";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 import { authApi } from "@/api/authApi";
+import { getCartApi } from "@/api/cartApi";
+import { useCartStore } from "@/stores/useCartStore";
 
 import ProtectedRoute from "./components/router/ProtectedRoute";
 import AuthRoute from "./components/router/AuthRoute";
@@ -62,6 +64,16 @@ function App() {
               const userData = response.data || response.user;
               if (userData) {
                 setUser(userData);
+              }
+              
+              // Đồng bộ giỏ hàng từ server về local khi app load
+              try {
+                const cartRes = await getCartApi();
+                if (cartRes.data && cartRes.data.items) {
+                  useCartStore.setState({ items: cartRes.data.items });
+                }
+              } catch (cartErr) {
+                console.error("Lỗi khi fetch giỏ hàng đầu phiên:", cartErr);
               }
             }
           } catch (error) {

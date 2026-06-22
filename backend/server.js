@@ -78,5 +78,5 @@ app.use("/api/orders", orderRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+  console.info(`Server đang chạy tại http://localhost:${PORT}`);
 });

@@ -61,6 +61,7 @@ const ProductManagementPage = () => {
   }, [page, limit, appliedSearch, categoryFilter, dnaFilter, vendorFilter, t]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, [fetchProducts]);
 

@@ -135,7 +135,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
         ) : (
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-mkhe-text/80 mb-1">Email nhận thông báo</label>
+              <label className="block text-sm font-medium text-mkhe-text/80 mb-1">{t("shipping_info.email_notification")}</label>
               <InputField
                 type="text" value={userEmail || ""} readOnly disabled
                 rightElement={<Mail className="w-5 h-5" />}

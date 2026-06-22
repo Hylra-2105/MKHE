@@ -6,7 +6,7 @@ const sendEmail = async (mailOptions) => {
   try {
     const transporter = getTransporter();
     const result = await transporter.sendMail(mailOptions);
-    console.log(
+    console.info(
       `✓ Email đã được gửi tới: ${mailOptions.to} (MessageID: ${result.messageId})`,
     );
     return result;

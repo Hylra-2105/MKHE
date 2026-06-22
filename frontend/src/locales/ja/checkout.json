@@ -12,7 +12,21 @@
   "success": {
     "order_placed": "注文が正常に完了しました！",
     "otp_sent": "OTPが正常に送信されました！",
-    "address_added": "住所が正常に追加されました！"
+    "address_added": "住所が正常に追加されました！",
+    "title": "注文が完了しました！",
+    "thank_you_part1": "MKHE Heritageでお買い物いただきありがとうございます。ご注文番号は",
+    "thank_you_part2": "請求書と注文の詳細が記載されたメールを送信しました。",
+    "qr_scan": "QRコードをスキャンして支払う",
+    "bank": "銀行",
+    "account_no": "口座番号",
+    "account_name": "口座名義",
+    "amount": "金額",
+    "content": "振込内容",
+    "note": "自動注文承認のために、正確な内容で振り込んでください。",
+    "cod_method": "支払い方法：代金引換",
+    "cod_note_part1": "配達時に",
+    "cod_note_part2": "をお支払いいただきます。",
+    "continue_shopping": "買い物を続ける"
   },
   "actions": {
     "back": "戻る"
@@ -27,7 +41,8 @@
     "phone": "電話番号",
     "phone_placeholder": "電話番号を入力",
     "address": "お届け先住所",
-    "address_placeholder": "詳細な住所を入力（入力して検索...）"
+    "address_placeholder": "詳細な住所を入力（入力して検索...）",
+    "email_notification": "通知メール"
   },
   "payment_method": {
     "title": "お支払い方法",
@@ -47,7 +62,8 @@
     "sending_otp": "OTP を送信中...",
     "confirm_btn": "注文を確定",
     "processing": "処理中...",
-    "ordering": "注文中..."
+    "ordering": "注文中...",
+    "discount": "割引 (クーポン)"
   },
   "otp": {
     "title": "OTP 検証",

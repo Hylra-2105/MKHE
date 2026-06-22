@@ -29,8 +29,20 @@ const getSafeToken = () => {
   if (!token || token === "undefined" || token === "null") {
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
+    
+    // Bắt session drop: Tránh việc user đóng tab bị mất sessionStorage token nhưng giỏ hàng cũ ở localStorage vẫn còn.
+    if (localStorage.getItem("mkhe_was_logged_in") === "true") {
+      localStorage.removeItem("mkhe_was_logged_in");
+      localStorage.removeItem("mkhe-cart-storage");
+      // Dọn dẹp trong memory (đưa vào setTimeout để tránh lỗi khởi tạo vòng lặp của store)
+      setTimeout(() => {
+        useCartStore.getState().clearCart();
+      }, 0);
+    }
     return null;
   }
+  
+  localStorage.setItem("mkhe_was_logged_in", "true");
   return token;
 };
 
@@ -89,6 +101,7 @@ export const useAuthStore = create((set) => ({
       storage.setItem("token", data.token);
       storage.setItem("refreshToken", data.refreshToken);
       storage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("mkhe_was_logged_in", "true");
 
       set({
         user: data.user,
@@ -146,6 +159,7 @@ export const useAuthStore = create((set) => ({
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("mkhe_was_logged_in", "true");
 
       set({
         user: data.user,
@@ -225,6 +239,7 @@ export const useAuthStore = create((set) => ({
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("mkhe_was_logged_in");
       
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("refreshToken");

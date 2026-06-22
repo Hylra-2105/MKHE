@@ -65,26 +65,26 @@ export default function CheckoutPage() {
         const data = await orderApi.getMyOrderStats();
         if (data.success) {
           setOrderStats(data.data);
+          if (data.data.cancelRate > 0.7 && data.data.totalOrders >= 3 && paymentMethod === "COD") {
+            setPaymentMethod("BANK_TRANSFER");
+          }
         }
       } catch (err) {
         console.error("Lỗi fetch order stats:", err);
       }
     };
     fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (orderStats.cancelRate > 0.7 && orderStats.totalOrders >= 3 && paymentMethod === "COD") {
-      setPaymentMethod("BANK_TRANSFER");
-    }
-  }, [orderStats, paymentMethod]);
+
 
   useEffect(() => {
     if (!buyNowItem && checkoutItems.length === 0 && !isSuccess) {
       toast.error(t("errors.no_items"));
       navigate("/cart"); // Or shop
     }
-  }, [checkoutItems.length, navigate, isSuccess, buyNowItem]);
+  }, [checkoutItems.length, navigate, isSuccess, buyNowItem, t]);
 
 
   const handleSendOtp = async () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import ShopLayout from "@/features/shop/components/ShopLayout";
 import ProductGrid from "@/features/shop/components/ProductGrid";
@@ -51,7 +51,7 @@ const ShopPage = () => {
     handleFilterChange("page", newPage);
   };
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       // Build param object cho axios
@@ -77,13 +77,14 @@ const ShopPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentFilters.search, currentFilters.category, currentFilters.culturalDNA, currentFilters.craftVillage, currentFilters.page, t]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
     // Scroll to top when page/filters change
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [searchParams]);
+  }, [fetchProducts, searchParams]);
 
   return (
     <ShopLayout filters={currentFilters} onFilterChange={handleFilterChange}>

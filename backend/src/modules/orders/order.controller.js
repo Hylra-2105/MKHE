@@ -31,7 +31,7 @@ export const sendCheckoutOtp = async (req, res) => {
     await OTP.create({ email: user.email, otp, purpose: "CHECKOUT" });
 
     // Simulate SMS
-    console.log(`[SIMULATE SMS] OTP for Checkout (${user.email}): ${otp}`);
+    console.info(`[SIMULATE SMS] OTP for Checkout (${user.email}): ${otp}`);
     
     const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
     sendCheckoutOtpEmail(user.email, otp, userLang).catch((err) => {

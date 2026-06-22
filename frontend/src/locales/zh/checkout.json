@@ -12,7 +12,21 @@
   "success": {
     "order_placed": "订单已成功提交！",
     "otp_sent": "OTP发送成功！",
-    "address_added": "地址添加成功！"
+    "address_added": "地址添加成功！",
+    "title": "下单成功！",
+    "thank_you_part1": "感谢您在MKHE Heritage购物。您的订单号是",
+    "thank_you_part2": "发票和订单详情已发送至您的邮箱。",
+    "qr_scan": "扫描二维码支付",
+    "bank": "银行",
+    "account_no": "账号",
+    "account_name": "账户名",
+    "amount": "金额",
+    "content": "转账内容",
+    "note": "请务必按准确内容转账以便系统自动审核订单。",
+    "cod_method": "付款方式：货到付款",
+    "cod_note_part1": "您将在收到货物时支付",
+    "cod_note_part2": "。",
+    "continue_shopping": "继续购物"
   },
   "actions": {
     "back": "返回"
@@ -27,7 +41,8 @@
     "phone": "电话号码",
     "phone_placeholder": "输入电话号码",
     "address": "送货地址",
-    "address_placeholder": "输入详细地址（输入以搜索...）"
+    "address_placeholder": "输入详细地址（输入以搜索...）",
+    "email_notification": "通知邮箱"
   },
   "payment_method": {
     "title": "付款方式",
@@ -47,7 +62,8 @@
     "sending_otp": "正在发送 OTP...",
     "confirm_btn": "确认订单",
     "processing": "处理中...",
-    "ordering": "下单中..."
+    "ordering": "下单中...",
+    "discount": "折扣（优惠券）"
   },
   "otp": {
     "title": "OTP 验证",
