@@ -19,6 +19,7 @@ import {
   User,
   Users,
   Package,
+  ShoppingBag,
   Ticket,
   BarChart,
   LogOut,
@@ -33,7 +34,7 @@ const LANGUAGES = [
 ];
 
 export default function Header() {
-  const { t, i18n } = useTranslation("header");
+  const { t, i18n } = useTranslation(["header", "history"]);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
@@ -232,6 +233,20 @@ export default function Header() {
                     >
                       <User className="w-4 h-4" />
                       {t("user_menu.profile")}
+                    </Link>
+
+                    {/* Lịch sử đơn hàng */}
+                    <Link
+                      to="/profile?tab=orders"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=orders")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
                     </Link>
 
                     {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}

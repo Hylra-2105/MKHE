@@ -178,3 +178,73 @@ export const getMyOrderStats = async (req, res) => {
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
+
+// GET /api/orders/me
+export const getMyOrders = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const orders = await Order.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Order.countDocuments({ user: req.user._id });
+
+    return successResponse(res, 200, "OK", {
+      data: orders,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("getMyOrders Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/orders/me/:id
+export const getOrderById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findOne({ _id: id, user: req.user._id }).populate("items.product");
+    
+    if (!order) {
+      return errorResponse(res, 404, "ORDER_NOT_FOUND");
+    }
+
+    return successResponse(res, 200, "OK", order);
+  } catch (error) {
+    console.error("getOrderById Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// PUT /api/orders/me/:id/cancel
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findOne({ _id: id, user: req.user._id });
+
+    if (!order) {
+      return errorResponse(res, 404, "ORDER_NOT_FOUND");
+    }
+
+    if (order.orderStatus !== "PENDING") {
+      return errorResponse(res, 400, "CANNOT_CANCEL_ORDER");
+    }
+
+    order.orderStatus = "CANCELLED";
+    await order.save();
+
+    return successResponse(res, 200, "ORDER_CANCELLED", order);
+  } catch (error) {
+    console.error("cancelOrder Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
