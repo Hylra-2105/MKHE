@@ -16,7 +16,11 @@
     "search_btn": "찾다",
     "all_categories": "모든 카테고리",
     "all_dna": "모든 유전자 코드",
-    "all_vendors": "모든 제공업체"
+    "all_vendors": "모든 제공업체",
+    "all_status": "모든 상태",
+    "status_published": "게시됨",
+    "status_draft": "초안",
+    "status_out_of_stock": "품절"
   },
   "table": {
     "name": "제품명",
@@ -111,8 +115,8 @@
     "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
   },
   "statuses": {
-    "DRAFT": "초안(숨김)",
-    "PUBLISHED": "게시됨(판매 중)",
+    "DRAFT": "초안",
+    "PUBLISHED": "게시됨",
     "OUT_OF_STOCK": "품절"
   },
   "pagination": {
@@ -162,7 +166,10 @@
     "file_3d_too_large": "3D 파일이 너무 큽니다(>150MB). 브라우저가 정지될 수 있습니다. 3D 소프트웨어를 사용하여 먼저 줄이세요.",
     "optimizing_3d": "3D 파일({{size}}MB)을 최적화하는 중... CPU를 사용합니다. 페이지를 닫지 마세요!",
     "optimize_3d_success": "3D 최적화 성공! 크기가 축소되었습니다: {{size}}MB",
-    "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다."
+    "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다.",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
   },
   "nfc": {
     "management_title": "NFC 태그 관리",

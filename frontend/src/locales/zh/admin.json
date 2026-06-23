@@ -62,7 +62,8 @@
   },
   "errors": {
     "FORBIDDEN_ACCESS": "您没有权限访问此功能！",
-    "fetch_failed": "获取用户列表时发生错误！"
+    "fetch_failed": "获取用户列表时发生错误！",
+    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
   },
   "table": {
     "avatar": "阿凡达",
@@ -135,6 +136,28 @@
     "drop_rate": "掉落率",
     "time": "时间",
     "status": "状态",
+    "status_running": "运行中",
+    "status_draft": "草稿",
+    "status_ended": "已结束",
+    "status_placeholder": "状态",
+    "end_early": "提前结束",
+    "delete_draft_success": "草稿删除成功",
+    "end_early_success": "优惠券提前结束成功",
+    "delete_draft_title": "删除草稿",
+    "end_early_title": "提前结束优惠券",
+    "delete_draft_desc": "您确定要永久删除草稿“{{code}}”吗？ 此操作无法撤消。",
+    "end_early_desc": "您确定要提前结束优惠券“{{code}}”吗？ 用户将无法再保存或使用此代码。",
+    "cancel": "取消",
+    "processing": "处理中...",
+    "confirm": "确认",
+    "publish_time_passed": "开始时间已过。请选择从现在起的时间来发布。",
+    "save_changes": "保存更改",
+    "publish_btn": "发布",
+    "update_success": "更新成功",
+    "update_error": "更新错误",
+    "edit_title": "更新优惠券",
+    "updating": "更新中...",
+    "edit_warning": "优惠券已发布，您只能修改过期时间和数量（如果需要缩短活动时间或添加更多代码）。",
     "loading": "正在加载数据...",
     "no_vouchers": "暂无折扣码",
     "o2o_offline": "线下 (O2O)",
@@ -190,7 +213,6 @@
     "no_categories": "没有可用的类别。",
     "apply_o2o": "适用 O2O (店内购买)",
     "apply_o2o_desc": "允许通过二维码扫描在实体店使用此代码。",
-    "cancel": "取消",
     "creating": "正在创建...",
     "create_btn": "创建代金券",
     "currency_symbol": "VND",
@@ -210,7 +232,10 @@
     "use_now": "立即使用",
     "scan_at_counter": "柜台扫描",
     "use_online": "在线使用",
-    "min_order_card": "最低订单 {{value}} VND"
+    "min_order_card": "最低订单 {{value}} VND",
+    "percentage": "Phần trăm (%)",
+    "fixed_amount": "Số tiền (VNĐ)",
+    "free_ship": "Miễn phí vận chuyển"
   },
   "orders": {
     "title": "订单管理",

@@ -14,9 +14,13 @@
   "filter": {
     "search_placeholder": "按产品名称或 SKU 搜索...",
     "search_btn": "搜索",
-    "all_categories": "所有类别",
-    "all_dna": "所有基因密码",
-    "all_vendors": "所有提供商"
+    "all_categories": "所有分类",
+    "all_dna": "所有基因代码",
+    "all_vendors": "所有合作伙伴",
+    "all_status": "所有状态",
+    "status_published": "公开",
+    "status_draft": "草稿",
+    "status_out_of_stock": "缺货"
   },
   "table": {
     "name": "产品名称",
@@ -111,8 +115,8 @@
     "story_placeholder": "输入详细的产品故事（支持粗体、斜体、格式化...）"
   },
   "statuses": {
-    "DRAFT": "草稿（隐藏）",
-    "PUBLISHED": "已发布（发售）",
+    "DRAFT": "草稿",
+    "PUBLISHED": "公开",
     "OUT_OF_STOCK": "缺货"
   },
   "pagination": {
@@ -162,7 +166,10 @@
     "file_3d_too_large": "3D 文件太大（>150MB），可能会导致浏览器无响应。请先使用 3D 软件减小文件大小。",
     "optimizing_3d": "正在优化 3D 文件 ({{size}}MB)... 这将使用您的 CPU，请不要关闭页面！",
     "optimize_3d_success": "3D 优化成功！大小减小到：{{size}}MB",
-    "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。"
+    "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
   },
   "nfc": {
     "management_title": "NFC标签管理",

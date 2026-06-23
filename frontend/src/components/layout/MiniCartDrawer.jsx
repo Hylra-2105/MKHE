@@ -5,6 +5,7 @@ import { formatNumber, getImageUrl } from "@/utils/formatters";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
+import { useVoucherStore } from "@/stores/useVoucherStore";
 
 const MiniCartDrawer = () => {
   const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, getDiscountedTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart, selectedVoucher, setSelectedVoucher } = useCartStore();
@@ -13,6 +14,22 @@ const MiniCartDrawer = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isVoucherSelectorOpen, setIsVoucherSelectorOpen] = useState(false);
+  const { walletVouchers, fetchWalletVouchers, isLoadingWallet } = useVoucherStore();
+
+  useEffect(() => {
+    if (isCartOpen) {
+      fetchWalletVouchers();
+    }
+  }, [isCartOpen, fetchWalletVouchers]);
+
+  useEffect(() => {
+    if (selectedVoucher && !isLoadingWallet) {
+      const isValid = walletVouchers.some(uv => uv.voucher._id === selectedVoucher._id && uv.status === "AVAILABLE");
+      if (!isValid) {
+        setSelectedVoucher(null);
+      }
+    }
+  }, [walletVouchers, selectedVoucher, isLoadingWallet, setSelectedVoucher]);
 
   useEffect(() => {
     if (selectedItems.length === 0 && selectedVoucher) {

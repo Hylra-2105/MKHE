@@ -2,7 +2,8 @@
   "dna": {
     "title": "문화상품",
     "subtitle": "독특한 장인정신의 정수를 발견해보세요",
-    "view_all": "모두 보기"
+    "view_all": "모두 보기",
+    "buy_now": "Mua ngay"
   },
   "hero": {
     "tag": "유산과 우아함",
@@ -20,7 +21,8 @@
       "about": "회사 소개",
       "b2b": "B2B 컬렉션",
       "b2c": "B2C 패션",
-      "heritage": "문화유산 여행"
+      "heritage": "문화유산 여행",
+      "explore_details": "Khám phá chi tiết"
     },
     "support": {
       "title": "지원하다",
@@ -39,5 +41,8 @@
     "badge": "출시 예정",
     "title": "보드 게임: 헤리티지 애비뉴",
     "desc": "완전히 새로운 인터랙티브 엔터테인먼트 경험입니다. MKHE가 곧 공개할 모든 광장을 통한 다차원적인 문화 여행을 기대해 주세요!"
+  },
+  "core_tech": {
+    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
   }
 }

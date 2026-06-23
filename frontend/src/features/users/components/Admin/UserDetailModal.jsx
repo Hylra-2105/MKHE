@@ -14,6 +14,7 @@ import {
   AlertTriangle,
   ChevronDown,
 } from "lucide-react";
+import Button from '@/components/ui/Button';
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -224,9 +225,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-full transition-all cursor-pointer"
+            className="p-2 hover:bg-[var(--color-mkhe-border)]/20 rounded-full transition-all cursor-pointer text-[var(--color-mkhe-text)]/60"
           >
-            <X className="w-6 h-6 text-[var(--color-mkhe-text)]" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -409,28 +410,25 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
                   <button
                     onClick={handleCancel}
                     disabled={isSaving}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer disabled:opacity-50"
+                    className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
                   >
-                    <XCircle className="w-4 h-4 transition-colors" />{" "}
                     {t("common.cancel")}
                   </button>
-                  <button
+                  <Button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
+                    className="!w-auto !px-6 !py-2.5 !rounded-lg !text-sm"
                   >
-                    <Check className="w-4 h-4 transition-colors" />{" "}
                     {isSaving ? t("common.saving") : t("common.save_info")}
-                  </button>
+                  </Button>
                 </>
               ) : (
-                <button
+                <Button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/20 transition-all cursor-pointer"
+                  className="!w-auto !px-8 !py-2.5 !rounded-lg !text-sm"
                 >
-                  <Edit2 className="w-4 h-4 transition-colors" />{" "}
                   {t("common.edit")}
-                </button>
+                </Button>
               )}
             </div>
           )}

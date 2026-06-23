@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Plus, Ticket, Calendar, TrendingDown, Tag, Box } from "lucide-react";
-import { getAdminVouchersApi } from "@/api/voucherApi";
+import { Plus, Ticket, Calendar, TrendingDown, Tag, Box, Edit2, Trash2, StopCircle, X } from "lucide-react";
+import { getAdminVouchersApi, deleteVoucherApi } from "@/api/voucherApi";
 import { formatNumber } from "@/utils/formatters";
 import toast from "react-hot-toast";
 import VoucherFormModal from "./VoucherFormModal";
@@ -15,10 +15,12 @@ const VoucherManagementFeature = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(4);
   const [totalPages, setTotalPages] = useState(1);
+  const [editVoucher, setEditVoucher] = useState(null);
+  const [confirmModal, setConfirmModal] = useState({ isOpen: false, voucher: null, isDelete: false });
 
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("PUBLISHED");
   const [typeFilter, setTypeFilter] = useState("ALL");
 
   const handleSearch = (e) => {
@@ -51,24 +53,72 @@ const VoucherManagementFeature = () => {
   // Pagination display
   const pageNumbers = [page - 1, page, page + 1];
 
+  const openConfirmModal = (voucher, isDelete) => {
+    setConfirmModal({ isOpen: true, voucher, isDelete });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModal({ isOpen: false, voucher: null, isDelete: false });
+  };
+
+  const executeAction = async () => {
+    const voucher = confirmModal.voucher;
+    if (!voucher) return;
+    
+    try {
+      setLoading(true);
+      const res = await deleteVoucherApi(voucher._id);
+      if (res.data?.success) {
+        toast.success(confirmModal.isDelete ? t("voucher.delete_draft_success", { defaultValue: "Đã xóa bản nháp thành công" }) : t("voucher.end_early_success", { defaultValue: "Đã kết thúc sớm voucher thành công" }));
+        fetchVouchers();
+      } else {
+        toast.error(res.data?.message || t("voucher.delete_error"));
+        setLoading(false);
+      }
+    } catch (error) {
+      toast.error(t("voucher.delete_error", { defaultValue: "Lỗi thực thi hành động" }));
+      setLoading(false);
+    } finally {
+      closeConfirmModal();
+    }
+  };
+
+  const openCreateModal = () => {
+    setEditVoucher(null);
+    setIsDrawerOpen(true);
+  };
+
+  const openEditModal = (voucher) => {
+    setEditVoucher(voucher);
+    setIsDrawerOpen(true);
+  };
+
   const getStatusBadge = (voucher) => {
+    if (voucher.status === "DRAFT") {
+      return <span className="px-2.5 py-1 text-xs rounded-full bg-gray-500/10 text-gray-500 font-bold">{t("voucher.status_draft", { defaultValue: "Bản nháp" })}</span>;
+    }
+    
+    if (isVoucherEnded(voucher)) {
+      return <span className="px-2.5 py-1 text-xs rounded-full bg-red-500/10 text-red-500 font-bold">{t("voucher.status_ended", { defaultValue: "Đã kết thúc" })}</span>;
+    }
+
+    // Status is PUBLISHED
     const now = new Date();
     const startDate = new Date(voucher.startDate);
-    const endDate = new Date(voucher.endDate);
 
-    if (!voucher.isActive) {
-      return <span className="px-2.5 py-1 text-xs rounded-full bg-red-100 text-red-700 font-medium">{t("voucher.badge_inactive")}</span>;
-    }
     if (now < startDate) {
-      return <span className="px-2.5 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-medium">{t("voucher.badge_upcoming")}</span>;
+      return <span className="px-2.5 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-500 font-bold">{t("voucher.badge_upcoming", { defaultValue: "Sắp diễn ra" })}</span>;
     }
-    if (now > endDate) {
-      return <span className="px-2.5 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-medium">{t("voucher.expired")}</span>;
-    }
-    if (voucher.usageLimit !== null && voucher.usedCount >= voucher.usageLimit) {
-      return <span className="px-2.5 py-1 text-xs rounded-full bg-gray-100 text-gray-700 font-medium">{t("voucher.out_of_stock")}</span>;
-    }
-    return <span className="px-2.5 py-1 text-xs rounded-full bg-green-100 text-green-700 font-medium">{t("voucher.running")}</span>;
+
+    return <span className="px-2.5 py-1 text-xs rounded-full bg-green-500/10 text-green-500 font-bold">{t("voucher.status_running", { defaultValue: "Đang chạy" })}</span>;
+  };
+
+  const isVoucherEnded = (voucher) => {
+    if (voucher.status === "ENDED") return true;
+    const now = new Date();
+    if (new Date(voucher.endDate) < now) return true;
+    if (voucher.usageLimit !== null && voucher.usedCount >= voucher.usageLimit) return true;
+    return false;
   };
 
   return (
@@ -79,7 +129,7 @@ const VoucherManagementFeature = () => {
           <p className="text-sm text-mkhe-text/60 italic">{t("voucher.subtitle")}</p>
         </div>
         <button 
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={openCreateModal}
           className="bg-mkhe-primary text-white cursor-pointer px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-mkhe-primary/90 transition-all shadow-lg shadow-mkhe-primary/20"
         >
           <Plus className="w-5 h-5" />
@@ -109,15 +159,14 @@ const VoucherManagementFeature = () => {
           <Dropdown
             value={statusFilter}
             options={[
-              { value: "ALL", label: t("voucher.status_all") },
-              { value: "RUNNING", label: t("voucher.running") },
-              { value: "UPCOMING", label: t("voucher.badge_upcoming") },
-              { value: "EXPIRED", label: t("voucher.expired") },
-              { value: "OUT_OF_STOCK", label: t("voucher.out_of_stock") }
+              { value: "ALL", label: t("voucher.status_all", { defaultValue: "Tất cả" }) },
+              { value: "PUBLISHED", label: t("voucher.status_running", { defaultValue: "Đang chạy" }) },
+              { value: "DRAFT", label: t("voucher.status_draft", { defaultValue: "Bản nháp" }) },
+              { value: "ENDED", label: t("voucher.status_ended", { defaultValue: "Đã kết thúc" }) }
             ]}
             onChange={(val) => { setStatusFilter(val); setPage(1); }}
-            placeholder={t("voucher.status_all")}
-            className="w-full md:w-56"
+            placeholder={t("voucher.status_placeholder", { defaultValue: "Trạng thái" })}
+            className="w-full md:w-48"
             triggerClassName="h-10 px-3 rounded"
             optionClassName="text-sm"
           />
@@ -151,12 +200,13 @@ const VoucherManagementFeature = () => {
                 <th className="p-4 font-semibold">{t("voucher.drop_rate")}</th>
                 <th className="p-4 font-semibold">{t("voucher.time")}</th>
                 <th className="p-4 font-semibold">{t("voucher.status")}</th>
+                <th className="p-4 font-semibold text-center">{t("table.actions", { defaultValue: "Hành động" })}</th>
               </tr>
             </thead>
             <tbody className="text-mkhe-text relative">
               {loading && (
                 <tr className="absolute inset-0 h-full flex items-center justify-center bg-mkhe-bg/50 backdrop-blur-sm pointer-events-none z-10">
-                  <td colSpan="7" className="text-center">
+                  <td colSpan="8" className="text-center">
                     <div className="inline-block animate-spin">
                       <div className="w-8 h-8 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
                     </div>
@@ -165,7 +215,7 @@ const VoucherManagementFeature = () => {
               )}
               {!loading && vouchers.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="p-8 text-center text-mkhe-text/50">
+                  <td colSpan="8" className="p-8 text-center text-mkhe-text/50">
                     <Ticket className="w-12 h-12 mx-auto mb-3 opacity-20" />
                     {t("voucher.no_vouchers")}
                   </td>
@@ -234,6 +284,37 @@ const VoucherManagementFeature = () => {
                     </td>
                     <td className="p-4">
                       {getStatusBadge(voucher)}
+                    </td>
+                    <td className="p-4 text-center">
+                      {!isVoucherEnded(voucher) && (
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => openEditModal(voucher)}
+                            className="p-2 rounded-full bg-mkhe-primary/10 hover:bg-mkhe-primary/20 text-mkhe-primary transition-all cursor-pointer"
+                            title={t("voucher.edit", { defaultValue: "Sửa" })}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          {voucher.status === "PUBLISHED" && (
+                            <button 
+                              onClick={() => openConfirmModal(voucher, false)} 
+                              className="p-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 rounded-full transition-colors cursor-pointer"
+                              title={t("voucher.end_early", { defaultValue: "Kết thúc sớm" })}
+                            >
+                              <StopCircle className="w-4 h-4" />
+                            </button>
+                          )}
+                          {voucher.status === "DRAFT" && (
+                            <button 
+                              onClick={() => openConfirmModal(voucher, true)} 
+                              className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full transition-colors cursor-pointer"
+                              title={t("voucher.action_delete")}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -306,7 +387,52 @@ const VoucherManagementFeature = () => {
         isOpen={isDrawerOpen} 
         onClose={() => setIsDrawerOpen(false)} 
         onSuccess={fetchVouchers}
+        editData={editVoucher}
       />
+
+      {/* Confirm Modal */}
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 transition-opacity">
+          <div className="relative bg-mkhe-bg p-6 rounded-2xl shadow-2xl border border-mkhe-border/10 w-[90%] max-w-[400px] animate-fade-in-up">
+            
+            <button
+              onClick={closeConfirmModal}
+              className="absolute top-4 right-4 p-1.5 rounded-full text-mkhe-text/50 hover:bg-mkhe-border/10 hover:text-mkhe-text transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${confirmModal.isDelete ? "bg-red-100 text-red-500" : "bg-yellow-100 text-yellow-600"}`}>
+                {confirmModal.isDelete ? <Trash2 className="w-8 h-8" /> : <StopCircle className="w-8 h-8" />}
+              </div>
+              <h3 className="text-xl font-bold text-mkhe-text mb-2">
+                {confirmModal.isDelete ? t("voucher.delete_draft_title", { defaultValue: "Xóa bản nháp" }) : t("voucher.end_early_title", { defaultValue: "Kết thúc sớm voucher" })}
+              </h3>
+              <p className="text-mkhe-text/70 mb-6 text-sm">
+                {confirmModal.isDelete 
+                  ? t("voucher.delete_draft_desc", { code: confirmModal.voucher?.code, defaultValue: `Bạn có chắc chắn muốn xóa vĩnh viễn bản nháp "${confirmModal.voucher?.code}" không? Thao tác này không thể hoàn tác.` })
+                  : t("voucher.end_early_desc", { code: confirmModal.voucher?.code, defaultValue: `Bạn có chắc chắn muốn kết thúc sớm voucher "${confirmModal.voucher?.code}" không? Người dùng sẽ không thể tiếp tục lưu hay sử dụng mã này.` })}
+              </p>
+              <div className="flex justify-center w-full gap-3 mt-2">
+                <button 
+                  onClick={closeConfirmModal}
+                  className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-xl hover:bg-[var(--color-mkhe-border)]/50 transition-all text-sm cursor-pointer"
+                >
+                  {t("voucher.cancel", { defaultValue: "Hủy bỏ" })}
+                </button>
+                <button 
+                  onClick={executeAction}
+                  disabled={loading}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-white transition-all text-sm cursor-pointer disabled:opacity-50 ${confirmModal.isDelete ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20" : "bg-mkhe-primary hover:bg-mkhe-primary/90 shadow-lg shadow-mkhe-primary/20"}`}
+                >
+                  {loading ? t("voucher.processing", { defaultValue: "Đang xử lý..." }) : t("voucher.confirm", { defaultValue: "Xác nhận" })}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

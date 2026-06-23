@@ -16,7 +16,8 @@
     "update_success": "Update successful!",
     "change_pass_success": "Password updated successfully!",
     "otp_sent_success": "OTP sent successfully!",
-    "otp_send_error": "Error sending OTP"
+    "otp_send_error": "Error sending OTP",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "auth": {
     "new_password": "New Password",
@@ -54,7 +55,6 @@
     "edit": "Edit",
     "save_info": "Save Information"
   },
-
   "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP code.",
   "PASSWORD_MUST_BE_DIFFERENT": "New password must be different from the current password.",
   "USER_NOT_FOUND": "User account not found.",

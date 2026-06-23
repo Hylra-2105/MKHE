@@ -16,7 +16,8 @@
     "update_success": "アップデートが成功しました！",
     "change_pass_success": "パスワードが正常に更新されました。",
     "otp_sent_success": "OTP が正常に送信されました。",
-    "otp_send_error": "OTP 送信エラー"
+    "otp_send_error": "OTP 送信エラー",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "auth": {
     "new_password": "新しいパスワード",

@@ -72,16 +72,21 @@ const voucherSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    status: {
+      type: String,
+      enum: ["DRAFT", "PUBLISHED", "ENDED"],
+      default: "DRAFT",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Check if voucher is currently valid (time & active)
+// Virtual property: kiểm tra Voucher có đang hợp lệ không (còn hạn, còn lượt, và được PUBLISHED)
 voucherSchema.virtual("isValid").get(function () {
   const now = new Date();
-  return this.isActive && now >= this.startDate && now <= this.endDate && (this.usageLimit === null || this.usedCount < this.usageLimit);
+  return this.status === "PUBLISHED" && this.isActive && now >= this.startDate && now <= this.endDate && (this.usageLimit === null || this.usedCount < this.usageLimit);
 });
 
 const Voucher = mongoose.model("Voucher", voucherSchema);
