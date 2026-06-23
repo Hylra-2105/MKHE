@@ -42,7 +42,9 @@
     "phone_placeholder": "Nhập số điện thoại",
     "address": "Địa chỉ giao hàng",
     "address_placeholder": "Nhập địa chỉ chi tiết (nhập để tìm kiếm...)",
-    "email_notification": "Email nhận thông báo"
+    "email_notification": "Email nhận thông báo",
+    "note": "Ghi chú đơn hàng (Tùy chọn)",
+    "note_placeholder": "Ghi chú thêm về thời gian nhận hàng, địa điểm..."
   },
   "payment_method": {
     "title": "Phương thức thanh toán",

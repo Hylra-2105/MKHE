@@ -55,18 +55,23 @@ const Dropdown = ({
             <button
               key={opt.value}
               type="button"
+              disabled={opt.disabled}
               onClick={() => {
-                onChange(opt.value);
-                setIsOpen(false);
+                if (!opt.disabled) {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }
               }}
-              className={`w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left flex justify-between items-center cursor-pointer transition-colors ${
-                value === opt.value
-                  ? "text-mkhe-primary hover:bg-mkhe-primary/10 font-semibold"
-                  : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+              className={`w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left flex justify-between items-center transition-colors ${
+                opt.disabled
+                  ? "opacity-40 cursor-not-allowed bg-mkhe-border/5 text-mkhe-text/50"
+                  : value === opt.value
+                  ? "text-mkhe-primary hover:bg-mkhe-primary/10 font-semibold cursor-pointer"
+                  : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10 cursor-pointer"
               } ${optionClassName}`}
             >
               <span className={`truncate ${opt.color || ""}`}>{opt.label}</span>
-              {value === opt.value && <Check className="w-4 h-4 shrink-0" />}
+              {value === opt.value && !opt.disabled && <Check className="w-4 h-4 shrink-0" />}
             </button>
           ))}
         </div>

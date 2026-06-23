@@ -96,7 +96,13 @@
       "current_file": "Current 3D file",
       "label": "3D MODEL FILE (.GLB, .GLTF)",
       "error_upload": "Error uploading 3D file",
-      "error_upload_both": "Error uploading image or 3D file"
+      "error_upload_both": "Error uploading image or 3D file",
+      "selected_file": "New 3D file selected",
+      "optimized": "Web-optimized",
+      "deleted": "Current 3D Model will be deleted",
+      "click_upload_new": "Drag & drop or click to upload new file",
+      "auto_compress": "System automatically optimizes Mesh & Texture. Supports huge files up to 150MB!",
+      "delete": "Delete"
     }
   },
   "statuses": {

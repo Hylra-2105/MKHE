@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X, Package, UploadCloud, ImageIcon, Fingerprint, Box } from "lucide-react";
+import { X, Package, Fingerprint } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Dropdown from "@/components/ui/Dropdown";
 import { productApi } from "@/api/productApi";
@@ -10,6 +10,8 @@ import { draftDB } from "@/utils/db";
 import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
 import RichTextEditor from "@/components/ui/RichTextEditor";
+import ImageGalleryUploader from "./ImageGalleryUploader";
+import Model3DUploader from "./Model3DUploader";
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
@@ -331,7 +333,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
       toast.success(t("messages.add_success"));
 
-      try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {}
+      try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {
+        // Ignore DB error
+      }
       resetForm();
       if (onSuccess) onSuccess();
       onClose();
@@ -356,7 +360,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleCancel = async () => {
     resetForm();
-    try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {}
+    try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {
+      // Ignore
+    }
     onClose();
   };
 
@@ -379,31 +385,23 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* CỘT TRÁI: UPLOAD ẢNH */}
           <div className="md:w-[35%] bg-mkhe-primary/5 p-6 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 overflow-y-auto custom-scrollbar">
-            <div className="flex items-center gap-2 mb-4">
-              <ImageIcon className="w-4 h-4 text-mkhe-primary" />
-              <label className="text-xs font-bold text-mkhe-text/70 uppercase">{t("modal.images_label")} ({previewUrls.length}/{MAX_IMAGES})</label>
-            </div>
-            <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${isDragging ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg" : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"}`}>
-              <div className="pointer-events-none flex flex-col items-center">
-                <UploadCloud className={`w-10 h-10 mb-3 ${isDragging ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                <p className="text-sm text-center font-semibold text-mkhe-text/80">{t("modal.drag_drop_text")}</p>
-              </div>
-              <input type="file" ref={fileInputRef} onChange={handleFileInput} accept="image/*,video/*" multiple className="hidden" />
-            </div>
-            {previewUrls.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mt-6">
-                {previewUrls.map((preview, index) => (
-                  <div key={index} className="relative group rounded-lg overflow-hidden border border-mkhe-border/30 aspect-square cursor-pointer hover:border-mkhe-primary transition-colors" onClick={() => setActiveLightboxUrl(preview)}>
-                    {preview.type.startsWith("video/") ? (
-                      <video src={preview.url} className="w-full h-full object-cover" muted />
-                    ) : (
-                      <img src={preview.url} alt={`preview-${index}`} className="w-full h-full object-cover" />
-                    )}
-                    <button type="button" onClick={(e) => { e.stopPropagation(); removeImage(index); }} className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 shadow-md"><X className="w-3 h-3" /></button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ImageGalleryUploader
+              maxImages={MAX_IMAGES}
+              keptImages={[]}
+              newImagePreviews={previewUrls}
+              deletedImages={[]}
+              isDragging={isDragging}
+              fileInputRef={fileInputRef}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onFileInputClick={() => fileInputRef.current?.click()}
+              onFileInputChange={handleFileInput}
+              onSetActiveLightboxUrl={setActiveLightboxUrl}
+              onMarkImageForDeletion={() => {}}
+              onUndoDeleteImage={() => {}}
+              onRemoveNewImage={removeImage}
+            />
           </div>
 
           {/* CỘT PHẢI: FORM THÔNG TIN */}
@@ -556,52 +554,19 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     </div>
                   )}
                   
-                  {/* KÉO THẢ FILE 3D XỊN XÒ */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1 flex items-center gap-1">
-                      <Box className="w-3 h-3" /> {t("modal.3d_file.label")}
-                    </label>
-                    <div
-                      onDragOver={handleDragOver3D}
-                      onDragLeave={handleDragLeave3D}
-                      onDrop={handleDrop3D}
-                      onClick={() => fileInput3DRef.current?.click()}
-                      className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${
-                        isDragging3D
-                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg"
-                          : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"
-                      }`}
-                    >
-                      <input type="file" ref={fileInput3DRef} onChange={handleFileInput3D} accept=".glb,.gltf" className="hidden" />
-                      
-                      {isCompressing3D ? (
-                        <div className="flex flex-col items-center gap-3 py-4 pointer-events-none">
-                          <div className="w-8 h-8 border-4 border-mkhe-primary border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-xs font-bold text-mkhe-primary animate-pulse text-center">
-                            {t("modal.3d_file.compressing").split(' (')[0]}<br/>({t("modal.3d_file.compressing").split(' (')[1]}
-                          </span>
-                        </div>
-                      ) : file3D ? (
-                        <div className="flex items-center gap-3 w-full justify-between bg-mkhe-primary/10 p-2.5 rounded-lg border border-mkhe-primary/30">
-                          <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
-                            <Box className="w-5 h-5 text-mkhe-primary shrink-0" />
-                            <span className="text-sm text-mkhe-text font-medium truncate">{file3D.name}</span>
-                            <span className="text-xs font-bold text-green-500 shrink-0">({(file3D.size / (1024 * 1024)).toFixed(2)} MB)</span>
-                          </div>
-                          <button type="button" onClick={remove3DFile} className="p-1.5 cursor-pointer hover:bg-red-500/20 text-red-500 rounded-md transition-colors z-10 relative">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-2 py-3 pointer-events-none">
-                          <UploadCloud className={`w-8 h-8 mb-1 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                          <span className="text-xs font-medium text-mkhe-text/70 text-center px-4">
-                            {isDragging3D ? "Thả file 3D vào đây" : t("modal.3d_file.drag_drop")}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <Model3DUploader
+                    hasDPP={formData.hasDPP}
+                    file3D={file3D}
+                    isDragging3D={isDragging3D}
+                    isCompressing3D={isCompressing3D}
+                    isDeleted3D={false}
+                    onDragOver={handleDragOver3D}
+                    onDragLeave={handleDragLeave3D}
+                    onDrop={handleDrop3D}
+                    onFileInputChange={handleFileInput3D}
+                    onRemove3DFile={remove3DFile}
+                    fileInput3DRef={fileInput3DRef}
+                  />
                 </div>
               </div>
 

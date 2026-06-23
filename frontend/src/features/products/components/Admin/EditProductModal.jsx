@@ -4,8 +4,6 @@ import {
   X,
   Edit3,
   Trash2,
-  UploadCloud,
-  ImageIcon,
   RotateCcw,
   Fingerprint,
   Box,
@@ -23,6 +21,8 @@ import { isVideoMedia } from "@/utils/validators";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
+import ImageGalleryUploader from "./ImageGalleryUploader";
+import Model3DUploader from "./Model3DUploader";
 
 const MAX_IMAGES = 10;
 
@@ -448,166 +448,23 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* CỘT TRÁI: QUẢN LÝ ẢNH */}
           <div className="md:w-[35%] bg-mkhe-primary/5 p-6 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 overflow-y-auto custom-scrollbar">
-            <div className="flex items-center gap-2 mb-4">
-              <ImageIcon className="w-4 h-4 text-mkhe-primary" />
-              <label className="text-xs font-bold text-mkhe-text/70 uppercase">
-                {t("modal.gallery_label")} (
-                {keptImages.length + newImagePreviews.length}/{MAX_IMAGES})
-              </label>
-            </div>
-
-            <div
+            <ImageGalleryUploader
+              maxImages={MAX_IMAGES}
+              keptImages={keptImages}
+              newImagePreviews={newImagePreviews}
+              deletedImages={deletedImages}
+              isDragging={isDragging}
+              fileInputRef={fileInputRef}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${
-                isDragging
-                  ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg"
-                  : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"
-              }`}
-            >
-              <div className="pointer-events-none flex flex-col items-center">
-                <UploadCloud className={`w-10 h-10 mb-3 ${isDragging ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                <p className="text-sm text-center font-semibold text-mkhe-text/80">
-                  {t("modal.drag_drop_text")}
-                </p>
-                <p className="text-xs text-mkhe-text/50 mt-1">
-                  {t("modal.click_to_select")}
-                </p>
-              </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileInput}
-                accept="image/*,video/*"
-                multiple
-                className="hidden"
-              />
-            </div>
-
-            {/* 1. ẢNH ĐANG GIỮ LẠI (KEPT IMAGES) */}
-            {keptImages.length > 0 && (
-              <div className="mt-6">
-                <p className="text-[10px] font-bold text-mkhe-text/50 uppercase mb-3">
-                  {t("modal.current_images")}
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  {keptImages.map((url, index) => (
-                    <div
-                      key={`kept-${index}`}
-                      className="relative group rounded-xl overflow-hidden border border-[var(--color-mkhe-border)] aspect-square bg-[var(--color-mkhe-border)]/5 flex items-center justify-center cursor-pointer hover:border-mkhe-primary transition-colors"
-                      onClick={() => setActiveLightboxUrl(url)}
-                    >
-                      {isVideoMedia(url) ? (
-                        <video src={url} className="w-full h-full object-cover" muted />
-                      ) : (
-                        <img
-                          src={url}
-                          alt={`kept-${index}`}
-                          loading="lazy"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          markImageForDeletion(url);
-                        }}
-                        className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 cursor-pointer shadow-md"
-                        title={t("modal.mark_for_deletion")}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 2. ẢNH MỚI UPLOAD (NEW IMAGES) */}
-            {newImagePreviews.length > 0 && (
-              <div className="mt-6">
-                <p className="text-[10px] font-bold text-mkhe-primary uppercase mb-3">
-                  {t("modal.new_images")}
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  {newImagePreviews.map((url, index) => (
-                    <div
-                      key={`new-${index}`}
-                      className="relative group rounded-lg overflow-hidden border border-mkhe-primary/50 aspect-square cursor-pointer transition-colors"
-                      onClick={() => setActiveLightboxUrl(url)}
-                    >
-                      {url.type && url.type.startsWith("video/") ? (
-                        <video src={url.url} className="w-full h-full object-cover" muted />
-                      ) : (
-                        <img
-                          src={url.url}
-                          alt={`new-${index}`}
-                          loading="lazy"
-                          className="w-full h-full object-cover"
-                        />
-                      )}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeNewImage(index);
-                        }}
-                        className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 cursor-pointer shadow-md"
-                        title={t("modal.delete_image")}
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                      <div className="absolute bottom-0 inset-x-0 bg-mkhe-primary/90 py-0.5 text-center">
-                        <span className="text-[9px] text-white font-bold uppercase">
-                          {t("modal.new_badge")}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 3. ẢNH ĐÁNH DẤU XÓA (DELETED IMAGES) */}
-            {deletedImages.length > 0 && (
-              <div className="mt-6">
-                <p className="text-[10px] font-bold text-red-500 uppercase mb-3">
-                  {t("modal.marked_for_deletion")}
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  {deletedImages.map((url, index) => (
-                    <div
-                      key={`deleted-${index}`}
-                      className="relative rounded-lg overflow-hidden border-2 border-red-500/50 aspect-square"
-                    >
-                      <img
-                        src={url}
-                        alt={`deleted-${index}`}
-                        loading="lazy"
-                        className="w-full h-full object-cover grayscale opacity-40 blur-[1px]"
-                      />
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
-                        <Trash2 className="w-6 h-6 text-red-500 mb-1" />
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          undoDeleteImage(url);
-                        }}
-                        className="absolute top-1 right-1 p-1.5 bg-mkhe-primary text-white rounded-full hover:scale-110 transition-transform z-10 cursor-pointer shadow-lg"
-                        title={t("modal.restore_image")}
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              onFileInputClick={() => fileInputRef.current?.click()}
+              onFileInputChange={handleFileInput}
+              onSetActiveLightboxUrl={setActiveLightboxUrl}
+              onMarkImageForDeletion={markImageForDeletion}
+              onUndoDeleteImage={undoDeleteImage}
+              onRemoveNewImage={removeNewImage}
+            />
           </div>
 
           {/* CỘT PHẢI: FORM THÔNG TIN & NFC */}
@@ -793,50 +650,19 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                   )}
                   
                   {/* KÉO THẢ FILE 3D XỊN XÒ */}
-                  <div className="flex flex-col gap-1.5 w-full">
-                    <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1 flex items-center gap-1">
-                      <Box className="w-3 h-3" /> {t("modal.3d_file.label")}
-                    </label>
-                    <div
-                      onDragOver={handleDragOver3D}
-                      onDragLeave={handleDragLeave3D}
-                      onDrop={handleDrop3D}
-                      onClick={() => fileInput3DRef.current?.click()}
-                      className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${
-                        isDragging3D
-                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg"
-                          : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"
-                      }`}
-                    >
-                      <input type="file" ref={fileInput3DRef} onChange={handleFileInput3D} accept=".glb,.gltf" className="hidden" />
-                      
-                      {isCompressing3D ? (
-                        <div className="flex flex-col items-center gap-3 py-4 pointer-events-none">
-                          <div className="w-8 h-8 border-4 border-mkhe-primary border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-xs font-bold text-mkhe-primary animate-pulse text-center">
-                            {t("modal.3d_file.compressing").split(' (')[0]}<br/>({t("modal.3d_file.compressing").split(' (')[1]}
-                          </span>
-                        </div>
-                      ) : file3D ? (
-                        <div className="flex items-center gap-3 w-full justify-between bg-mkhe-primary/10 p-2.5 rounded-lg border border-mkhe-primary/30">
-                          <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
-                            <Box className="w-5 h-5 text-mkhe-primary shrink-0" />
-                            <span className="text-sm text-mkhe-text font-medium truncate">{file3D.name || t("modal.3d_file.current_file")}</span>
-                            <span className="text-xs font-bold text-green-500 shrink-0">({(file3D.size / (1024 * 1024)).toFixed(2)} MB)</span>
-                          </div>
-                          <button type="button" onClick={remove3DFile} className="p-1.5 cursor-pointer hover:bg-red-500/20 text-red-500 rounded-md transition-colors z-10 relative">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-2 py-3 pointer-events-none">
-                          <UploadCloud className={`w-8 h-8 mb-1 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                          <span className="text-xs font-medium text-mkhe-text/70 text-center px-4">
-                            {product.file3D && !isDeleted3D ? t("modal.3d_file.replace_file") : t("modal.3d_file.drag_drop")}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                  <Model3DUploader
+                    hasDPP={formData.hasDPP}
+                    file3D={file3D}
+                    isDragging3D={isDragging3D}
+                    isCompressing3D={isCompressing3D}
+                    isDeleted3D={isDeleted3D}
+                    onDragOver={handleDragOver3D}
+                    onDragLeave={handleDragLeave3D}
+                    onDrop={handleDrop3D}
+                    onFileInputChange={handleFileInput3D}
+                    onRemove3DFile={remove3DFile}
+                    fileInput3DRef={fileInput3DRef}
+                  />
 
                     {/* HIỂN THỊ FILE 3D HIỆN TẠI (LÀM MỜ NẾU BỊ ĐÁNH DẤU XÓA HOẶC BỊ GHI ĐÈ BỞI FILE MỚI) */}
                     {product?.file3D && (
@@ -873,8 +699,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     )}
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
             </div>
 
             {/* TAB NFC */}

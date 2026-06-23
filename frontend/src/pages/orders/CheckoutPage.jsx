@@ -30,6 +30,7 @@ export default function CheckoutPage() {
     isDefault: defaultAddress?.isDefault || false,
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [isVoucherDrawerOpen, setIsVoucherDrawerOpen] = useState(false);
@@ -153,6 +154,7 @@ export default function CheckoutPage() {
         otp: (paymentMethod === "COD" && !isTrustedDevice) ? otp : undefined,
         voucherId: selectedVoucher?._id,
         isTrustedDevice: paymentMethod === "COD" ? isTrustedDevice : undefined,
+        note,
       };
 
       const res = await orderApi.checkout(payload);
@@ -200,6 +202,8 @@ export default function CheckoutPage() {
           userEmail={user?.email}
           user={user}
           orderStats={orderStats}
+          note={note}
+          setNote={setNote}
         />
 
         <OrderSummary 

@@ -14,7 +14,8 @@
     "admin_area": "Khu vực quản trị",
     "staff_area": "Khu vực nhân viên",
     "manage_products": "Quản lý Sản phẩm",
-    "manage_vouchers": "Quản lý Voucher"
+    "manage_vouchers": "Quản lý Voucher",
+    "manage_orders": "Quản lý Đơn hàng"
   },
   "guest_menu": {
     "login": "Đăng nhập"

@@ -42,7 +42,9 @@
     "phone_placeholder": "전화번호 입력",
     "address": "배송지 주소",
     "address_placeholder": "상세 주소 입력 (입력하여 검색...)",
-    "email_notification": "알림 이메일"
+    "email_notification": "알림 이메일",
+    "note": "주문 메모 (선택 사항)",
+    "note_placeholder": "배송 시간, 장소 등에 대한 추가 메모..."
   },
   "payment_method": {
     "title": "결제 수단",

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { X, Package, MapPin, CreditCard, Loader2, CheckCircle2, RotateCcw } from "lucide-react";
+import { X, Package, MapPin, CreditCard, Loader2, CheckCircle2, RotateCcw, MessageSquare } from "lucide-react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import orderApi from "@/api/orderApi";
@@ -16,7 +16,9 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isRebuying, setIsRebuying] = useState(false);
+  const [isReceiving, setIsReceiving] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isConfirmReceiveOpen, setIsConfirmReceiveOpen] = useState(false);
   const formatMoney = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };
@@ -58,6 +60,27 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
       toast.error(t("history:cancel_error", { defaultValue: "Không thể hủy đơn hàng" }));
     } finally {
       setIsCancelling(false);
+    }
+  };
+
+  const handleReceiveClick = () => {
+    setIsConfirmReceiveOpen(true);
+  };
+
+  const executeReceiveOrder = async () => {
+    setIsConfirmReceiveOpen(false);
+    setIsReceiving(true);
+    try {
+      const response = await orderApi.receiveOrder(orderId);
+      if (response && response.success) {
+        toast.success(t("history:receive_success", { defaultValue: "Đã xác nhận nhận hàng thành công!" }));
+        setOrder(response.data);
+        if (onOrderUpdated) onOrderUpdated();
+      }
+    } catch (error) {
+      toast.error(t("history:receive_error", { defaultValue: "Lỗi xác nhận nhận hàng" }));
+    } finally {
+      setIsReceiving(false);
     }
   };
 
@@ -135,7 +158,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                 {t("history:status_cancelled", { defaultValue: "Đơn hàng đã bị hủy" })}
               </div>
             ) : (
-              <div className="relative flex justify-between items-center w-full max-w-xl mx-auto mt-6 mb-2">
+              <div className="relative z-0 flex justify-between items-center w-full max-w-xl mx-auto mt-6 mb-2">
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-[var(--color-mkhe-border)]/20 -z-10 rounded-full"></div>
                 <div 
                   className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-mkhe-primary -z-10 rounded-full transition-all duration-500"
@@ -199,6 +222,16 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             </div>
           </div>
 
+          {order.note && (
+            <div className="bg-[var(--color-mkhe-input)]/50 p-5 rounded-2xl border border-[var(--color-mkhe-border)]/10 mb-8">
+              <h3 className="font-bold text-[var(--color-mkhe-text)] flex items-center gap-2 mb-2">
+                <MessageSquare className="w-5 h-5 text-mkhe-primary" />
+                {t("history:note", { defaultValue: "Ghi chú đơn hàng" })}
+              </h3>
+              <p className="text-sm text-[var(--color-mkhe-text)]/80 italic">{order.note}</p>
+            </div>
+          )}
+
           {/* Items */}
           <div>
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("checkout:summary.title", { defaultValue: "Đơn hàng" })}</h3>
@@ -254,6 +287,23 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             </button>
           )}
 
+          {order.orderStatus === "DELIVERING" && (
+            <button
+              onClick={handleReceiveClick}
+              disabled={isReceiving}
+              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer border border-green-500/30"
+            >
+              {isReceiving ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <CheckCircle2 className="w-4 h-4" />
+                  {t("history:receive_btn", { defaultValue: "Đã nhận được hàng" })}
+                </>
+              )}
+            </button>
+          )}
+
           <button
             onClick={handleRebuy}
             disabled={isRebuying}
@@ -278,9 +328,20 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
         title={t("history:cancel_btn", { defaultValue: "Hủy đơn hàng" })}
         message={t("history:confirm_cancel", { defaultValue: "Bạn có chắc chắn muốn hủy đơn hàng này không?" })}
         confirmText={t("history:cancel_btn", { defaultValue: "Hủy đơn hàng" })}
-        cancelText="Hủy"
+        cancelText={t("common:cancel", { defaultValue: "Hủy" })}
         icon="alert"
         isDanger={true}
+      />
+
+      <ConfirmModal
+        isOpen={isConfirmReceiveOpen}
+        onConfirm={executeReceiveOrder}
+        onCancel={() => setIsConfirmReceiveOpen(false)}
+        title={t("history:receive_btn", { defaultValue: "Đã nhận được hàng" })}
+        message={t("history:confirm_receive", { defaultValue: "Xác nhận bạn đã nhận được hàng và sản phẩm không có vấn đề gì?" })}
+        confirmText={t("history:confirm_btn", { defaultValue: "Đồng ý" })}
+        cancelText={t("common:back", { defaultValue: "Trở lại" })}
+        icon="check"
       />
     </div>
   );

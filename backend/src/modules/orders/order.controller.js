@@ -6,6 +6,7 @@ import OTP from "../auth/otp.model.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
 import { sendCheckoutOtpEmail, sendInvoiceEmail } from "../../utils/email.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 const generateOrderCode = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -48,7 +49,7 @@ export const sendCheckoutOtp = async (req, res) => {
 export const checkout = async (req, res) => {
   try {
     const user = req.user;
-    const { shippingInfo, items, paymentMethod, otp, voucherId, isTrustedDevice } = req.body;
+    const { shippingInfo, items, paymentMethod, otp, voucherId, isTrustedDevice, note } = req.body;
 
     // 1. Verify OTP
     if (paymentMethod === "COD" && !isTrustedDevice) {
@@ -113,6 +114,15 @@ export const checkout = async (req, res) => {
 
     const totalAmount = Math.max(0, subtotal + shippingFee - discountAmount);
 
+    // Calculate cancelRate for Anti-Fraud
+    const totalUserOrders = await Order.countDocuments({ user: user._id });
+    const canceledUserOrders = await Order.countDocuments({ user: user._id, orderStatus: "CANCELLED" });
+    const cancelRate = totalUserOrders >= 3 ? (canceledUserOrders / totalUserOrders) * 100 : 0;
+    
+    const isHighValue = totalAmount >= (parseInt(process.env.HIGH_RISK_THRESHOLD) || 5000000);
+    const isHighRiskUser = cancelRate > 50;
+    const isHighRisk = isHighValue || isHighRiskUser;
+
     // 4. Create Order
     let orderCode = generateOrderCode();
     while (await Order.findOne({ orderCode })) {
@@ -132,7 +142,9 @@ export const checkout = async (req, res) => {
       discountAmount,
       totalAmount,
       voucherCode: appliedVoucherCode,
-      requireCallConfirm: totalAmount >= (parseInt(process.env.HIGH_RISK_THRESHOLD) || 5000000),
+      requireCallConfirm: isHighValue,
+      isHighRisk: isHighRisk,
+      note: note,
     }]);
 
     // 5. Remove cart items
@@ -242,9 +254,195 @@ export const cancelOrder = async (req, res) => {
     order.orderStatus = "CANCELLED";
     await order.save();
 
+    // ROLLBACK STOCK
+    for (const item of order.items) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        product.stock += item.quantity;
+        if (product.status === "OUT_OF_STOCK") product.status = "PUBLISHED";
+        await product.save();
+      }
+    }
+
     return successResponse(res, 200, "ORDER_CANCELLED", order);
   } catch (error) {
     console.error("cancelOrder Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// PUT /api/orders/me/:id/receive
+export const receiveOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await Order.findOne({ _id: id, user: req.user.id });
+
+    if (!order) {
+      return errorResponse(res, 404, "ORDER_NOT_FOUND");
+    }
+
+    if (order.orderStatus !== "DELIVERING") {
+      return errorResponse(res, 400, "CANNOT_RECEIVE_ORDER_NOT_DELIVERING");
+    }
+
+    order.orderStatus = "COMPLETED";
+    order.paymentStatus = "PAID";
+    
+    await order.save();
+
+    return successResponse(res, 200, "ORDER_RECEIVED", order);
+  } catch (error) {
+    console.error("receiveOrder Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/orders/admin
+export const getAllOrdersAdmin = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const statusFilter = req.query.status || "";
+    const search = req.query.search || "";
+    const startDate = req.query.startDate || "";
+    const endDate = req.query.endDate || "";
+    const highRisk = req.query.highRisk || "";
+    
+    const skip = (page - 1) * limit;
+
+    let query = {};
+    if (statusFilter) query.orderStatus = statusFilter;
+    
+    if (highRisk === "true") query.isHighRisk = true;
+
+    if (search) {
+      const searchRegex = createVietnameseRegex(search);
+      query.$or = [
+        { orderCode: { $regex: searchRegex, $options: "i" } },
+        { "shippingInfo.name": { $regex: searchRegex, $options: "i" } },
+        { "shippingInfo.phone": { $regex: searchRegex, $options: "i" } },
+      ];
+    }
+
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        query.createdAt.$gte = start;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
+    }
+
+    const total = await Order.countDocuments(query);
+    const orders = await Order.find(query)
+      .populate("user", "name email phone avatar isBlocked role bio addresses")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // We still compute cancelRate to attach to the response so frontend can show the exact % if needed
+    const ordersWithCancelRate = await Promise.all(orders.map(async (order) => {
+      const orderObj = order.toObject();
+      if (orderObj.user) {
+        const totalUserOrders = await Order.countDocuments({ user: orderObj.user._id });
+        const canceledUserOrders = await Order.countDocuments({ user: orderObj.user._id, orderStatus: "CANCELLED" });
+        orderObj.user.cancelRate = totalUserOrders >= 3 ? Math.round((canceledUserOrders / totalUserOrders) * 100) : 0;
+      }
+      return orderObj;
+    }));
+
+    return successResponse(res, 200, "OK", {
+      data: ordersWithCancelRate,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("getAllOrdersAdmin Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// PUT /api/orders/admin/:id/status
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, paymentStatus } = req.body;
+    
+    const allowedStatuses = ["PENDING", "CONFIRMED", "DELIVERING", "COMPLETED", "CANCELLED"];
+    if (!allowedStatuses.includes(status)) {
+      return errorResponse(res, 400, "INVALID_STATUS");
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return errorResponse(res, 404, "ORDER_NOT_FOUND");
+    }
+
+    if (paymentStatus) {
+      const allowedPaymentStatuses = ["UNPAID", "PAID"];
+      if (allowedPaymentStatuses.includes(paymentStatus)) {
+        order.paymentStatus = paymentStatus;
+      }
+    }
+
+    // Validation: Block shipping if VietQR is UNPAID
+    if (order.paymentMethod === "BANK_TRANSFER" && order.paymentStatus === "UNPAID") {
+      if (["CONFIRMED", "DELIVERING", "COMPLETED"].includes(status)) {
+        return errorResponse(res, 400, "VIETQR_UNPAID_CANNOT_SHIP");
+      }
+    }
+
+    // Validation: COMPLETED status ALWAYS requires PAID
+    if (status === "COMPLETED" && order.paymentStatus === "UNPAID") {
+      return errorResponse(res, 400, "COMPLETED_MUST_BE_PAID");
+    }
+
+    const previousStatus = order.orderStatus;
+    
+    // Nếu từ trạng thái CANCELLED chuyển về trạng thái khác, ta phải trừ kho lại (check tồn kho trước)
+    if (previousStatus === "CANCELLED" && status !== "CANCELLED") {
+      for (const item of order.items) {
+        const product = await Product.findById(item.product);
+        if (!product || product.stock < item.quantity) {
+          return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product?.name || item.product}`);
+        }
+      }
+      // Thực sự trừ kho
+      for (const item of order.items) {
+        const product = await Product.findById(item.product);
+        product.stock -= item.quantity;
+        await product.save();
+      }
+    }
+
+    order.orderStatus = status;
+    
+    // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED -> Hoàn kho
+    if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
+      for (const item of order.items) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.stock += item.quantity;
+          if (product.status === "OUT_OF_STOCK") product.status = "PUBLISHED";
+          await product.save();
+        }
+      }
+    }
+
+    await order.save();
+
+    return successResponse(res, 200, "ORDER_STATUS_UPDATED", order);
+  } catch (error) {
+    console.error("updateOrderStatus Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

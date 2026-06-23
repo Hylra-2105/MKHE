@@ -42,7 +42,9 @@
     "phone_placeholder": "Enter phone number",
     "address": "Shipping Address",
     "address_placeholder": "Enter detailed address (type to search...)",
-    "email_notification": "Notification Email"
+    "email_notification": "Notification Email",
+    "note": "Order note (Optional)",
+    "note_placeholder": "Additional notes about delivery time, location..."
   },
   "payment_method": {
     "title": "Payment Method",

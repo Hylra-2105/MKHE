@@ -51,6 +51,8 @@ const orderSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true },
     voucherCode: { type: String },
     requireCallConfirm: { type: Boolean, default: false },
+    isHighRisk: { type: Boolean, default: false },
+    note: { type: String },
   },
   { timestamps: true }
 );

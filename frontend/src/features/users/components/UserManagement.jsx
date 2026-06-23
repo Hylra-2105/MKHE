@@ -25,6 +25,7 @@ export default function UserManagementFeature() {
   const [searchInput, setSearchInput] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +39,7 @@ export default function UserManagementFeature() {
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter);
+      const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter, statusFilter);
 
       if (res.success) {
         setUsers(res.data);
@@ -65,7 +66,7 @@ export default function UserManagementFeature() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, appliedSearch, roleFilter, t]);
+  }, [page, limit, appliedSearch, roleFilter, statusFilter, t]);
 
   useEffect(() => {
     fetchUsers();
@@ -80,6 +81,11 @@ export default function UserManagementFeature() {
   const handleRoleChange = (e) => {
     setPage(1);
     setRoleFilter(e.target.value);
+  };
+
+  const handleStatusChange = (e) => {
+    setPage(1);
+    setStatusFilter(e.target.value);
   };
 
   if (isForbidden) {
@@ -115,6 +121,8 @@ export default function UserManagementFeature() {
         setSearchInput={setSearchInput}
         roleFilter={roleFilter}
         handleRoleChange={handleRoleChange}
+        statusFilter={statusFilter}
+        handleStatusChange={handleStatusChange}
         handleSearch={handleSearch}
       />
 

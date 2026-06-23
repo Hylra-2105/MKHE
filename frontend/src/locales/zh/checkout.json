@@ -42,7 +42,9 @@
     "phone_placeholder": "输入电话号码",
     "address": "送货地址",
     "address_placeholder": "输入详细地址（输入以搜索...）",
-    "email_notification": "通知邮箱"
+    "email_notification": "通知邮箱",
+    "note": "订单备注 (可选)",
+    "note_placeholder": "关于交货时间、地点的附加说明..."
   },
   "payment_method": {
     "title": "付款方式",

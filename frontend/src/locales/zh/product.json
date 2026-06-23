@@ -99,7 +99,13 @@
       "current_file": "当前 3D 文件",
       "label": "3D 模型文件（.GLB、.GLTF）",
       "error_upload": "上传 3D 文件时出错",
-      "error_upload_both": "上传图像或 3D 文件时出错"
+      "error_upload_both": "上传图像或 3D 文件时出错",
+      "selected_file": "已选择新的3D文件",
+      "optimized": "网络优化",
+      "deleted": "当前的3D模型将被删除",
+      "click_upload_new": "拖放或单击以上传新文件",
+      "auto_compress": "系统自动优化网格和纹理。支持高达150MB的巨型文件！",
+      "delete": "删除"
     },
     "story": "产品故事",
     "story_placeholder": "输入详细的产品故事（支持粗体、斜体、格式化...）"

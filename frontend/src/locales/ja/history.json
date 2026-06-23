@@ -30,5 +30,12 @@
   "subtotal": "小計",
   "discount": "割引",
   "total": "合計",
-  "payment_status": "ステータス"
+  "payment_status": "ステータス",
+  "note": "注文メモ",
+  "products": "製品",
+  "product_name": "製品名",
+  "price": "単価",
+  "receive_btn": "受け取りました",
+  "confirm_receive": "商品を無事に受け取ったことを確認しますか？",
+  "confirm_btn": "確認"
 }

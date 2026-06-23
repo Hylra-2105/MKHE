@@ -42,7 +42,9 @@
     "phone_placeholder": "電話番号を入力",
     "address": "お届け先住所",
     "address_placeholder": "詳細な住所を入力（入力して検索...）",
-    "email_notification": "通知メール"
+    "email_notification": "通知メール",
+    "note": "注文メモ (任意)",
+    "note_placeholder": "配達時間や場所に関する追加メモ..."
   },
   "payment_method": {
     "title": "お支払い方法",

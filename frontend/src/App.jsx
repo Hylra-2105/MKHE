@@ -41,6 +41,7 @@ import DPPPage from "@/pages/dpp/DPPPage";
 
 import CheckoutPage from "./pages/orders/CheckoutPage";
 import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
+import OrderManagementPage from "./pages/orders/OrderManagementPage";
 
 function App() {
   const setUser = useAuthStore((state) => state.setUser);
@@ -123,6 +124,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <VoucherManagementPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/orders"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <OrderManagementPage />
               </ProtectedRoute>
             }
           />
