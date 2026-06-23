@@ -12,5 +12,7 @@
   "INVALID_EMAIL_FORMAT": "电子邮件格式无效。请输入有效的电子邮件。",
   "REGISTER_SUCCESS": "注册成功！",
   "PASSWORD_MUST_BE_DIFFERENT": "新密码必须与旧密码不同。",
-  "TOO_MANY_OTP_REQUESTS": "您请求 OTP 的次数过多。请15分钟后重试。"
+  "TOO_MANY_OTP_REQUESTS": "您请求 OTP 的次数过多。请15分钟后重试。",
+  "cancel": "取消",
+  "back": "返回"
 }

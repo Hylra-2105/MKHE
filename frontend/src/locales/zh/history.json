@@ -30,5 +30,12 @@
   "subtotal": "小计",
   "discount": "折扣",
   "total": "总计",
-  "payment_status": "状态"
+  "payment_status": "状态",
+  "note": "订单备注",
+  "products": "产品",
+  "product_name": "产品名称",
+  "price": "单价",
+  "receive_btn": "已收货",
+  "confirm_receive": "确认您已完好收到产品？",
+  "confirm_btn": "确认"
 }

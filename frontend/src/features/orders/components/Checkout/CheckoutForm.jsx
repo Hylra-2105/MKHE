@@ -5,7 +5,7 @@ import AddressMap from "./AddressMap";
 import AddressBookModal from "./AddressBookModal";
 import { useTranslation } from "react-i18next";
 
-export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMethod, setPaymentMethod, userEmail, user, orderStats }) {
+export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMethod, setPaymentMethod, userEmail, user, orderStats, note, setNote }) {
   const { t } = useTranslation("checkout");
   const [addressInput, setAddressInput] = React.useState(shippingInfo.address || "");
   const [suggestions, setSuggestions] = React.useState([]);
@@ -202,6 +202,18 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
           {/* Checkbox đã bị xóa vì hệ thống tự động lưu mặc định */}
           </div>
         )}
+
+        {/* Customer Note */}
+        <div className="mt-6 pt-4 border-t border-mkhe-border/10">
+          <label className="block text-sm font-medium text-mkhe-text/80 mb-1">{t("shipping_info.note", "Ghi chú đơn hàng (Tùy chọn)")}</label>
+          <textarea
+            name="note" 
+            value={note} 
+            onChange={(e) => setNote(e.target.value)}
+            className="w-full p-3 border border-mkhe-border/20 rounded-md focus:outline-none focus:ring-1 focus:ring-mkhe-primary min-h-[80px] bg-mkhe-bg text-mkhe-text placeholder-mkhe-text/40 cursor-text"
+            placeholder={t("shipping_info.note_placeholder", "Ghi chú thêm về thời gian nhận hàng, địa điểm...")}
+          />
+        </div>
       </div>
 
       <AddressBookModal 

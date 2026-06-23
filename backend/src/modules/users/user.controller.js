@@ -63,6 +63,11 @@ export const updateUser = async (req, res) => {
       updateData.isBlocked = isBlocked;
       // Chỉ lưu lý do nếu đang thực hiện KHÓA (isBlocked = true)
       updateData.blockReason = isBlocked ? blockReason : "";
+      
+      // Nếu khóa user, lập tức xóa hết refresh token để ép đăng xuất
+      if (isBlocked === true) {
+        updateData.refreshTokens = [];
+      }
     }
 
     // các trường không được update

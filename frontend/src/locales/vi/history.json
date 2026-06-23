@@ -30,5 +30,12 @@
   "subtotal": "Tạm tính",
   "discount": "Giảm giá",
   "total": "Tổng cộng",
-  "payment_status": "Trạng thái"
+  "payment_status": "Trạng thái",
+  "note": "Ghi chú đơn hàng",
+  "products": "Sản phẩm",
+  "product_name": "Tên sản phẩm",
+  "price": "Đơn giá",
+  "receive_btn": "Đã nhận được hàng",
+  "confirm_receive": "Xác nhận bạn đã nhận được hàng và sản phẩm không có vấn đề gì?",
+  "confirm_btn": "Đồng ý"
 }

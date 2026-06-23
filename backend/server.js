@@ -22,8 +22,10 @@ import dppRoutes from "./src/modules/dpp/dpp.routes.js";
 import cartRoutes from "./src/modules/cart/cart.routes.js";
 import voucherRoutes from "./src/modules/vouchers/voucher.routes.js";
 import orderRoutes from "./src/modules/orders/order.routes.js";
+import { startOrderCron } from "./src/cron/orderCron.js";
 
 connectDB();
+startOrderCron();
 
 const app = express();
 

@@ -30,5 +30,12 @@
   "subtotal": "Subtotal",
   "discount": "Discount",
   "total": "Total",
-  "payment_status": "Status"
+  "payment_status": "Status",
+  "note": "Order note",
+  "products": "Products",
+  "product_name": "Product Name",
+  "price": "Unit Price",
+  "receive_btn": "Received",
+  "confirm_receive": "Confirm you have received the products in good condition?",
+  "confirm_btn": "Confirm"
 }

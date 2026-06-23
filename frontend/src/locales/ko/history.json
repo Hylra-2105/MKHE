@@ -30,5 +30,12 @@
   "subtotal": "소계",
   "discount": "할인",
   "total": "합계",
-  "payment_status": "상태"
+  "payment_status": "상태",
+  "note": "주문 메모",
+  "products": "제품",
+  "product_name": "상품명",
+  "price": "단가",
+  "receive_btn": "수령 완료",
+  "confirm_receive": "상품을 정상적으로 수령하셨습니까?",
+  "confirm_btn": "확인"
 }

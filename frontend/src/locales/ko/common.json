@@ -12,5 +12,7 @@
   "INVALID_EMAIL_FORMAT": "이메일 형식이 잘못되었습니다. 유효한 이메일을 입력하세요.",
   "REGISTER_SUCCESS": "등록이 완료되었습니다!",
   "PASSWORD_MUST_BE_DIFFERENT": "새 비밀번호는 이전 비밀번호와 달라야 합니다.",
-  "TOO_MANY_OTP_REQUESTS": "OTP를 너무 많이 요청하셨습니다. 15분 후에 다시 시도해 주세요."
+  "TOO_MANY_OTP_REQUESTS": "OTP를 너무 많이 요청하셨습니다. 15분 후에 다시 시도해 주세요.",
+  "cancel": "취소",
+  "back": "뒤로"
 }

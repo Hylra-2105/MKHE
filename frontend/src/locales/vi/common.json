@@ -12,5 +12,7 @@
   "INVALID_EMAIL_FORMAT": "Định dạng email không hợp lệ. Vui lòng nhập email hợp lệ.",
   "REGISTER_SUCCESS": "Đăng ký thành công!",
   "PASSWORD_MUST_BE_DIFFERENT": "Mật khẩu mới không được trùng với mật khẩu cũ.",
-  "TOO_MANY_OTP_REQUESTS": "Bạn đã yêu cầu gửi mã quá nhiều lần. Vui lòng thử lại sau 15 phút."
+  "TOO_MANY_OTP_REQUESTS": "Bạn đã yêu cầu gửi mã quá nhiều lần. Vui lòng thử lại sau 15 phút.",
+  "cancel": "Hủy",
+  "back": "Trở lại"
 }

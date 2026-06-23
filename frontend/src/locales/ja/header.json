@@ -15,7 +15,8 @@
     "admin_area": "管理エリア",
     "staff_area": "スタッフエリア",
     "manage_products": "製品管理",
-    "manage_vouchers": "バウチャー管理"
+    "manage_vouchers": "バウチャー管理",
+    "manage_orders": "注文管理"
   },
   "guest_menu": {
     "login": "ログイン"
