@@ -32,7 +32,7 @@ const getFormattedTime = (lang = "vi") => {
     hour: "2-digit",
     minute: "2-digit",
   };
-  return new Date().toLocaleString(lang === "en" ? "en-US" : "vi-VN", options);
+  return new Date().toLocaleString(lang === "vi" ? "vi-VN" : "en-US", options);
 };
 
 /**

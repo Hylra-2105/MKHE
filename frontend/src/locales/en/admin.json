@@ -51,7 +51,9 @@
     "fullname_placeholder": "Enter full name",
     "email_placeholder": "example@gmail.com",
     "other_addresses": "(+{{count}} other address)",
-    "other_addresses_plural": "(+{{count}} other addresses)"
+    "other_addresses_plural": "(+{{count}} other addresses)",
+    "contact": "CONTACT",
+    "default_address": "DEFAULT ADDRESS"
   },
   "pagination": {
     "showing_page": "Showing page",

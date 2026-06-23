@@ -99,7 +99,13 @@
       "current_file": "現在の 3D ファイル",
       "label": "3D モデル ファイル (.GLB、.GLTF)",
       "error_upload": "3D ファイルのアップロード中にエラーが発生しました",
-      "error_upload_both": "画像または 3D ファイルのアップロード中にエラーが発生しました"
+      "error_upload_both": "画像または 3D ファイルのアップロード中にエラーが発生しました",
+      "selected_file": "新しい3Dファイルが選択されました",
+      "optimized": "Web向けに最適化",
+      "deleted": "現在の3Dモデルは削除されます",
+      "click_upload_new": "ドラッグ＆ドロップまたはクリックして新しいファイルをアップロード",
+      "auto_compress": "システムがMeshとTextureを自動的に最適化します。最大150MBまでの巨大なファイルをサポート！",
+      "delete": "削除"
     },
     "story": "製品ストーリー",
     "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）"

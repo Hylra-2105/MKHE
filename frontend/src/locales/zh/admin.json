@@ -51,7 +51,9 @@
     "fullname_placeholder": "输入全名",
     "email_placeholder": "示例@gmail.com",
     "other_addresses": "(+{{count}} 其他地址)",
-    "other_addresses_plural": "(+{{count}} 其他地址)"
+    "other_addresses_plural": "(+{{count}} 其他地址)",
+    "contact": "联系方式",
+    "default_address": "默认地址"
   },
   "pagination": {
     "showing_page": "显示页面",

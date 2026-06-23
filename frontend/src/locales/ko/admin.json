@@ -51,7 +51,9 @@
     "fullname_placeholder": "이름을 입력하세요",
     "email_placeholder": "example@gmail.com",
     "other_addresses": "(+{{count}} 다른 주소)",
-    "other_addresses_plural": "(+{{count}} 다른 주소)"
+    "other_addresses_plural": "(+{{count}} 다른 주소)",
+    "contact": "연락처",
+    "default_address": "기본 주소"
   },
   "pagination": {
     "showing_page": "페이지 표시 중",

@@ -99,7 +99,13 @@
       "current_file": "현재 3D 파일",
       "label": "3D 모델 파일(.GLB, .GLTF)",
       "error_upload": "3D 파일 업로드 오류",
-      "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다."
+      "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다.",
+      "selected_file": "새 3D 파일이 선택되었습니다",
+      "optimized": "웹에 최적화됨",
+      "deleted": "현재 3D 모델이 삭제됩니다",
+      "click_upload_new": "새 파일을 업로드하려면 드래그 앤 드롭하거나 클릭하세요",
+      "auto_compress": "시스템이 자동으로 메쉬 및 텍스처를 최적화합니다. 최대 150MB의 대용량 파일을 지원합니다!",
+      "delete": "삭제"
     },
     "story": "제품 스토리",
     "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"

@@ -321,7 +321,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
 
               <div>
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 flex items-center gap-2 transition-colors">
-                  <MapPin className="w-4 h-4" /> Liên hệ
+                  <MapPin className="w-4 h-4" /> {t("users.contact", { defaultValue: "LIÊN HỆ" })}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
                   <EditableField

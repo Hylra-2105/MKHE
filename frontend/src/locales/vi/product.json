@@ -95,7 +95,13 @@
       "current_file": "File 3D hiện tại",
       "label": "FILE MÔ HÌNH 3D (.GLB, .GLTF)",
       "error_upload": "Lỗi upload file 3D",
-      "error_upload_both": "Lỗi upload ảnh hoặc file 3D"
+      "error_upload_both": "Lỗi upload ảnh hoặc file 3D",
+      "selected_file": "Đã chọn file 3D mới",
+      "optimized": "Đã nén chuẩn Web",
+      "deleted": "Sẽ Xóa Model 3D hiện tại",
+      "click_upload_new": "Kéo thả hoặc click để upload file mới",
+      "auto_compress": "Hệ thống sẽ tự động tối ưu lưới Mesh & Texture. Hỗ trợ file siêu nặng lên tới 150MB!",
+      "delete": "Xóa"
     }
   },
   "statuses": {

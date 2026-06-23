@@ -51,7 +51,9 @@
     "fullname_placeholder": "Họ và tên",
     "email_placeholder": "ví dụ: example@gmail.com",
     "other_addresses": "(+{{count}} địa chỉ khác)",
-    "other_addresses_plural": "(+{{count}} địa chỉ khác)"
+    "other_addresses_plural": "(+{{count}} địa chỉ khác)",
+    "contact": "LIÊN HỆ",
+    "default_address": "ĐỊA CHỈ MẶC ĐỊNH"
   },
   "pagination": {
     "showing_page": "Đang hiển thị trang",

@@ -51,7 +51,9 @@
     "fullname_placeholder": "フルネームを入力してください",
     "email_placeholder": "example@gmail.com",
     "other_addresses": "(+{{count}} 他の住所)",
-    "other_addresses_plural": "(+{{count}} 他の住所)"
+    "other_addresses_plural": "(+{{count}} 他の住所)",
+    "contact": "連絡先",
+    "default_address": "デフォルトの住所"
   },
   "pagination": {
     "showing_page": "表示中のページ",
