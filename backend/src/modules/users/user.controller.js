@@ -10,6 +10,7 @@ export const getAllUsers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const search = req.query.search || "";
     const roleFilter = req.query.role || "";
+    const statusFilter = req.query.status || "";
 
     const skip = (page - 1) * limit;
 
@@ -23,6 +24,11 @@ export const getAllUsers = async (req, res) => {
       ];
     }
     if (roleFilter) query.role = roleFilter;
+    if (statusFilter === "active") {
+      query.isBlocked = { $ne: true };
+    } else if (statusFilter === "blocked") {
+      query.isBlocked = true;
+    }
 
     const totalUsers = await User.countDocuments(query);
     const users = await User.find(query)

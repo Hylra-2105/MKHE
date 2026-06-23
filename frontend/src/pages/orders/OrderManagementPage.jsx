@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import orderApi from "@/api/orderApi";
-import { userApi } from "@/api/userApi";
 import { toast } from "react-hot-toast";
 import { FiPrinter, FiLock, FiAlertTriangle } from "react-icons/fi";
 import { Eye } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import OrderFilter from "@/features/orders/components/Admin/OrderFilter";
 import OrderDetailModal from "@/features/orders/components/Admin/OrderDetailModal";
+import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
 
 const OrderManagementPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +24,9 @@ const OrderManagementPage = () => {
   
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   const HIGH_RISK_THRESHOLD = import.meta.env.VITE_HIGH_RISK_THRESHOLD || 5000000;
 
@@ -78,47 +81,60 @@ const OrderManagementPage = () => {
     }
   };
 
-  const handleLockUser = async (userId) => {
-    if (!window.confirm(t("admin:orders.confirm_lock", { defaultValue: "Bạn có chắc chắn muốn khóa người dùng này? Hành động này sẽ đăng xuất họ khỏi tất cả thiết bị." }))) return;
-    try {
-      const res = await userApi.updateUser(userId, { isBlocked: true, blockReason: "Khóa do rủi ro gian lận đơn hàng" });
-      if (res.success) {
-        toast.success(t("admin:orders.lock_success", { defaultValue: "Đã khóa tài khoản thành công" }));
-        fetchOrders();
-      }
-    } catch (error) {
-      toast.error(error?.response?.data?.message || t("admin:orders.lock_fail", { defaultValue: "Lỗi khi khóa tài khoản" }));
-    }
-  };
+  // Removed handleLockUser because we use UserDetailModal now
 
   const handlePrintInvoice = (order) => {
+    const isPaid = order.paymentStatus === "Paid" || order.paymentStatus === "PAID";
+    const codAmount = isPaid ? 0 : order.totalAmount;
+    
+    const printLng = i18n.language === "vi" ? "vi" : "en";
+    
     const printWindow = window.open("", "_blank");
     printWindow.document.write(`
       <html>
         <head>
-          <title>In Hóa Đơn - ${order.orderCode}</title>
+          <title>Phiếu Giao Hàng - ${order.orderCode}</title>
           <style>
-            body { font-family: sans-serif; padding: 20px; }
+            @page { margin: 0; }
+            body { font-family: sans-serif; padding: 40px; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            .header { text-align: center; margin-bottom: 30px; }
+            .header { text-align: center; margin-bottom: 20px; border-bottom: 2px dashed #000; padding-bottom: 20px; }
+            .info-block { display: flex; justify-content: space-between; margin-bottom: 20px; }
+            .info-block > div { width: 48%; }
+            .cod-block { text-align: right; margin-top: 20px; border: 2px solid #000; padding: 15px; display: inline-block; float: right; border-radius: 8px; }
+            .clearfix::after { content: ""; clear: both; display: table; }
           </style>
         </head>
         <body>
           <div class="header">
-            <h2>HÓA ĐƠN BÁN HÀNG</h2>
-            <p>Mã đơn: ${order.orderCode}</p>
+            <h2>${t("admin:orders.print.title", { lng: printLng, defaultValue: "PHIẾU GIAO HÀNG (SHIPPING LABEL)" })}</h2>
+            <p>${t("admin:orders.print.order_code", { lng: printLng, defaultValue: "Mã đơn" })}: <strong>${order.orderCode}</strong></p>
           </div>
-          <p><strong>Khách hàng:</strong> ${order.shippingInfo.name}</p>
-          <p><strong>Điện thoại:</strong> ${order.shippingInfo.phone}</p>
-          <p><strong>Địa chỉ:</strong> ${order.shippingInfo.address}</p>
+          
+          <div class="info-block">
+            <div>
+              <h3>${t("admin:orders.print.sender", { lng: printLng, defaultValue: "NGƯỜI GỬI:" })}</h3>
+              <p><strong>${t("admin:orders.print.shop", { lng: printLng, defaultValue: "Shop:" })}</strong> MKHE Heritage</p>
+              <p><strong>${t("admin:orders.print.phone", { lng: printLng, defaultValue: "Điện thoại:" })}</strong> 090 123 4567</p>
+              <p><strong>${t("admin:orders.print.address", { lng: printLng, defaultValue: "Địa chỉ:" })}</strong> Trung tâm Kho vận MKHE, TP. Hồ Chí Minh</p>
+            </div>
+            <div>
+              <h3>${t("admin:orders.print.receiver", { lng: printLng, defaultValue: "NGƯỜI NHẬN:" })}</h3>
+              <p><strong>${t("admin:orders.print.customer", { lng: printLng, defaultValue: "Khách hàng:" })}</strong> ${order.shippingInfo.name}</p>
+              <p><strong>${t("admin:orders.print.phone", { lng: printLng, defaultValue: "Điện thoại:" })}</strong> ${order.shippingInfo.phone}</p>
+              <p><strong>${t("admin:orders.print.address", { lng: printLng, defaultValue: "Địa chỉ:" })}</strong> ${order.shippingInfo.address}</p>
+              ${order.shippingInfo.note ? `<p><strong>${t("admin:orders.print.note", { lng: printLng, defaultValue: "Ghi chú:" })}</strong> ${order.shippingInfo.note}</p>` : ''}
+            </div>
+          </div>
+
           <table>
             <thead>
               <tr>
-                <th>Sản phẩm</th>
-                <th>Số lượng</th>
-                <th>Đơn giá</th>
-                <th>Thành tiền</th>
+                <th>${t("admin:orders.print.product", { lng: printLng, defaultValue: "Sản phẩm" })}</th>
+                <th>${t("admin:orders.print.quantity", { lng: printLng, defaultValue: "Số lượng" })}</th>
+                <th>${t("admin:orders.print.unit_price", { lng: printLng, defaultValue: "Đơn giá" })}</th>
+                <th>${t("admin:orders.print.total", { lng: printLng, defaultValue: "Thành tiền" })}</th>
               </tr>
             </thead>
             <tbody>
@@ -132,9 +148,17 @@ const OrderManagementPage = () => {
               `).join('')}
             </tbody>
           </table>
-          <h3 style="text-align: right; margin-top: 20px;">Tổng tiền: ${order.totalAmount.toLocaleString()}đ</h3>
+          
+          <div class="clearfix">
+            <h3 style="text-align: right; margin-top: 20px;">${t("admin:orders.print.total_amount", { lng: printLng, defaultValue: "Tổng tiền đơn hàng:" })} ${order.totalAmount.toLocaleString()}đ</h3>
+            <div class="cod-block">
+              <p style="margin: 0 0 5px 0;">${t("admin:orders.print.payment_method", { lng: printLng, defaultValue: "Phương thức thanh toán:" })} <strong>${order.paymentMethod}</strong></p>
+              <h2 style="margin: 0; color: #000;">${t("admin:orders.print.cod", { lng: printLng, defaultValue: "TIỀN THU HỘ (COD):" })} ${codAmount.toLocaleString()}đ</h2>
+            </div>
+          </div>
+
           <script>
-            window.onload = () => { window.print(); window.close(); }
+            window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 500); }
           </script>
         </body>
       </html>
@@ -254,11 +278,11 @@ const OrderManagementPage = () => {
                     >
                       <FiPrinter size={18} />
                     </button>
-                    {user?.role === "Admin" && order.user && !order.user.isBlocked && (
+                    {user?.role === "Admin" && order.user && (
                       <button 
-                        onClick={() => handleLockUser(order.user._id)}
-                        className="p-2 text-red-600 hover:bg-red-500/20 bg-red-500/10 rounded-full transition-all duration-300 cursor-pointer"
-                        title={t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
+                        onClick={() => { setSelectedUser(order.user); setIsUserModalOpen(true); }}
+                        className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 ${order.user.isBlocked ? "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10" : "text-red-600 hover:bg-red-500/20 bg-red-500/10"}`}
+                        title={order.user.isBlocked ? t("common.unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
                       >
                         <FiLock size={18} />
                       </button>
@@ -277,6 +301,14 @@ const OrderManagementPage = () => {
         onClose={() => { setIsModalOpen(false); setSelectedOrder(null); }}
         order={selectedOrder}
         onStatusChange={handleStatusChange}
+      />
+
+      <UserDetailModal
+        isOpen={isUserModalOpen}
+        onClose={() => { setIsUserModalOpen(false); setSelectedUser(null); }}
+        user={selectedUser}
+        onRefresh={fetchOrders}
+        lockOnly={true}
       />
 
       <div className="h-px bg-mkhe-border/30 my-7"></div>

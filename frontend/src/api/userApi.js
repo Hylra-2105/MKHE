@@ -3,9 +3,9 @@ import { ENDPOINTS } from "@/constants/endpoints";
 
 export const userApi = {
   // Lấy danh sách users
-  getAllUsers: async (page = 1, limit = 5, search = "", role = "") => {
+  getAllUsers: async (page = 1, limit = 5, search = "", role = "", status = "") => {
     const response = await axiosClient.get(ENDPOINTS.USERS.GET_ALL, {
-      params: { page, limit, search, role },
+      params: { page, limit, search, role, status },
     });
     return response.data;
   },
@@ -64,6 +64,6 @@ export const userApi = {
 };
 
 // For backward compatibility
-export const getAllUsersApi = (page, limit, search, role) => {
-  return userApi.getAllUsers(page, limit, search, role);
+export const getAllUsersApi = (page, limit, search, role, status) => {
+  return userApi.getAllUsers(page, limit, search, role, status);
 };

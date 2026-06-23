@@ -24,7 +24,7 @@ import {
 } from "@/utils/validators";
 import EditableField from "@/features/users/components/Admin/EditableField";
 
-const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
+const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false }) => {
   const { t } = useTranslation("admin");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
@@ -42,11 +42,15 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
 
   useEffect(() => {
     if (user && isOpen) {
+      const defaultAddr = user.addresses?.find((a) => a.isDefault);
       const initialForm = {
         name: user.name || "",
         phone: user.phone || "",
         bio: user.bio || "",
         isBlocked: user.isBlocked ?? false,
+        defaultAddressText: defaultAddr?.addressText || "",
+        defaultAddressName: defaultAddr?.receiverName || "",
+        defaultAddressPhone: defaultAddr?.receiverPhone || "",
       };
       setEditForm(initialForm);
       setOriginalEditForm(initialForm);
@@ -95,7 +99,14 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   };
 
   const handleSave = async () => {
-    let dataToSave = { ...editForm };
+    let dataToSave = {
+      name: editForm.name,
+      phone: editForm.phone,
+      bio: editForm.bio,
+      isBlocked: editForm.isBlocked,
+      blockReason: editForm.blockReason,
+    };
+
     setIsSaving(true);
     try {
       const response = await axiosClient.put(`/users/${user._id}`, dataToSave);
@@ -325,6 +336,27 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
               </div>
 
               <div>
+                <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 flex items-center gap-2 transition-colors">
+                  <MapPin className="w-4 h-4" /> 
+                  {t("users.default_address", { defaultValue: "ĐỊA CHỈ MẶC ĐỊNH" })}
+                  {user?.addresses && Math.max(0, user.addresses.length - (user.addresses.find(a => a.isDefault) ? 1 : 0)) > 0 && (
+                    <span className="text-[var(--color-mkhe-text)]/50 font-medium normal-case text-xs lowercase ml-1">
+                      {t("users.other_addresses", { count: Math.max(0, user.addresses.length - (user.addresses.find(a => a.isDefault) ? 1 : 0)), defaultValue: "(+{{count}} địa chỉ khác)" })}
+                    </span>
+                  )}
+                </h4>
+                <div className="mb-5">
+                  <div className={`p-4 bg-[var(--color-mkhe-bg)] rounded-xl border border-[var(--color-mkhe-border)]/20 text-sm text-[var(--color-mkhe-text)]/80 leading-relaxed transition-colors ${isEditing ? 'opacity-70' : ''}`}>
+                    {user?.addresses?.find(a => a.isDefault) ? (
+                      user.addresses.find(a => a.isDefault).addressText
+                    ) : (
+                      <span className="italic opacity-50">{t("users.address_empty", { defaultValue: "Chưa cập nhật" })}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div>
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 transition-colors">
                   {t("users.bio")}
                 </h4>
@@ -350,13 +382,15 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
         {/* FOOTER BUTTONS */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
           <div className="flex gap-3">
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4 transition-colors" />{" "}
-              {t("common.delete_account")}
-            </button>
+            {!lockOnly && (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4 transition-colors" />{" "}
+                {t("common.delete_account")}
+              </button>
+            )}
             <button
               onClick={handleBlockButtonClick}
               disabled={isSaving}
@@ -368,36 +402,38 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
                 : t("common.lock_account")}
             </button>
           </div>
-          <div className="flex gap-3">
-            {isEditing ? (
-              <>
+          {!lockOnly && (
+            <div className="flex gap-3">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <XCircle className="w-4 h-4 transition-colors" />{" "}
+                    {t("common.cancel")}
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <Check className="w-4 h-4 transition-colors" />{" "}
+                    {isSaving ? t("common.saving") : t("common.save_info")}
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer disabled:opacity-50"
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/20 transition-all cursor-pointer"
                 >
-                  <XCircle className="w-4 h-4 transition-colors" />{" "}
-                  {t("common.cancel")}
+                  <Edit2 className="w-4 h-4 transition-colors" />{" "}
+                  {t("common.edit")}
                 </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Check className="w-4 h-4 transition-colors" />{" "}
-                  {isSaving ? t("common.saving") : t("common.save_info")}
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/20 transition-all cursor-pointer"
-              >
-                <Edit2 className="w-4 h-4 transition-colors" />{" "}
-                {t("common.edit")}
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* XÁC NHẬN XÓA TÀI KHOẢN */}

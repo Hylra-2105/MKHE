@@ -49,7 +49,9 @@
     "block_reason_label": "处罚原因",
     "role": "系统角色（权限）",
     "fullname_placeholder": "输入全名",
-    "email_placeholder": "示例@gmail.com"
+    "email_placeholder": "示例@gmail.com",
+    "other_addresses": "(+{{count}} 其他地址)",
+    "other_addresses_plural": "(+{{count}} 其他地址)"
   },
   "pagination": {
     "showing_page": "显示页面",
@@ -76,7 +78,10 @@
   },
   "filter": {
     "placeholder": "按姓名或电子邮件搜索...",
-    "search": "搜索"
+    "search": "搜索",
+    "all_status": "所有状态",
+    "active": "活跃",
+    "blocked": "已封锁"
   },
   "roles": {
     "all": "所有角色",
@@ -244,6 +249,24 @@
     "lock_fail": "锁定账户时出错",
     "error_vietqr_unpaid": "无法保存：VietQR 订单必须已付款才能确认发货！",
     "error_completed_unpaid": "无法保存：已完成的订单必须已付款！",
-    "high_risk_filter": "高风险订单"
+    "high_risk_filter": "高风险订单",
+    "print": {
+      "title": "运输标签",
+      "order_code": "订单代码",
+      "sender": "发件人:",
+      "shop": "店铺:",
+      "phone": "电话:",
+      "address": "地址:",
+      "receiver": "收件人:",
+      "customer": "客户:",
+      "note": "备注:",
+      "product": "产品",
+      "quantity": "数量",
+      "unit_price": "单价",
+      "total": "总计",
+      "total_amount": "订单总计:",
+      "payment_method": "付款方式:",
+      "cod": "代收货款:"
+    }
   }
 }

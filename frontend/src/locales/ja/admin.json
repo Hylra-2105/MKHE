@@ -49,7 +49,9 @@
     "block_reason_label": "ペナルティの理由",
     "role": "システムの役割 (権限)",
     "fullname_placeholder": "フルネームを入力してください",
-    "email_placeholder": "example@gmail.com"
+    "email_placeholder": "example@gmail.com",
+    "other_addresses": "(+{{count}} 他の住所)",
+    "other_addresses_plural": "(+{{count}} 他の住所)"
   },
   "pagination": {
     "showing_page": "表示中のページ",
@@ -76,7 +78,10 @@
   },
   "filter": {
     "placeholder": "名前またはメールアドレスで検索...",
-    "search": "検索"
+    "search": "検索",
+    "all_status": "すべてのステータス",
+    "active": "アクティブ",
+    "blocked": "ブロックされました"
   },
   "roles": {
     "all": "すべての役割",
@@ -244,6 +249,24 @@
     "lock_fail": "アカウントのロックエラー",
     "error_vietqr_unpaid": "保存できません: 配送を確認するにはVietQR注文が支払済みである必要があります！",
     "error_completed_unpaid": "保存できません: 完了した注文は支払済みである必要があります！",
-    "high_risk_filter": "高リスク注文"
+    "high_risk_filter": "高リスク注文",
+    "print": {
+      "title": "配送ラベル",
+      "order_code": "注文コード",
+      "sender": "送信者:",
+      "shop": "ショップ:",
+      "phone": "電話:",
+      "address": "住所:",
+      "receiver": "受信者:",
+      "customer": "お客様:",
+      "note": "メモ:",
+      "product": "製品",
+      "quantity": "数量",
+      "unit_price": "単価",
+      "total": "合計",
+      "total_amount": "注文合計:",
+      "payment_method": "支払方法:",
+      "cod": "代金引換額:"
+    }
   }
 }

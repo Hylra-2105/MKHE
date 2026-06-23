@@ -7,6 +7,8 @@ const UserFilter = ({
   setSearchInput,
   roleFilter,
   handleRoleChange,
+  statusFilter,
+  handleStatusChange,
   handleSearch,
 }) => {
   const { t } = useTranslation("admin");
@@ -18,6 +20,12 @@ const UserFilter = ({
       value: role,
       label: t(`roles.${role.toLowerCase()}`),
     })),
+  ];
+
+  const statusOptions = [
+    { value: "", label: t("filter.all_status", { defaultValue: "Tất cả trạng thái" }) },
+    { value: "active", label: t("filter.active", { defaultValue: "Hoạt động" }) },
+    { value: "blocked", label: t("filter.blocked", { defaultValue: "Bị khóa" }) },
   ];
 
   return (
@@ -43,7 +51,17 @@ const UserFilter = ({
         options={roleOptions}
         onChange={(val) => handleRoleChange({ target: { value: val } })}
         placeholder={t("roles.all")}
-        className="w-full md:w-80"
+        className="w-full md:w-48"
+        triggerClassName="h-10 px-3 rounded"
+        optionClassName="text-sm"
+      />
+
+      <Dropdown
+        value={statusFilter}
+        options={statusOptions}
+        onChange={(val) => handleStatusChange({ target: { value: val } })}
+        placeholder={t("filter.all_status", { defaultValue: "Tất cả trạng thái" })}
+        className="w-full md:w-48"
         triggerClassName="h-10 px-3 rounded"
         optionClassName="text-sm"
       />

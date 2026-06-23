@@ -340,7 +340,7 @@ export const getAllOrdersAdmin = async (req, res) => {
 
     const total = await Order.countDocuments(query);
     const orders = await Order.find(query)
-      .populate("user", "name email phone avatar")
+      .populate("user", "name email phone avatar isBlocked role bio addresses")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
