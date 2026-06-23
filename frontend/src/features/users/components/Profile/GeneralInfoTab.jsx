@@ -273,16 +273,15 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               <button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/60 transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
               >
-                <XCircle className="w-4 h-4" /> {t("common.cancel")}
+                {t("common.cancel")}
               </button>
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
+                className="px-8 py-2.5 bg-mkhe-primary text-white font-bold rounded-xl hover:bg-mkhe-primary/90 transition-all cursor-pointer disabled:opacity-50 text-sm"
               >
-                <Check className="w-4 h-4" />{" "}
                 {isSaving
                   ? t("common.saving")
                   : t("common.save_info")}

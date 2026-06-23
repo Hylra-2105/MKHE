@@ -412,12 +412,12 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
                     disabled={isSaving}
                     className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
                   >
-                    {t("common.cancel")}
+                    {t("common.cancel", { defaultValue: "Hủy" })}
                   </button>
                   <Button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="!w-auto !px-6 !py-2.5 !rounded-lg !text-sm"
+                    className="!w-auto px-8 py-2.5 rounded-xl text-sm"
                   >
                     {isSaving ? t("common.saving") : t("common.save_info")}
                   </Button>
@@ -425,7 +425,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
               ) : (
                 <Button
                   onClick={() => setIsEditing(true)}
-                  className="!w-auto !px-8 !py-2.5 !rounded-lg !text-sm"
+                  className="!w-auto px-8 py-2.5 rounded-xl text-sm"
                 >
                   {t("common.edit")}
                 </Button>

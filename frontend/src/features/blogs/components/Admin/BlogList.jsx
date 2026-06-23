@@ -1,0 +1,294 @@
+import React, { useState, useEffect } from "react";
+import { Search, Plus, Edit, Trash2, Eye, LayoutGrid, List as ListIcon, Calendar } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { getBlogsApi, deleteBlogApi } from "@/api/blogApi";
+import Button from "@/components/ui/Button";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import Dropdown from "@/components/ui/Dropdown";
+import { useTranslation } from "react-i18next";
+
+const BlogList = () => {
+  const { t } = useTranslation("admin");
+  const navigate = useNavigate();
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState("grid"); // grid | list
+  const [filter, setFilter] = useState({
+    search: "",
+    category: "",
+    status: "",
+  });
+  
+  // Xóa blog
+  const [deleteId, setDeleteId] = useState(null);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const res = await getBlogsApi({
+        ...filter,
+        limit: 100, // Load all for simplicity
+      });
+      setBlogs(res.blogs || []);
+    } catch (error) {
+      toast.error("Lỗi khi tải danh sách bài viết");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, [filter.category, filter.status]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    fetchBlogs();
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    try {
+      await deleteBlogApi(deleteId);
+      toast.success("Xóa bài viết thành công");
+      setDeleteId(null);
+      fetchBlogs();
+    } catch (error) {
+      toast.error("Lỗi khi xóa bài viết");
+    }
+  };
+
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
+            Quản lý bài viết
+          </h1>
+          <p className="text-sm text-mkhe-text/60 italic">
+            Kể chuyện di sản, sự kiện và chia sẻ cẩm nang
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <button 
+            onClick={() => navigate("/admin/blogs/create")}
+            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer whitespace-nowrap"
+          >
+            Thêm bài viết mới
+          </button>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-mkhe-bg p-3 md:p-4 rounded shadow mb-6 flex flex-col xl:flex-row xl:items-center gap-4 border border-mkhe-border/30">
+        <form onSubmit={handleSearch} className="flex-1 flex gap-2 w-full">
+          <input
+            type="text"
+            placeholder="Tìm theo tiêu đề bài viết..."
+            value={filter.search}
+            onChange={(e) => setFilter(prev => ({ ...prev, search: e.target.value }))}
+            className="w-full h-10 px-3 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors"
+          />
+          <button
+            type="submit"
+            className="h-10 w-28 md:w-40 bg-mkhe-primary text-white px-4 md:px-6 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold whitespace-nowrap"
+          >
+            Tìm kiếm
+          </button>
+        </form>
+        
+        <div className="flex flex-col md:flex-row gap-3 w-full xl:w-auto items-center">
+          <Dropdown
+            value={filter.category}
+            options={[
+              { value: "", label: "Tất cả danh mục" },
+              { value: "Ký sự", label: "Ký sự" },
+              { value: "Sự kiện", label: "Sự kiện" },
+              { value: "Cẩm nang", label: "Cẩm nang" },
+            ]}
+            onChange={(val) => setFilter(prev => ({ ...prev, category: val }))}
+            placeholder="Tất cả danh mục"
+            className="w-full md:w-36 lg:w-44"
+            triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
+            optionClassName="text-sm"
+          />
+
+          <Dropdown
+            value={filter.status}
+            options={[
+              { value: "", label: "Tất cả trạng thái" },
+              { value: "PUBLISHED", label: "Đã xuất bản" },
+              { value: "DRAFT", label: "Bản nháp" },
+            ]}
+            onChange={(val) => setFilter(prev => ({ ...prev, status: val }))}
+            placeholder="Tất cả trạng thái"
+            className="w-full md:w-36 lg:w-44"
+            triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
+            optionClassName="text-sm"
+          />
+
+          <div className="flex items-center border border-mkhe-border/50 rounded h-10 overflow-hidden shrink-0">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "list" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+              title="Danh sách"
+            >
+              <ListIcon className="w-5 h-5" />
+            </button>
+            <div className="w-[1px] h-full bg-mkhe-border/50"></div>
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "grid" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+              title="Dạng lưới"
+            >
+              <LayoutGrid className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      {loading ? (
+        <div className="text-center py-20 text-mkhe-text/60">Đang tải danh sách...</div>
+      ) : blogs.length === 0 ? (
+        <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl p-12 text-center shadow-sm">
+          <div className="w-16 h-16 bg-mkhe-border/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <LayoutGrid className="w-8 h-8 text-mkhe-text/40" />
+          </div>
+          <h3 className="text-lg font-bold text-mkhe-text mb-2">Chưa có bài viết nào</h3>
+          <p className="text-mkhe-text/60 mb-6 max-w-sm mx-auto">
+            Hãy tạo bài viết đầu tiên để kể những câu chuyện di sản đầy tự hào của MKHE.
+          </p>
+          <button 
+            onClick={() => navigate("/admin/blogs/create")}
+            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+          >
+            Thêm bài viết mới
+          </button>
+        </div>
+      ) : viewMode === "grid" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {blogs.map(blog => (
+            <div key={blog._id} className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden hover:border-mkhe-primary transition-all group shadow-sm flex flex-col">
+              <div className="relative aspect-[16/9] bg-mkhe-border/10 overflow-hidden">
+                {blog.thumbnail ? (
+                  <img src={blog.thumbnail} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-mkhe-text/30">
+                    No Image
+                  </div>
+                )}
+                <div className="absolute top-3 right-3 flex gap-2">
+                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${blog.status === "PUBLISHED" ? "bg-green-500/80 text-white" : "bg-mkhe-border/80 text-mkhe-text"}`}>
+                    {blog.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
+                  </span>
+                </div>
+              </div>
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[11px] font-medium text-mkhe-primary bg-mkhe-primary/10 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                    {blog.category}
+                  </span>
+                  <span className="text-xs text-mkhe-text/50 flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
+                  </span>
+                </div>
+                <h3 className="text-sm font-bold text-mkhe-text line-clamp-2 mb-2 group-hover:text-mkhe-primary transition-colors">
+                  {blog.title}
+                </h3>
+                <div className="mt-auto pt-4 flex items-center justify-between border-t border-mkhe-border/20">
+                  <div className="text-xs text-mkhe-text/60">
+                    {blog.tags?.length || 0} sản phẩm tag
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-1.5 text-mkhe-text/60 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded transition-colors" title="Chỉnh sửa">
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-1.5 text-mkhe-text/60 hover:text-mkhe-text hover:bg-mkhe-border/30 rounded transition-colors" title="Xem trên web">
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 text-mkhe-text/60 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors" title="Xóa">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-mkhe-input/30 border-b border-mkhe-border/50">
+                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Bài viết</th>
+                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Danh mục</th>
+                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Trạng thái</th>
+                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Ngày tạo</th>
+                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-right">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-mkhe-border/30">
+                {blogs.map(blog => (
+                  <tr key={blog._id} className="hover:bg-mkhe-border/10 transition-colors group">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-16 h-12 rounded overflow-hidden bg-mkhe-border/20 flex-shrink-0">
+                          {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-full object-cover" />}
+                        </div>
+                        <p className="text-sm font-bold text-mkhe-text group-hover:text-mkhe-primary transition-colors line-clamp-1">{blog.title}</p>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <span className="text-xs font-medium text-mkhe-primary bg-mkhe-primary/10 px-2 py-1 rounded-full uppercase tracking-wide">
+                        {blog.category}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
+                        {blog.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm text-mkhe-text/80">
+                      {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 text-mkhe-text/60 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded-lg transition-colors" title="Chỉnh sửa">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 text-mkhe-text/60 hover:text-mkhe-text hover:bg-mkhe-border/30 rounded-lg transition-colors" title="Xem trên web">
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button onClick={() => setDeleteId(blog._id)} className="p-2 text-mkhe-text/60 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Xóa">
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        title="Xóa Bài Viết"
+        message="Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác."
+        confirmText="Xóa"
+        cancelText="Hủy"
+        type="danger"
+      />
+    </div>
+  );
+};
+
+export default BlogList;

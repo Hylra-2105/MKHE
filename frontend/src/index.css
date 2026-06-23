@@ -2,6 +2,8 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
+
 @theme {
   --color-mkhe-primary: #c5a059;
   --color-mkhe-primary-hover: #b38f4d;

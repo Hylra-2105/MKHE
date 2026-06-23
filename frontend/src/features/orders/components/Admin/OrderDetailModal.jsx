@@ -240,14 +240,14 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
         <div className="p-4 border-t border-mkhe-border/30 bg-mkhe-input/30 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all text-sm cursor-pointer"
+            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
           >
-            {t("common.cancel")}
+            {t("common.cancel", { defaultValue: "Hủy" })}
           </button>
           <Button 
             onClick={handleSave}
             disabled={(localStatus === order.orderStatus && localPaymentStatus === order.paymentStatus) || order.orderStatus === "CANCELLED" || order.orderStatus === "COMPLETED"}
-            className="!w-auto !px-6 !py-2.5 !rounded-lg !text-sm"
+            className="!w-auto px-8 py-2.5 rounded-xl text-sm"
           >
             {t("admin:orders.save", { defaultValue: "Lưu thay đổi" })}
           </Button>

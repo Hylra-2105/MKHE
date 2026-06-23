@@ -520,16 +520,16 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               localStorage.removeItem("mkhe_voucher_draft");
               onClose();
             }}
-            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all text-sm cursor-pointer"
+            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
           >
-            {t("voucher.cancel")}
+            {t("common.cancel", { defaultValue: "Hủy" })}
           </button>
           {!editData ? (
             <Button 
               type="button"
               onClick={(e) => handleSubmit(e, "DRAFT")}
               disabled={loading}
-              className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+              className="!w-auto px-8 py-2.5 rounded-xl text-sm"
             >
               {loading ? t("voucher.creating") : t("voucher.create_btn", { defaultValue: "Tạo Bản Nháp" })}
             </Button>
@@ -539,7 +539,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                 type="button"
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 disabled={loading}
-                className="!w-auto !px-6 !py-2.5 !bg-transparent !border !border-mkhe-primary !text-mkhe-primary !rounded-xl !hover:bg-mkhe-primary/10 !text-sm"
+                className="!w-auto px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm"
               >
                 {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
               </Button>
@@ -547,7 +547,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                 type="button"
                 onClick={(e) => handleSubmit(e, "PUBLISHED")}
                 disabled={loading}
-                className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+                className="!w-auto px-8 py-2.5 rounded-xl text-sm"
               >
                 {loading ? t("voucher.updating") : t("voucher.publish_btn", { defaultValue: "Phát Hành" })}
               </Button>
@@ -557,7 +557,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               type="submit"
               form="voucher-form"
               disabled={loading}
-              className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+              className="!w-auto px-8 py-2.5 rounded-xl text-sm"
             >
               {loading ? t("voucher.updating", { defaultValue: "Đang cập nhật..." }) : t("voucher.save_changes", { defaultValue: "Lưu thay đổi" })}
             </Button>

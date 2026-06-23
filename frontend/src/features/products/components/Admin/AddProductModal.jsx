@@ -12,6 +12,7 @@ import { compressImage } from "@/utils/imageCompressor";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
+import { getBlogsApi } from "@/api/blogApi";
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
@@ -37,6 +38,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     hasDPP: false,
     artisanName: "",
     gpsLocation: "",
+    storyBlogId: "",
   });
 
   // --- STATE CHO ẢNH & FILE 3D ---
@@ -63,6 +65,22 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }, 800);
     return () => clearTimeout(timer);
   }, [formData.gpsLocation]);
+
+  // --- BLOGS CHO KÝ SỰ ---
+  const [storyBlogs, setStoryBlogs] = useState([]);
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await getBlogsApi({ category: "Ký sự", status: "PUBLISHED", limit: 100 });
+        if (res.blogs) {
+          setStoryBlogs(res.blogs);
+        }
+      } catch (error) {
+        console.error("Fetch blogs error", error);
+      }
+    };
+    if (isOpen) fetchBlogs();
+  }, [isOpen]);
 
   // --- CÁC MẢNG DỮ LIỆU DROPDOWN ---
   const categories = [
@@ -351,7 +369,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const resetForm = () => {
     setFormData({
       name: "", sku: "", vendor: "", craftVillage: "", material: [], description: "", categoryMatrix: "B2C_Mass_Premium",
-      culturalDNA: "OTHER", price: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "",
+      culturalDNA: "OTHER", price: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "", storyBlogId: "",
     });
     setImageFiles([]); setFile3D(null);
     previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
@@ -528,6 +546,21 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                         className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" 
                         placeholder={t("modal.dpp.location_placeholder")} 
                       />
+                    </div>
+
+                    <div className="space-y-1 col-span-2">
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Ký sự liên kết (Tùy chọn)</label>
+                      <select
+                        name="storyBlogId"
+                        value={formData.storyBlogId}
+                        onChange={handleChange}
+                        className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary outline-none"
+                      >
+                        <option value="">-- Không liên kết Ký sự --</option>
+                        {storyBlogs.map(blog => (
+                          <option key={blog._id} value={blog._id}>{blog.title}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
