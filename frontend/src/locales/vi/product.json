@@ -11,7 +11,11 @@
     "search_btn": "Tìm kiếm",
     "all_categories": "Tất cả phân loại",
     "all_dna": "Tất cả Mã gen",
-    "all_vendors": "Tất cả Đối tác"
+    "all_vendors": "Tất cả Đối tác",
+    "all_status": "Tất cả trạng thái",
+    "status_published": "Công khai",
+    "status_draft": "Bản nháp",
+    "status_out_of_stock": "Hết hàng"
   },
   "table": {
     "name": "Tên sản phẩm",
@@ -105,8 +109,8 @@
     }
   },
   "statuses": {
-    "DRAFT": "Bản nháp (Đang ẩn)",
-    "PUBLISHED": "Công khai (Đang bán)",
+    "DRAFT": "Bản nháp",
+    "PUBLISHED": "Công khai",
     "OUT_OF_STOCK": "Hết hàng"
   },
   "pagination": {

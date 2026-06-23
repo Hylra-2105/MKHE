@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, MapPin, Phone, User, Package, MessageSquare } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown";
+import Button from "@/components/ui/Button";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 
@@ -49,7 +50,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* OVERLAY */}
       <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/40 transition-opacity"
         onClick={onClose}
       />
       
@@ -239,17 +240,17 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
         <div className="p-4 border-t border-mkhe-border/30 bg-mkhe-input/30 flex justify-end gap-3">
           <button 
             onClick={onClose}
-            className="px-6 py-2 bg-mkhe-border/20 hover:bg-mkhe-border/40 text-mkhe-text rounded shadow-sm font-medium transition cursor-pointer"
+            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all text-sm cursor-pointer"
           >
-            {t("admin:orders.close", { defaultValue: "Đóng" })}
+            {t("common.cancel")}
           </button>
-          <button 
+          <Button 
             onClick={handleSave}
             disabled={(localStatus === order.orderStatus && localPaymentStatus === order.paymentStatus) || order.orderStatus === "CANCELLED" || order.orderStatus === "COMPLETED"}
-            className="px-6 py-2 bg-mkhe-primary text-white rounded shadow-sm font-bold transition cursor-pointer hover:bg-mkhe-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="!w-auto !px-6 !py-2.5 !rounded-lg !text-sm"
           >
             {t("admin:orders.save", { defaultValue: "Lưu thay đổi" })}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

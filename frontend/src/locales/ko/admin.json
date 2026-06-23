@@ -62,7 +62,8 @@
   },
   "errors": {
     "FORBIDDEN_ACCESS": "이 기능에 액세스할 수 있는 권한이 없습니다!",
-    "fetch_failed": "사용자 목록을 가져오는 중 오류가 발생했습니다!"
+    "fetch_failed": "사용자 목록을 가져오는 중 오류가 발생했습니다!",
+    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
   },
   "table": {
     "avatar": "화신",
@@ -135,6 +136,28 @@
     "drop_rate": "드롭률",
     "time": "시간",
     "status": "상태",
+    "status_running": "진행 중",
+    "status_draft": "초안",
+    "status_ended": "종료됨",
+    "status_placeholder": "상태",
+    "end_early": "조기 종료",
+    "delete_draft_success": "초안이 성공적으로 삭제되었습니다",
+    "end_early_success": "바우처가 성공적으로 조기 종료되었습니다",
+    "delete_draft_title": "초안 삭제",
+    "end_early_title": "바우처 조기 종료",
+    "delete_draft_desc": "\"{{code}}\" 초안을 영구적으로 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+    "end_early_desc": "바우처 \"{{code}}\"을(를) 조기 종료하시겠습니까? 사용자는 더 이상 이 코드를 저장하거나 사용할 수 없습니다.",
+    "cancel": "취소",
+    "processing": "처리 중...",
+    "confirm": "확인",
+    "publish_time_passed": "시작 시간이 지났습니다. 게시하려면 지금부터 시간을 선택하세요.",
+    "save_changes": "변경 사항 저장",
+    "publish_btn": "게시",
+    "update_success": "업데이트 성공",
+    "update_error": "업데이트 오류",
+    "edit_title": "바우처 업데이트",
+    "updating": "업데이트 중...",
+    "edit_warning": "바우처가 발행되었습니다. 캠페인을 단축하거나 코드를 추가해야 하는 경우 만료일 및 수량만 수정할 수 있습니다.",
     "loading": "데이터 로드 중...",
     "no_vouchers": "아직 할인 코드가 없습니다",
     "o2o_offline": "오프라인 (O2O)",
@@ -190,7 +213,6 @@
     "no_categories": "사용 가능한 카테고리가 없습니다.",
     "apply_o2o": "O2O 적용 (매장 내 구매)",
     "apply_o2o_desc": "오프라인 매장에서 QR 스캔으로 이 코드를 사용할 수 있도록 허용합니다.",
-    "cancel": "취소",
     "creating": "생성 중...",
     "create_btn": "바우처 생성",
     "currency_symbol": "VND",
@@ -210,7 +232,10 @@
     "use_now": "지금 사용",
     "scan_at_counter": "카운터에서 스캔",
     "use_online": "온라인 사용",
-    "min_order_card": "최소 주문 {{value}} VND"
+    "min_order_card": "최소 주문 {{value}} VND",
+    "percentage": "Phần trăm (%)",
+    "fixed_amount": "Số tiền (VNĐ)",
+    "free_ship": "Miễn phí vận chuyển"
   },
   "orders": {
     "title": "주문 관리",

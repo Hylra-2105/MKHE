@@ -40,5 +40,6 @@ export const ENDPOINTS = {
     OPTIONS: `${API_BASE_URL}/vouchers/options`,
     CHECK_NFC_CLAIM: `${API_BASE_URL}/vouchers/check-nfc-claim`,
     CLAIM_NFC: `${API_BASE_URL}/vouchers/claim-nfc`,
+    ADMIN_DETAIL: (id) => `${API_BASE_URL}/vouchers/admin/${id}`,
   },
 };

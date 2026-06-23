@@ -32,6 +32,7 @@ const ProductManagementPage = () => {
   // State cho bộ lọc mã gen và nhà cung cấp
   const [dnaFilter, setDnaFilter] = useState("");
   const [vendorFilter, setVendorFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -43,7 +44,7 @@ const ProductManagementPage = () => {
         appliedSearch,
         categoryFilter,
         dnaFilter,
-        "ADMIN_ALL",
+        statusFilter || "ADMIN_ALL",
         false, // inStock
         vendorFilter
       );
@@ -58,7 +59,7 @@ const ProductManagementPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, appliedSearch, categoryFilter, dnaFilter, vendorFilter, t]);
+  }, [page, limit, appliedSearch, categoryFilter, dnaFilter, vendorFilter, statusFilter, t]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -85,6 +86,11 @@ const ProductManagementPage = () => {
   const handleVendorChange = (e) => {
     setPage(1);
     setVendorFilter(e.target.value);
+  };
+
+  const handleStatusChange = (e) => {
+    setPage(1);
+    setStatusFilter(e.target.value);
   };
 
   const handleEditProduct = (product) => {
@@ -135,6 +141,8 @@ const ProductManagementPage = () => {
         handleDnaChange={handleDnaChange}
         vendorFilter={vendorFilter}
         handleVendorChange={handleVendorChange}
+        statusFilter={statusFilter}
+        handleStatusChange={handleStatusChange}
       />
 
       <ProductTable

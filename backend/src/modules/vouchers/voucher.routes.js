@@ -10,6 +10,8 @@ import {
   getVoucherOptions,
   checkNfcClaim,
   claimNfcGacha,
+  updateVoucher,
+  deleteVoucher,
 } from "./voucher.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { checkRole } from "../../middlewares/checkRole.js";
@@ -53,6 +55,20 @@ router.get(
   verifyToken,
   checkRole(["Admin", "Staff"]),
   getVoucherOptions
+);
+
+router.put(
+  "/admin/:id",
+  verifyToken,
+  checkRole(["Admin", "Staff"]),
+  updateVoucher
+);
+
+router.delete(
+  "/admin/:id",
+  verifyToken,
+  checkRole(["Admin", "Staff"]),
+  deleteVoucher
 );
 
 export default router;

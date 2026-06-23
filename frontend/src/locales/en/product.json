@@ -11,7 +11,11 @@
     "search_btn": "Search",
     "all_categories": "All Categories",
     "all_dna": "All DNA Codes",
-    "all_vendors": "All Vendors"
+    "all_vendors": "All Vendors",
+    "all_status": "All Statuses",
+    "status_published": "Published",
+    "status_draft": "Draft",
+    "status_out_of_stock": "Out of Stock"
   },
   "table": {
     "name": "Product Name",
@@ -106,8 +110,8 @@
     }
   },
   "statuses": {
-    "DRAFT": "Draft (Hidden)",
-    "PUBLISHED": "Published (On Sale)",
+    "DRAFT": "Draft",
+    "PUBLISHED": "Published",
     "OUT_OF_STOCK": "Out of Stock"
   },
   "pagination": {
@@ -157,7 +161,10 @@
     "file_3d_too_large": "3D file is too large (>150MB), which may freeze the browser. Please reduce it using 3D software first.",
     "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
     "optimize_3d_success": "3D optimization successful! Size reduced to: {{size}}MB",
-    "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used."
+    "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used.",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
   },
   "nfc": {
     "management_title": "NFC Tag Management",

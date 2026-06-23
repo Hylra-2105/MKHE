@@ -2,6 +2,7 @@ import Order from "./order.model.js";
 import Product from "../products/product.model.js";
 import Cart from "../cart/cart.model.js";
 import UserVoucher from "../vouchers/userVoucher.model.js";
+import Voucher from "../vouchers/voucher.model.js";
 import OTP from "../auth/otp.model.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
@@ -89,14 +90,17 @@ export const checkout = async (req, res) => {
 
     if (voucherId) {
       const userVoucher = await UserVoucher.findOne({ 
-        _id: voucherId, 
+        voucher: voucherId, 
         user: user._id, 
         status: "AVAILABLE" 
       }).populate("voucher");
       
-      if (userVoucher) {
-        const v = userVoucher.voucher;
-        appliedVoucherCode = v.code;
+      if (!userVoucher) {
+        throw new Error("VOUCHER_NOT_ELIGIBLE_OR_USED");
+      }
+
+      const v = userVoucher.voucher;
+      appliedVoucherCode = v.code;
         
         if (v.type === "FIXED_AMOUNT") {
           discountAmount = v.discountValue;
@@ -109,7 +113,9 @@ export const checkout = async (req, res) => {
         userVoucher.status = "USED";
         userVoucher.usedAt = new Date();
         await userVoucher.save();
-      }
+
+        // Increment usedCount on Voucher model
+        await Voucher.findByIdAndUpdate(v._id, { $inc: { usedCount: 1 } });
     }
 
     const totalAmount = Math.max(0, subtotal + shippingFee - discountAmount);
@@ -169,6 +175,7 @@ export const checkout = async (req, res) => {
     if (error.message.startsWith("INSUFFICIENT_STOCK")) return errorResponse(res, 400, error.message);
     if (error.message === "INVALID_OTP") return errorResponse(res, 400, "INVALID_OTP");
     if (error.message === "OTP_REQUIRED") return errorResponse(res, 400, "OTP_REQUIRED");
+    if (error.message === "VOUCHER_NOT_ELIGIBLE_OR_USED") return errorResponse(res, 400, "VOUCHER_NOT_ELIGIBLE_OR_USED");
     
     return errorResponse(res, 500, "SERVER_ERROR", error.message);
   }

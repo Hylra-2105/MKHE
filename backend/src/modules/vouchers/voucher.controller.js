@@ -11,6 +11,7 @@ export const getPublicVouchers = async (req, res) => {
   try {
     const now = new Date();
     const vouchers = await Voucher.find({
+      status: "PUBLISHED",
       isActive: true,
       startDate: { $lte: now },
       endDate: { $gte: now },
@@ -155,6 +156,7 @@ export const createVoucher = async (req, res) => {
       applicableCategories,
       isO2O,
       dropRate,
+      status,
     } = req.body;
 
     // Validate
@@ -199,6 +201,7 @@ export const createVoucher = async (req, res) => {
       applicableCategories: applicableCategories || [],
       isO2O: isO2O || false,
       dropRate: dropRate || 0,
+      status: status || "DRAFT",
     });
 
     return successResponse(res, 201, "VOUCHER_CREATED_SUCCESS", voucher);
@@ -235,9 +238,8 @@ export const getAllAdminVouchers = async (req, res) => {
 
     if (status !== "ALL") {
       const now = new Date();
-      if (status === "RUNNING") {
-        query.isActive = true;
-        query.startDate = { $lte: now };
+      if (status === "PUBLISHED") {
+        query.status = "PUBLISHED";
         query.endDate = { $gte: now };
         query.$expr = {
           $or: [
@@ -245,26 +247,31 @@ export const getAllAdminVouchers = async (req, res) => {
             { $lt: ["$usedCount", "$usageLimit"] }
           ]
         };
-      } else if (status === "UPCOMING") {
-        query.isActive = true;
-        query.startDate = { $gt: now };
-      } else if (status === "EXPIRED") {
-        query.endDate = { $lt: now };
-      } else if (status === "OUT_OF_STOCK") {
-        query.$expr = {
-          $and: [
-            { $ne: ["$usageLimit", null] },
-            { $gte: ["$usedCount", "$usageLimit"] }
-          ]
-        };
-      } else if (status === "INACTIVE") {
-        query.isActive = false;
+      } else if (status === "ENDED") {
+        query.$or = [
+          { status: "ENDED" },
+          { status: "PUBLISHED", endDate: { $lt: now } },
+          { 
+            status: "PUBLISHED", 
+            $expr: {
+              $and: [
+                { $ne: ["$usageLimit", null] },
+                { $gte: ["$usedCount", "$usageLimit"] }
+              ]
+            }
+          }
+        ];
+      } else if (status === "DRAFT") {
+        query.status = "DRAFT";
       }
+    } else {
+      // Khi "ALL", không hiển thị các mã đã bị ENDED
+      query.status = { $ne: "ENDED" };
     }
 
     const total = await Voucher.countDocuments(query);
     const vouchers = await Voucher.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -397,6 +404,7 @@ export const claimNfcGacha = async (req, res) => {
 
     // 2. Lấy danh sách Voucher active, còn lượt dùng, và dropRate > 0
     const activeVouchers = await Voucher.find({
+      status: "PUBLISHED",
       isActive: true,
       dropRate: { $gt: 0 },
       startDate: { $lte: new Date() },
@@ -472,6 +480,101 @@ export const claimNfcGacha = async (req, res) => {
       return errorResponse(res, 400, "NFC_ALREADY_CLAIMED");
     }
     console.error("Lỗi claimNfcGacha:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// @desc    Cập nhật mã giảm giá
+// @route   PUT /api/vouchers/admin/:id
+// @access  Private/Admin|Staff
+export const updateVoucher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    const voucher = await Voucher.findById(id);
+    if (!voucher) return errorResponse(res, 404, "VOUCHER_NOT_FOUND");
+    
+    // Trạng thái PUBLISHED khóa chỉnh sửa một số trường quan trọng
+    const isLocked = voucher.status === "PUBLISHED";
+    
+    if (isLocked) {
+      // Bị khóa code, type, discountValue
+      if (updateData.code && updateData.code.toUpperCase() !== voucher.code) return errorResponse(res, 400, "CANNOT_UPDATE_LOCKED_FIELDS");
+      if (updateData.type && updateData.type !== voucher.type) return errorResponse(res, 400, "CANNOT_UPDATE_LOCKED_FIELDS");
+      if (updateData.discountValue !== undefined && Number(updateData.discountValue) !== voucher.discountValue) return errorResponse(res, 400, "CANNOT_UPDATE_LOCKED_FIELDS");
+    } else {
+       // DRAFT: Được phép cập nhật toàn bộ
+       if (updateData.code && updateData.code.toUpperCase() !== voucher.code) {
+           const existing = await Voucher.findOne({ code: updateData.code.toUpperCase() });
+           if (existing) return errorResponse(res, 400, "VOUCHER_CODE_EXISTS");
+           voucher.code = updateData.code.toUpperCase();
+       }
+       if (updateData.type) voucher.type = updateData.type;
+       if (updateData.discountValue !== undefined) voucher.discountValue = updateData.discountValue;
+       if (updateData.maxDiscount !== undefined) voucher.maxDiscount = updateData.type === 'PERCENTAGE' ? updateData.maxDiscount : null;
+       if (updateData.startDate) voucher.startDate = updateData.startDate;
+    }
+    
+    // Luôn cho phép cập nhật endDate và usageLimit
+    if (updateData.endDate) {
+       if (new Date(updateData.endDate) <= new Date(voucher.startDate)) return errorResponse(res, 400, "INVALID_DATE_RANGE");
+       voucher.endDate = updateData.endDate;
+    }
+    
+    if (updateData.usageLimit !== undefined) voucher.usageLimit = updateData.usageLimit;
+    if (updateData.minOrderValue !== undefined) voucher.minOrderValue = updateData.minOrderValue;
+    if (updateData.applicableVillages) voucher.applicableVillages = updateData.applicableVillages;
+    if (updateData.applicableCategories) voucher.applicableCategories = updateData.applicableCategories;
+    if (updateData.isO2O !== undefined) voucher.isO2O = updateData.isO2O;
+    if (updateData.dropRate !== undefined) voucher.dropRate = updateData.dropRate;
+    
+    // Hỗ trợ chuyển đổi trạng thái (từ DRAFT sang PUBLISHED)
+    if (updateData.status === "PUBLISHED" && voucher.status === "DRAFT") {
+      voucher.status = "PUBLISHED";
+    }
+
+    // Recalculate title
+    if (voucher.type === "PERCENTAGE") {
+      voucher.title = `Giảm ${voucher.discountValue}%`;
+      if (voucher.maxDiscount) voucher.title += ` tối đa ${voucher.maxDiscount.toLocaleString("vi-VN")}đ`;
+    } else if (voucher.type === "FIXED_AMOUNT") {
+      voucher.title = `Giảm ${voucher.discountValue.toLocaleString("vi-VN")}đ`;
+    } else if (voucher.type === "FREE_SHIP") {
+      voucher.title = voucher.discountValue > 0 ? `Giảm ${voucher.discountValue.toLocaleString("vi-VN")}đ phí vận chuyển` : `Miễn phí vận chuyển`;
+    }
+
+    await voucher.save();
+    return successResponse(res, 200, "VOUCHER_UPDATED_SUCCESS", voucher);
+  } catch (error) {
+    console.error("Lỗi updateVoucher:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// @desc    Soft-delete mã giảm giá
+// @route   DELETE /api/vouchers/admin/:id
+// @access  Private/Admin|Staff
+export const deleteVoucher = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const voucher = await Voucher.findById(id);
+    if (!voucher) return errorResponse(res, 404, "VOUCHER_NOT_FOUND");
+    
+    if (voucher.status === "DRAFT") {
+      // Hard delete nếu đang ở nháp
+      await Voucher.findByIdAndDelete(id);
+      return successResponse(res, 200, "VOUCHER_DELETED_SUCCESS", voucher);
+    }
+    
+    // Soft delete: chuyển trạng thái sang ENDED
+    voucher.status = "ENDED";
+    voucher.isActive = false;
+    await voucher.save();
+    
+    return successResponse(res, 200, "VOUCHER_DELETED_SUCCESS", voucher);
+  } catch (error) {
+    console.error("Lỗi deleteVoucher:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

@@ -16,7 +16,11 @@
     "search_btn": "検索",
     "all_categories": "すべてのカテゴリ",
     "all_dna": "すべての遺伝コード",
-    "all_vendors": "すべてのプロバイダー"
+    "all_vendors": "すべてのプロバイダー",
+    "all_status": "すべてのステータス",
+    "status_published": "公開",
+    "status_draft": "ドラフト",
+    "status_out_of_stock": "在庫切れ"
   },
   "table": {
     "name": "製品名",
@@ -111,8 +115,8 @@
     "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）"
   },
   "statuses": {
-    "DRAFT": "ドラフト (非表示)",
-    "PUBLISHED": "出版済み（発売中）",
+    "DRAFT": "ドラフト",
+    "PUBLISHED": "公開",
     "OUT_OF_STOCK": "在庫切れ"
   },
   "pagination": {
@@ -162,7 +166,10 @@
     "file_3d_too_large": "3D ファイルが大きすぎる（150MB以上）ため、ブラウザがフリーズする可能性があります。先に 3D ソフトウェアで縮小してください。",
     "optimizing_3d": "3D ファイル（{{size}}MB）を最適化しています... これには CPU が使用されます。ページを閉じないでください！",
     "optimize_3d_success": "3D 最適化が成功しました！サイズが縮小されました：{{size}}MB",
-    "optimize_3d_error": "3D 最適化に失敗しました：{{error}}。元のファイルが使用されます。"
+    "optimize_3d_error": "3D 最適化に失敗しました：{{error}}。元のファイルが使用されます。",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
   },
   "nfc": {
     "management_title": "NFCタグ管理",

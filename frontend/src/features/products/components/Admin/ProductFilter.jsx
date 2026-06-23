@@ -12,6 +12,8 @@ const ProductFilter = ({
   handleDnaChange, // Thêm prop mới
   vendorFilter,
   handleVendorChange,
+  statusFilter, // Thêm prop mới
+  handleStatusChange, // Thêm prop mới
 }) => {
   const { t } = useTranslation("product");
 
@@ -40,6 +42,13 @@ const ProductFilter = ({
     { value: "Gốm Phnôm Pi", label: "Gốm Phnôm Pi" },
     { value: "Hanhsilk", label: "Hanhsilk" },
     { value: "Khác", label: "Khác" },
+  ];
+
+  const statusOptions = [
+    { value: "", label: t("filter.all_status", "Tất cả trạng thái") },
+    { value: "PUBLISHED", label: t("filter.status_published", "Công khai") },
+    { value: "DRAFT", label: t("filter.status_draft", "Bản nháp") },
+    { value: "OUT_OF_STOCK", label: t("filter.status_out_of_stock", "Hết hàng") },
   ];
 
   return (
@@ -90,6 +99,16 @@ const ProductFilter = ({
           options={vendorOptions}
           onChange={(val) => handleVendorChange({ target: { value: val } })}
           placeholder={t("filter.all_vendors", "Tất cả Đối tác")}
+          className="w-full md:w-40 lg:w-48"
+          triggerClassName="h-10 px-3 rounded"
+          optionClassName="text-sm"
+        />
+
+        <Dropdown
+          value={statusFilter}
+          options={statusOptions}
+          onChange={(val) => handleStatusChange({ target: { value: val } })}
+          placeholder={t("filter.all_status", "Tất cả trạng thái")}
           className="w-full md:w-40 lg:w-48"
           triggerClassName="h-10 px-3 rounded"
           optionClassName="text-sm"

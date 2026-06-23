@@ -14,3 +14,5 @@ export const getAdminVouchersApi = (page = 1, limit = 5, search = "", status = "
   axiosClient.get(ENDPOINTS.VOUCHERS.ADMIN, { params: { page, limit, search, status, type } });
 export const createVoucherApi = (data) => axiosClient.post(ENDPOINTS.VOUCHERS.ADMIN, data);
 export const getVoucherOptionsApi = () => axiosClient.get(ENDPOINTS.VOUCHERS.OPTIONS);
+export const updateVoucherApi = (id, data) => axiosClient.put(ENDPOINTS.VOUCHERS.ADMIN_DETAIL(id), data);
+export const deleteVoucherApi = (id) => axiosClient.delete(ENDPOINTS.VOUCHERS.ADMIN_DETAIL(id));

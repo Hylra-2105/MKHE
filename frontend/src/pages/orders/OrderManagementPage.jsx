@@ -176,14 +176,14 @@ const OrderManagementPage = () => {
                     <button 
                       onClick={() => handlePrintInvoice(order)} 
                       title={t("admin:orders.print_invoice", { defaultValue: "In hóa đơn" })} 
-                      className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9"
+                      className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9"
                     >
                       <FiPrinter size={18} />
                     </button>
                     {user?.role === "Admin" && order.user && (
                       <button 
                         onClick={() => { setSelectedUser(order.user); setIsUserModalOpen(true); }}
-                        className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 ${order.user.isBlocked ? "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10" : "text-red-600 hover:bg-red-500/20 bg-red-500/10"}`}
+                        className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 ${order.user.isBlocked ? "text-green-500 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
                         title={order.user.isBlocked ? t("common.unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
                       >
                         <FiLock size={18} />

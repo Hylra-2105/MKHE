@@ -62,7 +62,8 @@
   },
   "errors": {
     "FORBIDDEN_ACCESS": "You do not have permission to access this feature!",
-    "fetch_failed": "Error occurred while fetching user list!"
+    "fetch_failed": "Error occurred while fetching user list!",
+    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
   },
   "table": {
     "avatar": "Avatar",
@@ -135,6 +136,28 @@
     "drop_rate": "Drop Rate",
     "time": "Time",
     "status": "Status",
+    "status_running": "Running",
+    "status_draft": "Draft",
+    "status_ended": "Ended",
+    "status_placeholder": "Status",
+    "end_early": "End Early",
+    "delete_draft_success": "Draft deleted successfully",
+    "end_early_success": "Voucher ended early successfully",
+    "delete_draft_title": "Delete Draft",
+    "end_early_title": "End Voucher Early",
+    "delete_draft_desc": "Are you sure you want to permanently delete the draft \"{{code}}\"? This action cannot be undone.",
+    "end_early_desc": "Are you sure you want to end the voucher \"{{code}}\" early? Users will no longer be able to save or use this code.",
+    "cancel": "Cancel",
+    "processing": "Processing...",
+    "confirm": "Confirm",
+    "publish_time_passed": "Start time has passed. Please select a time from now onwards to publish.",
+    "save_changes": "Save Changes",
+    "publish_btn": "Publish",
+    "update_success": "Update successful",
+    "update_error": "Update error",
+    "edit_title": "Update Voucher",
+    "updating": "Updating...",
+    "edit_warning": "Voucher has been published, you can only edit Expiration Date and Quantity (if you need to cut the campaign short or add more codes).",
     "loading": "Loading data...",
     "no_vouchers": "No discount codes yet",
     "o2o_offline": "O2O Offline",
@@ -190,7 +213,6 @@
     "no_categories": "No categories available.",
     "apply_o2o": "Apply O2O (In-store purchase)",
     "apply_o2o_desc": "Allow using this code at physical stores via QR scan.",
-    "cancel": "Cancel",
     "creating": "Creating...",
     "create_btn": "Create Voucher",
     "currency_symbol": "VND",
@@ -210,7 +232,10 @@
     "use_now": "Use Now",
     "scan_at_counter": "Scan at counter",
     "use_online": "Use Online",
-    "min_order_card": "Min order {{value}} VND"
+    "min_order_card": "Min order {{value}} VND",
+    "percentage": "Phần trăm (%)",
+    "fixed_amount": "Số tiền (VNĐ)",
+    "free_ship": "Miễn phí vận chuyển"
   },
   "orders": {
     "title": "Order Management",

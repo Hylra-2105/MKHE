@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Save, AlertCircle } from "lucide-react";
-import { getVoucherOptionsApi, createVoucherApi } from "@/api/voucherApi";
+import { getVoucherOptionsApi, createVoucherApi, updateVoucherApi } from "@/api/voucherApi";
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/Dropdown";
+import Button from "@/components/ui/Button";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -23,7 +24,7 @@ const formatFlatpickrDate = (dateObj) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
+const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const { t } = useTranslation(["admin"]);
   const [formData, setFormData] = useState({
     code: "",
@@ -38,7 +39,10 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
     applicableCategories: [],
     isO2O: false,
     dropRate: 0,
+    status: "DRAFT",
   });
+
+  const isPublished = editData?.status === "PUBLISHED";
 
   const [options, setOptions] = useState({ categories: [], villages: [] });
   const [loading, setLoading] = useState(false);
@@ -46,6 +50,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
 
   const startDateOptions = useMemo(() => ({
     ...flatpickrOptions,
+    minDate: new Date(),
   }), []);
 
   const endDateOptions = useMemo(() => ({
@@ -61,7 +66,24 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
 
   useEffect(() => {
     if (isOpen) {
-      // Load draft or reset form
+      if (editData) {
+        setFormData({
+          code: editData.code || "",
+          type: editData.type || "PERCENTAGE",
+          discountValue: editData.discountValue?.toString() || "",
+          maxDiscount: editData.maxDiscount?.toString() || "",
+          minOrderValue: editData.minOrderValue?.toString() || "",
+          startDate: editData.startDate || "",
+          endDate: editData.endDate || "",
+          usageLimit: editData.usageLimit?.toString() || "",
+          applicableVillages: editData.applicableVillages || [],
+          applicableCategories: editData.applicableCategories || [],
+          isO2O: editData.isO2O || false,
+          dropRate: editData.dropRate || 0,
+          status: editData.status || "DRAFT",
+        });
+      } else {
+        // Load draft or reset form
       const draft = localStorage.getItem("mkhe_voucher_draft");
       if (draft) {
         try {
@@ -102,7 +124,9 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
           applicableCategories: [],
           isO2O: false,
           dropRate: 0,
+          status: "DRAFT",
         });
+      }
       }
 
       // Fetch options
@@ -130,13 +154,12 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
 
       fetchOptions();
     }
-  }, [isOpen]);
+  }, [isOpen, editData]);
 
   
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || editData) return;
 
-    
     const isFormEmpty = !formData.code && !formData.discountValue && !formData.startDate && !formData.endDate;
     if (isFormEmpty) return;
 
@@ -199,7 +222,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, submitStatus = null) => {
     e.preventDefault();
 
     if (!formData.startDate || !formData.endDate) {
@@ -208,6 +231,10 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
 
     if (new Date(formData.endDate) <= new Date(formData.startDate)) {
       return toast.error(t("voucher.time_invalid_error"));
+    }
+
+    if (submitStatus === "PUBLISHED" && new Date(formData.startDate) < new Date()) {
+      return toast.error(t("voucher.publish_time_passed", { defaultValue: "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành." }));
     }
 
     try {
@@ -220,15 +247,21 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
         maxDiscount: formData.maxDiscount ? Number(formData.maxDiscount) : null,
         minOrderValue: formData.minOrderValue ? Number(formData.minOrderValue) : 0,
         usageLimit: formData.usageLimit ? Number(formData.usageLimit) : null,
+        status: submitStatus || formData.status,
       };
 
-      await createVoucherApi(payload);
-      localStorage.removeItem("mkhe_voucher_draft");
-      toast.success(t("voucher.create_success"));
+      if (editData) {
+        await updateVoucherApi(editData._id, payload);
+        toast.success(t("voucher.update_success", { defaultValue: "Cập nhật thành công" }));
+      } else {
+        await createVoucherApi(payload);
+        localStorage.removeItem("mkhe_voucher_draft");
+        toast.success(t("voucher.create_success"));
+      }
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.message || t("voucher.create_error_generic"));
+      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error", { defaultValue: "Lỗi cập nhật" }) : t("voucher.create_error_generic")));
     } finally {
       setLoading(false);
     }
@@ -242,7 +275,9 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
         
         {/* Header */}
         <div className="flex items-center justify-between mx-6 pt-6 pb-5 border-b border-[var(--color-mkhe-border)]/50 shrink-0">
-          <h2 className="font-serif text-2xl text-gradient-gold font-bold">{t("voucher.create_title")}</h2>
+          <h2 className="font-serif text-2xl text-gradient-gold font-bold">
+            {editData ? t("voucher.edit_title", { defaultValue: "Cập nhật Voucher" }) : t("voucher.create_title")}
+          </h2>
           <button 
             onClick={onClose}
             className="p-2 hover:bg-mkhe-primary/10 cursor-pointer rounded-full transition-colors"
@@ -255,6 +290,13 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
         <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
           <form id="voucher-form" onSubmit={handleSubmit} className="space-y-6">
             
+            {isPublished && (
+              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-lg flex items-start gap-2 text-sm">
+                <AlertCircle className="w-5 h-5 shrink-0 text-yellow-600 mt-0.5" />
+                <p>{t("voucher.edit_warning", { defaultValue: "Voucher đã phát hành, bạn chỉ có thể sửa Hạn sử dụng và Số lượng (nếu cần cắt chiến dịch hoặc bơm thêm mã)." })}</p>
+              </div>
+            )}
+
             <div className="space-y-4">
               <h3 className="font-semibold text-lg border-b pb-2 border-[var(--color-mkhe-border)]/20 text-gradient-gold">{t("voucher.basic_info")}</h3>
               
@@ -267,7 +309,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                   placeholder={t("voucher.voucher_code_placeholder")}
                   value={formData.code}
                   onChange={handleChange}
-                  className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase"
+                  disabled={isPublished}
+                  className={`w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                 />
               </div>
 
@@ -277,7 +320,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                   <Dropdown 
                     value={formData.type} 
                     options={voucherTypes} 
-                    onChange={(val) => handleChange({ target: { name: 'type', value: val }})} 
+                    onChange={(val) => !isPublished && handleChange({ target: { name: 'type', value: val }})} 
+                    disabled={isPublished}
                     className="w-full" 
                     triggerClassName="p-3.5 rounded-xl text-sm" 
                     optionClassName="text-sm" 
@@ -293,7 +337,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                       placeholder={formData.type === "PERCENTAGE" ? t("voucher.discount_percentage_placeholder") : t("voucher.discount_fixed_placeholder")}
                       value={formatMoney(formData.discountValue)}
                       onChange={handleMoneyChange}
-                      className="w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                      disabled={isPublished}
+                      className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">
                       {formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}
@@ -312,7 +357,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                       placeholder={t("voucher.not_required")}
                       value={formatMoney(formData.maxDiscount)}
                       onChange={handleMoneyChange}
-                      className="w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                      disabled={isPublished}
+                      className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">{t("voucher.currency_symbol")}</span>
                   </div>
@@ -329,7 +375,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                     placeholder={t("voucher.min_order_placeholder")}
                     value={formatMoney(formData.minOrderValue)}
                     onChange={handleMoneyChange}
-                    className="w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                    disabled={isPublished}
+                    className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">{t("voucher.currency_symbol")}</span>
                 </div>
@@ -346,9 +393,10 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
                   <Flatpickr
                     id="startDate"
                     value={formatFlatpickrDate(formData.startDate)}
-                    onChange={([date]) => setFormData(prev => ({...prev, startDate: date}))}
+                    onChange={([date]) => !isPublished && setFormData(prev => ({...prev, startDate: date}))}
                     options={startDateOptions}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                    disabled={isPublished}
+                    className={`w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
                 </div>
@@ -476,19 +524,44 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess }) => {
           >
             {t("voucher.cancel")}
           </button>
-          <button 
-            type="submit"
-            form="voucher-form"
-            disabled={loading}
-            className="px-8 py-2.5 bg-mkhe-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-mkhe-primary/90 transition-all text-sm disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? t("voucher.creating") : (
-              <>
-                <Save className="w-4 h-4" />
-                {t("voucher.create_btn")}
-              </>
-            )}
-          </button>
+          {!editData ? (
+            <Button 
+              type="button"
+              onClick={(e) => handleSubmit(e, "DRAFT")}
+              disabled={loading}
+              className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+            >
+              {loading ? t("voucher.creating") : t("voucher.create_btn", { defaultValue: "Tạo Bản Nháp" })}
+            </Button>
+          ) : formData.status === "DRAFT" ? (
+            <div className="flex items-center gap-2">
+              <Button 
+                type="button"
+                onClick={(e) => handleSubmit(e, "DRAFT")}
+                disabled={loading}
+                className="!w-auto !px-6 !py-2.5 !bg-transparent !border !border-mkhe-primary !text-mkhe-primary !rounded-xl !hover:bg-mkhe-primary/10 !text-sm"
+              >
+                {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
+              </Button>
+              <Button 
+                type="button"
+                onClick={(e) => handleSubmit(e, "PUBLISHED")}
+                disabled={loading}
+                className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+              >
+                {loading ? t("voucher.updating") : t("voucher.publish_btn", { defaultValue: "Phát Hành" })}
+              </Button>
+            </div>
+          ) : (
+            <Button 
+              type="submit"
+              form="voucher-form"
+              disabled={loading}
+              className="!w-auto !px-8 !py-2.5 !rounded-xl !text-sm"
+            >
+              {loading ? t("voucher.updating", { defaultValue: "Đang cập nhật..." }) : t("voucher.save_changes", { defaultValue: "Lưu thay đổi" })}
+            </Button>
+          )}
         </div>
 
       </div>

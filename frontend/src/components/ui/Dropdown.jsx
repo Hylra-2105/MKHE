@@ -10,6 +10,7 @@ const Dropdown = ({
   triggerClassName = "",
   dropdownClassName = "",
   optionClassName = "",
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -36,8 +37,9 @@ const Dropdown = ({
     >
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-transparent border border-mkhe-border/50 text-mkhe-text cursor-pointer focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border ${triggerClassName}`}
+        disabled={disabled}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border ${disabled ? "opacity-60 bg-gray-100 cursor-not-allowed" : "cursor-pointer"} ${triggerClassName}`}
       >
         <span className={`truncate ${selectedColor}`}>{selectedLabel}</span>
         <ChevronDown

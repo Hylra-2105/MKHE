@@ -166,6 +166,7 @@ export default function CheckoutPage() {
         if (!buyNowItem) {
           await removeMultipleFromCart(checkoutItems.map(i => i.product._id), true);
         }
+        useCartStore.getState().setSelectedVoucher(null);
         toast.success(t("success.order_placed"));
         setShowOtpModal(false);
         navigate("/checkout/success", { state: { order: res.data } });
