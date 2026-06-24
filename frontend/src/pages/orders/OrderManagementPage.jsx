@@ -122,17 +122,17 @@ const OrderManagementPage = () => {
         handleSearch={handleSearch}
       />
 
-      <div className={`bg-mkhe-bg rounded shadow overflow-hidden border border-mkhe-border/30 h-[600px] flex flex-col transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
+      <div className={`bg-mkhe-bg rounded shadow overflow-hidden border border-mkhe-border/50 min-h-[420px] flex flex-col transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
-            <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-              <th className="p-4 font-semibold">{t("admin:orders.table_id", { defaultValue: "Mã Đơn" })}</th>
-              <th className="p-4 font-semibold">{t("admin:orders.table_date", { defaultValue: "Ngày Đặt" })}</th>
-              <th className="p-4 font-semibold">{t("admin:orders.table_customer", { defaultValue: "Khách Hàng" })}</th>
-              <th className="p-4 font-semibold">{t("admin:orders.table_total", { defaultValue: "Tổng Tiền" })}</th>
-              <th className="p-4 font-semibold text-center">{t("admin:orders.table_status", { defaultValue: "Trạng Thái" })}</th>
-              <th className="p-4 font-semibold text-center">{t("admin:orders.table_action", { defaultValue: "Hành Động" })}</th>
+            <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
+              <th className="px-4 py-3 font-semibold">{t("admin:orders.table_id", { defaultValue: "Mã Đơn" })}</th>
+              <th className="px-4 py-3 font-semibold">{t("admin:orders.table_date", { defaultValue: "Ngày Đặt" })}</th>
+              <th className="px-4 py-3 font-semibold">{t("admin:orders.table_customer", { defaultValue: "Khách Hàng" })}</th>
+              <th className="px-4 py-3 font-semibold">{t("admin:orders.table_total", { defaultValue: "Tổng Tiền" })}</th>
+              <th className="px-4 py-3 font-semibold text-center">{t("admin:orders.table_status", { defaultValue: "Trạng Thái" })}</th>
+              <th className="px-4 py-3 font-semibold text-center">{t("admin:orders.table_action", { defaultValue: "Hành Động" })}</th>
             </tr>
           </thead>
           <tbody className="text-mkhe-text relative">
@@ -149,10 +149,10 @@ const OrderManagementPage = () => {
               <tr><td colSpan="6" className="p-8 text-center text-mkhe-text/60">{t("admin:orders.no_orders", { defaultValue: "Không tìm thấy đơn hàng nào." })}</td></tr>
             ) : (
               orders.map((order) => (
-                <tr key={order._id} className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0">
-                  <td className="p-4 font-medium">{order.orderCode}</td>
-                  <td className="p-4 text-mkhe-text/80">{new Date(order.createdAt).toLocaleDateString("vi-VN")}</td>
-                  <td className="p-4">
+                <tr key={order._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0">
+                  <td className="px-4 py-2.5 font-medium">{order.orderCode}</td>
+                  <td className="px-4 py-2.5 text-mkhe-text/80">{new Date(order.createdAt).toLocaleDateString("vi-VN")}</td>
+                  <td className="px-4 py-2.5">
                     <div className="font-medium">{order.shippingInfo.name}</div>
                     <div className="text-sm text-mkhe-text/60">{order.shippingInfo.phone}</div>
                     {isHighRisk(order) && (
@@ -161,11 +161,11 @@ const OrderManagementPage = () => {
                       </div>
                     )}
                   </td>
-                  <td className="p-4 font-medium">{order.totalAmount.toLocaleString()}đ</td>
-                  <td className="p-4 text-center">
+                  <td className="px-4 py-2.5 font-medium">{order.totalAmount.toLocaleString()}đ</td>
+                  <td className="px-4 py-2.5 text-center">
                     <StatusBadge status={order.orderStatus} />
                   </td>
-                  <td className="p-4 flex gap-2 justify-center">
+                  <td className="px-4 py-2.5 flex gap-2 justify-center">
                     <button 
                       onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }}
                       title={t("admin:orders.view_detail", { defaultValue: "Xem chi tiết" })} 

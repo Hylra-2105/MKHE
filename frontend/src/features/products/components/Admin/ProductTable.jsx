@@ -7,26 +7,26 @@ const ProductTable = ({ products, loading, onEdit }) => {
 
   return (
     <div
-      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/30 min-h-[420px] transition-opacity relative ${
+      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/50 min-h-[420px] transition-opacity relative ${
         loading ? "opacity-60 pointer-events-none" : "opacity-100"
       }`}
     >
       <table className="w-full text-left border-collapse min-w-[800px]">
         <thead>
-          <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-            <th className="p-4 font-semibold w-1/4">{t("table.name")}</th>
-            <th className="p-4 font-semibold w-1/7">{t("table.sku")}</th>
-            <th className="p-4 font-semibold w-1/7">{t("table.category")}</th>
-            <th className="p-4 font-semibold text-center w-1/9">
+          <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
+            <th className="px-4 py-3 font-semibold w-1/4">{t("table.name")}</th>
+            <th className="px-4 py-3 font-semibold w-1/7">{t("table.sku")}</th>
+            <th className="px-4 py-3 font-semibold w-1/7">{t("table.category")}</th>
+            <th className="px-4 py-3 font-semibold text-center w-1/9">
               {t("table.price")}
             </th>
-            <th className="p-4 font-semibold text-center w-1/11">
+            <th className="px-4 py-3 font-semibold text-center w-1/11">
               {t("table.stock")}
             </th>
-            <th className="p-4 font-semibold text-center w-1/6">
+            <th className="px-4 py-3 font-semibold text-center w-1/6">
               {t("table.status")}
             </th>
-            <th className="p-4 font-semibold text-center">
+            <th className="px-4 py-3 font-semibold text-center">
               {t("table.actions")}
             </th>
           </tr>
@@ -42,9 +42,9 @@ const ProductTable = ({ products, loading, onEdit }) => {
             products?.map((product) => (
               <tr
                 key={product._id}
-                className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
+                className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
-                <td className="p-4 font-medium text-mkhe-text">
+                <td className="px-4 py-2.5 font-medium text-mkhe-text">
                   <div className="flex flex-col gap-1.5 items-start">
                     <span className="text-base font-bold">{product.name}</span>
                     <div className="flex flex-wrap items-center gap-2 mt-0.5">
@@ -63,12 +63,12 @@ const ProductTable = ({ products, loading, onEdit }) => {
                     </div>
                   </div>
                 </td>
-                <td className="p-4 text-mkhe-primary font-semibold">
+                <td className="px-4 py-2.5 text-mkhe-primary font-semibold">
                   {product.sku}
                 </td>
 
                 {/* CỘT CATEGORY */}
-                <td className="p-4">
+                <td className="px-4 py-2.5">
                   <span className="bg-mkhe-primary/10 text-mkhe-primary font-medium px-2.5 py-1 rounded text-[11px] border border-mkhe-primary/30 whitespace-nowrap">
                     {t(
                       `categories.${product.categoryMatrix}`,
@@ -77,13 +77,13 @@ const ProductTable = ({ products, loading, onEdit }) => {
                   </span>
                 </td>
 
-                <td className="p-4 text-center font-bold text-mkhe-primary">
+                <td className="px-4 py-2.5 text-center font-bold text-mkhe-primary">
                   {product.price?.toLocaleString("vi-VN") || 0} đ
                 </td>
-                <td className="p-4 text-center font-medium text-mkhe-text">
+                <td className="px-4 py-2.5 text-center font-medium text-mkhe-text">
                   {product.stock || 0}
                 </td>
-                <td className="p-4 text-center">
+                <td className="px-4 py-2.5 text-center">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${
                       product.status === "PUBLISHED"
@@ -96,7 +96,7 @@ const ProductTable = ({ products, loading, onEdit }) => {
                     {t(`statuses.${product.status}`, product.status)}
                   </span>
                 </td>
-                <td className="p-4 text-center">
+                <td className="px-4 py-2.5 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <button
                       onClick={() => onEdit(product)}

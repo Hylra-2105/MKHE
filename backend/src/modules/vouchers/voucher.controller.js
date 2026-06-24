@@ -495,8 +495,8 @@ export const updateVoucher = async (req, res) => {
     const voucher = await Voucher.findById(id);
     if (!voucher) return errorResponse(res, 404, "VOUCHER_NOT_FOUND");
     
-    // Trạng thái PUBLISHED khóa chỉnh sửa một số trường quan trọng
-    const isLocked = voucher.status === "PUBLISHED";
+    // Trạng thái PUBLISHED khóa chỉnh sửa một số trường quan trọng (chỉ khóa khi voucher ĐÃ CHẠY)
+    const isLocked = voucher.status === "PUBLISHED" && new Date(voucher.startDate) <= new Date();
     
     if (isLocked) {
       // Bị khóa code, type, discountValue
@@ -532,6 +532,15 @@ export const updateVoucher = async (req, res) => {
     // Hỗ trợ chuyển đổi trạng thái (từ DRAFT sang PUBLISHED)
     if (updateData.status === "PUBLISHED" && voucher.status === "DRAFT") {
       voucher.status = "PUBLISHED";
+    }
+    
+    // Hỗ trợ chuyển đổi trạng thái (từ PUBLISHED về DRAFT nếu voucher chưa chạy)
+    if (updateData.status === "DRAFT" && voucher.status === "PUBLISHED") {
+      if (new Date(voucher.startDate) > new Date()) {
+        voucher.status = "DRAFT";
+      } else {
+        return errorResponse(res, 400, "CANNOT_REVERT_RUNNING_VOUCHER");
+      }
     }
 
     // Recalculate title

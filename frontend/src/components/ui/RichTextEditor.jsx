@@ -19,7 +19,7 @@ const MenuBar = ({ editor, onImageUpload }) => {
   if (!editor) return null;
 
   const btnClass = (isActive) =>
-    `p-1.5 rounded transition-colors ${
+    `p-1.5 rounded transition-colors cursor-pointer ${
       isActive
         ? "bg-mkhe-primary/20 text-mkhe-primary"
         : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"
@@ -166,7 +166,7 @@ const MenuBar = ({ editor, onImageUpload }) => {
                 try {
                   const url = await onImageUpload(file);
                   if (url) {
-                    editor.chain().focus().setImage({ src: url }).run();
+                    editor.chain().focus().setImage({ src: url }).insertContent('<p></p>').run();
                   }
                 } catch (error) {
                   console.error("Image upload failed", error);
@@ -187,11 +187,11 @@ const MenuBar = ({ editor, onImageUpload }) => {
         onClick={() => {
           const url = prompt(t("editor.youtube_url", "Enter YouTube URL:"));
           if (url) {
-            editor.commands.setYoutubeVideo({
+            editor.chain().focus().setYoutubeVideo({
               src: url,
               width: Math.max(320, parseInt(editor.view.dom.clientWidth, 10)) || 640,
               height: Math.max(180, parseInt(editor.view.dom.clientWidth, 10) * 9 / 16) || 360,
-            });
+            }).insertContent('<p></p>').run();
           }
         }}
         className={btnClass()}
@@ -234,7 +234,7 @@ const RichTextEditor = ({ value, onChange, placeholder, onImageUpload }) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm prose-stone max-w-none focus:outline-none min-h-[150px] p-4 text-mkhe-text leading-relaxed " +
+          "prose prose-sm prose-stone dark:prose-invert max-w-none focus:outline-none min-h-[150px] p-4 text-mkhe-text leading-relaxed " +
           "[&>p]:mb-3 last:[&>p]:mb-0 [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:font-semibold [&_h3]:text-lg [&_h3]:mb-2 [&_h3]:mt-4 " +
           "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 " +
           "[&_blockquote]:border-l-4 [&_blockquote]:border-mkhe-primary/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-mkhe-text/80 [&_blockquote]:my-4 " +

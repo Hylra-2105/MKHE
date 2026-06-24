@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import Dropdown from "@/components/ui/Dropdown";
+import { LayoutGrid, List as ListIcon } from "lucide-react";
 
 const UserFilter = ({
   searchInput,
@@ -10,6 +11,8 @@ const UserFilter = ({
   statusFilter,
   handleStatusChange,
   handleSearch,
+  viewMode,
+  setViewMode,
 }) => {
   const { t } = useTranslation("admin");
 
@@ -65,6 +68,25 @@ const UserFilter = ({
         triggerClassName="h-10 px-3 rounded"
         optionClassName="text-sm"
       />
+
+      {/* View Mode Toggle */}
+      <div className="flex items-center border border-mkhe-border/50 rounded h-10 overflow-hidden shrink-0 ml-auto md:ml-0">
+        <button
+          onClick={() => setViewMode("list")}
+          className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "list" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+          title="Danh sách"
+        >
+          <ListIcon className="w-5 h-5" />
+        </button>
+        <div className="w-[1px] h-full bg-mkhe-border/50"></div>
+        <button
+          onClick={() => setViewMode("grid")}
+          className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "grid" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+          title="Lưới"
+        >
+          <LayoutGrid className="w-4 h-4" />
+        </button>
+      </div>
     </div>
   );
 };

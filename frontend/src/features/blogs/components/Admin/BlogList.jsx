@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Search, Plus, Edit, Trash2, Eye, LayoutGrid, List as ListIcon, Calendar } from "lucide-react";
+import { Search, Plus, Edit2, Trash2, Eye, LayoutGrid, List as ListIcon, Calendar } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getBlogsApi, deleteBlogApi } from "@/api/blogApi";
@@ -13,7 +13,7 @@ const BlogList = () => {
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("grid"); // grid | list
+  const [viewMode, setViewMode] = useState("list"); // grid | list
   const [filter, setFilter] = useState({
     search: "",
     category: "",
@@ -198,18 +198,18 @@ const BlogList = () => {
                 <h3 className="text-sm font-bold text-mkhe-text line-clamp-2 mb-2 group-hover:text-mkhe-primary transition-colors">
                   {blog.title}
                 </h3>
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-mkhe-border/20">
+                <div className="mt-auto pt-4 flex items-center justify-between border-t border-mkhe-border/50">
                   <div className="text-xs text-mkhe-text/60">
                     {blog.tags?.length || 0} sản phẩm tag
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-1.5 text-mkhe-text/60 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded transition-colors" title="Chỉnh sửa">
-                      <Edit className="w-4 h-4" />
+                    <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-1.5 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer" title="Chỉnh sửa">
+                      <Edit2 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-1.5 text-mkhe-text/60 hover:text-mkhe-text hover:bg-mkhe-border/30 rounded transition-colors" title="Xem trên web">
+                    <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-1.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer" title="Xem trên web">
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 text-mkhe-text/60 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors" title="Xóa">
+                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title="Xóa">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -224,17 +224,17 @@ const BlogList = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-mkhe-input/30 border-b border-mkhe-border/50">
-                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Bài viết</th>
-                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Danh mục</th>
-                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Trạng thái</th>
-                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Ngày tạo</th>
-                  <th className="p-4 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-right">Thao tác</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Bài viết</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Danh mục</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Trạng thái</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Ngày tạo</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-center">{t("table.actions", { defaultValue: "Hành động" })}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-mkhe-border/30">
+              <tbody className="divide-y divide-mkhe-border/50">
                 {blogs.map(blog => (
                   <tr key={blog._id} className="hover:bg-mkhe-border/10 transition-colors group">
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="flex items-center gap-3">
                         <div className="w-16 h-12 rounded overflow-hidden bg-mkhe-border/20 flex-shrink-0">
                           {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-full object-cover" />}
@@ -242,28 +242,28 @@ const BlogList = () => {
                         <p className="text-sm font-bold text-mkhe-text group-hover:text-mkhe-primary transition-colors line-clamp-1">{blog.title}</p>
                       </div>
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <span className="text-xs font-medium text-mkhe-primary bg-mkhe-primary/10 px-2 py-1 rounded-full uppercase tracking-wide">
                         {blog.category}
                       </span>
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
                         {blog.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
                       </span>
                     </td>
-                    <td className="p-4 text-sm text-mkhe-text/80">
+                    <td className="px-4 py-2.5 text-sm text-mkhe-text/80">
                       {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
                     </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 text-mkhe-text/60 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded-lg transition-colors" title="Chỉnh sửa">
-                          <Edit className="w-4 h-4" />
+                    <td className="px-4 py-2.5 text-center">
+                      <div className="flex items-center justify-center gap-1 transition-opacity">
+                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer" title="Chỉnh sửa">
+                          <Edit2 className="w-4 h-4" />
                         </button>
-                        <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 text-mkhe-text/60 hover:text-mkhe-text hover:bg-mkhe-border/30 rounded-lg transition-colors" title="Xem trên web">
+                        <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-all duration-300 cursor-pointer" title="Xem trên web">
                           <Eye className="w-4 h-4" />
                         </button>
-                        <button onClick={() => setDeleteId(blog._id)} className="p-2 text-mkhe-text/60 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Xóa">
+                        <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title="Xóa">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>

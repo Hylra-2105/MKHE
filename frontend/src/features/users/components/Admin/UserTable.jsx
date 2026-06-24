@@ -8,21 +8,21 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
 
   return (
     <div
-      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/30 min-h-[420px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}
+      className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/50 min-h-[420px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}
     >
       <table className="w-full text-left border-collapse min-w-[800px]">
         <thead>
-          <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-            <th className="p-4 font-semibold w-50">{t("table.avatar")}</th>
-            <th className="p-4 font-semibold w-1/6">{t("table.name")}</th>
-            <th className="p-4 font-semibold w-1/6">{t("table.email")}</th>
-            <th className="p-4 font-semibold text-center w-1/4">
+          <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
+            <th className="px-4 py-3 font-semibold w-50">{t("table.avatar")}</th>
+            <th className="px-4 py-3 font-semibold w-1/6">{t("table.name")}</th>
+            <th className="px-4 py-3 font-semibold w-1/6">{t("table.email")}</th>
+            <th className="px-4 py-3 font-semibold text-center w-1/4">
               {t("table.role")}
             </th>
-            <th className="p-4 font-semibold text-center w-1/6">
+            <th className="px-4 py-3 font-semibold text-center w-1/6">
               {t("table.status")}
             </th>
-            <th className="p-4 font-semibold text-center">
+            <th className="px-4 py-3 font-semibold text-center">
               {t("table.actions")}
             </th>
           </tr>
@@ -47,9 +47,9 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
             users.map((user) => (
               <tr
                 key={user._id}
-                className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
+                className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
-                <td className="p-4">
+                <td className="px-4 py-2.5">
                   {user.avatar && isVideoMedia(user.avatar) ? (
                     <video
                       src={user.avatar}
@@ -72,9 +72,9 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                     />
                   )}
                 </td>
-                <td className="p-4 font-medium">{user.name}</td>
-                <td className="p-4 text-mkhe-text/80 ">{user.email}</td>
-                <td className="p-4 text-center">
+                <td className="px-4 py-2.5 font-medium">{user.name}</td>
+                <td className="px-4 py-2.5 text-mkhe-text/80 ">{user.email}</td>
+                <td className="px-4 py-2.5 text-center">
                   <span
                     className={`px-2.5 py-1 rounded text-xs font-bold border ${
                       user.role === "Admin"
@@ -87,7 +87,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                     {t(`roles.${user.role.toLowerCase()}`)}
                   </span>
                 </td>
-                <td className="p-4 text-center">
+                <td className="px-4 py-2.5 text-center">
                   {user.isBlocked ? (
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-600 border border-orange-500/30">
                       {t("table.status_blocked")}
@@ -98,7 +98,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                     </span>
                   )}
                 </td>
-                <td className="p-4 text-center">
+                <td className="px-4 py-2.5 text-center">
                   <div className="flex justify-center">
                     {user._id !== currentUser?._id && (
                       <button

@@ -42,8 +42,9 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
     status: "DRAFT",
   });
 
-  const isPublished = editData?.status === "PUBLISHED";
-
+  // Chỉ khóa các trường (isPublished = true) khi voucher ĐÃ CHẠY (startDate <= now)
+  const isPublished = editData?.status === "PUBLISHED" && new Date(editData?.startDate) <= new Date();
+  const isScheduled = editData?.status === "PUBLISHED" && new Date(editData?.startDate) > new Date();
   const [options, setOptions] = useState({ categories: [], villages: [] });
   const [loading, setLoading] = useState(false);
   const [fetchingOptions, setFetchingOptions] = useState(false);
@@ -291,9 +292,16 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           <form id="voucher-form" onSubmit={handleSubmit} className="space-y-6">
             
             {isPublished && (
-              <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-lg flex items-start gap-2 text-sm">
-                <AlertCircle className="w-5 h-5 shrink-0 text-yellow-600 mt-0.5" />
-                <p>{t("voucher.edit_warning", { defaultValue: "Voucher đã phát hành, bạn chỉ có thể sửa Hạn sử dụng và Số lượng (nếu cần cắt chiến dịch hoặc bơm thêm mã)." })}</p>
+              <div className="bg-yellow-500/10 text-yellow-600 p-4 rounded-lg mb-6 flex items-start gap-3 border border-yellow-500/20">
+                <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+                <p className="text-sm">{t("voucher.edit_warning", { defaultValue: "Voucher đang chạy, bạn chỉ có thể sửa Hạn sử dụng và Số lượng (nếu cần cắt chiến dịch hoặc bơm thêm mã)." })}</p>
+              </div>
+            )}
+
+            {isScheduled && (
+              <div className="bg-blue-500/10 text-blue-500 p-4 rounded-lg mb-6 flex items-start gap-3 border border-blue-500/20">
+                <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+                <p className="text-sm">Voucher này đang được lên lịch. Bạn có thể chỉnh sửa toàn bộ thông tin hoặc Hủy lên lịch để đưa về Bản nháp.</p>
               </div>
             )}
 
@@ -535,14 +543,14 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
             </Button>
           ) : formData.status === "DRAFT" ? (
             <div className="flex items-center gap-2">
-              <Button 
+              <button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 disabled={loading}
-                className="!w-auto px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm"
+                className="px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
               >
                 {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
-              </Button>
+              </button>
               <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "PUBLISHED")}
@@ -553,14 +561,26 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               </Button>
             </div>
           ) : (
-            <Button 
-              type="submit"
-              form="voucher-form"
-              disabled={loading}
-              className="!w-auto px-8 py-2.5 rounded-xl text-sm"
-            >
-              {loading ? t("voucher.updating", { defaultValue: "Đang cập nhật..." }) : t("voucher.save_changes", { defaultValue: "Lưu thay đổi" })}
-            </Button>
+            <div className="flex items-center gap-2">
+              {isScheduled && (
+                <button 
+                  type="button"
+                  onClick={(e) => handleSubmit(e, "DRAFT")}
+                  disabled={loading}
+                  className="px-6 py-2.5 bg-transparent border border-red-500/50 text-red-500 rounded-xl hover:bg-red-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                >
+                  {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
+                </button>
+              )}
+              <Button 
+                type="button"
+                onClick={(e) => handleSubmit(e, formData.status)}
+                disabled={loading}
+                className="!w-auto px-8 py-2.5 rounded-xl text-sm"
+              >
+                {loading ? t("voucher.updating", { defaultValue: "Đang cập nhật..." }) : t("voucher.save_changes", { defaultValue: "Lưu thay đổi" })}
+              </Button>
+            </div>
           )}
         </div>
 

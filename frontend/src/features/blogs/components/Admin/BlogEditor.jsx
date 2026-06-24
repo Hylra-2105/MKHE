@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Image as ImageIcon, X, Check, Search } from "lucide-react";
+import { ChevronLeft, Image as ImageIcon, X, Check, Search } from "lucide-react";
 import toast from "react-hot-toast";
 import { getBlogBySlugApi, createBlogApi, updateBlogApi, uploadBlogImageApi } from "@/api/blogApi";
 import axiosClient from "@/api/axiosClient";
@@ -200,24 +200,28 @@ const BlogEditor = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-6">
         <button 
           onClick={() => navigate("/admin/blogs")}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-mkhe-border/20 text-mkhe-text hover:bg-mkhe-border/40 transition-colors"
+          className="group inline-flex items-center gap-1 text-mkhe-text/80 hover:text-mkhe-primary transition-colors text-sm font-medium uppercase tracking-wider w-fit cursor-pointer"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+          <span>Quay lại</span>
         </button>
         <div>
-          <h1 className="text-2xl font-logo font-bold text-mkhe-text">
+          <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
             {id ? "Chỉnh sửa bài viết" : "Thêm bài viết mới"}
           </h1>
+          <p className="text-sm text-mkhe-text/60 italic">
+            {id ? "Cập nhật nội dung bài viết hiện tại" : "Sáng tạo nội dung bài viết mới"}
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Cột trái (70%) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-mkhe-bg border border-mkhe-border/50 p-6 rounded-xl shadow-sm">
+          <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
             <input
               type="text"
               placeholder="Nhập tiêu đề bài viết..."
@@ -240,20 +244,33 @@ const BlogEditor = () => {
         {/* Cột phải (30%) */}
         <div className="space-y-6">
           {/* Nút hành động */}
-          <div className="bg-mkhe-bg border border-mkhe-border/50 p-6 rounded-xl shadow-sm flex flex-col gap-3">
-            <h3 className="font-bold text-mkhe-text mb-2">Xuất bản</h3>
-            <p className="text-xs text-mkhe-text/60 mb-2">Hệ thống sẽ tự động lưu nháp nội dung của bạn.</p>
+          <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm flex flex-col gap-3">
+            <h3 className="font-bold text-mkhe-text mb-2">
+              {!id ? "Xuất bản bài viết" : "Cập nhật bài viết"}
+            </h3>
+            <p className="text-xs text-mkhe-text/60 mb-2">
+              Hệ thống có tự động lưu nháp. Bạn có thể lưu thủ công hoặc xuất bản ngay.
+            </p>
+            
             <Button
               onClick={() => handleSubmit("PUBLISHED")}
               disabled={saving}
               className="w-full py-3"
             >
-              {saving ? "Đang xử lý..." : "Xuất Bản Ngay"}
+              {saving ? "Đang xử lý..." : (!id ? "Xuất Bản Ngay" : "Cập Nhật & Xuất Bản")}
             </Button>
+            
+            <button
+              onClick={() => handleSubmit("DRAFT")}
+              disabled={saving}
+              className="w-full py-3 rounded-md font-bold text-mkhe-text/80 uppercase tracking-wide border border-mkhe-primary/30 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 hover:text-mkhe-primary cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+            >
+              {saving ? "Đang xử lý..." : "Lưu Bản Nháp"}
+            </button>
           </div>
 
           {/* Ảnh bìa */}
-          <div className="bg-mkhe-bg border border-mkhe-border/50 p-6 rounded-xl shadow-sm">
+          <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
             <h3 className="font-bold text-mkhe-text mb-4">Ảnh bìa (Thumbnail)</h3>
             <div className="text-xs text-mkhe-text/60 mb-3">Tỉ lệ khuyến nghị: 16:9 (Ví dụ 1200x675)</div>
             
@@ -286,7 +303,7 @@ const BlogEditor = () => {
                 </div>
               ) : (
                 <div 
-                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors aspect-video flex flex-col items-center justify-center ${isDragging ? 'border-mkhe-primary bg-mkhe-primary/10' : 'border-mkhe-border/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5'}`}
+                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors aspect-video flex flex-col items-center justify-center ${isDragging ? 'border-mkhe-primary bg-mkhe-primary/10' : 'border-mkhe-border hover:border-mkhe-primary hover:bg-mkhe-primary/5'}`}
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
@@ -309,7 +326,7 @@ const BlogEditor = () => {
           </div>
 
           {/* Danh mục */}
-          <div className="bg-mkhe-bg border border-mkhe-border/50 p-6 rounded-xl shadow-sm">
+          <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
             <h3 className="font-bold text-mkhe-text mb-4">Danh mục</h3>
             <Dropdown
               value={formData.category}
@@ -321,13 +338,13 @@ const BlogEditor = () => {
               onChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
               placeholder="Chọn danh mục"
               className="w-full"
-              triggerClassName="w-full px-4 py-3 bg-mkhe-input/50 border border-mkhe-border/50 rounded-lg text-mkhe-text focus:outline-none focus:border-mkhe-primary outline-none transition-colors"
+              triggerClassName="w-full px-4 py-3 bg-mkhe-input/50 border border-mkhe-border rounded-lg text-mkhe-text focus:outline-none focus:border-mkhe-primary outline-none transition-colors"
               optionClassName="text-sm"
             />
           </div>
 
           {/* Gắn thẻ sản phẩm */}
-          <div className="bg-mkhe-bg border border-mkhe-border/50 p-6 rounded-xl shadow-sm">
+          <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
             <h3 className="font-bold text-mkhe-text mb-1">Sản phẩm liên kết</h3>
             <p className="text-xs text-mkhe-text/60 mb-4">Các sản phẩm này sẽ hiện ở cuối bài viết</p>
             
@@ -337,7 +354,7 @@ const BlogEditor = () => {
                 placeholder="Tìm kiếm sản phẩm..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-mkhe-input/30 border border-mkhe-border/50 rounded-lg text-sm text-mkhe-text focus:outline-none focus:border-mkhe-primary"
+                className="w-full pl-9 pr-4 py-2 bg-mkhe-input/30 border border-mkhe-border rounded-lg text-sm text-mkhe-text focus:outline-none focus:border-mkhe-primary"
               />
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40" />
             </div>
@@ -358,8 +375,17 @@ const BlogEditor = () => {
                       <p className="text-sm font-medium text-mkhe-text truncate">{product.name}</p>
                       <p className="text-xs text-mkhe-text/60">{product.sku}</p>
                     </div>
-                    <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${isSelected ? "bg-mkhe-primary border-mkhe-primary text-white" : "border-mkhe-border/50"}`}>
-                      {isSelected && <Check className="w-3 h-3" />}
+                    <div className="flex-shrink-0 pointer-events-none">
+                      <input 
+                        type="checkbox" 
+                        id={`cb-${product._id}`}
+                        className="magic-cb-input"
+                        checked={isSelected}
+                        readOnly
+                      />
+                      <label htmlFor={`cb-${product._id}`} className="magic-cb-label m-0">
+                        <span></span>
+                      </label>
                     </div>
                   </div>
                 );

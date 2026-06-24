@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 
 import { productApi } from "@/api/productApi";
 import ProductTable from "@/features/products/components/Admin/ProductTable";
+import ProductGrid from "@/features/products/components/Admin/ProductGrid";
 import AddProductModal from "@/features/products/components/Admin/AddProductModal";
 import EditProductModal from "@/features/products/components/Admin/EditProductModal";
 import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
@@ -15,6 +16,7 @@ const ProductManagementPage = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("list"); // grid | list
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -22,7 +24,7 @@ const ProductManagementPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(4);
+  const limit = viewMode === "grid" ? 8 : 6;
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchInput, setSearchInput] = useState("");
@@ -143,16 +145,26 @@ const ProductManagementPage = () => {
         handleVendorChange={handleVendorChange}
         statusFilter={statusFilter}
         handleStatusChange={handleStatusChange}
+        viewMode={viewMode}
+        setViewMode={(mode) => {
+          setViewMode(mode);
+          setPage(1);
+        }}
       />
 
-      <ProductTable
-        products={products}
-        loading={loading}
-        onEdit={handleEditProduct}
-      />
-
-      {/* DIVIDER */}
-      <div className="h-px bg-mkhe-border/30 my-7"></div>
+      {viewMode === "list" ? (
+        <ProductTable
+          products={products}
+          loading={loading}
+          onEdit={handleEditProduct}
+        />
+      ) : (
+        <ProductGrid
+          products={products}
+          loading={loading}
+          onEdit={handleEditProduct}
+        />
+      )}<div className="h-px bg-mkhe-border/30 my-7"></div>
 
       {/* PAGINATION */}
       {totalPages > 0 && (
