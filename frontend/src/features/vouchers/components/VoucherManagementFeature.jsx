@@ -129,7 +129,7 @@ const VoucherManagementFeature = () => {
   };
 
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col font-sans">
+    <div className="p-3 md:p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">{t("voucher.title")}</h1>
@@ -197,10 +197,10 @@ const VoucherManagementFeature = () => {
 
       {/* Table */}
         <div className={`bg-mkhe-bg rounded shadow overflow-x-auto overflow-y-hidden border border-mkhe-border/50 min-h-[385px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
             <thead>
               <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-                <th className="px-4 py-3 font-semibold">{t("voucher.voucher_code")}</th>
+                <th className="px-4 py-3 font-semibold sticky left-0 bg-mkhe-bg z-20 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{t("voucher.voucher_code")}</th>
                 <th className="px-4 py-3 font-semibold">{t("voucher.discount_amount")}</th>
                 <th className="px-4 py-3 font-semibold">{t("voucher.applicable_conditions")}</th>
                 <th className="px-4 py-3 font-semibold">{t("voucher.issue_quantity")}</th>
@@ -230,7 +230,7 @@ const VoucherManagementFeature = () => {
               ) : (
                 vouchers.map((voucher) => (
                   <tr key={voucher._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0 group">
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 sticky left-0 bg-mkhe-bg z-10 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                       <div className="font-bold text-mkhe-primary mb-1">{voucher.code}</div>
                       {voucher.isO2O && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-mkhe-primary/10 text-mkhe-primary px-2 py-0.5 rounded-full uppercase tracking-wider">

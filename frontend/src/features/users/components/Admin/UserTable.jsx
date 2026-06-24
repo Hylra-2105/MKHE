@@ -10,10 +10,10 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
     <div
       className={`bg-mkhe-bg rounded shadow overflow-x-auto border border-mkhe-border/50 min-h-[420px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}
     >
-      <table className="w-full text-left border-collapse min-w-[800px]">
+      <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
         <thead>
           <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-            <th className="px-4 py-3 font-semibold w-50">{t("table.avatar")}</th>
+            <th className="px-4 py-3 font-semibold w-50 sticky left-0 bg-mkhe-bg z-20 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{t("table.avatar")}</th>
             <th className="px-4 py-3 font-semibold w-1/6">{t("table.name")}</th>
             <th className="px-4 py-3 font-semibold w-1/6">{t("table.email")}</th>
             <th className="px-4 py-3 font-semibold text-center w-1/4">
@@ -49,7 +49,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                 key={user._id}
                 className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
-                <td className="px-4 py-2.5">
+                <td className="px-4 py-2.5 sticky left-0 bg-mkhe-bg z-10 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                   {user.avatar && isVideoMedia(user.avatar) ? (
                     <video
                       src={user.avatar}

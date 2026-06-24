@@ -96,7 +96,7 @@ const OrderManagementPage = () => {
   const pageNumbers = [page - 1, page, page + 1];
 
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
+    <div className="p-3 md:p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
@@ -124,10 +124,10 @@ const OrderManagementPage = () => {
 
       <div className={`bg-mkhe-bg rounded shadow overflow-hidden border border-mkhe-border/50 min-h-[420px] flex flex-col transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
         <div className="overflow-x-auto flex-1">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-              <th className="px-4 py-3 font-semibold">{t("admin:orders.table_id", { defaultValue: "Mã Đơn" })}</th>
+              <th className="px-4 py-3 font-semibold sticky left-0 bg-mkhe-bg z-20 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{t("admin:orders.table_id", { defaultValue: "Mã Đơn" })}</th>
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_date", { defaultValue: "Ngày Đặt" })}</th>
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_customer", { defaultValue: "Khách Hàng" })}</th>
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_total", { defaultValue: "Tổng Tiền" })}</th>
@@ -150,7 +150,7 @@ const OrderManagementPage = () => {
             ) : (
               orders.map((order) => (
                 <tr key={order._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0">
-                  <td className="px-4 py-2.5 font-medium">{order.orderCode}</td>
+                  <td className="px-4 py-2.5 font-medium sticky left-0 bg-mkhe-bg z-10 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{order.orderCode}</td>
                   <td className="px-4 py-2.5 text-mkhe-text/80">{new Date(order.createdAt).toLocaleDateString("vi-VN")}</td>
                   <td className="px-4 py-2.5">
                     <div className="font-medium">{order.shippingInfo.name}</div>

@@ -10,7 +10,7 @@ export default function MainLayout() {
   const hideFooter = isAdminPage || isProfilePage;
 
   return (
-    <div className="flex flex-col min-h-screen bg-mkhe-bg text-current transition-colors duration-300">
+    <div className="flex flex-col min-h-screen max-w-[100vw] overflow-x-hidden bg-mkhe-bg text-current transition-colors duration-300">
       <Header />
       <main className="flex-1">
         <Outlet />

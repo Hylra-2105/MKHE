@@ -22,7 +22,7 @@ const ProductGrid = ({ products, loading, onEdit }) => {
           <span className="text-mkhe-text/60">{t("table.empty", { defaultValue: "Không có sản phẩm nào trong kho." })}</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {products.map((product) => (
         <div key={product._id} className="bg-mkhe-bg border border-mkhe-primary/40 rounded shadow-[0_0_10px_rgba(197,160,89,0.1)] overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_4px_20px_rgba(197,160,89,0.25)]">
           <div className="relative aspect-square bg-mkhe-border/10 overflow-hidden cursor-pointer" onClick={() => onEdit(product)}>

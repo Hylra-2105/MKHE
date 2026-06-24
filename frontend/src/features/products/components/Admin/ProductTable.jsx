@@ -11,10 +11,10 @@ const ProductTable = ({ products, loading, onEdit }) => {
         loading ? "opacity-60 pointer-events-none" : "opacity-100"
       }`}
     >
-      <table className="w-full text-left border-collapse min-w-[800px]">
+      <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
         <thead>
           <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-            <th className="px-4 py-3 font-semibold w-1/4">{t("table.name")}</th>
+            <th className="px-4 py-3 font-semibold whitespace-normal min-w-[200px] max-w-[300px] sticky left-0 bg-mkhe-bg z-20 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{t("table.name")}</th>
             <th className="px-4 py-3 font-semibold w-1/7">{t("table.sku")}</th>
             <th className="px-4 py-3 font-semibold w-1/7">{t("table.category")}</th>
             <th className="px-4 py-3 font-semibold text-center w-1/9">
@@ -44,7 +44,7 @@ const ProductTable = ({ products, loading, onEdit }) => {
                 key={product._id}
                 className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0"
               >
-                <td className="px-4 py-2.5 font-medium text-mkhe-text">
+                <td className="px-4 py-2.5 font-medium text-mkhe-text whitespace-normal min-w-[200px] max-w-[300px] sticky left-0 bg-mkhe-bg z-10 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                   <div className="flex flex-col gap-1.5 items-start">
                     <span className="text-base font-bold">{product.name}</span>
                     <div className="flex flex-wrap items-center gap-2 mt-0.5">
