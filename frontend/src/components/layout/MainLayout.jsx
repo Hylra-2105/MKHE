@@ -12,7 +12,7 @@ export default function MainLayout() {
   return (
     <div className="flex flex-col min-h-screen max-w-[100vw] overflow-x-hidden bg-mkhe-bg text-current transition-colors duration-300">
       <Header />
-      <main className="flex-1 mt-20">
+      <main className="flex-1 pt-20">
         <Outlet />
       </main>
       {!hideFooter && <Footer />}

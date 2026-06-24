@@ -6,7 +6,7 @@ import { Calendar, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BlogPage = () => {
-  const { t } = useTranslation("blog");
+  const { t, i18n } = useTranslation("blog");
   const location = useLocation();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -71,7 +71,7 @@ const BlogPage = () => {
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4 bg-mkhe-primary text-black text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full">
-                    {blog.category}
+                    {t(`admin.editor.categories.${blog.category}`, { defaultValue: blog.category })}
                   </div>
                 </div>
 
@@ -79,7 +79,7 @@ const BlogPage = () => {
                 <div className="p-6 flex flex-col flex-1">
                   <div className="flex items-center gap-2 text-[11px] text-mkhe-text/50 uppercase font-semibold mb-3">
                     <Calendar className="w-3.5 h-3.5" />
-                    <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString("vi-VN")}</span>
+                    <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : (i18n.language === 'en' ? 'en-US' : (i18n.language === 'ko' ? 'ko-KR' : (i18n.language === 'ja' ? 'ja-JP' : 'zh-CN'))))}</span>
                   </div>
 
                   <h3 className="text-lg font-bold text-mkhe-text mb-3 line-clamp-2 group-hover:text-mkhe-primary transition-colors">

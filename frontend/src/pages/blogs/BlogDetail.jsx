@@ -10,7 +10,7 @@ const BlogDetail = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation("blog");
+  const { t, i18n } = useTranslation("blog");
   const { addToCart } = useCartStore();
 
   const handleAddToCart = (e, product) => {
@@ -48,7 +48,7 @@ const BlogDetail = () => {
       <div className="min-h-screen bg-mkhe-bg flex flex-col justify-center items-center">
         <h2 className="text-2xl font-bold text-mkhe-text mb-4">Không tìm thấy bài viết</h2>
         <Link to="/storytelling" className="text-mkhe-primary hover:underline flex items-center gap-2">
-          <ChevronLeft className="w-5 h-5" /> Quay lại danh sách
+          <ChevronLeft className="w-5 h-5" /> {t("public.detail.back", { defaultValue: "Quay lại danh sách" })}
         </Link>
       </div>
     );
@@ -62,7 +62,7 @@ const BlogDetail = () => {
           onClick={() => window.history.back()}
           className="flex items-center gap-2 cursor-pointer text-mkhe-text/60 hover:text-mkhe-primary transition-colors mb-2 group text-sm font-semibold uppercase tracking-wider"
         >
-          <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Quay lại
+          <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> {t("public.detail.back", { defaultValue: "Quay lại" })}
         </button>
       </div>
 
@@ -70,7 +70,7 @@ const BlogDetail = () => {
         {/* Header Bài viết */}
         <header className="mb-10 text-center">
           <div className="inline-block bg-mkhe-primary/20 text-mkhe-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-            {blog.category}
+            {t(`admin.editor.categories.${blog.category}`, { defaultValue: blog.category })}
           </div>
           <h1 className="text-3xl md:text-5xl font-logo font-bold text-gradient-gold mb-6 leading-tight">
             {blog.title}
@@ -83,7 +83,7 @@ const BlogDetail = () => {
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-mkhe-text/60 font-medium">
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString("vi-VN", {
+              <span>{new Date(blog.publishedAt || blog.createdAt).toLocaleDateString(i18n.language === 'vi' ? 'vi-VN' : (i18n.language === 'en' ? 'en-US' : (i18n.language === 'ko' ? 'ko-KR' : (i18n.language === 'ja' ? 'ja-JP' : 'zh-CN'))), {
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
               })}</span>
             </div>
