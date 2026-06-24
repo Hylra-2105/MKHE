@@ -44,11 +44,16 @@ export const getBlogs = async (req, res) => {
   }
 };
 
-// Lấy chi tiết blog theo slug
+// Lấy chi tiết blog theo slug hoặc ID
 export const getBlogBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const blog = await Blog.findOne({ slug })
+    
+    // Check if the parameter is a valid MongoDB ObjectId
+    const isObjectId = /^[0-9a-fA-F]{24}$/.test(slug);
+    const query = isObjectId ? { _id: slug } : { slug: slug };
+
+    const blog = await Blog.findOne(query)
       .populate("author", "fullname")
       .populate("tags", "name sku price images categoryMatrix stock");
 
@@ -74,6 +79,10 @@ export const createBlog = async (req, res) => {
     
     if (!title || !content || !category) {
       return errorResponse(res, 400, "Vui lòng nhập đủ Tiêu đề, Nội dung và Danh mục");
+    }
+
+    if (tags && tags.length > 4) {
+      return errorResponse(res, 400, "Chỉ được liên kết tối đa 4 sản phẩm");
     }
 
     const newBlog = new Blog({
@@ -102,6 +111,10 @@ export const updateBlog = async (req, res) => {
 
     const blog = await Blog.findById(id);
     if (!blog) return errorResponse(res, 404, "Không tìm thấy bài viết");
+
+    if (tags && tags.length > 4) {
+      return errorResponse(res, 400, "Chỉ được liên kết tối đa 4 sản phẩm");
+    }
 
     if (title) blog.title = title;
     if (content) blog.content = content;

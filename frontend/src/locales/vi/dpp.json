@@ -11,7 +11,10 @@
     "view3D": "Mô Hình 3D",
     "warningTitle": "CẢNH BÁO",
     "warningSubtitle": "SẢN PHẨM KHÔNG XÁC THỰC",
-    "warningDesc": "Mã định danh NFC này không tồn tại, đã bị giả mạo hoặc chưa được kích hoạt bởi MKHE. Vui lòng liên hệ với bộ phận CSKH để được hỗ trợ."
+    "warningDesc": "Mã định danh NFC này không tồn tại, đã bị giả mạo hoặc chưa được kích hoạt bởi MKHE. Vui lòng liên hệ với bộ phận CSKH để được hỗ trợ.",
+    "read_story": "Đọc Ký Sự Làng Nghề",
+    "read_story_desc": "Khám phá câu chuyện chi tiết về quá trình tạo ra sản phẩm này và những nét văn hóa đặc sắc.",
+    "read_story_btn": "Khám phá ngay"
   },
   "certificate": {
     "title": "Chứng nhận Chế tác",

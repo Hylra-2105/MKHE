@@ -16,7 +16,8 @@
     "staff_area": "员工区",
     "manage_products": "管理产品",
     "manage_vouchers": "优惠券管理",
-    "manage_orders": "订单管理"
+    "manage_orders": "订单管理",
+    "manage_blogs": "博客管理"
   },
   "guest_menu": {
     "login": "登录"

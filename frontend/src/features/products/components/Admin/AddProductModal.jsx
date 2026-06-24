@@ -549,7 +549,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     </div>
 
                     <div className="space-y-1 col-span-2">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Ký sự liên kết (Tùy chọn)</label>
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.story_link")}</label>
                       <select
                         name="storyBlogId"
                         value={formData.storyBlogId}

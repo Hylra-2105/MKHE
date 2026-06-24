@@ -88,7 +88,9 @@
       "location_placeholder": "例如：Phnom Pi Pottery Village（或输入坐标）",
       "location_placeholder_edit": "例如：10.823、106.629 或位置名称",
       "map_title": "位置图（迷你谷歌地图）",
-      "map_desc": "* 输入地址或坐标后，地图将自动更新。"
+      "map_desc": "* 输入地址或坐标后，地图将自动更新。",
+      "story_link": "关联故事 (可选)",
+      "story_link_empty": "-- 无关联故事 --"
     },
     "processing": "加工...",
     "images_label": "产品图片/视频",

@@ -6,7 +6,7 @@ import { Calendar, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 const BlogPage = () => {
-  const { t } = useTranslation("translation");
+  const { t } = useTranslation("blog");
   const location = useLocation();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,12 +40,10 @@ const BlogPage = () => {
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="mb-12 text-center">
           <h1 className="text-4xl font-logo font-bold text-gradient-gold uppercase mb-4 tracking-widest">
-            {isStorytelling ? "Ký sự Di sản" : "Blog & Tin tức"}
+            {isStorytelling ? t("public.page_title_story") : t("public.page_title_blog")}
           </h1>
           <p className="text-mkhe-text/70 max-w-2xl mx-auto text-sm">
-            {isStorytelling 
-              ? "Khám phá câu chuyện đằng sau những sản phẩm thủ công tinh xảo, những con người thầm lặng gìn giữ hồn cốt văn hóa dân tộc." 
-              : "Cập nhật những thông tin, sự kiện và xu hướng mới nhất."}
+            {isStorytelling ? t("public.page_desc_story") : t("public.page_desc_blog")}
           </p>
         </div>
 
@@ -55,7 +53,7 @@ const BlogPage = () => {
           </div>
         ) : blogs.length === 0 ? (
           <div className="text-center py-20 bg-mkhe-input rounded-2xl border border-mkhe-border/50">
-            <p className="text-mkhe-text/60">Chưa có bài viết nào được xuất bản.</p>
+            <p className="text-mkhe-text/60">{t("public.empty")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -94,7 +92,7 @@ const BlogPage = () => {
 
                   <div className="mt-auto pt-4">
                     <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-mkhe-text text-mkhe-bg hover:opacity-80 text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-sm hover:shadow-md cursor-pointer group">
-                      <span>Đọc tiếp</span>
+                      <span>{t("public.btn_read_more")}</span>
                       <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>

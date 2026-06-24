@@ -10,6 +10,7 @@ const BlogDetail = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation("blog");
   const { addToCart } = useCartStore();
 
   const handleAddToCart = (e, product) => {
@@ -112,7 +113,7 @@ const BlogDetail = () => {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-mkhe-primary to-transparent"></div>
             
             <h3 className="text-2xl font-bold text-gradient-gold mb-8 text-center uppercase tracking-widest">
-              Sản phẩm liên quan đến bài viết
+              {t("public.detail.related_products")}
             </h3>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -139,13 +140,13 @@ const BlogDetail = () => {
                     </Link>
                     <div className="mt-auto flex items-center justify-between pt-2">
                       <Link to={`/shop/${product._id}`} className="flex items-center text-xs text-mkhe-text/50 uppercase font-bold group-hover:text-mkhe-primary transition-colors">
-                        <span className="mr-1">Xem chi tiết</span>
+                        <span className="mr-1">{t("public.detail.view_detail")}</span>
                         <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                       </Link>
                       <button 
                         onClick={(e) => handleAddToCart(e, product)}
                         className="w-8 h-8 rounded-full bg-mkhe-primary/10 flex items-center justify-center text-mkhe-primary hover:bg-mkhe-primary hover:text-white transition-colors cursor-pointer"
-                        title="Thêm vào giỏ hàng"
+                        title={t("public.detail.add_to_cart")}
                       >
                         <ShoppingCart className="w-4 h-4" />
                       </button>

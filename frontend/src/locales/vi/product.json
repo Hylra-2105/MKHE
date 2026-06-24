@@ -86,7 +86,9 @@
       "location_placeholder": "VD: Làng gốm Phnôm Pi, An Giang (Hoặc nhập tọa độ số)",
       "location_placeholder_edit": "VD: 10.823, 106.629 hoặc Tên địa danh",
       "map_title": "Bản đồ định vị (Mini Google Maps)",
-      "map_desc": "* Bản đồ sẽ tự động cập nhật sau khi bạn nhập xong địa chỉ hoặc tọa độ."
+      "map_desc": "* Bản đồ sẽ tự động cập nhật sau khi bạn nhập xong địa chỉ hoặc tọa độ.",
+      "story_link": "Ký sự liên kết (Tùy chọn)",
+      "story_link_empty": "-- Không liên kết Ký sự --"
     },
     "3d_file": {
       "has_file": "Sản phẩm đã có file 3D",

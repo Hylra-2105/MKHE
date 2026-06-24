@@ -645,18 +645,18 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     </div>
                     
                     <div className="space-y-1 col-span-2">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">Ký sự liên kết (Tùy chọn)</label>
-                      <select
-                        name="storyBlogId"
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.story_link")}</label>
+                      <Dropdown
                         value={formData.storyBlogId}
-                        onChange={handleChange}
-                        className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                      >
-                        <option value="">-- Không liên kết Ký sự --</option>
-                        {storyBlogs.map(blog => (
-                          <option key={blog._id} value={blog._id}>{blog.title}</option>
-                        ))}
-                      </select>
+                        options={[
+                          { value: "", label: t("modal.dpp.story_link_empty") },
+                          ...storyBlogs.map(blog => ({ value: blog._id, label: blog.title }))
+                        ]}
+                        onChange={(val) => handleChange({ target: { name: "storyBlogId", value: val } })}
+                        className="w-full"
+                        triggerClassName="p-2.5 rounded-xl text-sm bg-transparent border border-mkhe-border/50 text-mkhe-text"
+                        optionClassName="text-sm truncate"
+                      />
                     </div>
                   </div>
 

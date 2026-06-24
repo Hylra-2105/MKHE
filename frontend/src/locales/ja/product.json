@@ -88,7 +88,9 @@
       "location_placeholder": "例: プノンピ陶器村 (または座標を入力)",
       "location_placeholder_edit": "例: 10.823、106.629 または場所名",
       "map_title": "ロケーションマップ (ミニ Google マップ)",
-      "map_desc": "※住所または座標を入力すると地図が自動更新されます。"
+      "map_desc": "※住所または座標を入力すると地図が自動更新されます。",
+      "story_link": "リンクされた物語 (オプション)",
+      "story_link_empty": "-- リンクされた物語なし --"
     },
     "processing": "処理...",
     "images_label": "製品画像/動画",

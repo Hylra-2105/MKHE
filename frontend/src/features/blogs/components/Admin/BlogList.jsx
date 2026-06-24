@@ -9,7 +9,7 @@ import Dropdown from "@/components/ui/Dropdown";
 import { useTranslation } from "react-i18next";
 
 const BlogList = () => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("blog");
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ const BlogList = () => {
       });
       setBlogs(res.blogs || []);
     } catch (error) {
-      toast.error("Lỗi khi tải danh sách bài viết");
+      toast.error(t("admin.fetch_error", { defaultValue: "Lỗi khi tải danh sách bài viết" }));
     } finally {
       setLoading(false);
     }
@@ -51,11 +51,11 @@ const BlogList = () => {
     if (!deleteId) return;
     try {
       await deleteBlogApi(deleteId);
-      toast.success("Xóa bài viết thành công");
+      toast.success(t("admin.delete_success", { defaultValue: "Xóa bài viết thành công" }));
       setDeleteId(null);
       fetchBlogs();
     } catch (error) {
-      toast.error("Lỗi khi xóa bài viết");
+      toast.error(t("admin.delete_error", { defaultValue: "Lỗi khi xóa bài viết" }));
     }
   };
 
@@ -64,10 +64,10 @@ const BlogList = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
-            Quản lý bài viết
+            {t("admin.title")}
           </h1>
           <p className="text-sm text-mkhe-text/60 italic">
-            Kể chuyện di sản, sự kiện và chia sẻ cẩm nang
+            {t("admin.subtitle")}
           </p>
         </div>
         <div className="flex gap-3">
@@ -75,7 +75,7 @@ const BlogList = () => {
             onClick={() => navigate("/admin/blogs/create")}
             className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer whitespace-nowrap"
           >
-            Thêm bài viết mới
+            {t("admin.add_new")}
           </button>
         </div>
       </div>
@@ -85,7 +85,7 @@ const BlogList = () => {
         <form onSubmit={handleSearch} className="flex-1 flex gap-2 w-full">
           <input
             type="text"
-            placeholder="Tìm theo tiêu đề bài viết..."
+            placeholder={t("admin.search_placeholder")}
             value={filter.search}
             onChange={(e) => setFilter(prev => ({ ...prev, search: e.target.value }))}
             className="w-full h-10 px-3 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors"
@@ -94,7 +94,7 @@ const BlogList = () => {
             type="submit"
             className="h-10 w-28 md:w-40 bg-mkhe-primary text-white px-4 md:px-6 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold whitespace-nowrap"
           >
-            Tìm kiếm
+            {t("admin.btn_search")}
           </button>
         </form>
         
@@ -102,13 +102,13 @@ const BlogList = () => {
           <Dropdown
             value={filter.category}
             options={[
-              { value: "", label: "Tất cả danh mục" },
-              { value: "Ký sự", label: "Ký sự" },
-              { value: "Sự kiện", label: "Sự kiện" },
-              { value: "Cẩm nang", label: "Cẩm nang" },
+              { value: "", label: t("admin.filter_category") },
+              { value: "Ký sự", label: t("admin.editor.categories.Ký sự") },
+              { value: "Sự kiện", label: t("admin.editor.categories.Sự kiện") },
+              { value: "Cẩm nang", label: t("admin.editor.categories.Cẩm nang") },
             ]}
             onChange={(val) => setFilter(prev => ({ ...prev, category: val }))}
-            placeholder="Tất cả danh mục"
+            placeholder={t("admin.filter_category")}
             className="w-full md:w-36 lg:w-44"
             triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
             optionClassName="text-sm"
@@ -117,12 +117,12 @@ const BlogList = () => {
           <Dropdown
             value={filter.status}
             options={[
-              { value: "", label: "Tất cả trạng thái" },
-              { value: "PUBLISHED", label: "Đã xuất bản" },
-              { value: "DRAFT", label: "Bản nháp" },
+              { value: "", label: t("admin.filter_status") },
+              { value: "PUBLISHED", label: t("admin.status.PUBLISHED") },
+              { value: "DRAFT", label: t("admin.status.DRAFT") },
             ]}
             onChange={(val) => setFilter(prev => ({ ...prev, status: val }))}
-            placeholder="Tất cả trạng thái"
+            placeholder={t("admin.filter_status")}
             className="w-full md:w-36 lg:w-44"
             triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
             optionClassName="text-sm"
@@ -156,7 +156,7 @@ const BlogList = () => {
           <div className="w-16 h-16 bg-mkhe-border/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <LayoutGrid className="w-8 h-8 text-mkhe-text/40" />
           </div>
-          <h3 className="text-lg font-bold text-mkhe-text mb-2">Chưa có bài viết nào</h3>
+          <h3 className="text-lg font-bold text-mkhe-text mb-2">{t("admin.empty_title")}</h3>
           <p className="text-mkhe-text/60 mb-6 max-w-sm mx-auto">
             Hãy tạo bài viết đầu tiên để kể những câu chuyện di sản đầy tự hào của MKHE.
           </p>
@@ -200,16 +200,18 @@ const BlogList = () => {
                 </h3>
                 <div className="mt-auto pt-4 flex items-center justify-between border-t border-mkhe-border/50">
                   <div className="text-xs text-mkhe-text/60">
-                    {blog.tags?.length || 0} sản phẩm tag
+                    {blog.tags?.length || 0} {t("admin.editor.form.linked_products")}
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-1.5 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer" title="Chỉnh sửa">
+                    <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-1.5 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.edit")}>
                       <Edit2 className="w-4 h-4" />
                     </button>
-                    <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-1.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer" title="Xem trên web">
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title="Xóa">
+                    {blog.status === "PUBLISHED" && (
+                      <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-1.5 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.view")}>
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    )}
+                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.delete")}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -221,14 +223,14 @@ const BlogList = () => {
       ) : (
         <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[800px] text-left border-collapse">
               <thead>
                 <tr className="bg-mkhe-input/30 border-b border-mkhe-border/50">
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Bài viết</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Danh mục</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Trạng thái</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">Ngày tạo</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-center">{t("table.actions", { defaultValue: "Hành động" })}</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.article")}</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.category")}</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.status")}</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.created_at")}</th>
+                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-center">{t("admin.table.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-mkhe-border/50">
@@ -257,13 +259,15 @@ const BlogList = () => {
                     </td>
                     <td className="px-4 py-2.5 text-center">
                       <div className="flex items-center justify-center gap-1 transition-opacity">
-                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer" title="Chỉnh sửa">
+                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.edit")}>
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-all duration-300 cursor-pointer" title="Xem trên web">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title="Xóa">
+                        {blog.status === "PUBLISHED" && (
+                          <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.view")}>
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
+                        <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -281,10 +285,10 @@ const BlogList = () => {
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        title="Xóa Bài Viết"
-        message="Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác."
-        confirmText="Xóa"
-        cancelText="Hủy"
+        title={t("admin.delete_modal.title")}
+        message={t("admin.delete_modal.message")}
+        confirmText={t("admin.delete_modal.btn_delete")}
+        cancelText={t("admin.delete_modal.btn_cancel")}
         type="danger"
       />
     </div>

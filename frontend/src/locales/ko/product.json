@@ -88,7 +88,9 @@
       "location_placeholder": "예: 프놈피 도자기 마을(또는 좌표 입력)",
       "location_placeholder_edit": "예: 10.823, 106.629 또는 위치 이름",
       "map_title": "위치 지도(미니 구글 지도)",
-      "map_desc": "* 주소나 좌표를 입력하면 지도가 자동으로 업데이트됩니다."
+      "map_desc": "* 주소나 좌표를 입력하면 지도가 자동으로 업데이트됩니다.",
+      "story_link": "연결된 이야기 (선택 사항)",
+      "story_link_empty": "-- 연결된 이야기 없음 --"
     },
     "processing": "처리 중...",
     "images_label": "제품 이미지/비디오",

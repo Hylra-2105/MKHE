@@ -11,7 +11,10 @@
     "view3D": "3D模型",
     "warningTitle": "警告",
     "warningSubtitle": "未经认证的产品",
-    "warningDesc": "该 NFC 标识符不存在、已被伪造或未被 MKHE 激活。请联系客户支持寻求帮助。"
+    "warningDesc": "该 NFC 标识符不存在、已被伪造或未被 MKHE 激活。请联系客户支持寻求帮助。",
+    "read_story": "阅读工艺村故事",
+    "read_story_desc": "探索该产品创作背后的详细故事及其独特的文化特色。",
+    "read_story_btn": "立即探索"
   },
   "certificate": {
     "title": "工艺证书",

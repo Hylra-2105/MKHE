@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { ChevronLeft, Image as ImageIcon, X, Check, Search } from "lucide-react";
 import toast from "react-hot-toast";
 import { getBlogBySlugApi, createBlogApi, updateBlogApi, uploadBlogImageApi } from "@/api/blogApi";
@@ -29,6 +30,7 @@ const BlogEditor = () => {
   // For selecting products
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const { t } = useTranslation("blog");
 
   useEffect(() => {
     fetchProducts();
@@ -150,6 +152,10 @@ const BlogEditor = () => {
       if (isSelected) {
         return { ...prev, tags: prev.tags.filter(id => id !== productId) };
       } else {
+        if (prev.tags.length >= 4) {
+          toast.error(t("admin.editor.form.max_products"));
+          return prev;
+        }
         return { ...prev, tags: [...prev.tags, productId] };
       }
     });
@@ -195,7 +201,7 @@ const BlogEditor = () => {
   });
 
   if (loading) {
-    return <div className="p-6 text-center">Đang tải dữ liệu...</div>;
+    return <div className="p-6 text-center">{t("common:loading", { defaultValue: "Đang tải dữ liệu..." })}</div>;
   }
 
   return (
@@ -206,14 +212,14 @@ const BlogEditor = () => {
           className="group inline-flex items-center gap-1 text-mkhe-text/80 hover:text-mkhe-primary transition-colors text-sm font-medium uppercase tracking-wider w-fit cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-          <span>Quay lại</span>
+          <span>{t("admin.editor.btn_back")}</span>
         </button>
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
-            {id ? "Chỉnh sửa bài viết" : "Thêm bài viết mới"}
+            {id ? t("admin.editor.edit_title") : t("admin.editor.create_title")}
           </h1>
           <p className="text-sm text-mkhe-text/60 italic">
-            {id ? "Cập nhật nội dung bài viết hiện tại" : "Sáng tạo nội dung bài viết mới"}
+            {id ? t("admin.editor.edit_subtitle", { defaultValue: "Cập nhật nội dung bài viết hiện tại" }) : t("admin.editor.create_subtitle", { defaultValue: "Sáng tạo nội dung bài viết mới" })}
           </p>
         </div>
       </div>
@@ -224,7 +230,7 @@ const BlogEditor = () => {
           <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
             <input
               type="text"
-              placeholder="Nhập tiêu đề bài viết..."
+              placeholder={t("admin.editor.form.title_placeholder")}
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               className="w-full text-2xl font-bold bg-transparent border-none text-mkhe-text focus:outline-none placeholder:text-mkhe-text/30 mb-6"
@@ -234,7 +240,7 @@ const BlogEditor = () => {
               <RichTextEditor 
                 value={formData.content}
                 onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-                placeholder="Nội dung bài viết..."
+                placeholder={t("admin.editor.form.content")}
                 onImageUpload={handleEditorImageUpload}
               />
             </div>
@@ -246,10 +252,10 @@ const BlogEditor = () => {
           {/* Nút hành động */}
           <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm flex flex-col gap-3">
             <h3 className="font-bold text-mkhe-text mb-2">
-              {!id ? "Xuất bản bài viết" : "Cập nhật bài viết"}
+              {!id ? t("admin.editor.publish_title") : t("admin.editor.update_publish_title")}
             </h3>
             <p className="text-xs text-mkhe-text/60 mb-2">
-              Hệ thống có tự động lưu nháp. Bạn có thể lưu thủ công hoặc xuất bản ngay.
+              {t("admin.editor.publish_desc")}
             </p>
             
             <Button
@@ -257,7 +263,7 @@ const BlogEditor = () => {
               disabled={saving}
               className="w-full py-3"
             >
-              {saving ? "Đang xử lý..." : (!id ? "Xuất Bản Ngay" : "Cập Nhật & Xuất Bản")}
+              {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : (!id ? t("admin.editor.btn_publish_now") : t("admin.editor.btn_update_publish"))}
             </Button>
             
             <button
@@ -265,14 +271,14 @@ const BlogEditor = () => {
               disabled={saving}
               className="w-full py-3 rounded-md font-bold text-mkhe-text/80 uppercase tracking-wide border border-mkhe-primary/30 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 hover:text-mkhe-primary cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
             >
-              {saving ? "Đang xử lý..." : "Lưu Bản Nháp"}
+              {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : t("admin.editor.btn_save_draft")}
             </button>
           </div>
 
           {/* Ảnh bìa */}
           <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
-            <h3 className="font-bold text-mkhe-text mb-4">Ảnh bìa (Thumbnail)</h3>
-            <div className="text-xs text-mkhe-text/60 mb-3">Tỉ lệ khuyến nghị: 16:9 (Ví dụ 1200x675)</div>
+            <h3 className="font-bold text-mkhe-text mb-4">{t("admin.editor.thumbnail_title")}</h3>
+            <div className="text-xs text-mkhe-text/60 mb-3">{t("admin.editor.thumbnail_ratio")}</div>
             
             <div className="relative">
               {formData.thumbnail ? (
@@ -289,14 +295,14 @@ const BlogEditor = () => {
                   />
                   <div className={`absolute inset-0 transition-opacity flex items-center justify-center ${isDragging ? 'bg-mkhe-primary/20 opacity-100' : 'bg-black/50 opacity-0 group-hover:opacity-100'}`}>
                     {isDragging ? (
-                      <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-lg">Thả ảnh vào đây</span>
+                      <span className="text-white font-bold bg-black/50 px-4 py-2 rounded-lg">{t("admin.editor.thumbnail_drop")}</span>
                     ) : (
                       <Button 
                         variant="outline" 
                         className="border-white text-white hover:bg-white hover:text-black"
                         onClick={() => fileInputRef.current?.click()}
                       >
-                        Thay đổi ảnh
+                        {t("admin.editor.thumbnail_change")}
                       </Button>
                     )}
                   </div>
@@ -311,7 +317,7 @@ const BlogEditor = () => {
                 >
                   <ImageIcon className={`w-8 h-8 mb-3 transition-colors ${isDragging ? 'text-mkhe-primary' : 'text-mkhe-text/40'}`} />
                   <p className={`text-sm font-medium transition-colors ${isDragging ? 'text-mkhe-primary' : 'text-mkhe-text/60'}`}>
-                    {isDragging ? "Thả ảnh vào đây" : "Nhấn hoặc kéo thả ảnh vào đây"}
+                    {isDragging ? t("admin.editor.thumbnail_drop") : t("admin.editor.thumbnail_drag")}
                   </p>
                 </div>
               )}
@@ -327,16 +333,16 @@ const BlogEditor = () => {
 
           {/* Danh mục */}
           <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
-            <h3 className="font-bold text-mkhe-text mb-4">Danh mục</h3>
+            <h3 className="font-bold text-mkhe-text mb-4">{t("admin.editor.form.category")}</h3>
             <Dropdown
               value={formData.category}
               options={[
-                { value: "Ký sự", label: "Ký sự" },
-                { value: "Sự kiện", label: "Sự kiện" },
-                { value: "Cẩm nang", label: "Cẩm nang" },
+                { value: "Ký sự", label: t("admin.editor.categories.Ký sự") },
+                { value: "Sự kiện", label: t("admin.editor.categories.Sự kiện") },
+                { value: "Cẩm nang", label: t("admin.editor.categories.Cẩm nang") },
               ]}
               onChange={(val) => setFormData(prev => ({ ...prev, category: val }))}
-              placeholder="Chọn danh mục"
+              placeholder={t("admin.editor.category_placeholder")}
               className="w-full"
               triggerClassName="w-full px-4 py-3 bg-mkhe-input/50 border border-mkhe-border rounded-lg text-mkhe-text focus:outline-none focus:border-mkhe-primary outline-none transition-colors"
               optionClassName="text-sm"
@@ -345,13 +351,13 @@ const BlogEditor = () => {
 
           {/* Gắn thẻ sản phẩm */}
           <div className="bg-mkhe-bg border border-mkhe-border p-6 rounded-xl shadow-sm">
-            <h3 className="font-bold text-mkhe-text mb-1">Sản phẩm liên kết</h3>
-            <p className="text-xs text-mkhe-text/60 mb-4">Các sản phẩm này sẽ hiện ở cuối bài viết</p>
+            <h3 className="font-bold text-mkhe-text mb-1">{t("admin.editor.form.linked_products")}</h3>
+            <p className="text-xs text-mkhe-text/60 mb-4">{t("admin.editor.form.linked_products_desc")}</p>
             
             <div className="relative mb-4">
               <input
                 type="text"
-                placeholder="Tìm kiếm sản phẩm..."
+                placeholder={t("admin.editor.form.search_product")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-9 pr-4 py-2 bg-mkhe-input/30 border border-mkhe-border rounded-lg text-sm text-mkhe-text focus:outline-none focus:border-mkhe-primary"
@@ -369,7 +375,7 @@ const BlogEditor = () => {
                     className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer border transition-colors ${isSelected ? "border-mkhe-primary bg-mkhe-primary/5" : "border-transparent hover:bg-mkhe-border/10"}`}
                   >
                     <div className="w-10 h-10 rounded overflow-hidden bg-mkhe-border/20 flex-shrink-0">
-                      {product.images?.[0] && <img src={product.images[0]} alt="" className="w-full h-full object-cover" />}
+                      {product.images?.[0] && <img src={product.images[0]} alt="" loading="lazy" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-mkhe-text truncate">{product.name}</p>
@@ -391,7 +397,7 @@ const BlogEditor = () => {
                 );
               })}
               {filteredProducts.length === 0 && (
-                <div className="text-center py-4 text-sm text-mkhe-text/40">Không tìm thấy sản phẩm</div>
+                <div className="text-center py-4 text-sm text-mkhe-text/40">{t("common:empty", { defaultValue: "Không tìm thấy sản phẩm" })}</div>
               )}
             </div>
           </div>

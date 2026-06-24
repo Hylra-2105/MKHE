@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Public routes
 router.get("/", verifyTokenOptional, getBlogs);
-router.get("/:slug", getBlogBySlug);
+router.get("/:slug", verifyTokenOptional, getBlogBySlug);
 
 // Admin / Staff routes
 router.post("/", verifyToken, checkRole(["Admin", "Staff"]), createBlog);
