@@ -168,6 +168,7 @@ const VoucherManagementFeature = () => {
             options={[
               { value: "ALL", label: t("voucher.status_all", { defaultValue: "Tất cả" }) },
               { value: "PUBLISHED", label: t("voucher.status_running", { defaultValue: "Đang chạy" }) },
+              { value: "UPCOMING", label: t("voucher.status_upcoming", { defaultValue: "Sắp diễn ra" }) },
               { value: "DRAFT", label: t("voucher.status_draft", { defaultValue: "Bản nháp" }) },
               { value: "ENDED", label: t("voucher.status_ended", { defaultValue: "Đã kết thúc" }) }
             ]}

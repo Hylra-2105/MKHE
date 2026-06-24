@@ -8,13 +8,14 @@ import {
   uploadBlogImage,
 } from "./blog.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
+import { verifyTokenOptional } from "../../middlewares/verifyTokenOptional.js";
 import { checkRole } from "../../middlewares/checkRole.js";
 import { uploadCloud } from "../../config/cloudinary.js";
 
 const router = express.Router();
 
 // Public routes
-router.get("/", getBlogs);
+router.get("/", verifyTokenOptional, getBlogs);
 router.get("/:slug", getBlogBySlug);
 
 // Admin / Staff routes

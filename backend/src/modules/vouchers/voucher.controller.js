@@ -240,6 +240,7 @@ export const getAllAdminVouchers = async (req, res) => {
       const now = new Date();
       if (status === "PUBLISHED") {
         query.status = "PUBLISHED";
+        query.startDate = { $lte: now };
         query.endDate = { $gte: now };
         query.$expr = {
           $or: [
@@ -247,6 +248,9 @@ export const getAllAdminVouchers = async (req, res) => {
             { $lt: ["$usedCount", "$usageLimit"] }
           ]
         };
+      } else if (status === "UPCOMING") {
+        query.status = "PUBLISHED";
+        query.startDate = { $gt: now };
       } else if (status === "ENDED") {
         query.$or = [
           { status: "ENDED" },
