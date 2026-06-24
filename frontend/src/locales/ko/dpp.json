@@ -11,7 +11,10 @@
     "view3D": "3D 모델",
     "warningTitle": "경고",
     "warningSubtitle": "인증되지 않은 제품",
-    "warningDesc": "이 NFC 식별자는 존재하지 않거나 위조되었거나 MKHE에 의해 활성화되지 않았습니다. 도움이 필요하면 고객지원팀에 문의하세요."
+    "warningDesc": "이 NFC 식별자는 존재하지 않거나 위조되었거나 MKHE에 의해 활성화되지 않았습니다. 도움이 필요하면 고객지원팀에 문의하세요.",
+    "read_story": "공예 마을 이야기 읽기",
+    "read_story_desc": "이 제품 제작의 비하인드 스토리와 독특한 문화적 특징을 발견하세요.",
+    "read_story_btn": "지금 발견하기"
   },
   "certificate": {
     "title": "장인기술증명서",

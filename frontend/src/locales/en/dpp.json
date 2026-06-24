@@ -11,7 +11,10 @@
     "view3D": "3D Model",
     "warningTitle": "WARNING",
     "warningSubtitle": "UNAUTHENTICATED PRODUCT",
-    "warningDesc": "This NFC identifier does not exist, has been forged, or has not been activated by MKHE. Please contact customer support for assistance."
+    "warningDesc": "This NFC identifier does not exist, has been forged, or has not been activated by MKHE. Please contact customer support for assistance.",
+    "read_story": "Read Craft Village Story",
+    "read_story_desc": "Discover the detailed story behind the creation of this product and its unique cultural features.",
+    "read_story_btn": "Discover Now"
   },
   "certificate": {
     "title": "Craftsmanship Certificate",

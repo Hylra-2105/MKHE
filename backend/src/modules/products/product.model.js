@@ -84,6 +84,11 @@ const productSchema = new mongoose.Schema(
       ref: "DPP_Profile",
       default: null,
     },
+    storyBlogId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
+      default: null,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

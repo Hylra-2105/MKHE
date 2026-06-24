@@ -5,6 +5,7 @@ import { Trash2 } from "lucide-react";
 
 import { productApi } from "@/api/productApi";
 import ProductTable from "@/features/products/components/Admin/ProductTable";
+import ProductGrid from "@/features/products/components/Admin/ProductGrid";
 import AddProductModal from "@/features/products/components/Admin/AddProductModal";
 import EditProductModal from "@/features/products/components/Admin/EditProductModal";
 import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
@@ -15,6 +16,7 @@ const ProductManagementPage = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("list"); // grid | list
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -22,7 +24,7 @@ const ProductManagementPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(4);
+  const limit = viewMode === "grid" ? 8 : 6;
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchInput, setSearchInput] = useState("");
@@ -101,9 +103,9 @@ const ProductManagementPage = () => {
   const pageNumbers = [page - 1, page, page + 1];
 
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
+    <div className="p-3 md:p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
             {t("page.title")}
@@ -143,16 +145,26 @@ const ProductManagementPage = () => {
         handleVendorChange={handleVendorChange}
         statusFilter={statusFilter}
         handleStatusChange={handleStatusChange}
+        viewMode={viewMode}
+        setViewMode={(mode) => {
+          setViewMode(mode);
+          setPage(1);
+        }}
       />
 
-      <ProductTable
-        products={products}
-        loading={loading}
-        onEdit={handleEditProduct}
-      />
-
-      {/* DIVIDER */}
-      <div className="h-px bg-mkhe-border/30 my-7"></div>
+      {viewMode === "list" ? (
+        <ProductTable
+          products={products}
+          loading={loading}
+          onEdit={handleEditProduct}
+        />
+      ) : (
+        <ProductGrid
+          products={products}
+          loading={loading}
+          onEdit={handleEditProduct}
+        />
+      )}<div className="h-px bg-mkhe-border/30 my-7"></div>
 
       {/* PAGINATION */}
       {totalPages > 0 && (

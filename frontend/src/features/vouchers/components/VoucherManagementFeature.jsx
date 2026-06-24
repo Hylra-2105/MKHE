@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Plus, Ticket, Calendar, TrendingDown, Tag, Box, Edit2, Trash2, StopCircle, X } from "lucide-react";
-import { getAdminVouchersApi, deleteVoucherApi } from "@/api/voucherApi";
+import { getAdminVouchersApi, deleteVoucherApi, updateVoucherApi } from "@/api/voucherApi";
 import { formatNumber } from "@/utils/formatters";
 import toast from "react-hot-toast";
 import VoucherFormModal from "./VoucherFormModal";
@@ -13,14 +13,14 @@ const VoucherManagementFeature = () => {
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit] = useState(4);
+  const [limit] = useState(6);
   const [totalPages, setTotalPages] = useState(1);
   const [editVoucher, setEditVoucher] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, voucher: null, isDelete: false });
 
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("PUBLISHED");
+  const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
 
   const handleSearch = (e) => {
@@ -67,16 +67,23 @@ const VoucherManagementFeature = () => {
     
     try {
       setLoading(true);
-      const res = await deleteVoucherApi(voucher._id);
+      let res;
+      if (confirmModal.isDelete) {
+        res = await deleteVoucherApi(voucher._id);
+      } else {
+        // Kết thúc sớm: Set endDate thành thời điểm hiện tại
+        res = await updateVoucherApi(voucher._id, { endDate: new Date().toISOString() });
+      }
+
       if (res.data?.success) {
         toast.success(confirmModal.isDelete ? t("voucher.delete_draft_success", { defaultValue: "Đã xóa bản nháp thành công" }) : t("voucher.end_early_success", { defaultValue: "Đã kết thúc sớm voucher thành công" }));
         fetchVouchers();
       } else {
-        toast.error(res.data?.message || t("voucher.delete_error"));
+        toast.error(res.data?.message || (confirmModal.isDelete ? t("voucher.delete_error") : "Không thể kết thúc voucher"));
         setLoading(false);
       }
     } catch (error) {
-      toast.error(t("voucher.delete_error", { defaultValue: "Lỗi thực thi hành động" }));
+      toast.error(confirmModal.isDelete ? t("voucher.delete_error", { defaultValue: "Lỗi xóa voucher" }) : "Lỗi kết thúc voucher");
       setLoading(false);
     } finally {
       closeConfirmModal();
@@ -122,7 +129,7 @@ const VoucherManagementFeature = () => {
   };
 
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col font-sans">
+    <div className="p-3 md:p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">{t("voucher.title")}</h1>
@@ -161,6 +168,7 @@ const VoucherManagementFeature = () => {
             options={[
               { value: "ALL", label: t("voucher.status_all", { defaultValue: "Tất cả" }) },
               { value: "PUBLISHED", label: t("voucher.status_running", { defaultValue: "Đang chạy" }) },
+              { value: "UPCOMING", label: t("voucher.status_upcoming", { defaultValue: "Sắp diễn ra" }) },
               { value: "DRAFT", label: t("voucher.status_draft", { defaultValue: "Bản nháp" }) },
               { value: "ENDED", label: t("voucher.status_ended", { defaultValue: "Đã kết thúc" }) }
             ]}
@@ -189,18 +197,18 @@ const VoucherManagementFeature = () => {
       </div>
 
       {/* Table */}
-        <div className={`bg-mkhe-bg rounded shadow overflow-x-auto overflow-y-hidden border border-mkhe-border/30 h-[440px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
-          <table className="w-full text-left border-collapse min-w-[800px]">
+        <div className={`bg-mkhe-bg rounded shadow overflow-x-auto overflow-y-hidden border border-mkhe-border/50 min-h-[385px] transition-opacity ${loading ? "opacity-60 pointer-events-none" : "opacity-100"}`}>
+          <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
             <thead>
-              <tr className="border-b border-mkhe-border/30 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-                <th className="p-4 font-semibold">{t("voucher.voucher_code")}</th>
-                <th className="p-4 font-semibold">{t("voucher.discount_amount")}</th>
-                <th className="p-4 font-semibold">{t("voucher.applicable_conditions")}</th>
-                <th className="p-4 font-semibold">{t("voucher.issue_quantity")}</th>
-                <th className="p-4 font-semibold">{t("voucher.drop_rate")}</th>
-                <th className="p-4 font-semibold">{t("voucher.time")}</th>
-                <th className="p-4 font-semibold">{t("voucher.status")}</th>
-                <th className="p-4 font-semibold text-center">{t("table.actions", { defaultValue: "Hành động" })}</th>
+              <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
+                <th className="px-4 py-3 font-semibold sticky left-0 bg-mkhe-bg z-20 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">{t("voucher.voucher_code")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.discount_amount")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.applicable_conditions")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.issue_quantity")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.drop_rate")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.time")}</th>
+                <th className="px-4 py-3 font-semibold">{t("voucher.status")}</th>
+                <th className="px-4 py-3 font-semibold text-center">{t("table.actions", { defaultValue: "Hành động" })}</th>
               </tr>
             </thead>
             <tbody className="text-mkhe-text relative">
@@ -222,8 +230,8 @@ const VoucherManagementFeature = () => {
                 </tr>
               ) : (
                 vouchers.map((voucher) => (
-                  <tr key={voucher._id} className="border-b border-mkhe-border/20 hover:bg-mkhe-primary/5 transition-colors last:border-b-0 group">
-                    <td className="p-4">
+                  <tr key={voucher._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0 group">
+                    <td className="px-4 py-2.5 sticky left-0 bg-mkhe-bg z-10 border-r border-mkhe-border/50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.3)]">
                       <div className="font-bold text-mkhe-primary mb-1">{voucher.code}</div>
                       {voucher.isO2O && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-mkhe-primary/10 text-mkhe-primary px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -231,7 +239,7 @@ const VoucherManagementFeature = () => {
                         </span>
                       )}
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="font-semibold text-mkhe-text flex items-center gap-1.5">
                         <TrendingDown className="w-4 h-4 text-green-500" />
                         {voucher.type === "PERCENTAGE" && `${voucher.discountValue}%`}
@@ -242,7 +250,7 @@ const VoucherManagementFeature = () => {
                         <div className="text-xs text-mkhe-text/60 mt-1">{t("voucher.max_discount_val", { val: formatNumber(voucher.maxDiscount) })}</div>
                       )}
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="text-sm font-medium">{t("voucher.min_order_val", { val: formatNumber(voucher.minOrderValue) })}</div>
                       {(voucher.applicableVillages.length > 0 || voucher.applicableCategories.length > 0) && (
                         <div className="flex items-center gap-1 mt-1 text-xs text-mkhe-text/60">
@@ -251,7 +259,7 @@ const VoucherManagementFeature = () => {
                         </div>
                       )}
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="text-sm">
                         <span className="font-semibold">{voucher.usedCount}</span>
                         <span className="text-mkhe-text/50 mx-1">/</span>
@@ -264,12 +272,12 @@ const VoucherManagementFeature = () => {
                         />
                       </div>
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="text-sm font-semibold text-mkhe-primary">
                         {voucher.dropRate > 0 ? `${voucher.dropRate}%` : "-"}
                       </div>
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       <div className="flex flex-col gap-1 text-sm">
                         <div className="flex items-center gap-1.5 text-mkhe-text/70">
                           <Calendar className="w-3.5 h-3.5" />
@@ -282,10 +290,10 @@ const VoucherManagementFeature = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="p-4">
+                    <td className="px-4 py-2.5">
                       {getStatusBadge(voucher)}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="px-4 py-2.5 text-center">
                       {!isVoucherEnded(voucher) && (
                         <div className="flex items-center justify-center gap-2">
                           <button
@@ -295,7 +303,7 @@ const VoucherManagementFeature = () => {
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          {voucher.status === "PUBLISHED" && (
+                          {voucher.status === "PUBLISHED" && new Date(voucher.startDate) <= new Date() && (
                             <button 
                               onClick={() => openConfirmModal(voucher, false)} 
                               className="p-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 rounded-full transition-colors cursor-pointer"
@@ -304,7 +312,7 @@ const VoucherManagementFeature = () => {
                               <StopCircle className="w-4 h-4" />
                             </button>
                           )}
-                          {voucher.status === "DRAFT" && (
+                          {(voucher.status === "DRAFT" || (voucher.status === "PUBLISHED" && new Date(voucher.startDate) > new Date())) && (
                             <button 
                               onClick={() => openConfirmModal(voucher, true)} 
                               className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full transition-colors cursor-pointer"

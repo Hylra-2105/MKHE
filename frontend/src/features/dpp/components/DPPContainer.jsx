@@ -455,6 +455,33 @@ const DPPContainer = () => {
             </div>
           </div>
         </div>
+
+        {/* Call to Action: Đọc Ký sự */}
+        {product.storyBlogId && product.storyBlogId.slug && (
+          <div className="mb-4">
+            <div className="relative bg-mkhe-primary/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-mkhe-primary/30 overflow-hidden text-center transition-all duration-500 hover:border-mkhe-primary/60">
+              <div className="relative z-10 space-y-4">
+                <div className="flex justify-center">
+                  <ImageIcon className="w-8 h-8 text-mkhe-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold uppercase tracking-widest font-logo mb-1 text-gradient-gold">
+                    Đọc Ký Sự Làng Nghề
+                  </h3>
+                  <p className="text-sm text-mkhe-text/70">
+                    Khám phá câu chuyện chi tiết về quá trình tạo ra sản phẩm này và những nét văn hóa đặc sắc.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate(`/blogs/${product.storyBlogId.slug}`)}
+                  className="w-full py-4 px-6 rounded-full cursor-pointer font-bold uppercase tracking-widest text-xs transition-all duration-500 flex items-center justify-center gap-2 bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
+                >
+                  Khám phá ngay
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Auth Bottom Sheet */}

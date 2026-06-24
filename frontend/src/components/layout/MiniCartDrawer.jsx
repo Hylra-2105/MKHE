@@ -108,7 +108,7 @@ const MiniCartDrawer = () => {
               <p className="text-lg">{t("empty", "Giỏ hàng của bạn đang trống")}</p>
               <button 
                 onClick={() => setCartOpen(false)}
-                className="mt-6 px-6 py-2 border border-mkhe-primary text-mkhe-primary rounded-full hover:bg-mkhe-primary hover:text-white transition-colors"
+                className="mt-6 px-8 py-3 bg-mkhe-text text-mkhe-bg font-bold uppercase tracking-wider text-sm rounded-full hover:opacity-80 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
               >
                 {t("continue_shopping", "Tiếp tục mua sắm")}
               </button>

@@ -148,7 +148,7 @@ const NFCManagement = ({ productId }) => {
                 <th className="p-3 pl-4">{t("nfc.uid")}</th>
                 <th className="p-3">{t("nfc.status")}</th>
                 <th className="p-3 min-w-[300px]">{t("nfc.url")}</th>
-                <th className="p-3 text-right pr-4">{t("nfc.actions")}</th>
+                <th className="p-3 text-center">{t("nfc.actions", { defaultValue: "Hành động" })}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-mkhe-border/20 text-mkhe-text">
@@ -188,7 +188,7 @@ const NFCManagement = ({ productId }) => {
                         </button>
                       </div>
                     </td>
-                    <td className="p-3 pr-4 text-right">
+                    <td className="p-3 text-center">
                       {isPending && (
                         <button
                           type="button"

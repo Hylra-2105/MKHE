@@ -85,7 +85,9 @@
       "location_placeholder": "Ex: Phnom Pi Pottery Village (Or enter coordinates)",
       "location_placeholder_edit": "Ex: 10.823, 106.629 or Location Name",
       "map_title": "Location Map (Mini Google Maps)",
-      "map_desc": "* Map will automatically update after you enter the address or coordinates."
+      "map_desc": "* Map will automatically update after you enter the address or coordinates.",
+      "story_link": "Linked Story (Optional)",
+      "story_link_empty": "-- No linked story --"
     },
     "processing": "Processing...",
     "images_label": "Product Images/videos",

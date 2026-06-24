@@ -5,9 +5,10 @@ import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import UserFilter from "./Admin/UserFilter";
-import UserTable from "./Admin/UserTable";
+import UserTable from "@/features/users/components/Admin/UserTable";
+import UserGrid from "@/features/users/components/Admin/UserGrid";
 import UserDetailModal from "./Admin/UserDetailModal";
-import AddUserModal from "./Admin/AddUserModal";
+import AddUserModal from "@/features/users/components/Admin/AddUserModal";
 import ForbiddenPage from "@/pages/errors/ForbiddenPage";
 
 export default function UserManagementFeature() {
@@ -16,10 +17,11 @@ export default function UserManagementFeature() {
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [viewMode, setViewMode] = useState("list"); // list | grid
   const [isForbidden, setIsForbidden] = useState(false);
 
   const [page, setPage] = useState(1);
-  const [limit] = useState(5);
+  const limit = viewMode === "grid" ? 8 : 6;
   const [totalPages, setTotalPages] = useState(1);
 
   const [searchInput, setSearchInput] = useState("");
@@ -96,9 +98,9 @@ export default function UserManagementFeature() {
   const pageNumbers = [page - 1, page, page + 1];
 
   return (
-    <div className="p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
+    <div className="p-3 md:p-6 bg-mkhe-bg min-h-screen text-mkhe-text flex flex-col">
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
             {t("users.title")}
@@ -124,14 +126,28 @@ export default function UserManagementFeature() {
         statusFilter={statusFilter}
         handleStatusChange={handleStatusChange}
         handleSearch={handleSearch}
+        viewMode={viewMode}
+        setViewMode={(mode) => {
+          setViewMode(mode);
+          setPage(1);
+        }}
       />
 
-      <UserTable
-        users={users}
-        loading={loading}
-        onViewUser={handleViewUser}
-        currentUser={currentUser}
-      />
+      {viewMode === "list" ? (
+        <UserTable
+          users={users}
+          loading={loading}
+          onViewUser={handleViewUser}
+          currentUser={currentUser}
+        />
+      ) : (
+        <UserGrid
+          users={users}
+          loading={loading}
+          onViewUser={handleViewUser}
+          currentUser={currentUser}
+        />
+      )}
 
       {/* DIVIDER */}
       <div className="h-px bg-mkhe-border/30 my-7"></div>

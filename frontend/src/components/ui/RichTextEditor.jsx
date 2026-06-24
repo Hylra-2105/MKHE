@@ -3,21 +3,23 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
+import Image from "@tiptap/extension-image";
+import Youtube from "@tiptap/extension-youtube";
 import { useTranslation } from "react-i18next";
 import { 
   Bold, Italic, Heading2, Heading3, 
   List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  Undo, Redo
+  Undo, Redo, Image as ImageIcon, Video as YoutubeIcon
 } from "lucide-react";
 
-const MenuBar = ({ editor }) => {
+const MenuBar = ({ editor, onImageUpload }) => {
   const { t } = useTranslation();
   
   if (!editor) return null;
 
   const btnClass = (isActive) =>
-    `p-1.5 rounded transition-colors ${
+    `p-1.5 rounded transition-colors cursor-pointer ${
       isActive
         ? "bg-mkhe-primary/20 text-mkhe-primary"
         : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"
@@ -148,16 +150,78 @@ const MenuBar = ({ editor }) => {
       >
         <AlignJustify className="w-4 h-4" />
       </button>
+
+      <div className="w-px h-4 bg-mkhe-border/30 mx-1" />
+
+      {onImageUpload && (
+        <button
+          type="button"
+          onClick={() => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = async (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                try {
+                  const url = await onImageUpload(file);
+                  if (url) {
+                    editor.chain().focus().setImage({ src: url }).insertContent('<p></p>').run();
+                  }
+                } catch (error) {
+                  console.error("Image upload failed", error);
+                }
+              }
+            };
+            input.click();
+          }}
+          className={btnClass()}
+          title={t("editor.add_image", "Add Image")}
+        >
+          <ImageIcon className="w-4 h-4" />
+        </button>
+      )}
+
+      <button
+        type="button"
+        onClick={() => {
+          const url = prompt(t("editor.youtube_url", "Enter YouTube URL:"));
+          if (url) {
+            editor.chain().focus().setYoutubeVideo({
+              src: url,
+              width: Math.max(320, parseInt(editor.view.dom.clientWidth, 10)) || 640,
+              height: Math.max(180, parseInt(editor.view.dom.clientWidth, 10) * 9 / 16) || 360,
+            }).insertContent('<p></p>').run();
+          }
+        }}
+        className={btnClass()}
+        title={t("editor.add_youtube", "Add YouTube Video")}
+      >
+        <YoutubeIcon className="w-4 h-4" />
+      </button>
+
     </div>
   );
 };
 
-const RichTextEditor = ({ value, onChange, placeholder }) => {
+const RichTextEditor = ({ value, onChange, placeholder, onImageUpload }) => {
   const { t } = useTranslation();
   
   const editor = useEditor({
     extensions: [
       StarterKit,
+      Image.configure({
+        inline: true,
+        HTMLAttributes: {
+          class: 'rounded-lg max-w-full h-auto mx-auto my-4',
+        },
+      }),
+      Youtube.configure({
+        inline: false,
+        HTMLAttributes: {
+          class: 'w-full aspect-video rounded-lg my-4',
+        },
+      }),
       TextAlign.configure({
         types: ['heading', 'paragraph'],
       }),
@@ -170,7 +234,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm prose-invert max-w-none focus:outline-none min-h-[150px] p-4 text-mkhe-text leading-relaxed " +
+          "prose prose-sm prose-stone dark:prose-invert max-w-none focus:outline-none min-h-[150px] p-4 text-mkhe-text leading-relaxed " +
           "[&>p]:mb-3 last:[&>p]:mb-0 [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mb-3 [&_h2]:mt-5 [&_h3]:font-semibold [&_h3]:text-lg [&_h3]:mb-2 [&_h3]:mt-4 " +
           "[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 " +
           "[&_blockquote]:border-l-4 [&_blockquote]:border-mkhe-primary/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-mkhe-text/80 [&_blockquote]:my-4 " +
@@ -198,7 +262,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
 
   return (
     <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden focus-within:border-mkhe-primary transition-colors">
-      <MenuBar editor={editor} />
+      <MenuBar editor={editor} onImageUpload={onImageUpload} />
       <EditorContent editor={editor} />
     </div>
   );

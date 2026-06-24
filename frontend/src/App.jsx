@@ -26,6 +26,10 @@ import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
 
 import HomePage from "./pages/home/HomePage";
+import BlogList from "./features/blogs/components/Admin/BlogList";
+import BlogEditor from "./features/blogs/components/Admin/BlogEditor";
+import BlogPage from "./pages/blogs/BlogPage";
+import BlogDetail from "./pages/blogs/BlogDetail";
 import ShopPage from "./pages/shop/ShopPage";
 import ShopDetailPage from "./pages/shop/ShopDetailPage";
 import UserManagement from "./pages/users/UserManagementPage";
@@ -101,6 +105,33 @@ function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:id" element={<ShopDetailPage />} />
+          <Route path="/storytelling" element={<BlogPage />} />
+          <Route path="/blogs" element={<BlogPage />} />
+          <Route path="/blogs/:slug" element={<BlogDetail />} />
+          <Route
+            path="/admin/blogs"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <BlogList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs/create"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <BlogEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/blogs/edit/:id"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <BlogEditor />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/admin/users"
             element={

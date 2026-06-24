@@ -23,6 +23,8 @@ import {
   Ticket,
   BarChart,
   LogOut,
+  FileText,
+  Menu,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -52,6 +54,7 @@ export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("main");
   const [isGuestLangOpen, setIsGuestLangOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef(null);
   const guestLangRef = useRef(null);
@@ -120,16 +123,24 @@ export default function Header() {
     { key: "craft_villages", path: "/craft-villages" },
     { key: "shop", path: "/shop" },
     { key: "storytelling", path: "/storytelling" },
-    { key: "values", path: "/values" },
+    { key: "blog", path: "/blogs" },
   ];
 
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-10 shrink-0 sticky top-0 z-50 text-current transition-colors duration-300">
-      {/* LOGO */}
-      <div className="w-1/4">
+    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-50 text-current transition-colors duration-300">
+      {/* LOGO AND MOBILE MENU */}
+      <div className="flex-shrink-0 lg:w-1/4 flex items-center gap-3">
+        {/* Hamburger Menu cho Mobile */}
+        <button 
+          className="lg:hidden p-1.5 opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
         <Link
           to="/home"
           className="flex items-center gap-3 select-none cursor-pointer"
@@ -165,7 +176,7 @@ export default function Header() {
       </nav>
 
       {/* CỤM CHỨC NĂNG BÊN PHẢI */}
-      <div className="w-1/4 flex items-center justify-end gap-5">
+      <div className="flex-shrink-0 lg:w-1/4 flex items-center justify-end gap-3 md:gap-5">
         {/* ẨN KÍNH LÚP VÀ GIỎ HÀNG KHI LÀ ADMIN HOẶC STAFF */}
         {!isAdminOrStaff && (
           <>
@@ -219,7 +230,7 @@ export default function Header() {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-6 w-60 bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50">
+              <div className="absolute right-0 mt-6 w-60 max-w-[calc(100vw-2rem)] bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 origin-top-right">
                 {activeMenu === "main" && (
                   <div>
                     <Link
@@ -310,6 +321,20 @@ export default function Header() {
                         >
                           <Ticket className="w-4 h-4" />
                           {t("user_menu.manage_vouchers")}
+                        </Link>
+
+                        {/* Cả Admin và Staff đều thấy Quản lý Bài viết */}
+                        <Link
+                          to="/admin/blogs"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/blogs")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <FileText className="w-4 h-4" />
+                          {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
                         </Link>
 
                         {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
@@ -477,6 +502,28 @@ export default function Header() {
           </div>
         )}
       </div>
+
+      {/* MOBILE NAV MENU */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-20 left-0 w-full bg-mkhe-bg border-b border-mkhe-border shadow-xl flex flex-col p-4 z-40 lg:hidden">
+          {!isAdminOrStaff ? (
+            navLinks.map((link) => (
+              <Link
+                key={link.key}
+                to={link.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="py-3 border-b border-mkhe-border/50 text-sm font-medium hover:text-mkhe-primary transition-colors uppercase tracking-wider"
+              >
+                {t(`nav.${link.key}`)}
+              </Link>
+            ))
+          ) : (
+            <div className="py-3 text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none text-center">
+              {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 }

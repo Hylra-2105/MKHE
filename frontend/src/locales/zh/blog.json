@@ -1,0 +1,87 @@
+{
+  "admin": {
+    "title": "博客管理",
+    "subtitle": "讲述遗产故事、活动并分享指南",
+    "add_new": "添加新文章",
+    "search_placeholder": "按标题搜索...",
+    "btn_search": "搜索",
+    "filter_category": "所有类别",
+    "filter_status": "所有状态",
+    "empty_title": "暂无文章",
+    "empty_desc": "创建您的第一篇文章来讲述MKHE引以为傲的遗产故事。",
+    "table": {
+      "article": "文章",
+      "category": "类别",
+      "status": "状态",
+      "created_at": "创建时间",
+      "actions": "操作"
+    },
+    "status": {
+      "PUBLISHED": "已发布",
+      "DRAFT": "草稿"
+    },
+    "actions": {
+      "edit": "编辑",
+      "view": "在网页查看",
+      "delete": "删除"
+    },
+    "delete_modal": {
+      "title": "删除文章",
+      "message": "您确定要删除这篇文章吗？此操作无法撤销。",
+      "btn_delete": "删除",
+      "btn_cancel": "取消"
+    },
+    "editor": {
+      "create_title": "写新文章",
+      "edit_title": "编辑文章",
+      "btn_back": "返回",
+      "btn_save_draft": "保存草稿",
+      "btn_publish": "发布",
+      "form": {
+        "title": "文章标题",
+        "title_placeholder": "输入标题...",
+        "category": "类别",
+        "thumbnail": "缩略图",
+        "thumbnail_drag": "将图片或视频拖放到此处",
+        "thumbnail_click": "或点击选择文件",
+        "content": "内容",
+        "linked_products": "关联产品",
+        "linked_products_desc": "选择在文章末尾显示的产品",
+        "search_product": "搜索产品...",
+        "max_products": "为获得最佳显示效果，最多只能关联4个产品！"
+      },
+      "categories": {
+        "Ký sự": "故事",
+        "Sự kiện": "活动",
+        "Cẩm nang": "指南"
+      },
+      "edit_subtitle": "更新当前文章内容",
+      "create_subtitle": "创建新文章内容",
+      "publish_title": "发布文章",
+      "update_publish_title": "更新文章",
+      "publish_desc": "系统会自动保存草稿。您可以手动保存或立即发布。",
+      "btn_publish_now": "立即发布",
+      "btn_update_publish": "更新并发布",
+      "thumbnail_title": "封面图 (Thumbnail)",
+      "thumbnail_ratio": "推荐比例：16:9（例如：1200x675）",
+      "thumbnail_drop": "将图片拖放到此处",
+      "thumbnail_change": "更改图片",
+      "thumbnail_drag": "点击或将图片拖放到此处",
+      "category_placeholder": "选择类别"
+    }
+  },
+  "public": {
+    "page_title_story": "遗产故事",
+    "page_desc_story": "探索精美手工制品背后的故事以及默默守护民族文化灵魂的人们。",
+    "page_title_blog": "博客与新闻",
+    "page_desc_blog": "更新最新信息、活动和趋势。",
+    "empty": "暂无已发布文章。",
+    "btn_read_more": "阅读更多",
+    "detail": {
+      "back": "返回",
+      "related_products": "相关产品",
+      "view_detail": "查看详情",
+      "add_to_cart": "加入购物车"
+    }
+  }
+}

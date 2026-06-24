@@ -23,6 +23,7 @@ import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
+import { getBlogsApi } from "@/api/blogApi";
 
 const MAX_IMAGES = 10;
 
@@ -47,6 +48,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     hasDPP: false,
     artisanName: "",
     gpsLocation: "",
+    storyBlogId: "",
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -59,7 +61,23 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     return () => clearTimeout(timer);
   }, [formData.gpsLocation]);
 
-  // --- STATE FOR IMAGES & 3D ---
+  // --- BLOGS CHO KÝ SỰ ---
+  const [storyBlogs, setStoryBlogs] = useState([]);
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await getBlogsApi({ category: "Ký sự", status: "PUBLISHED", limit: 100 });
+        if (res.blogs) {
+          setStoryBlogs(res.blogs);
+        }
+      } catch (error) {
+        console.error("Fetch blogs error", error);
+      }
+    };
+    if (isOpen) fetchBlogs();
+  }, [isOpen]);
+
+  // --- CÁC MẢNG DỮ LIỆU DROPDOWN ---
   const fileInputRef = useRef(null);
   const fileInput3DRef = useRef(null);
 
@@ -151,6 +169,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         hasDPP: product.hasDPP || false,
         artisanName: product.artisanName || "",
         gpsLocation: product.gpsLocation || "",
+        storyBlogId: product.storyBlogId || "",
       });
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
@@ -622,6 +641,21 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                         required={formData.hasDPP} 
                         className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" 
                         placeholder={t("modal.dpp.location_placeholder_edit")} 
+                      />
+                    </div>
+                    
+                    <div className="space-y-1 col-span-2">
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.story_link")}</label>
+                      <Dropdown
+                        value={formData.storyBlogId}
+                        options={[
+                          { value: "", label: t("modal.dpp.story_link_empty") },
+                          ...storyBlogs.map(blog => ({ value: blog._id, label: blog.title }))
+                        ]}
+                        onChange={(val) => handleChange({ target: { name: "storyBlogId", value: val } })}
+                        className="w-full"
+                        triggerClassName="p-2.5 rounded-xl text-sm bg-transparent border border-mkhe-border/50 text-mkhe-text"
+                        optionClassName="text-sm truncate"
                       />
                     </div>
                   </div>

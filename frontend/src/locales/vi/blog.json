@@ -1,0 +1,87 @@
+{
+  "admin": {
+    "title": "Quản lý bài viết",
+    "subtitle": "Kể chuyện di sản, sự kiện và chia sẻ cẩm nang",
+    "add_new": "Thêm bài viết mới",
+    "search_placeholder": "Tìm theo tiêu đề bài viết...",
+    "btn_search": "Tìm kiếm",
+    "filter_category": "Tất cả danh mục",
+    "filter_status": "Tất cả trạng thái",
+    "empty_title": "Chưa có bài viết nào",
+    "empty_desc": "Hãy tạo bài viết đầu tiên để kể những câu chuyện di sản đầy tự hào của MKHE.",
+    "table": {
+      "article": "Bài viết",
+      "category": "Danh mục",
+      "status": "Trạng thái",
+      "created_at": "Ngày tạo",
+      "actions": "Hành động"
+    },
+    "status": {
+      "PUBLISHED": "Đã xuất bản",
+      "DRAFT": "Bản nháp"
+    },
+    "actions": {
+      "edit": "Chỉnh sửa",
+      "view": "Xem trên web",
+      "delete": "Xóa"
+    },
+    "delete_modal": {
+      "title": "Xóa Bài Viết",
+      "message": "Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.",
+      "btn_delete": "Xóa",
+      "btn_cancel": "Hủy"
+    },
+    "editor": {
+      "create_title": "Viết bài mới",
+      "edit_title": "Chỉnh sửa bài viết",
+      "btn_back": "Quay lại",
+      "btn_save_draft": "Lưu nháp",
+      "btn_publish": "Xuất bản",
+      "form": {
+        "title": "Tiêu đề bài viết",
+        "title_placeholder": "Nhập tiêu đề...",
+        "category": "Danh mục",
+        "thumbnail": "Ảnh bìa",
+        "thumbnail_drag": "Kéo thả ảnh hoặc video vào đây",
+        "thumbnail_click": "hoặc click để chọn file",
+        "content": "Nội dung bài viết",
+        "linked_products": "Sản phẩm liên kết",
+        "linked_products_desc": "Chọn sản phẩm xuất hiện ở cuối bài viết",
+        "search_product": "Tìm kiếm sản phẩm...",
+        "max_products": "Chỉ được liên kết tối đa 4 sản phẩm để tối ưu hiển thị!"
+      },
+      "categories": {
+        "Ký sự": "Ký sự",
+        "Sự kiện": "Sự kiện",
+        "Cẩm nang": "Cẩm nang"
+      },
+      "edit_subtitle": "Cập nhật nội dung bài viết hiện tại",
+      "create_subtitle": "Sáng tạo nội dung bài viết mới",
+      "publish_title": "Xuất bản bài viết",
+      "update_publish_title": "Cập nhật bài viết",
+      "publish_desc": "Hệ thống có tự động lưu nháp. Bạn có thể lưu thủ công hoặc xuất bản ngay.",
+      "btn_publish_now": "Xuất Bản Ngay",
+      "btn_update_publish": "Cập Nhật & Xuất Bản",
+      "thumbnail_title": "Ảnh bìa (Thumbnail)",
+      "thumbnail_ratio": "Tỉ lệ khuyến nghị: 16:9 (Ví dụ 1200x675)",
+      "thumbnail_drop": "Thả ảnh vào đây",
+      "thumbnail_change": "Thay đổi ảnh",
+      "thumbnail_drag": "Nhấn hoặc kéo thả ảnh vào đây",
+      "category_placeholder": "Chọn danh mục"
+    }
+  },
+  "public": {
+    "page_title_story": "Ký sự Di sản",
+    "page_desc_story": "Khám phá câu chuyện đằng sau những sản phẩm thủ công tinh xảo, những con người thầm lặng gìn giữ hồn cốt văn hóa dân tộc.",
+    "page_title_blog": "Blog & Tin tức",
+    "page_desc_blog": "Cập nhật những thông tin, sự kiện và xu hướng mới nhất.",
+    "empty": "Chưa có bài viết nào được xuất bản.",
+    "btn_read_more": "Đọc tiếp",
+    "detail": {
+      "back": "QUAY LẠI",
+      "related_products": "Sản phẩm liên quan đến bài viết",
+      "view_detail": "Xem chi tiết",
+      "add_to_cart": "Thêm vào giỏ hàng"
+    }
+  }
+}
