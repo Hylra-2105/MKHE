@@ -16,6 +16,7 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema(
   {
     orderCode: { type: String, required: true, unique: true }, // MKHE-XXXXX
+    payosOrderCode: { type: Number, unique: true, sparse: true }, // For PayOS webhook matching
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

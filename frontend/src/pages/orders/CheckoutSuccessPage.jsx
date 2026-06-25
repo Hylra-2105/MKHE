@@ -5,9 +5,17 @@ import { CheckCircle, QrCode } from "lucide-react";
 export default function CheckoutSuccessPage() {
   const { t } = useTranslation("checkout");
   const location = useLocation();
-  const order = location.state?.order;
+  const [order, setOrder] = useState(location.state?.order || null);
+  const searchParams = new URLSearchParams(location.search);
+  const isPayosReturn = searchParams.get("status") || searchParams.get("cancel");
 
-  if (!order) {
+  useEffect(() => {
+    // If we have an order in state, we are good.
+    // If not, but we came from PayOS, we can just show a generic success message or fetch from API.
+    // For simplicity, we just bypass the redirect if it's a PayOS return.
+  }, []);
+
+  if (!order && !isPayosReturn) {
     return <Navigate to="/shop" replace />;
   }
 
@@ -30,11 +38,11 @@ export default function CheckoutSuccessPage() {
         <CheckCircle className="w-20 h-20 text-green-500 mb-6" />
         <h1 className="text-4xl font-serif text-mkhe-primary mb-4">{t("success.title")}</h1>
         <p className="text-gray-600 text-lg mb-8 max-w-xl">
-          {t("success.thank_you_part1")} <strong className="text-mkhe-text">{order.orderCode}</strong>.
+          {t("success.thank_you_part1")} {order && <strong className="text-mkhe-text">{order.orderCode}</strong>}
           {t("success.thank_you_part2")}
         </p>
 
-        {order.paymentMethod === "BANK_TRANSFER" && (
+        {order?.paymentMethod === "BANK_TRANSFER" && !isPayosReturn && (
           <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-6 w-full max-w-md mb-8">
             <div className="flex items-center justify-center gap-2 mb-4 text-mkhe-primary font-medium">
               <QrCode className="w-6 h-6" />
@@ -56,7 +64,21 @@ export default function CheckoutSuccessPage() {
           </div>
         )}
 
-        {order.paymentMethod === "COD" && (
+        {isPayosReturn && searchParams.get("status") === "PAID" && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 w-full max-w-md mb-8 text-green-700">
+            <p className="font-medium mb-2">Thanh toán trực tuyến thành công!</p>
+            <p className="text-sm">Hệ thống đã ghi nhận thanh toán của bạn. Đơn hàng sẽ sớm được xử lý và giao đến bạn.</p>
+          </div>
+        )}
+        
+        {isPayosReturn && searchParams.get("cancel") === "true" && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 w-full max-w-md mb-8 text-red-700">
+            <p className="font-medium mb-2">Đã hủy thanh toán!</p>
+            <p className="text-sm">Bạn đã hủy giao dịch thanh toán. Đơn hàng vẫn được lưu lại chờ thanh toán. Vui lòng kiểm tra lại trong quản lý đơn hàng.</p>
+          </div>
+        )}
+
+        {order?.paymentMethod === "COD" && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 w-full max-w-md mb-8">
             <p className="text-gray-700 font-medium mb-2">{t("success.cod_method")}</p>
             <p className="text-sm text-gray-500">{t("success.cod_note_part1")} <strong className="text-mkhe-primary">{formatMoney(order.totalAmount)}</strong> {t("success.cod_note_part2")}</p>
