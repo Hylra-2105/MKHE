@@ -169,10 +169,12 @@ export default function CheckoutPage() {
         useCartStore.getState().setSelectedVoucher(null);
         toast.success(t("success.order_placed"));
         setShowOtpModal(false);
-        if (res.data.checkoutUrl) {
-          window.location.href = res.data.checkoutUrl;
+        const orderData = res.data.order || res.data;
+        
+        if (res.data.payosData) {
+          navigate("/checkout/success", { state: { orderData, payosData: res.data.payosData } });
         } else {
-          navigate("/checkout/success", { state: { order: res.data.order || res.data } });
+          navigate("/checkout/success", { state: { orderData } });
         }
       }
     } catch (error) {

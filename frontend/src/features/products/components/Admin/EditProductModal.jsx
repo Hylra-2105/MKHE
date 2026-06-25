@@ -335,6 +335,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         return toast.error(t("messages.missing_dpp_fields", "Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS."));
       }
     }
+    if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
+      return toast.error("Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.");
+    }
 
     setLoading(true);
     try {

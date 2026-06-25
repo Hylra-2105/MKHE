@@ -170,31 +170,31 @@ export const checkout = async (req, res) => {
       console.error("Failed to send invoice email:", err);
     });
 
-    let checkoutUrl = null;
+    let payosData = null;
     if (paymentMethod === "BANK_TRANSFER" && process.env.PAYOS_CLIENT_ID) {
       try {
         const { PayOS } = await import("@payos/node");
-        const payos = new PayOS(
-          process.env.PAYOS_CLIENT_ID,
-          process.env.PAYOS_API_KEY,
-          process.env.PAYOS_CHECKSUM_KEY
-        );
+        const payos = new PayOS({
+          clientId: process.env.PAYOS_CLIENT_ID,
+          apiKey: process.env.PAYOS_API_KEY,
+          checksumKey: process.env.PAYOS_CHECKSUM_KEY
+        });
         const domain = process.env.FRONTEND_URL || "https://mkhe.netlify.app";
         const body = {
           orderCode: payosOrderCode,
           amount: totalAmount,
           description: `Thanh toan don ${orderCode}`,
-          returnUrl: `${domain}/checkout/success`,
-          cancelUrl: `${domain}/checkout/success`,
+          returnUrl: `${domain}/checkout/success?status=PAID`,
+          cancelUrl: `${domain}/checkout/success?cancel=true`,
         };
-        const paymentLinkResponse = await payos.createPaymentLink(body);
-        checkoutUrl = paymentLinkResponse.checkoutUrl;
+        const paymentLinkResponse = await payos.paymentRequests.create(body);
+        payosData = paymentLinkResponse;
       } catch (err) {
         console.error("PayOS Create Payment Link Error:", err);
       }
     }
 
-    return successResponse(res, 201, "ORDER_CREATED", checkoutUrl ? { order: newOrder[0], checkoutUrl } : newOrder[0]);
+    return successResponse(res, 201, "ORDER_CREATED", payosData ? { order: newOrder[0], payosData } : newOrder[0]);
 
   } catch (error) {
     console.error("Checkout Error:", error);
@@ -490,17 +490,18 @@ export const payosWebhook = async (req, res) => {
       return res.json({ success: true });
     }
 
-    const PayOS = (await import("@payos/node")).default;
-    const payos = new PayOS(
-      process.env.PAYOS_CLIENT_ID,
-      process.env.PAYOS_API_KEY,
-      process.env.PAYOS_CHECKSUM_KEY
-    );
+    const m = await import("@payos/node");
+    const PayOS = m.default.PayOS;
+    const payos = new PayOS({
+      clientId: process.env.PAYOS_CLIENT_ID,
+      apiKey: process.env.PAYOS_API_KEY,
+      checksumKey: process.env.PAYOS_CHECKSUM_KEY
+    });
 
-    const data = payos.verifyPaymentWebhookData(webhookData);
+    const data = await payos.webhooks.verify(webhookData);
 
     // code "00" nghĩa là thanh toán thành công
-    if (data.code === "00") {
+    if (webhookData.code === "00") {
       const order = await Order.findOne({ payosOrderCode: data.orderCode });
       if (order && order.paymentStatus !== "PAID") {
         order.paymentStatus = "PAID";
