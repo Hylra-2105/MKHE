@@ -35,6 +35,7 @@ import ShopDetailPage from "./pages/shop/ShopDetailPage";
 import UserManagement from "./pages/users/UserManagementPage";
 import ProductManagementPage from "./pages/products/ProductManagementPage";
 import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
+import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -164,6 +165,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <OrderManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/admin/reviews"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ReviewManagementPage />
               </ProtectedRoute>
             }
           />

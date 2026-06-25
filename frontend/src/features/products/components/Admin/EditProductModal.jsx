@@ -344,6 +344,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         stock: Number(formData.stock) || 0,
       };
 
+      if (!updatePayload.hasDPP) {
+        updatePayload.artisanName = "";
+        updatePayload.gpsLocation = "";
+        updatePayload.storyBlogId = null;
+        // Optionally handle file3D if you want to wipe it too, but maybe leave it alone.
+      } else if (!updatePayload.storyBlogId) {
+        updatePayload.storyBlogId = null;
+      }
+
       if (isDeleted3D && !file3D) {
         updatePayload.file3D = "";
       }

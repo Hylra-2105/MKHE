@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import orderApi from "@/api/orderApi";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useCartStore } from "@/stores/useCartStore";
+import ReviewModal from "@/features/reviews/components/ReviewModal";
 
 const STATUS_STEPS = ["PENDING", "CONFIRMED", "DELIVERING", "COMPLETED"];
 
@@ -19,6 +20,11 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
   const [isReceiving, setIsReceiving] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isConfirmReceiveOpen, setIsConfirmReceiveOpen] = useState(false);
+  
+  // Review state
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewItem, setReviewItem] = useState(null);
+
   const formatMoney = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };
@@ -237,16 +243,39 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("checkout:summary.title", { defaultValue: "Đơn hàng" })}</h3>
             <div className="space-y-4">
               {order.items.map((item) => (
-                <div key={item._id} className="flex items-center gap-4 p-3 bg-[var(--color-mkhe-input)]/30 rounded-xl border border-[var(--color-mkhe-border)]/5">
-                  <div className="w-16 h-16 rounded-lg bg-[var(--color-mkhe-bg)] overflow-hidden flex-shrink-0">
-                    <img src={item.image || "https://placehold.co/100"} alt={item.name} className="w-full h-full object-cover" />
+                <div key={item._id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-[var(--color-mkhe-input)]/30 rounded-xl border border-[var(--color-mkhe-border)]/5">
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-16 h-16 rounded-lg bg-[var(--color-mkhe-bg)] overflow-hidden flex-shrink-0">
+                      <img src={item.image || "https://placehold.co/100"} alt={item.name} className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-[var(--color-mkhe-text)] line-clamp-1">{item.name}</h4>
+                      <p className="text-xs text-[var(--color-mkhe-text)]/50 mt-1">{t("history:quantity", { defaultValue: "Số lượng" })}: {item.quantity}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-[var(--color-mkhe-text)] line-clamp-1">{item.name}</h4>
-                    <p className="text-xs text-[var(--color-mkhe-text)]/50 mt-1">{t("history:quantity", { defaultValue: "Số lượng" })}: {item.quantity}</p>
-                  </div>
-                  <div className="font-bold text-mkhe-primary text-sm">
-                    {formatMoney(item.price * item.quantity)}
+                  
+                  <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 mt-2 sm:mt-0 pt-3 sm:pt-0 border-t border-[var(--color-mkhe-border)]/10 sm:border-0">
+                    <div className="font-bold text-mkhe-primary text-sm">
+                      {formatMoney(item.price * item.quantity)}
+                    </div>
+                    
+                    {order.orderStatus === "COMPLETED" && (
+                      item.isReviewed ? (
+                        <div className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[var(--color-mkhe-border)]/20 text-[var(--color-mkhe-text)]/40 bg-[var(--color-mkhe-input)]/50 cursor-not-allowed">
+                          {t("history:already_reviewed", { defaultValue: "Đã đánh giá" })}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setReviewItem(item);
+                            setIsReviewModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 text-xs font-bold rounded-lg border border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary hover:text-white transition-colors cursor-pointer"
+                        >
+                          {t("history:write_review", { defaultValue: "Đánh giá sản phẩm" })}
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               ))}
@@ -342,6 +371,25 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
         confirmText={t("history:confirm_btn", { defaultValue: "Đồng ý" })}
         cancelText={t("common:back", { defaultValue: "Trở lại" })}
         icon="check"
+      />
+
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={() => {
+          setIsReviewModalOpen(false);
+          setReviewItem(null);
+        }}
+        orderId={order._id}
+        item={reviewItem}
+        onSuccess={() => {
+          setOrder(prev => {
+            if (!prev || !reviewItem) return prev;
+            return {
+              ...prev,
+              items: prev.items.map(i => i._id === reviewItem._id ? { ...i, isReviewed: true } : i)
+            };
+          });
+        }}
       />
     </div>
   );

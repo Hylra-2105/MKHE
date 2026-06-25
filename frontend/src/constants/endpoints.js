@@ -42,4 +42,13 @@ export const ENDPOINTS = {
     CLAIM_NFC: `${API_BASE_URL}/vouchers/claim-nfc`,
     ADMIN_DETAIL: (id) => `${API_BASE_URL}/vouchers/admin/${id}`,
   },
+  REVIEWS: {
+    CREATE: `${API_BASE_URL}/reviews`,
+    GET_BY_PRODUCT: (id) => `${API_BASE_URL}/reviews/product/${id}`,
+    GET_ALL: `${API_BASE_URL}/reviews`,
+    TOGGLE_VISIBILITY: (id) => `${API_BASE_URL}/reviews/${id}/toggle-visibility`,
+  },
+  UPLOAD: {
+    IMAGE: `${API_BASE_URL}/upload/image`,
+  },
 };
