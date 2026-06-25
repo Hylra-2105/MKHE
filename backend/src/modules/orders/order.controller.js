@@ -179,7 +179,7 @@ export const checkout = async (req, res) => {
           process.env.PAYOS_API_KEY,
           process.env.PAYOS_CHECKSUM_KEY
         );
-        const domain = process.env.FRONTEND_URL || "http://localhost:5173";
+        const domain = process.env.FRONTEND_URL || "https://mkhe.netlify.app";
         const body = {
           orderCode: payosOrderCode,
           amount: totalAmount,
