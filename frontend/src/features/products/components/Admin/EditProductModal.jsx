@@ -335,6 +335,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         return toast.error(t("messages.missing_dpp_fields", "Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS."));
       }
     }
+    if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
+      return toast.error("Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.");
+    }
 
     setLoading(true);
     try {
@@ -343,6 +346,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         price: Number(formData.price),
         stock: Number(formData.stock) || 0,
       };
+
+      if (!updatePayload.hasDPP) {
+        updatePayload.artisanName = "";
+        updatePayload.gpsLocation = "";
+        updatePayload.storyBlogId = null;
+        // Optionally handle file3D if you want to wipe it too, but maybe leave it alone.
+      } else if (!updatePayload.storyBlogId) {
+        updatePayload.storyBlogId = null;
+      }
 
       if (isDeleted3D && !file3D) {
         updatePayload.file3D = "";

@@ -20,15 +20,20 @@ const storage = new CloudinaryStorage({
     // Nhận diện file 3D dựa trên đuôi file hoặc mimetype
     const is3D = file.originalname.endsWith(".glb") || file.originalname.endsWith(".gltf") || file.mimetype.startsWith("model/");
 
-    let folderName = "mkhe_avatars";
+    let folderName = req.body.folder || "mkhe_avatars";
     let resourceType = "image";
 
     if (isVideo) {
-      folderName = "mkhe_videos";
+      folderName = req.body.folder || "mkhe_videos";
       resourceType = "video";
     } else if (is3D) {
-      folderName = "mkhe_3d";
+      folderName = req.body.folder || "mkhe_3d";
       resourceType = "raw"; 
+    }
+
+    // Specific check for review uploads
+    if (req.originalUrl && req.originalUrl.includes("/upload/image")) {
+      folderName = "mkhe_reviews";
     }
 
     return {

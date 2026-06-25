@@ -169,13 +169,23 @@ export default function CheckoutPage() {
         useCartStore.getState().setSelectedVoucher(null);
         toast.success(t("success.order_placed"));
         setShowOtpModal(false);
-        navigate("/checkout/success", { state: { order: res.data } });
+        const orderData = res.data.order || res.data;
+        
+        if (res.data.payosData) {
+          navigate("/checkout/success", { state: { orderData, payosData: res.data.payosData } });
+        } else {
+          navigate("/checkout/success", { state: { orderData } });
+        }
       }
     } catch (error) {
-      if (error.response?.data?.message === "VALIDATION_ERROR" && error.response.data.errors?.length > 0) {
+      const errorMsg = error.response?.data?.message;
+      if (errorMsg === "VALIDATION_ERROR" && error.response.data.errors?.length > 0) {
         toast.error(error.response.data.errors[0].message);
+      } else if (errorMsg && errorMsg.startsWith("INSUFFICIENT_STOCK:")) {
+        const productName = errorMsg.split(":")[1];
+        toast.error(`${t("errors.insufficient_stock")} ${productName}`);
       } else {
-        toast.error(error.response?.data?.message || t("errors.order_failed"));
+        toast.error(errorMsg || t("errors.order_failed"));
       }
     } finally {
       setIsSubmitting(false);

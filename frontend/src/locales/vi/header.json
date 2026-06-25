@@ -16,7 +16,8 @@
     "manage_products": "Quản lý Sản phẩm",
     "manage_vouchers": "Quản lý Voucher",
     "manage_orders": "Quản lý Đơn hàng",
-    "manage_blogs": "Quản lý Bài viết"
+    "manage_blogs": "Quản lý Bài viết",
+    "manage_reviews": "Quản lý Đánh giá"
   },
   "guest_menu": {
     "login": "Đăng nhập"

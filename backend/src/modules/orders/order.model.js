@@ -10,11 +10,13 @@ const orderItemSchema = new mongoose.Schema({
   image: { type: String },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true, min: 1 },
+  isReviewed: { type: Boolean, default: false },
 });
 
 const orderSchema = new mongoose.Schema(
   {
     orderCode: { type: String, required: true, unique: true }, // MKHE-XXXXX
+    payosOrderCode: { type: Number, unique: true, sparse: true }, // For PayOS webhook matching
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

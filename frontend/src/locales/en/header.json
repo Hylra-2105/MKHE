@@ -17,7 +17,8 @@
     "manage_products": "Manage Products",
     "manage_vouchers": "Manage Vouchers",
     "manage_orders": "Manage Orders",
-    "manage_blogs": "Blog Management"
+    "manage_blogs": "Blog Management",
+    "manage_reviews": "Manage Reviews"
   },
   "guest_menu": {
     "login": "Login"

@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 export const ENDPOINTS = {
   AUTH: {
@@ -41,5 +41,14 @@ export const ENDPOINTS = {
     CHECK_NFC_CLAIM: `${API_BASE_URL}/vouchers/check-nfc-claim`,
     CLAIM_NFC: `${API_BASE_URL}/vouchers/claim-nfc`,
     ADMIN_DETAIL: (id) => `${API_BASE_URL}/vouchers/admin/${id}`,
+  },
+  REVIEWS: {
+    CREATE: `${API_BASE_URL}/reviews`,
+    GET_BY_PRODUCT: (id) => `${API_BASE_URL}/reviews/product/${id}`,
+    GET_ALL: `${API_BASE_URL}/reviews`,
+    TOGGLE_VISIBILITY: (id) => `${API_BASE_URL}/reviews/${id}/toggle-visibility`,
+  },
+  UPLOAD: {
+    IMAGE: `${API_BASE_URL}/upload/image`,
   },
 };

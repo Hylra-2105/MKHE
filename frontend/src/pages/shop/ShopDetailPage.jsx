@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
 import { useCartStore } from "@/stores/useCartStore";
 import { getImageUrl, formatNumber } from "@/utils/formatters";
-import { ChevronLeft, ShoppingCart, Info, Plus, Minus, ShieldCheck, MapPin, Layers, Hash, X, ChevronDown, CreditCard } from "lucide-react";
+import { ChevronLeft, ShoppingCart, Info, Plus, Minus, ShieldCheck, MapPin, Layers, Hash, X, ChevronDown, CreditCard, Star } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, EffectFade } from "swiper/modules";
+import ReviewList from "@/features/reviews/components/ReviewList";
 
 // Swiper styles
 import "swiper/css";
@@ -175,9 +176,18 @@ export default function ShopDetailPage() {
               <h1 className="text-3xl md:text-5xl font-sans text-mkhe-text font-light leading-tight mb-4">
                 {product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
               </h1>
-              <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
-                {formatNumber(product.price)} đ
-              </p>
+              <div className="flex items-center gap-4 mb-4">
+                <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
+                  {formatNumber(product.price)} đ
+                </p>
+                {product.ratingCount > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-sm font-bold">
+                    <Star className="w-4 h-4 fill-current" />
+                    <span>{product.ratingAverage}</span>
+                    <span className="text-mkhe-text/40 font-normal ml-1">({product.ratingCount} {t("reviews:customer_reviews", { defaultValue: "Đánh giá" })})</span>
+                  </div>
+                )}
+              </div>
               {product.hasDPP && (
                 <div className="inline-flex items-center gap-2 mt-4 px-3 py-1.5 bg-mkhe-primary/10 border border-mkhe-primary/20 text-mkhe-primary rounded-full text-sm font-medium shadow-sm">
                   <ShieldCheck className="w-4 h-4" />
@@ -325,6 +335,10 @@ export default function ShopDetailPage() {
                 )}
               </div>
             )}
+
+            <div className="mt-16 pt-12 border-t border-mkhe-border/10">
+              <ReviewList productId={product._id} />
+            </div>
           </div>
         </div>
 

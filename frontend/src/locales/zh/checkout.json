@@ -7,7 +7,8 @@
     "invalid_otp": "OTP 代码无效。",
     "order_failed": "下订单时出错。",
     "otp_failed": "发送OTP失败。",
-    "address_failed": "添加地址失败。"
+    "address_failed": "添加地址失败。",
+    "insufficient_stock": "库存不足的商品："
   },
   "success": {
     "order_placed": "订单已成功提交！",

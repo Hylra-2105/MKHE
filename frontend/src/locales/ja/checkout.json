@@ -7,7 +7,8 @@
     "invalid_otp": "無効な OTP コードです。",
     "order_failed": "注文時にエラーが発生しました。",
     "otp_failed": "OTPの送信に失敗しました。",
-    "address_failed": "住所の追加に失敗しました。"
+    "address_failed": "住所の追加に失敗しました。",
+    "insufficient_stock": "在庫不足のアイテム："
   },
   "success": {
     "order_placed": "注文が正常に完了しました！",

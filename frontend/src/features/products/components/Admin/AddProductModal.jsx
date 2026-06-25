@@ -314,6 +314,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Vị trí / Địa chỉ Làng nghề.");
       }
     }
+    if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
+      return toast.error("Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.");
+    }
 
     setLoading(true);
     try {

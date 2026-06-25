@@ -23,6 +23,8 @@ import cartRoutes from "./src/modules/cart/cart.routes.js";
 import voucherRoutes from "./src/modules/vouchers/voucher.routes.js";
 import orderRoutes from "./src/modules/orders/order.routes.js";
 import blogRoutes from "./src/modules/blogs/blog.routes.js";
+import reviewRoutes from "./src/modules/reviews/review.routes.js";
+import uploadRoutes from "./src/modules/upload/upload.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 
 connectDB();
@@ -33,7 +35,7 @@ const app = express();
 // Middleware CORS with proper headers for OAuth
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://mkhe.netlify.app"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -80,6 +82,12 @@ app.use("/api/orders", orderRoutes);
 
 // API liên quan đến Blogs
 app.use("/api/blogs", blogRoutes);
+
+// API liên quan đến Reviews
+app.use("/api/reviews", reviewRoutes);
+
+// API liên quan đến Upload
+app.use("/api/upload", uploadRoutes);
 
 const PORT = process.env.PORT || 5000;
 
