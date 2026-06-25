@@ -7,7 +7,8 @@
     "invalid_otp": "Mã OTP không hợp lệ.",
     "order_failed": "Lỗi khi đặt hàng.",
     "otp_failed": "Lỗi khi gửi mã OTP.",
-    "address_failed": "Lỗi khi thêm địa chỉ."
+    "address_failed": "Lỗi khi thêm địa chỉ.",
+    "insufficient_stock": "Không đủ hàng trong kho:"
   },
   "success": {
     "order_placed": "Đặt hàng thành công!",

@@ -7,7 +7,8 @@
     "invalid_otp": "Invalid OTP code.",
     "order_failed": "Error placing order.",
     "otp_failed": "Failed to send OTP.",
-    "address_failed": "Failed to add address."
+    "address_failed": "Failed to add address.",
+    "insufficient_stock": "Insufficient stock for item:"
   },
   "success": {
     "order_placed": "Order placed successfully!",
