@@ -173,7 +173,7 @@ export const checkout = async (req, res) => {
     let checkoutUrl = null;
     if (paymentMethod === "BANK_TRANSFER" && process.env.PAYOS_CLIENT_ID) {
       try {
-        const PayOS = (await import("@payos/node")).default;
+        const { PayOS } = await import("@payos/node");
         const payos = new PayOS(
           process.env.PAYOS_CLIENT_ID,
           process.env.PAYOS_API_KEY,
