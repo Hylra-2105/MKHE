@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const axiosClient = axios.create({
   // Thay thế bằng Base URL của bạn
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -108,7 +108,7 @@ axiosClient.interceptors.response.use(
 
         try {
           // Xin token mới bằng axios gốc (không dùng axiosClient để tránh dính interceptor)
-          const response = await axios.post("http://localhost:5000/api/auth/refresh-token", {
+          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"}/auth/refresh-token`, {
             refreshToken,
           });
 
