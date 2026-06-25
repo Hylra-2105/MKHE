@@ -7,7 +7,8 @@
     "invalid_otp": "잘못된 OTP 코드입니다.",
     "order_failed": "주문 중 오류가 발생했습니다.",
     "otp_failed": "OTP 전송에 실패했습니다.",
-    "address_failed": "주소 추가에 실패했습니다."
+    "address_failed": "주소 추가에 실패했습니다.",
+    "insufficient_stock": "재고 부족 상품:"
   },
   "success": {
     "order_placed": "주문이 성공적으로 완료되었습니다!",
