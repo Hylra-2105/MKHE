@@ -30,5 +30,19 @@
   "hidden": "Hidden",
   "visible": "Visible",
   "show": "Show review",
-  "hide": "Hide review"
+  "hide": "Hide review",
+  "search_placeholder": "Search reviews...",
+  "management_subtitle": "Manage and moderate customer reviews",
+  "filter_rating": "All ratings",
+  "stars_5": "5 Stars",
+  "stars_4": "4 Stars",
+  "stars_3": "3 Stars",
+  "stars_2": "2 Stars",
+  "stars_1": "1 Star",
+  "modal_title": "Review Details",
+  "modal_customer": "Customer",
+  "modal_product": "Product",
+  "modal_rating": "Rating",
+  "modal_content": "Content",
+  "star": "Star"
 }

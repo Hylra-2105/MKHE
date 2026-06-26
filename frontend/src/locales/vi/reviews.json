@@ -30,5 +30,19 @@
   "hidden": "Bị Ẩn",
   "visible": "Hiển thị",
   "show": "Hiện đánh giá",
-  "hide": "Ẩn đánh giá"
+  "hide": "Ẩn đánh giá",
+  "search_placeholder": "Tìm kiếm đánh giá...",
+  "management_subtitle": "Quản lý và kiểm duyệt đánh giá từ khách hàng",
+  "filter_rating": "Tất cả số sao",
+  "stars_5": "5 Sao",
+  "stars_4": "4 Sao",
+  "stars_3": "3 Sao",
+  "stars_2": "2 Sao",
+  "stars_1": "1 Sao",
+  "modal_title": "Chi tiết đánh giá",
+  "modal_customer": "Khách hàng",
+  "modal_product": "Sản phẩm",
+  "modal_rating": "Đánh giá",
+  "modal_content": "Nội dung",
+  "star": "Sao"
 }

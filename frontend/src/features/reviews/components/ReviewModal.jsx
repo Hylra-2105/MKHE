@@ -236,14 +236,14 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
         <div className="p-4 border-t border-[var(--color-mkhe-border)]/10 bg-[var(--color-mkhe-input)]/20 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-transparent border border-[var(--color-mkhe-border)]/30 hover:bg-[var(--color-mkhe-input)] transition-colors"
+            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-transparent border border-[var(--color-mkhe-border)]/30 hover:bg-[var(--color-mkhe-input)] transition-colors cursor-pointer"
           >
             {t("common:cancel")}
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || isUploading}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-mkhe-primary text-white hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-mkhe-primary text-white hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {t("reviews:submit")}
