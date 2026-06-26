@@ -18,9 +18,9 @@ export const getAllUsers = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { name: { $regex: searchRegex, $options: "i" } },
-        { email: { $regex: searchRegex, $options: "i" } },
-        { phone: { $regex: searchRegex, $options: "i" } },
+        { name: { $regex: searchRegex } },
+        { email: { $regex: searchRegex } },
+        { phone: { $regex: searchRegex } },
       ];
     }
     if (roleFilter) query.role = roleFilter;

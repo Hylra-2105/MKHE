@@ -355,9 +355,9 @@ export const getAllOrdersAdmin = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { orderCode: { $regex: searchRegex, $options: "i" } },
-        { "shippingInfo.name": { $regex: searchRegex, $options: "i" } },
-        { "shippingInfo.phone": { $regex: searchRegex, $options: "i" } },
+        { orderCode: { $regex: searchRegex } },
+        { "shippingInfo.name": { $regex: searchRegex } },
+        { "shippingInfo.phone": { $regex: searchRegex } },
       ];
     }
 

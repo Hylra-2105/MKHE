@@ -269,7 +269,7 @@ export default function ShopDetailPage() {
                   </button>
                 </div>
                 <span className="text-sm text-mkhe-text/50 ml-2">
-                  {product.stock > 0 ? t("shop.detail.in_stock", { count: product.stock, defaultValue: `${product.stock} sản phẩm có sẵn` }) : t("shop.detail.sold_out", "Đã bán hết")}
+                  {product.stock > 0 ? t("shop.detail.in_stock", { count: product.stock, defaultValue: `${product.stock} sản phẩm có sẵn` }) : t("shop.detail.sold_out", { defaultValue: "Đã bán hết" })}
                 </span>
               </div>
 
@@ -280,24 +280,24 @@ export default function ShopDetailPage() {
                   disabled={isOutOfStock}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 md:py-5 rounded-full font-medium text-lg border-2 transition-all ${
                     isOutOfStock 
-                      ? "border-mkhe-border/20 text-mkhe-text/40 cursor-not-allowed" 
+                      ? "bg-mkhe-primary/5 border-mkhe-primary/20 text-mkhe-primary/40 cursor-not-allowed" 
                       : "border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary/10 active:scale-[0.99] cursor-pointer"
                   }`}
                 >
                   <ShoppingCart className="w-6 h-6" />
-                  <span>{isOutOfStock ? t("shop.detail.out_of_stock", "Hết hàng") : t("shop.detail.add_to_cart", "Thêm vào giỏ")}</span>
+                  <span>{isOutOfStock ? t("shop.detail.sold_out", { defaultValue: "Tạm hết" }) : t("shop.detail.add_to_cart", { defaultValue: "Thêm vào giỏ" })}</span>
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={isOutOfStock}
                   className={`flex-1 flex items-center justify-center gap-3 py-4 md:py-5 rounded-full font-medium text-lg shadow-lg transition-all ${
                     isOutOfStock 
-                      ? "bg-mkhe-border/20 text-mkhe-text/40 cursor-not-allowed shadow-none" 
+                      ? "bg-mkhe-primary/10 text-mkhe-primary/40 cursor-not-allowed shadow-none" 
                       : "bg-mkhe-primary text-white shadow-mkhe-primary/30 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
                   }`}
                 >
                   <CreditCard className="w-6 h-6" />
-                  <span>{isOutOfStock ? t("shop.detail.out_of_stock", "Hết hàng") : t("shop.detail.buy_now", "Mua ngay")}</span>
+                  <span>{isOutOfStock ? t("shop.detail.sold_out", { defaultValue: "Tạm hết" }) : t("shop.detail.buy_now", { defaultValue: "Mua ngay" })}</span>
                 </button>
               </div>
             </div>

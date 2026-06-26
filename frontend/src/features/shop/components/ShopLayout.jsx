@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const ShopLayout = ({ children, filters, onFilterChange }) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(false);
+  const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(true);
   const { t } = useTranslation("product");
 
   return (

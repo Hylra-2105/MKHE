@@ -92,8 +92,8 @@ export const getProducts = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { name: { $regex: searchRegex, $options: "i" } },
-        { sku: { $regex: searchRegex, $options: "i" } },
+        { name: { $regex: searchRegex } },
+        { sku: { $regex: searchRegex } },
       ];
     }
 
@@ -108,16 +108,21 @@ export const getProducts = async (req, res) => {
         query.status = status;
       }
     } else {
-      query.status = { $in: ["ACTIVE", "PUBLISHED"] };
+      query.status = { $in: ["PUBLISHED", "OUT_OF_STOCK"] };
     }
 
     if (inStock !== false) {
       query.stock = { $gt: 0 };
     }
 
+    let sortQuery = { createdAt: -1, _id: -1 };
+    if (!status) {
+      sortQuery = { status: -1, createdAt: -1, _id: -1 };
+    }
+
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query)
-      .sort({ createdAt: -1, _id: -1 })
+      .sort(sortQuery)
       .skip(skip)
       .limit(limit);
 
@@ -184,8 +189,8 @@ export const getShopProductById = async (req, res) => {
       return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     }
 
-    // Chỉ trả về nếu sản phẩm đang PUBLISHED (hoặc ACTIVE)
-    if (!["PUBLISHED", "ACTIVE"].includes(product.status)) {
+    // Chỉ trả về nếu sản phẩm đang PUBLISHED, ACTIVE, hoặc OUT_OF_STOCK
+    if (!["PUBLISHED", "ACTIVE", "OUT_OF_STOCK"].includes(product.status)) {
       return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
     }
 
@@ -387,7 +392,7 @@ export const getShopProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     let query = {
-      status: "PUBLISHED"
+      status: { $in: ["PUBLISHED", "OUT_OF_STOCK"] }
     };
 
     // --- LOGIC BẢO MẬT B2B ---
@@ -402,8 +407,8 @@ export const getShopProducts = async (req, res) => {
       const searchRegex = createVietnameseRegex(search);
       andConditions.push({
         $or: [
-          { name: { $regex: searchRegex, $options: "i" } },
-          { sku: { $regex: searchRegex, $options: "i" } },
+          { name: { $regex: searchRegex } },
+          { sku: { $regex: searchRegex } },
         ]
       });
     }
@@ -430,8 +435,8 @@ export const getShopProducts = async (req, res) => {
       const cvRegex = createVietnameseRegex(craftVillage);
       andConditions.push({
         $or: [
-          { craftVillage: { $regex: cvRegex, $options: "i" } },
-          { vendor: { $regex: cvRegex, $options: "i" } }
+          { craftVillage: { $regex: cvRegex } },
+          { vendor: { $regex: cvRegex } }
         ]
       });
     }
@@ -450,7 +455,7 @@ export const getShopProducts = async (req, res) => {
 
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ status: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
