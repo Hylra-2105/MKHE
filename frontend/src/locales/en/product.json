@@ -155,10 +155,10 @@
     "activate_error": "Activation failed",
     "processing_images": "Processing and optimizing images...",
     "processing_images_success": "Files processed successfully!",
-    "processing_images_error": "An error occurred while processing files",
+    "processing_images_error": "Error processing files",
     "video_too_large": "Video {{name}} is too large (>100MB).",
     "missing_fields": "Please fill in Name, SKU, Price, and Vendor.",
-    "missing_dpp_fields": "Digital Passport requires Artisan Name and GPS Coordinates.",
+    "missing_dpp_fields": "DPP requires Artisan Name and GPS Location.",
     "no_link_allowed": "Do not paste links! Please enter location name or coordinates only.",
     "file_3d_too_large": "3D file is too large (>150MB), which may freeze the browser. Please reduce it using 3D software first.",
     "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
@@ -166,7 +166,10 @@
     "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used.",
     "gallery_upload_success": "Đã thêm media mới thành công",
     "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "Cannot publish when stock is 0.",
+    "invalid_quantity": "Valid quantity is 1 to 100",
+    "restore_failed": "❌ Failed to restore: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC Tag Management",

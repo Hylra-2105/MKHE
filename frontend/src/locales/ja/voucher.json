@@ -1,0 +1,9 @@
+{
+  "publish_time_passed": "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành.",
+  "update_success": "Cập nhật thành công",
+  "update_error": "Lỗi cập nhật",
+  "delete_draft_success": "Đã xóa bản nháp thành công",
+  "end_early_success": "Đã kết thúc sớm voucher thành công",
+  "delete_error": "Lỗi xóa voucher",
+  "end_early_error": "Không thể kết thúc voucher"
+}

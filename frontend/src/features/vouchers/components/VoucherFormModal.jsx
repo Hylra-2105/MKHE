@@ -48,6 +48,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const [options, setOptions] = useState({ categories: [], villages: [] });
   const [loading, setLoading] = useState(false);
   const [fetchingOptions, setFetchingOptions] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
 
   const startDateOptions = useMemo(() => ({
     ...flatpickrOptions,
@@ -67,6 +68,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
   useEffect(() => {
     if (isOpen) {
+      setFormErrors({});
       if (editData) {
         setFormData({
           code: editData.code || "",
@@ -118,7 +120,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           discountValue: "",
           maxDiscount: "",
           minOrderValue: "",
-          startDate: "",
+          startDate: new Date(new Date().getTime() + 5 * 60000).toISOString(),
           endDate: "",
           usageLimit: "",
           applicableVillages: [],
@@ -174,6 +176,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
+
     setFormData((prev) => {
       let nextValue = type === "checkbox" ? checked : value;
       let nextState = { ...prev, [name]: nextValue };
@@ -201,6 +205,9 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
   const handleMoneyChange = (e) => {
     const { name, value } = e.target;
+
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
+
     let rawValue = value.replace(/\D/g, "");
     
     if (name === "discountValue" && formData.type === "PERCENTAGE" && rawValue !== "") {
@@ -226,16 +233,44 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const handleSubmit = async (e, submitStatus = null) => {
     e.preventDefault();
 
-    if (!formData.startDate || !formData.endDate) {
-      return toast.error(t("voucher.time_empty_error"));
+    setFormErrors({});
+    let errors = {};
+
+    if (!formData.code || !formData.code.trim()) {
+      errors.code = t("voucher.code_required", { defaultValue: "Vui lòng nhập mã ưu đãi" });
     }
 
-    if (new Date(formData.endDate) <= new Date(formData.startDate)) {
-      return toast.error(t("voucher.time_invalid_error"));
+    if (!formData.discountValue || Number(formData.discountValue) <= 0) {
+      errors.discountValue = t("voucher.discount_required", { defaultValue: "Vui lòng nhập mức giảm hợp lệ" });
     }
 
-    if (submitStatus === "PUBLISHED" && new Date(formData.startDate) < new Date()) {
-      return toast.error(t("voucher.publish_time_passed", { defaultValue: "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành." }));
+    if (!formData.startDate) {
+      errors.startDate = t("voucher.time_empty_error");
+    }
+    if (!formData.endDate) {
+      errors.endDate = t("voucher.time_empty_error");
+    }
+
+    if (formData.startDate && formData.endDate && new Date(formData.endDate) <= new Date(formData.startDate)) {
+      errors.endDate = t("voucher.time_invalid_error");
+    }
+
+    if (formData.startDate) {
+      const start = new Date(formData.startDate);
+      start.setSeconds(0, 0);
+      const now = new Date();
+      now.setSeconds(0, 0);
+      
+      const isUnchanged = editData && new Date(editData.startDate).getTime() === start.getTime();
+
+      if (!isUnchanged && start < now) {
+        errors.startDate = t("voucher.publish_time_passed", { defaultValue: "Thời gian bắt đầu không được trong quá khứ" });
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
     }
 
     try {
@@ -253,7 +288,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
       if (editData) {
         await updateVoucherApi(editData._id, payload);
-        toast.success(t("voucher.update_success", { defaultValue: "Cập nhật thành công" }));
+        toast.success(t("voucher.update_success"));
       } else {
         await createVoucherApi(payload);
         localStorage.removeItem("mkhe_voucher_draft");
@@ -262,7 +297,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error", { defaultValue: "Lỗi cập nhật" }) : t("voucher.create_error_generic")));
+      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error") : t("voucher.create_error_generic")));
     } finally {
       setLoading(false);
     }
@@ -313,13 +348,18 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                 <input 
                   type="text" 
                   name="code"
-                  required
                   placeholder={t("voucher.voucher_code_placeholder")}
                   value={formData.code}
                   onChange={handleChange}
                   disabled={isPublished}
-                  className={`w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  className={`w-full p-3.5 bg-transparent border ${formErrors.code ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                 />
+                {formErrors.code && (
+                  <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                    <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                    <p className="text-xs font-medium">{formErrors.code}</p>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -341,17 +381,22 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     <input 
                       type="text" 
                       name="discountValue"
-                      required
                       placeholder={formData.type === "PERCENTAGE" ? t("voucher.discount_percentage_placeholder") : t("voucher.discount_fixed_placeholder")}
                       value={formatMoney(formData.discountValue)}
                       onChange={handleMoneyChange}
                       disabled={isPublished}
-                      className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                      className={`w-full p-3.5 pr-10 bg-transparent border ${formErrors.discountValue ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">
                       {formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}
                     </span>
                   </div>
+                  {formErrors.discountValue && (
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <p className="text-xs font-medium">{formErrors.discountValue}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -401,23 +446,43 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <Flatpickr
                     id="startDate"
                     value={formatFlatpickrDate(formData.startDate)}
-                    onChange={([date]) => !isPublished && setFormData(prev => ({...prev, startDate: date}))}
+                    onChange={([date]) => {
+                      if (!isPublished) {
+                        setFormData(prev => ({...prev, startDate: date}));
+                        if (formErrors.startDate) setFormErrors(prev => ({ ...prev, startDate: null }));
+                      }
+                    }}
                     options={startDateOptions}
                     disabled={isPublished}
-                    className={`w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
+                  {formErrors.startDate && (
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <p className="text-xs font-medium">{formErrors.startDate}</p>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label htmlFor="endDate" className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.end_date_label")} <span className="text-red-500">*</span></label>
                   <Flatpickr
                     id="endDate"
                     value={formatFlatpickrDate(formData.endDate)}
-                    onChange={([date]) => setFormData(prev => ({...prev, endDate: date}))}
+                    onChange={([date]) => {
+                      setFormData(prev => ({...prev, endDate: date}));
+                      if (formErrors.endDate) setFormErrors(prev => ({ ...prev, endDate: null }));
+                    }}
                     options={endDateOptions}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
                     placeholder={t("voucher.end_date_placeholder")}
                   />
+                  {formErrors.endDate && (
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <p className="text-xs font-medium">{formErrors.endDate}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 

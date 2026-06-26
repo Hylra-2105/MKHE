@@ -1,0 +1,9 @@
+{
+  "publish_time_passed": "시작 시간이 지났습니다. 이후의 시간을 선택해 주세요.",
+  "update_success": "성공적으로 업데이트되었습니다",
+  "update_error": "업데이트에 실패했습니다",
+  "delete_draft_success": "초안이 성공적으로 삭제되었습니다",
+  "end_early_success": "바우처가 조기 종료되었습니다",
+  "delete_error": "바우처 삭제에 실패했습니다",
+  "end_early_error": "바우처 조기 종료에 실패했습니다"
+}

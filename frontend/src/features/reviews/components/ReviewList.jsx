@@ -36,7 +36,7 @@ const ReviewList = ({ productId }) => {
     return (
       <div className="text-center py-12 bg-[var(--color-mkhe-input)]/20 rounded-2xl border border-[var(--color-mkhe-border)]/10">
         <p className="text-[var(--color-mkhe-text)]/60">
-          {t("reviews:no_reviews", { defaultValue: "Chưa có đánh giá nào cho sản phẩm này." })}
+          {t("reviews:no_reviews")}
         </p>
       </div>
     );
@@ -47,7 +47,7 @@ const ReviewList = ({ productId }) => {
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-serif text-[var(--color-mkhe-text)]">
-        {t("reviews:customer_reviews", { defaultValue: "Đánh giá từ khách hàng" })} ({reviews.length})
+        {t("reviews:customer_reviews")} ({reviews.length})
       </h3>
       
       <div className="space-y-4">
@@ -104,8 +104,8 @@ const ReviewList = ({ productId }) => {
             className="flex items-center gap-2 px-6 py-2 border border-[var(--color-mkhe-border)]/20 rounded-full text-sm font-medium hover:bg-[var(--color-mkhe-input)] transition-colors text-[var(--color-mkhe-text)]/80 cursor-pointer"
           >
             {showAll 
-              ? t("reviews:show_less", { defaultValue: "Thu gọn" }) 
-              : t("reviews:view_all", { count: reviews.length, defaultValue: `Xem tất cả ${reviews.length} đánh giá` })
+              ? t("reviews:show_less") 
+              : t("reviews:view_all", { count: reviews.length })
             }
             <ChevronDown className={`w-4 h-4 transition-transform ${showAll ? "rotate-180" : ""}`} />
           </button>

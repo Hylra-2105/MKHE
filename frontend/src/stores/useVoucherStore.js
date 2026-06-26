@@ -38,11 +38,11 @@ export const useVoucherStore = create((set, get) => ({
     set({ isCollecting: true });
     try {
       await collectVoucherApi(voucherId);
-      toast.success(i18n.t("toast.collected", { ns: "common", defaultValue: "Đã lưu mã giảm giá vào ví!" }));
+      toast.success(i18n.t("toast.collected", { ns: "common" }));
       // Refresh wallet
       await get().fetchWalletVouchers();
     } catch (error) {
-      toast.error(error.response?.data?.message || i18n.t("toast.collect_error", { ns: "common", defaultValue: "Lỗi lưu mã giảm giá" }));
+      toast.error(error.response?.data?.message || i18n.t("toast.collect_error", { ns: "common" }));
     } finally {
       set({ isCollecting: false });
     }

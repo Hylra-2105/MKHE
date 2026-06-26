@@ -19,6 +19,7 @@ const OrderManagementPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -32,13 +33,14 @@ const OrderManagementPage = () => {
 
   const HIGH_RISK_THRESHOLD = import.meta.env.VITE_HIGH_RISK_THRESHOLD || 5000000;
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (isBackground = false) => {
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       const res = await orderApi.getAllOrdersAdmin({ 
         page, 
         limit: 6, 
         status: statusFilter,
+        paymentStatus: paymentStatusFilter,
         search: searchInput,
         startDate,
         endDate,
@@ -49,9 +51,9 @@ const OrderManagementPage = () => {
         setTotalPages(res.data.pagination.totalPages);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || t("admin:orders.fetch_error", { defaultValue: "Lỗi tải danh sách đơn hàng" }));
+      toast.error(error?.response?.data?.message || t("admin:orders.fetch_error"));
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   };
 
@@ -63,23 +65,29 @@ const OrderManagementPage = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [page]); 
+
+    const interval = setInterval(() => {
+      fetchOrders(true);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [page, statusFilter, searchInput, startDate, endDate, highRisk]); 
 
   const handleStatusChange = async (id, newStatus, newPaymentStatus) => {
     try {
       const res = await orderApi.updateOrderStatusAdmin(id, newStatus, newPaymentStatus);
       if (res.success) {
-        toast.success(t("admin:orders.update_success", { defaultValue: "Cập nhật trạng thái thành công" }));
+        toast.success(t("admin:orders.update_success"));
         fetchOrders();
         if (selectedOrder && selectedOrder._id === id) {
           setSelectedOrder({ ...selectedOrder, orderStatus: newStatus, paymentStatus: newPaymentStatus || selectedOrder.paymentStatus });
         }
         setIsModalOpen(false);
       } else {
-        toast.error(res.message || t("admin:orders.update_fail", { defaultValue: "Cập nhật thất bại" }));
+        toast.error(res.message || t("admin:orders.update_fail"));
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || t("admin:orders.system_error", { defaultValue: "Lỗi hệ thống" }));
+      toast.error(error.response?.data?.message || t("admin:orders.system_error"));
     }
   };
 
@@ -119,6 +127,8 @@ const OrderManagementPage = () => {
         setHighRisk={setHighRisk}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        paymentStatusFilter={paymentStatusFilter}
+        setPaymentStatusFilter={setPaymentStatusFilter}
         handleSearch={handleSearch}
       />
 
@@ -131,6 +141,7 @@ const OrderManagementPage = () => {
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_date", { defaultValue: "Ngày Đặt" })}</th>
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_customer", { defaultValue: "Khách Hàng" })}</th>
               <th className="px-4 py-3 font-semibold">{t("admin:orders.table_total", { defaultValue: "Tổng Tiền" })}</th>
+              <th className="px-4 py-3 font-semibold text-center">{t("admin:orders.table_payment", { defaultValue: "THANH TOÁN" })}</th>
               <th className="px-4 py-3 font-semibold text-center">{t("admin:orders.table_status", { defaultValue: "Trạng Thái" })}</th>
               <th className="px-4 py-3 font-semibold text-center">{t("admin:orders.table_action", { defaultValue: "Hành Động" })}</th>
             </tr>
@@ -138,7 +149,7 @@ const OrderManagementPage = () => {
           <tbody className="text-mkhe-text relative">
             {loading && (
               <tr className="absolute inset-0 h-full flex items-center justify-center bg-mkhe-bg/50 backdrop-blur-sm pointer-events-none">
-                <td colSpan="6" className="text-center">
+                <td colSpan="7" className="text-center">
                   <div className="inline-block animate-spin">
                     <div className="w-8 h-8 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
                   </div>
@@ -146,7 +157,7 @@ const OrderManagementPage = () => {
               </tr>
             )}
             {!loading && orders.length === 0 ? (
-              <tr><td colSpan="6" className="p-8 text-center text-mkhe-text/60">{t("admin:orders.no_orders", { defaultValue: "Không tìm thấy đơn hàng nào." })}</td></tr>
+              <tr><td colSpan="7" className="p-8 text-center text-mkhe-text/60">{t("admin:orders.no_orders", { defaultValue: "Không tìm thấy đơn hàng nào." })}</td></tr>
             ) : (
               orders.map((order) => (
                 <tr key={order._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0">
@@ -163,32 +174,45 @@ const OrderManagementPage = () => {
                   </td>
                   <td className="px-4 py-2.5 font-medium">{order.totalAmount.toLocaleString()}đ</td>
                   <td className="px-4 py-2.5 text-center">
+                    <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                      order.paymentStatus === "PAID" ? "bg-green-500/10 text-green-500" :
+                      order.paymentStatus === "REFUNDED" ? "bg-yellow-500/10 text-yellow-500" :
+                      "bg-red-500/10 text-red-500"
+                    }`}>
+                      {order.paymentStatus === "PAID" ? "Đã thanh toán" :
+                       order.paymentStatus === "REFUNDED" ? "Hoàn tiền" :
+                       "Chưa thanh toán"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5 text-center">
                     <StatusBadge status={order.orderStatus} />
                   </td>
-                  <td className="px-4 py-2.5 flex gap-2 justify-center">
-                    <button 
-                      onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }}
-                      title={t("admin:orders.view_detail", { defaultValue: "Xem chi tiết" })} 
-                      className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handlePrintInvoice(order)} 
-                      title={t("admin:orders.print_invoice", { defaultValue: "In hóa đơn" })} 
-                      className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9"
-                    >
-                      <FiPrinter size={18} />
-                    </button>
-                    {user?.role === "Admin" && order.user && (
+                  <td className="px-4 py-2.5 text-center align-middle">
+                    <div className="flex items-center justify-center gap-2">
                       <button 
-                        onClick={() => { setSelectedUser(order.user); setIsUserModalOpen(true); }}
-                        className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 ${order.user.isBlocked ? "text-green-500 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
-                        title={order.user.isBlocked ? t("common.unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
+                        onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }}
+                        title={t("admin:orders.view_detail", { defaultValue: "Xem chi tiết" })} 
+                        className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
                       >
-                        <FiLock size={18} />
+                        <Eye className="w-4 h-4" />
                       </button>
-                    )}
+                      <button 
+                        onClick={() => handlePrintInvoice(order)} 
+                        title={t("admin:orders.print_invoice", { defaultValue: "In hóa đơn" })} 
+                        className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
+                      >
+                        <FiPrinter size={18} />
+                      </button>
+                      {user?.role === "Admin" && order.user && (
+                        <button 
+                          onClick={() => { setSelectedUser(order.user); setIsUserModalOpen(true); }}
+                          className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${order.user.isBlocked ? "text-green-500 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
+                          title={order.user.isBlocked ? t("common.unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
+                        >
+                          <FiLock size={18} />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

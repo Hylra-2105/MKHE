@@ -21,7 +21,7 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
     if (!files.length) return;
 
     if (images.length + files.length > 5) {
-      toast.error(t("reviews:max_images_error", { defaultValue: "Chỉ được tải lên tối đa 5 ảnh" }));
+      toast.error(t("reviews:max_images_error"));
       return;
     }
 
@@ -50,7 +50,7 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
       const newImages = responses.map(res => res.data?.data?.url).filter(Boolean);
       setImages(prev => [...prev, ...newImages]);
     } catch (error) {
-      toast.error(t("reviews:upload_error", { defaultValue: "Lỗi tải ảnh lên" }));
+      toast.error(t("reviews:upload_error"));
     } finally {
       setIsUploading(false);
     }
@@ -88,7 +88,7 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
 
   const handleSubmit = async () => {
     if (!rating) {
-      toast.error(t("reviews:rating_required", { defaultValue: "Vui lòng chọn số sao" }));
+      toast.error(t("reviews:rating_required"));
       return;
     }
 
@@ -102,14 +102,14 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
         images
       });
       if (response && response.data?.success) {
-        toast.success(t("reviews:create_success", { defaultValue: "Đánh giá sản phẩm thành công!" }));
+        toast.success(t("reviews:create_success"));
         onSuccess();
         onClose();
       }
     } catch (error) {
       const msg = error.response?.data?.message === "ALREADY_REVIEWED" 
-        ? t("reviews:already_reviewed", { defaultValue: "Bạn đã đánh giá sản phẩm này rồi." })
-        : t("reviews:create_error", { defaultValue: "Lỗi khi gửi đánh giá." });
+        ? t("reviews:already_reviewed")
+        : t("reviews:create_error");
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
@@ -117,13 +117,13 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
       <div className="bg-[var(--color-mkhe-bg)] w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-mkhe-border)]/10">
           <h2 className="text-xl font-bold text-[var(--color-mkhe-text)]">
-            {t("reviews:write_review", { defaultValue: "Đánh giá sản phẩm" })}
+            {t("reviews:write_review")}
           </h2>
           <button
             onClick={onClose}
@@ -153,7 +153,7 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
           {/* Rating */}
           <div className="flex flex-col items-center justify-center mb-6">
             <span className="text-sm font-medium text-[var(--color-mkhe-text)]/70 mb-2">
-              {t("reviews:how_would_you_rate", { defaultValue: "Chất lượng sản phẩm thế nào?" })}
+              {t("reviews:how_would_you_rate")}
             </span>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -173,20 +173,20 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
           {/* Comment */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-[var(--color-mkhe-text)]/80 mb-2">
-              {t("reviews:comment", { defaultValue: "Chia sẻ cảm nhận của bạn (Tuỳ chọn)" })}
+              {t("reviews:comment_label")}
             </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               className="w-full rounded-xl bg-[var(--color-mkhe-input)]/50 border border-[var(--color-mkhe-border)]/30 p-4 text-[var(--color-mkhe-text)] focus:outline-none focus:border-mkhe-primary/50 min-h-[100px] resize-y"
-              placeholder={t("reviews:comment_placeholder", { defaultValue: "Sản phẩm đóng gói đẹp, chất lượng tuyệt vời..." })}
+              placeholder={t("reviews:comment_placeholder")}
             />
           </div>
 
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-[var(--color-mkhe-text)]/80 mb-2">
-              {t("reviews:upload_images", { defaultValue: "Thêm hình ảnh thực tế (Tối đa 5 ảnh)" })}
+              {t("reviews:upload_images")}
             </label>
             <div className="flex gap-3 flex-wrap">
               {images.map((img, index) => (
@@ -214,7 +214,7 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
                     <>
                       <ImageIcon className="w-6 h-6 mb-1" />
                       <span className="text-[10px] uppercase font-bold text-center leading-tight">
-                        {isDragging ? t("reviews:drop_here", { defaultValue: "Thả ảnh" }) : t("reviews:add_photo", { defaultValue: "Thêm ảnh" })}
+                        {isDragging ? t("reviews:drop_here") : t("reviews:add_photo")}
                       </span>
                     </>
                   )}
@@ -236,17 +236,17 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
         <div className="p-4 border-t border-[var(--color-mkhe-border)]/10 bg-[var(--color-mkhe-input)]/20 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-transparent border border-[var(--color-mkhe-border)]/30 hover:bg-[var(--color-mkhe-input)] transition-colors"
+            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-transparent border border-[var(--color-mkhe-border)]/30 hover:bg-[var(--color-mkhe-input)] transition-colors cursor-pointer"
           >
-            {t("common:cancel", { defaultValue: "Hủy" })}
+            {t("common:cancel")}
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || isUploading}
-            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-mkhe-primary text-white hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2"
+            className="px-6 py-2.5 rounded-xl font-bold text-sm bg-mkhe-primary text-white hover:brightness-110 transition-all disabled:opacity-50 flex items-center gap-2 cursor-pointer disabled:cursor-not-allowed"
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-            {t("reviews:submit", { defaultValue: "Gửi Đánh Giá" })}
+            {t("reviews:submit")}
           </button>
         </div>
       </div>

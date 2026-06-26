@@ -14,5 +14,8 @@
   "PASSWORD_MUST_BE_DIFFERENT": "새 비밀번호는 이전 비밀번호와 달라야 합니다.",
   "TOO_MANY_OTP_REQUESTS": "OTP를 너무 많이 요청하셨습니다. 15분 후에 다시 시도해 주세요.",
   "cancel": "취소",
-  "back": "뒤로"
+  "back": "뒤로",
+  "search": "검색",
+  "actions": "작업",
+  "view_details": "세부정보 보기"
 }

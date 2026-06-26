@@ -6,6 +6,7 @@ import { getBlogsApi, deleteBlogApi } from "@/api/blogApi";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
+import Pagination from "@/components/ui/Pagination";
 import { useTranslation } from "react-i18next";
 
 const BlogList = () => {
@@ -19,6 +20,8 @@ const BlogList = () => {
     category: "",
     status: "",
   });
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Xóa blog
   const [deleteId, setDeleteId] = useState(null);
@@ -28,11 +31,13 @@ const BlogList = () => {
       setLoading(true);
       const res = await getBlogsApi({
         ...filter,
-        limit: 100, // Load all for simplicity
+        limit: 6,
+        page,
       });
       setBlogs(res.blogs || []);
+      setTotalPages(res.totalPages || 1);
     } catch (error) {
-      toast.error(t("admin.fetch_error", { defaultValue: "Lỗi khi tải danh sách bài viết" }));
+      toast.error(t("admin.fetch_error"));
     } finally {
       setLoading(false);
     }
@@ -40,10 +45,11 @@ const BlogList = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [filter.category, filter.status]);
+  }, [filter.category, filter.status, page]);
 
   const handleSearch = (e) => {
     e.preventDefault();
+    setPage(1);
     fetchBlogs();
   };
 
@@ -51,11 +57,11 @@ const BlogList = () => {
     if (!deleteId) return;
     try {
       await deleteBlogApi(deleteId);
-      toast.success(t("admin.delete_success", { defaultValue: "Xóa bài viết thành công" }));
+      toast.success(t("admin.delete_success"));
       setDeleteId(null);
       fetchBlogs();
     } catch (error) {
-      toast.error(t("admin.delete_error", { defaultValue: "Lỗi khi xóa bài viết" }));
+      toast.error(t("admin.delete_error"));
     }
   };
 
@@ -107,7 +113,10 @@ const BlogList = () => {
               { value: "Sự kiện", label: t("admin.editor.categories.Sự kiện") },
               { value: "Cẩm nang", label: t("admin.editor.categories.Cẩm nang") },
             ]}
-            onChange={(val) => setFilter(prev => ({ ...prev, category: val }))}
+            onChange={(val) => {
+              setFilter(prev => ({ ...prev, category: val }));
+              setPage(1);
+            }}
             placeholder={t("admin.filter_category")}
             className="w-full md:w-36 lg:w-44"
             triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
@@ -121,7 +130,10 @@ const BlogList = () => {
               { value: "PUBLISHED", label: t("admin.status.PUBLISHED") },
               { value: "DRAFT", label: t("admin.status.DRAFT") },
             ]}
-            onChange={(val) => setFilter(prev => ({ ...prev, status: val }))}
+            onChange={(val) => {
+              setFilter(prev => ({ ...prev, status: val }));
+              setPage(1);
+            }}
             placeholder={t("admin.filter_status")}
             className="w-full md:w-36 lg:w-44"
             triggerClassName="h-10 px-3 rounded bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary focus:outline-none transition-colors"
@@ -149,8 +161,13 @@ const BlogList = () => {
       </div>
 
       {/* Content */}
-      {loading ? (
-        <div className="text-center py-20 text-mkhe-text/60">Đang tải danh sách...</div>
+      {loading && blogs.length === 0 ? (
+        <div className="flex items-center justify-center min-h-[520px] text-mkhe-text/60">
+          <div className="inline-block animate-spin mr-3">
+            <div className="w-6 h-6 border-4 border-mkhe-primary/20 border-t-mkhe-primary rounded-full"></div>
+          </div>
+          Đang tải danh sách...
+        </div>
       ) : blogs.length === 0 ? (
         <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl p-12 text-center shadow-sm">
           <div className="w-16 h-16 bg-mkhe-border/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -168,7 +185,7 @@ const BlogList = () => {
           </button>
         </div>
       ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start min-h-[520px] transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
           {blogs.map(blog => (
             <div key={blog._id} className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden hover:border-mkhe-primary transition-all group shadow-sm flex flex-col">
               <div className="relative aspect-[16/9] bg-mkhe-border/10 overflow-hidden">
@@ -221,75 +238,84 @@ const BlogList = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-mkhe-bg border border-mkhe-border/50 rounded-xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px] text-left border-collapse">
-              <thead>
-                <tr className="bg-mkhe-input/30 border-b border-mkhe-border/50">
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.article")}</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.category")}</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.status")}</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider">{t("admin.table.created_at")}</th>
-                  <th className="px-4 py-3 font-medium text-xs text-mkhe-text/60 uppercase tracking-wider text-center">{t("admin.table.actions")}</th>
+        <div className={`bg-mkhe-bg rounded shadow overflow-x-auto overflow-y-hidden border border-mkhe-border/50 min-h-[460px] transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>
+          <table className="w-full text-left border-collapse min-w-[800px] whitespace-nowrap">
+            <thead>
+              <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
+                <th className="px-4 py-3 font-semibold">{t("admin.table.article")}</th>
+                <th className="px-4 py-3 font-semibold">{t("admin.table.category")}</th>
+                <th className="px-4 py-3 font-semibold">{t("admin.table.status")}</th>
+                <th className="px-4 py-3 font-semibold">{t("admin.table.created_at")}</th>
+                <th className="px-4 py-3 font-semibold text-center">{t("admin.table.actions")}</th>
+              </tr>
+            </thead>
+            <tbody className="text-mkhe-text">
+              {blogs.map(blog => (
+                <tr key={blog._id} className="border-b border-mkhe-border/50 hover:bg-mkhe-primary/5 transition-colors last:border-b-0 group">
+                  <td className="px-4 py-2.5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-12 rounded overflow-hidden bg-mkhe-border/20 flex-shrink-0">
+                        {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-full object-cover" />}
+                      </div>
+                      <p className="text-sm font-bold text-mkhe-text group-hover:text-mkhe-primary transition-colors line-clamp-1">{blog.title}</p>
+                    </div>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <span className="text-xs font-medium text-mkhe-primary bg-mkhe-primary/10 px-2 py-1 rounded-full uppercase tracking-wide">
+                      {blog.category}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
+                      {blog.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2.5 text-sm text-mkhe-text/80">
+                    {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
+                  </td>
+                  <td className="px-4 py-2.5 text-center">
+                    <div className="flex items-center justify-center gap-1 transition-opacity">
+                      <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.edit")}>
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      {blog.status === "PUBLISHED" && (
+                        <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.view")}>
+                          <Eye className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-mkhe-border/50">
-                {blogs.map(blog => (
-                  <tr key={blog._id} className="hover:bg-mkhe-border/10 transition-colors group">
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-16 h-12 rounded overflow-hidden bg-mkhe-border/20 flex-shrink-0">
-                          {blog.thumbnail && <img src={blog.thumbnail} alt={blog.title} className="w-full h-full object-cover" />}
-                        </div>
-                        <p className="text-sm font-bold text-mkhe-text group-hover:text-mkhe-primary transition-colors line-clamp-1">{blog.title}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className="text-xs font-medium text-mkhe-primary bg-mkhe-primary/10 px-2 py-1 rounded-full uppercase tracking-wide">
-                        {blog.category}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
-                        {blog.status === "PUBLISHED" ? "Đã xuất bản" : "Bản nháp"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2.5 text-sm text-mkhe-text/80">
-                      {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
-                    </td>
-                    <td className="px-4 py-2.5 text-center">
-                      <div className="flex items-center justify-center gap-1 transition-opacity">
-                        <button onClick={() => navigate(`/admin/blogs/edit/${blog._id}`)} className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.edit")}>
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        {blog.status === "PUBLISHED" && (
-                          <button onClick={() => window.open(`/blogs/${blog.slug}`, "_blank")} className="p-2 bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.view")}>
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        )}
-                        <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
+      )}
+
+      {/* Pagination */}
+      {blogs.length > 0 && (
+        <Pagination
+          page={page}
+          setPage={setPage}
+          totalPages={totalPages}
+          loading={loading}
+        />
       )}
 
       {/* Delete Modal */}
       <ConfirmModal
         isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        onCancel={() => setDeleteId(null)}
         onConfirm={handleDelete}
         title={t("admin.delete_modal.title")}
         message={t("admin.delete_modal.message")}
         confirmText={t("admin.delete_modal.btn_delete")}
         cancelText={t("admin.delete_modal.btn_cancel")}
-        type="danger"
+        isDanger={true}
+        icon="trash"
       />
     </div>
   );

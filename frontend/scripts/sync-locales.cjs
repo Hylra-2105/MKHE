@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const localesDir = path.join(__dirname, 'frontend', 'src', 'locales');
+const localesDir = path.join(__dirname, '..', 'src', 'locales');
 const baseLang = 'vi';
 const languages = fs.readdirSync(localesDir).filter(f => fs.statSync(path.join(localesDir, f)).isDirectory() && f !== baseLang);
 const viDir = path.join(localesDir, baseLang);

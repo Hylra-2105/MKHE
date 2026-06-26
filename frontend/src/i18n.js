@@ -20,6 +20,7 @@ import cartVI from "./locales/vi/cart.json";
 import checkoutVI from "./locales/vi/checkout.json";
 import historyVI from "./locales/vi/history.json";
 import blogVI from "./locales/vi/blog.json";
+import reviewsVI from "./locales/vi/reviews.json";
 
 // EN
 
@@ -39,6 +40,7 @@ import cartEN from "./locales/en/cart.json";
 import checkoutEN from "./locales/en/checkout.json";
 import historyEN from "./locales/en/history.json";
 import blogEN from "./locales/en/blog.json";
+import reviewsEN from "./locales/en/reviews.json";
 
 // ZH
 
@@ -58,6 +60,7 @@ import cartZH from "./locales/zh/cart.json";
 import checkoutZH from "./locales/zh/checkout.json";
 import historyZH from "./locales/zh/history.json";
 import blogZH from "./locales/zh/blog.json";
+import reviewsZH from "./locales/zh/reviews.json";
 
 // KO
 
@@ -77,6 +80,7 @@ import cartKO from "./locales/ko/cart.json";
 import checkoutKO from "./locales/ko/checkout.json";
 import historyKO from "./locales/ko/history.json";
 import blogKO from "./locales/ko/blog.json";
+import reviewsKO from "./locales/ko/reviews.json";
 
 // JA
 
@@ -96,6 +100,7 @@ import cartJA from "./locales/ja/cart.json";
 import checkoutJA from "./locales/ja/checkout.json";
 import historyJA from "./locales/ja/history.json";
 import blogJA from "./locales/ja/blog.json";
+import reviewsJA from "./locales/ja/reviews.json";
 
 
 const resources = {
@@ -116,6 +121,7 @@ const resources = {
     checkout: checkoutVI,
     history: historyVI,
     blog: blogVI,
+    reviews: reviewsVI,
   },
   en: {
     login: loginEN,
@@ -134,6 +140,7 @@ const resources = {
     checkout: checkoutEN,
     history: historyEN,
     blog: blogEN,
+    reviews: reviewsEN,
   },
   zh: {
     login: loginZH,
@@ -152,6 +159,7 @@ const resources = {
     checkout: checkoutZH,
     history: historyZH,
     blog: blogZH,
+    reviews: reviewsZH,
   },
   ko: {
     login: loginKO,
@@ -170,6 +178,7 @@ const resources = {
     checkout: checkoutKO,
     history: historyKO,
     blog: blogKO,
+    reviews: reviewsKO,
   },
   ja: {
     login: loginJA,
@@ -188,6 +197,7 @@ const resources = {
     checkout: checkoutJA,
     history: historyJA,
     blog: blogJA,
+    reviews: reviewsJA,
   },
 };
 
@@ -213,7 +223,8 @@ i18n
       "cart",
       "checkout",
       "history",
-      "blog"
+      "blog",
+      "reviews"
     ],
     defaultNS: "user",
     interpolation: {

@@ -1,5 +1,6 @@
 import Review from "./review.model.js";
 import Product from "../products/product.model.js";
+import User from "../users/user.model.js";
 import Order from "../orders/order.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 
@@ -110,16 +111,43 @@ export const getAllReviews = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const sortField = req.query.sortField || 'createdAt';
+    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
     const skip = (page - 1) * limit;
 
-    const reviews = await Review.find()
+    const sortConfig = { [sortField]: sortOrder };
+    const query = {};
+
+    if (req.query.rating) {
+      query.rating = parseInt(req.query.rating);
+    }
+
+    if (req.query.search) {
+      const regex = new RegExp(req.query.search, "i");
+      
+      const productIds = await Product.find({ 
+        $or: [{ name: regex }, { sku: regex }] 
+      }).distinct("_id");
+      
+      const userIds = await User.find({ 
+        $or: [{ name: regex }, { email: regex }] 
+      }).distinct("_id");
+      
+      query.$or = [
+        { comment: regex },
+        { product: { $in: productIds } },
+        { user: { $in: userIds } }
+      ];
+    }
+
+    const reviews = await Review.find(query)
       .populate("user", "name email")
       .populate("product", "name sku")
-      .sort("-createdAt")
+      .sort(sortConfig)
       .skip(skip)
       .limit(limit);
 
-    const total = await Review.countDocuments();
+    const total = await Review.countDocuments(query);
 
     return successResponse(res, 200, "REVIEWS_FETCHED", {
       reviews,

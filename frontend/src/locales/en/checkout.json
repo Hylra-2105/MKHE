@@ -27,7 +27,20 @@
     "cod_method": "Payment Method: COD",
     "cod_note_part1": "You will pay the amount of",
     "cod_note_part2": "upon delivery.",
-    "continue_shopping": "Continue Shopping"
+    "continue_shopping": "Continue Shopping",
+    "payment_success_toast": "Thanh toán thành công!",
+    "processing_transaction": "Đang xử lý giao dịch...",
+    "processing_wait": "Vui lòng chờ trong giây lát, hệ thống đang xác nhận khoản thanh toán của bạn.",
+    "order_code": "Mã đơn hàng",
+    "waiting_payment": "Đang chờ thanh toán...",
+    "vietqr_transfer": "Chuyển khoản VietQR",
+    "momo_wallet": "Ví điện tử MoMo",
+    "qr_scan_note": "Vui lòng quét QR hoặc chuyển khoản đúng nội dung và số tiền để đơn hàng được duyệt tự động.",
+    "payment_success_title": "Đã thanh toán thành công!",
+    "payment_success_desc": "Tuyệt vời! Hệ thống đã xác nhận thanh toán của bạn. Đơn hàng đang được chuẩn bị và sẽ sớm giao đến tay bạn.",
+    "payment_cancelled_title": "Đã hủy thanh toán!",
+    "payment_cancelled_desc": "Bạn đã hủy giao dịch thanh toán. Đơn hàng vẫn được lưu lại chờ thanh toán. Vui lòng kiểm tra lại trong quản lý đơn hàng.",
+    "manage_orders": "Quản lý đơn hàng"
   },
   "actions": {
     "back": "Back"
@@ -86,5 +99,6 @@
     "add_btn": "Add",
     "back": "Back to address book",
     "default": "Default"
-  }
+  },
+  "copied_success": "Copied {{label}}"
 }

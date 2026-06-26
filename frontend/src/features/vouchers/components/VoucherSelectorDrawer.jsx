@@ -11,9 +11,16 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
   const [activeTab, setActiveTab] = useState("AVAILABLE");
 
   useEffect(() => {
+    let intervalId;
     if (isOpen) {
       fetchWalletVouchers();
+      intervalId = setInterval(() => {
+        fetchWalletVouchers();
+      }, 10000);
     }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [isOpen]);
 
   const checkEligibility = (voucher) => {

@@ -216,7 +216,6 @@
     "no_categories": "Không có danh mục nào.",
     "apply_o2o": "Áp dụng O2O (Mua tại quầy)",
     "apply_o2o_desc": "Cho phép dùng mã này tại cửa hàng vật lý qua quét QR.",
-    "cancel": "Hủy",
     "creating": "Đang tạo...",
     "create_btn": "Tạo mã",
     "currency_symbol": "đ",
@@ -283,9 +282,12 @@
     "save": "Lưu thay đổi",
     "close": "Đóng",
     "payment_method": "Phương thức thanh toán",
-    "payment_status": "Trạng thái TT",
-    "paid": "Đã TT",
-    "unpaid": "Chưa TT",
+    "payment_status": "Trạng thái thanh toán",
+    "paid": "Đã thanh toán",
+    "unpaid": "Chưa thanh toán",
+    "payment_all": "Tất cả thanh toán",
+    "refunded": "Đã hoàn tiền",
+    "table_payment": "THANH TOÁN",
     "fetch_error": "Lỗi tải danh sách đơn hàng",
     "update_success": "Cập nhật trạng thái thành công",
     "update_fail": "Cập nhật thất bại",
@@ -296,5 +298,8 @@
     "error_vietqr_unpaid": "Không thể lưu: Đơn VietQR phải Đã thanh toán thì mới được xác nhận giao hàng!",
     "error_completed_unpaid": "Không thể lưu: Đơn hàng hoàn thành bắt buộc phải Đã thanh toán!",
     "high_risk_filter": "Đơn rủi ro cao"
-  }
+  },
+  "fetch_error": "Lỗi khi tải danh sách bài viết",
+  "delete_success": "Xóa bài viết thành công",
+  "delete_error": "Lỗi khi xóa bài viết"
 }

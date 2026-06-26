@@ -146,7 +146,7 @@
     "processing_images_error": "Có lỗi xảy ra khi xử lý file",
     "video_too_large": "Video {{name}} quá lớn (>100MB).",
     "missing_fields": "Vui lòng điền đủ Tên, SKU, Giá và Nhà cung cấp.",
-    "missing_dpp_fields": "Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS.",
+    "missing_dpp_fields": "Hộ chiếu số yêu cầu Tên nghệ nhân và Tọa độ GPS/Vị trí Làng nghề.",
     "no_link_allowed": "Không được dán link! Vui lòng chỉ nhập tên địa điểm hoặc tọa độ.",
     "file_3d_too_large": "File 3D quá lớn (>150MB), có thể làm đứng trình duyệt. Vui lòng giảm bớt từ phần mềm 3D trước.",
     "optimizing_3d": "Đang tối ưu file 3D ({{size}}MB)... Quá trình này dùng CPU máy bạn, vui lòng không tắt trang!",
@@ -165,7 +165,10 @@
     "copy_link_success": "Đã copy link xác thực NFC!",
     "update_tag_error": "Lỗi khi cập nhật trạng thái thẻ",
     "activate_success": "Kích hoạt thành công mã {{uid}}",
-    "activate_error": "Kích hoạt thất bại"
+    "activate_error": "Kích hoạt thất bại",
+    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
+    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
+    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "Quản lý mã NFC",

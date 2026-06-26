@@ -42,7 +42,7 @@ const BlogEditor = () => {
         try {
           const parsed = JSON.parse(savedDraft);
           setFormData(parsed);
-          toast.success("Đã khôi phục bản nháp tự động lưu", { id: 'draft-restore-toast' });
+          toast.success(t("editor.draft_restored"), { id: 'draft-restore-toast' });
         } catch(e) {}
       }
     }
@@ -87,7 +87,7 @@ const BlogEditor = () => {
         });
       }
     } catch (error) {
-      toast.error("Không tìm thấy bài viết");
+      toast.error(t("editor.not_found"));
       navigate("/admin/blogs");
     } finally {
       setLoading(false);
@@ -100,12 +100,12 @@ const BlogEditor = () => {
       const url = await uploadBlogImageApi(file);
       if (url) {
         setFormData(prev => ({ ...prev, thumbnail: url }));
-        toast.success("Tải ảnh lên thành công", { id: "uploadThumbnail" });
+        toast.success(t("editor.upload_success"), { id: "uploadThumbnail" });
       } else {
         throw new Error("Không lấy được URL ảnh");
       }
     } catch (error) {
-      toast.error("Lỗi khi tải ảnh", { id: "uploadThumbnail" });
+      toast.error(t("editor.upload_error"), { id: "uploadThumbnail" });
     }
   };
 
@@ -132,7 +132,7 @@ const BlogEditor = () => {
     if (file && file.type.startsWith('image/')) {
       await uploadThumbnailFile(file);
     } else {
-      if (file) toast.error("Vui lòng chọn file hình ảnh hợp lệ");
+      if (file) toast.error(t("editor.invalid_image"));
     }
   };
 
@@ -141,7 +141,7 @@ const BlogEditor = () => {
       const url = await uploadBlogImageApi(file);
       return url;
     } catch (error) {
-      toast.error("Lỗi khi tải ảnh vào bài viết");
+      toast.error(t("editor.upload_to_content_error"));
       return null;
     }
   };
@@ -163,10 +163,10 @@ const BlogEditor = () => {
 
   const handleSubmit = async (status) => {
     if (!formData.title.trim()) {
-      return toast.error("Vui lòng nhập tiêu đề bài viết");
+      return toast.error(t("editor.title_required"));
     }
     if (!formData.content.trim() || formData.content === "<p></p>") {
-      return toast.error("Vui lòng nhập nội dung bài viết");
+      return toast.error(t("editor.content_required"));
     }
     
     try {
@@ -175,15 +175,15 @@ const BlogEditor = () => {
       
       if (id) {
         await updateBlogApi(id, payload);
-        toast.success("Cập nhật bài viết thành công");
+        toast.success(t("editor.update_success"));
       } else {
         await createBlogApi(payload);
-        toast.success("Tạo bài viết thành công");
+        toast.success(t("editor.create_success"));
       }
       localStorage.removeItem(`mkhe_blog_draft_${id || 'new'}`);
       navigate("/admin/blogs");
     } catch (error) {
-      toast.error("Lỗi khi lưu bài viết");
+      toast.error(t("editor.save_error"));
     } finally {
       setSaving(false);
     }

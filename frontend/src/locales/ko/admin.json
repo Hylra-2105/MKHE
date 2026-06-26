@@ -263,18 +263,21 @@
     "detail_title": "주문 상세",
     "save": "변경 사항 저장",
     "close": "닫기",
-    "payment_method": "결제 수단",
+    "payment_method": "결제 방법",
     "payment_status": "결제 상태",
     "paid": "결제 완료",
     "unpaid": "미결제",
-    "fetch_error": "주문 목록을 불러오는 중 오류 발생",
+    "payment_all": "모든 결제",
+    "refunded": "환불됨",
+    "table_payment": "결제",
+    "fetch_error": "주문 목록을 불러오지 못했습니다",
     "update_success": "상태가 성공적으로 업데이트되었습니다",
-    "update_fail": "업데이트 실패",
+    "update_fail": "업데이트에 실패했습니다",
     "system_error": "시스템 오류",
     "confirm_lock": "이 사용자를 잠그시겠습니까? 이 작업은 모든 기기에서 로그아웃됩니다.",
     "lock_success": "계정이 성공적으로 잠겼습니다",
     "lock_fail": "계정 잠금 오류",
-    "error_vietqr_unpaid": "저장 불가: VietQR 주문은 배송 확정을 위해 결제 완료 상태여야 합니다!",
+    "error_vietqr_unpaid": "저장 불가: VietQR 주문은 결제 완료 상태여야 배송이 가능합니다!",
     "error_completed_unpaid": "저장 불가: 완료된 주문은 결제 완료 상태여야 합니다!",
     "high_risk_filter": "고위험 주문",
     "print": {
@@ -295,5 +298,8 @@
       "payment_method": "결제 방법:",
       "cod": "COD 금액:"
     }
-  }
+  },
+  "fetch_error": "블로그 목록을 불러오지 못했습니다",
+  "delete_success": "블로그가 성공적으로 삭제되었습니다",
+  "delete_error": "블로그 삭제에 실패했습니다"
 }

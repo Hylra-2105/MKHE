@@ -37,5 +37,7 @@
   "price": "Đơn giá",
   "receive_btn": "Đã nhận được hàng",
   "confirm_receive": "Xác nhận bạn đã nhận được hàng và sản phẩm không có vấn đề gì?",
-  "confirm_btn": "Đồng ý"
+  "confirm_btn": "Đồng ý",
+  "receive_success": "Đã xác nhận nhận hàng thành công!",
+  "receive_error": "Lỗi xác nhận nhận hàng"
 }

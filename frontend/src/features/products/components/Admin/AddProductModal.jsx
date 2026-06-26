@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X, Package, Fingerprint } from "lucide-react";
+import { X, Package, Fingerprint, AlertCircle, ChevronDown } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Dropdown from "@/components/ui/Dropdown";
 import { productApi } from "@/api/productApi";
@@ -22,6 +22,20 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const { t } = useTranslation("product");
   const [loading, setLoading] = useState(false);
   const autoSaveTimeoutRef = useRef(null);
+
+  const [formErrors, setFormErrors] = useState({});
+  const [isMaterialDropdownOpen, setIsMaterialDropdownOpen] = useState(false);
+  const materialDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (materialDropdownRef.current && !materialDropdownRef.current.contains(event.target)) {
+        setIsMaterialDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // --- STATE CƠ BẢN + MVP ---
   const [formData, setFormData] = useState({
@@ -192,6 +206,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   const updateField = (name, value) => {
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -220,7 +235,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       for (const file of fileArray) {
         if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-          toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
+          toast.error(t("errors.invalid_file_type"));
           continue;
         }
 
@@ -230,7 +245,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
           processedFile = await compressImage(file);
         } else if (file.size > 100 * 1024 * 1024) {
           // Video giới hạn 100MB
-          toast.error(`Video ${file.name} quá lớn (>100MB).`);
+          toast.error(t("messages.video_too_large", { name: file.name }));
           continue;
         }
 
@@ -241,10 +256,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       setImageFiles((prev) => [...prev, ...validFiles]);
       setPreviewUrls((prev) => [...prev, ...newPreviews]);
       
-      if (validFiles.length > 0) toast.success(t("messages.processing_images_success", "Xử lý file thành công!"), { id: toastId, duration: 3000 });
+      if (validFiles.length > 0) toast.success(t("messages.processing_images_success"), { id: toastId, duration: 3000 });
       else toast.dismiss(toastId);
     } catch (error) {
-      toast.error(t("messages.processing_images_error", "Có lỗi xảy ra khi xử lý file"), { id: toastId, duration: 3000 });
+      toast.error(t("messages.processing_images_error"), { id: toastId, duration: 3000 });
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -277,19 +292,19 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
     
     if (file.size > 150 * 1024 * 1024) {
-      return toast.error(t("messages.file_3d_too_large", "File 3D quá lớn (>150MB)..."));
+      return toast.error(t("messages.file_3d_too_large"));
     }
 
     setIsCompressing3D(true);
-    const toastId = toast.loading(t("messages.optimizing_3d", "Đang tối ưu file 3D...", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
+    const toastId = toast.loading(t("messages.optimizing_3d", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
 
     try {
       const compressedFile = await compressGLB(file);
       setFile3D(compressedFile);
-      toast.success(t("messages.optimize_3d_success", "Tối ưu 3D thành công! Dung lượng giảm còn: {{size}}MB", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
+      toast.success(t("messages.optimize_3d_success", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
     } catch (error) {
       console.error(error);
-      toast.error(t("messages.optimize_3d_error", "Tối ưu 3D thất bại: {{error}}", { error: error.message || "Lỗi cấu trúc file" }), { id: toastId, duration: 3000 });
+      toast.error(t("messages.optimize_3d_error", { error: error.message || t("errors.file_structure") }), { id: toastId, duration: 3000 });
       setFile3D(file);
     } finally {
       setIsCompressing3D(false);
@@ -306,16 +321,24 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.sku || !formData.price || !formData.vendor) {
-      return toast.error("Vui lòng điền đủ Tên, SKU, Giá và Nhà cung cấp.");
-    }
+    const errors = {};
+    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền tên sản phẩm");
+    if (!formData.sku) errors.sku = t("messages.required_field", "Vui lòng điền mã SKU");
+    if (!formData.price) errors.price = t("messages.required_field", "Vui lòng điền giá bán");
+    if (!formData.vendor) errors.vendor = t("messages.required_field", "Vui lòng chọn nhà cung cấp");
+
     if (formData.hasDPP) {
-      if (!formData.artisanName || !formData.gpsLocation) {
-        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Vị trí / Địa chỉ Làng nghề.");
-      }
+      if (!formData.artisanName) errors.artisanName = t("messages.required_field", "Vui lòng điền tên nghệ nhân");
+      if (!formData.gpsLocation) errors.gpsLocation = t("messages.required_field", "Vui lòng điền vị trí GPS");
     }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
-      return toast.error("Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.");
+      return toast.error(t("messages.public_stock_error"));
     }
 
     setLoading(true);
@@ -436,11 +459,23 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-8">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.name_placeholder")} />
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.name_placeholder")} />
+                    {formErrors.name && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.name}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-4">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" required value={formData.sku} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase" placeholder={t("modal.sku_placeholder")} />
+                    <input type="text" name="sku" value={formData.sku} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm uppercase ${formErrors.sku ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.sku_placeholder")} />
+                    {formErrors.sku && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.sku}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -460,7 +495,13 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => updateField("vendor", val)} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    {formErrors.vendor && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.vendor}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
@@ -472,23 +513,58 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.material", "Chất liệu")}</label>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {predefinedMaterials.map((mat) => (
-                        <label key={mat.value} className="flex items-center gap-1 cursor-pointer bg-mkhe-primary/5 px-2 py-1.5 border border-mkhe-border/30 rounded-lg hover:bg-mkhe-primary/10 transition-colors">
-                          <input 
-                            type="checkbox" 
-                            checked={formData.material.includes(mat.value)}
-                            onChange={() => toggleMaterial(mat.value)}
-                            className="accent-mkhe-primary w-3.5 h-3.5 cursor-pointer"
-                          />
-                          <span className="text-xs text-mkhe-text font-medium">{mat.label}</span>
-                        </label>
-                      ))}
+                    <div className="relative" ref={materialDropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setIsMaterialDropdownOpen(!isMaterialDropdownOpen)}
+                        className="w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border p-3.5 rounded-xl text-sm cursor-pointer"
+                      >
+                        <span className="truncate">
+                          {formData.material?.length > 0
+                            ? formData.material.join(", ")
+                            : "Chọn chất liệu"}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 shrink-0 ${isMaterialDropdownOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {isMaterialDropdownOpen && (
+                        <div className="absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 overflow-hidden max-h-60 overflow-y-auto custom-scrollbar">
+                          {predefinedMaterials.map((mat) => {
+                            const isSelected = formData.material?.includes(mat.value);
+                            return (
+                              <div
+                                key={mat.value}
+                                onClick={() => toggleMaterial(mat.value)}
+                                className={`flex items-center gap-3 p-2.5 mx-2 mb-1.5 last:mb-0 rounded-lg cursor-pointer transition-colors ${isSelected ? "bg-mkhe-primary/10" : "hover:bg-mkhe-border/10"}`}
+                              >
+                                <div className="flex-shrink-0 pointer-events-none">
+                                  <input 
+                                    type="checkbox" 
+                                    className="magic-cb-input"
+                                    checked={isSelected}
+                                    readOnly
+                                  />
+                                  <label className="magic-cb-label m-0">
+                                    <span></span>
+                                  </label>
+                                </div>
+                                <span className="text-sm font-medium text-mkhe-text">{mat.label}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.price_placeholder")} />
+                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.price_placeholder")} />
+                    {formErrors.price && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.price}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
@@ -528,7 +604,13 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" placeholder={t("modal.dpp.artisan_placeholder_add")} />
+                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_add")} />
+                      {formErrors.artisanName && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="space-y-1">
@@ -540,30 +622,36 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                         onChange={(e) => {
                           const val = e.target.value;
                           if (val.includes("http://") || val.includes("https://") || val.includes("maps.")) {
-                            toast.error("Không được dán link! Vui lòng chỉ nhập tên địa điểm hoặc địa chỉ bằng chữ.");
+                            toast.error(t("messages.no_link_allowed"));
                             return;
                           }
                           updateField("gpsLocation", val);
                         }} 
-                        required={formData.hasDPP} 
-                        className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" 
+                        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder")} 
                       />
+                      {formErrors.gpsLocation && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
+                        </div>
+                      )}
                     </div>
 
                     <div className="space-y-1 col-span-2">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.story_link")}</label>
-                      <select
-                        name="storyBlogId"
+                      <Dropdown
                         value={formData.storyBlogId}
-                        onChange={handleChange}
-                        className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary outline-none"
-                      >
-                        <option value="">-- Không liên kết Ký sự --</option>
-                        {storyBlogs.map(blog => (
-                          <option key={blog._id} value={blog._id}>{blog.title}</option>
-                        ))}
-                      </select>
+                        onChange={(val) => updateField("storyBlogId", val)}
+                        options={[
+                          { value: "", label: "-- Không liên kết Ký sự --" },
+                          ...storyBlogs.map(blog => ({ value: blog._id, label: blog.title }))
+                        ]}
+                        placeholder="-- Không liên kết Ký sự --"
+                        className="w-full"
+                        triggerClassName="p-3.5 rounded-xl text-sm cursor-pointer"
+                        optionClassName="text-sm truncate"
+                      />
                     </div>
                   </div>
 

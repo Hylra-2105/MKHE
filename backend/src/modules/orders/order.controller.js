@@ -347,6 +347,9 @@ export const getAllOrdersAdmin = async (req, res) => {
     let query = {};
     if (statusFilter) query.orderStatus = statusFilter;
     
+    const paymentStatus = req.query.paymentStatus || "";
+    if (paymentStatus) query.paymentStatus = paymentStatus;
+    
     if (highRisk === "true") query.isHighRisk = true;
 
     if (search) {
@@ -517,7 +520,7 @@ export const payosWebhook = async (req, res) => {
     console.error("PayOS Webhook Error:", error);
     return res.status(400).json({
       success: false,
-      message: "Webhook error",
+      message: "WEBHOOK_ERROR",
     });
   }
 };

@@ -17,7 +17,8 @@
     "manage_products": "제품 관리",
     "manage_vouchers": "바우처 관리",
     "manage_orders": "주문 관리",
-    "manage_blogs": "블로그 관리"
+    "manage_blogs": "블로그 관리",
+    "manage_reviews": "리뷰 관리"
   },
   "guest_menu": {
     "login": "로그인"

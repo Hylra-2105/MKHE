@@ -27,13 +27,13 @@ const BlogDetail = () => {
           setBlog(res);
         }
       } catch (error) {
-        toast.error("Không thể tải bài viết");
+        toast.error(t("blog:fetch_detail_error"));
       } finally {
         setLoading(false);
       }
     };
     if (slug) fetchBlog();
-  }, [slug]);
+  }, [slug, t]);
 
   if (loading) {
     return (

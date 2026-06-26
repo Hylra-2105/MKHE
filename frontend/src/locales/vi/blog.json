@@ -83,5 +83,20 @@
       "view_detail": "Xem chi tiết",
       "add_to_cart": "Thêm vào giỏ hàng"
     }
+  },
+  "fetch_list_error": "Không thể tải danh sách bài viết",
+  "fetch_detail_error": "Không thể tải bài viết",
+  "editor": {
+    "draft_restored": "Đã khôi phục bản nháp tự động lưu",
+    "not_found": "Không tìm thấy bài viết",
+    "upload_success": "Tải ảnh lên thành công",
+    "upload_error": "Lỗi khi tải ảnh",
+    "invalid_image": "Vui lòng chọn file hình ảnh hợp lệ",
+    "upload_to_content_error": "Lỗi khi tải ảnh vào bài viết",
+    "title_required": "Vui lòng nhập tiêu đề bài viết",
+    "content_required": "Vui lòng nhập nội dung bài viết",
+    "update_success": "Cập nhật bài viết thành công",
+    "create_success": "Tạo bài viết thành công",
+    "save_error": "Lỗi khi lưu bài viết"
   }
 }
