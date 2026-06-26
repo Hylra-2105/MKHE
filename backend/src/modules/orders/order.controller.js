@@ -347,6 +347,9 @@ export const getAllOrdersAdmin = async (req, res) => {
     let query = {};
     if (statusFilter) query.orderStatus = statusFilter;
     
+    const paymentStatus = req.query.paymentStatus || "";
+    if (paymentStatus) query.paymentStatus = paymentStatus;
+    
     if (highRisk === "true") query.isHighRisk = true;
 
     if (search) {

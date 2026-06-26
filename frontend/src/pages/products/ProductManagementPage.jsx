@@ -36,9 +36,9 @@ const ProductManagementPage = () => {
   const [vendorFilter, setVendorFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (isBackground = false) => {
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       // Lấy tất cả sản phẩm (kể cả DRAFT, HIDDEN)
       const res = await productApi.getAllProducts(
         page,
@@ -59,13 +59,19 @@ const ProductManagementPage = () => {
       toast.error(t("messages.fetch_error"));
       console.error(error);
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   }, [page, limit, appliedSearch, categoryFilter, dnaFilter, vendorFilter, statusFilter, t]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
+    
+    const interval = setInterval(() => {
+      fetchProducts(true);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [fetchProducts]);
 
   const handleSearch = (e) => {

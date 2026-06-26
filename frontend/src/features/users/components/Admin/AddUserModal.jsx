@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { X, UserPlus, Eye, EyeOff } from "lucide-react";
+import { X, UserPlus, Eye, EyeOff, AlertCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { userApi } from "@/api/userApi";
 
@@ -16,20 +16,28 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
     password: "",
     role: "Customer",
   });
+  const [formErrors, setFormErrors] = useState({});
 
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: null }));
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password.length < 6) {
-      return toast.error(
-        t("messages.pass_short", "Mật khẩu phải có ít nhất 6 ký tự"),
-      );
+
+    const errors = {};
+    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền vào trường này.");
+    if (!formData.email) errors.email = t("messages.required_field", "Vui lòng điền vào trường này.");
+    if (!formData.password) errors.password = t("messages.required_field", "Vui lòng điền vào trường này.");
+    else if (formData.password.length < 6) errors.password = t("messages.pass_short", "Mật khẩu phải có ít nhất 6 ký tự.");
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
     }
 
     setLoading(true);
@@ -87,15 +95,20 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
               <input
                 type="text"
                 name="name"
-                required
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                 placeholder={t(
                   "users.fullname_placeholder",
                   "VD: Nguyễn Văn A",
                 )}
               />
+              {formErrors.name && (
+                <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                  <p className="text-xs font-medium">{formErrors.name}</p>
+                </div>
+              )}
             </div>
 
             {/* Email */}
@@ -107,12 +120,17 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
               <input
                 type="email"
                 name="email"
-                required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+                className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.email ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                 placeholder={t("users.email_placeholder", "example@gmail.com")}
               />
+              {formErrors.email && (
+                <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                  <p className="text-xs font-medium">{formErrors.email}</p>
+                </div>
+              )}
             </div>
 
             {/* Mật khẩu */}
@@ -125,10 +143,9 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
                 <input
                   type={showPass ? "text" : "password"}
                   name="password"
-                  required
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm pr-12"
+                  className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm pr-12 ${formErrors.password ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                   // 🔥 ĐÃ FIX: Bọc i18n cho các dấu chấm mật khẩu (Tùy chọn, nhưng chuẩn thì cứ bọc)
                   placeholder={t("users.password_placeholder", "••••••••")}
                 />
@@ -144,6 +161,12 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
                   )}
                 </button>
               </div>
+              {formErrors.password && (
+                <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                  <p className="text-xs font-medium">{formErrors.password}</p>
+                </div>
+              )}
             </div>
 
             {/* VAI TRÒ (RADIO BUTTONS) */}

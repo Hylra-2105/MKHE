@@ -118,7 +118,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 p-4">
         <Loader2 className="w-10 h-10 text-mkhe-primary animate-spin" />
       </div>
     );
@@ -130,7 +130,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
   const currentStepIndex = STATUS_STEPS.indexOf(order.orderStatus);
 
   return (
-    <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
       <div className="bg-[var(--color-mkhe-bg)] w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200">
         
         {/* Header */}

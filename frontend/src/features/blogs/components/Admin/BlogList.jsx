@@ -283,13 +283,14 @@ const BlogList = () => {
       {/* Delete Modal */}
       <ConfirmModal
         isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        onCancel={() => setDeleteId(null)}
         onConfirm={handleDelete}
         title={t("admin.delete_modal.title")}
         message={t("admin.delete_modal.message")}
         confirmText={t("admin.delete_modal.btn_delete")}
         cancelText={t("admin.delete_modal.btn_cancel")}
-        type="danger"
+        isDanger={true}
+        icon="trash"
       />
     </div>
   );

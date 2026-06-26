@@ -14,8 +14,8 @@ const OrderHistoryTab = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-  const fetchOrders = useCallback(async (currentPage) => {
-    setIsLoading(true);
+  const fetchOrders = useCallback(async (currentPage, isBackground = false) => {
+    if (!isBackground) setIsLoading(true);
     try {
       const response = await orderApi.getMyOrders({ page: currentPage, limit: 3 });
       if (response && response.success) {
@@ -26,12 +26,18 @@ const OrderHistoryTab = () => {
       console.error("Lỗi tải lịch sử đơn hàng:", error);
       toast.error(t("history:fetch_orders_error"));
     } finally {
-      setIsLoading(false);
+      if (!isBackground) setIsLoading(false);
     }
   }, [t]);
 
   useEffect(() => {
     fetchOrders(page);
+    
+    const interval = setInterval(() => {
+      fetchOrders(page, true);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [fetchOrders, page]);
 
   const handlePageChange = (newPage) => {

@@ -9,6 +9,8 @@ import {
   Box,
   ExternalLink,
   Cpu,
+  AlertCircle,
+  ChevronDown
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -53,6 +55,20 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
   const [debouncedGpsLocation, setDebouncedGpsLocation] = useState("");
+
+  const [formErrors, setFormErrors] = useState({});
+  const [isMaterialDropdownOpen, setIsMaterialDropdownOpen] = useState(false);
+  const materialDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (materialDropdownRef.current && !materialDropdownRef.current.contains(event.target)) {
+        setIsMaterialDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -187,7 +203,16 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const updateField = (name, value) => {
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // ================= KÉO THẢ & XỬ LÝ FILE 3D (.GLB) =================
@@ -327,14 +352,23 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.sku || !formData.price || !formData.vendor) {
-      return toast.error(t("messages.missing_fields"));
-    }
+
+    const errors = {};
+    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền tên sản phẩm");
+    if (!formData.sku) errors.sku = t("messages.required_field", "Vui lòng điền mã SKU");
+    if (!formData.price) errors.price = t("messages.required_field", "Vui lòng điền giá bán");
+    if (!formData.vendor) errors.vendor = t("messages.required_field", "Vui lòng chọn nhà cung cấp");
+
     if (formData.hasDPP) {
-      if (!formData.artisanName || !formData.gpsLocation) {
-        return toast.error(t("messages.missing_dpp_fields"));
-      }
+      if (!formData.artisanName) errors.artisanName = t("messages.required_field", "Vui lòng điền tên nghệ nhân");
+      if (!formData.gpsLocation) errors.gpsLocation = t("messages.required_field", "Vui lòng điền vị trí GPS");
     }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
       return toast.error(t("messages.public_stock_error"));
     }
@@ -540,11 +574,23 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-8">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
+                    {formErrors.name && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.name}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-4">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" required value={formData.sku} disabled className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed" />
+                    <input type="text" name="sku" value={formData.sku} disabled className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed" />
+                    {formErrors.sku && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.sku}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -568,7 +614,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => handleChange({ target: { name: "vendor", value: val } })} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    {formErrors.vendor && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.vendor}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
@@ -580,23 +632,58 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.material", "Chất liệu")}</label>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {predefinedMaterials.map((mat) => (
-                        <label key={mat.value} className="flex items-center gap-1 cursor-pointer bg-mkhe-primary/5 px-2 py-1.5 border border-mkhe-border/30 rounded-lg hover:bg-mkhe-primary/10 transition-colors">
-                          <input 
-                            type="checkbox" 
-                            checked={formData.material?.includes(mat.value)}
-                            onChange={() => toggleMaterial(mat.value)}
-                            className="accent-mkhe-primary w-3.5 h-3.5 cursor-pointer"
-                          />
-                          <span className="text-xs text-mkhe-text font-medium">{mat.label}</span>
-                        </label>
-                      ))}
+                    <div className="relative" ref={materialDropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setIsMaterialDropdownOpen(!isMaterialDropdownOpen)}
+                        className="w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border p-3.5 rounded-xl text-sm cursor-pointer"
+                      >
+                        <span className="truncate">
+                          {formData.material?.length > 0
+                            ? formData.material.join(", ")
+                            : "Chọn chất liệu"}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 shrink-0 ${isMaterialDropdownOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {isMaterialDropdownOpen && (
+                        <div className="absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 overflow-hidden max-h-60 overflow-y-auto custom-scrollbar">
+                          {predefinedMaterials.map((mat) => {
+                            const isSelected = formData.material?.includes(mat.value);
+                            return (
+                              <div
+                                key={mat.value}
+                                onClick={() => toggleMaterial(mat.value)}
+                                className={`flex items-center gap-3 p-2.5 mx-2 mb-1.5 last:mb-0 rounded-lg cursor-pointer transition-colors ${isSelected ? "bg-mkhe-primary/10" : "hover:bg-mkhe-border/10"}`}
+                              >
+                                <div className="flex-shrink-0 pointer-events-none">
+                                  <input 
+                                    type="checkbox" 
+                                    className="magic-cb-input"
+                                    checked={isSelected}
+                                    readOnly
+                                  />
+                                  <label className="magic-cb-label m-0">
+                                    <span></span>
+                                  </label>
+                                </div>
+                                <span className="text-sm font-medium text-mkhe-text">{mat.label}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => handleChange({ target: { name: "price", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
+                    {formErrors.price && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.price}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
@@ -634,7 +721,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.dpp.artisan_placeholder_edit")} />
+                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_edit")} />
+                      {formErrors.artisanName && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
+                        </div>
+                      )}
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
@@ -650,10 +743,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           }
                           handleChange(e);
                         }} 
-                        required={formData.hasDPP} 
-                        className="w-full p-2.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" 
+                        className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder_edit")} 
                       />
+                      {formErrors.gpsLocation && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="space-y-1 col-span-2">
@@ -666,7 +764,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                         ]}
                         onChange={(val) => handleChange({ target: { name: "storyBlogId", value: val } })}
                         className="w-full"
-                        triggerClassName="p-2.5 rounded-xl text-sm bg-transparent border border-mkhe-border/50 text-mkhe-text"
+                        triggerClassName="p-2.5 rounded-xl text-sm bg-transparent border border-mkhe-border/50 text-mkhe-text cursor-pointer"
                         optionClassName="text-sm truncate"
                       />
                     </div>

@@ -30,6 +30,8 @@ export default function OrderFilter({
   setHighRisk,
   statusFilter,
   setStatusFilter,
+  paymentStatusFilter,
+  setPaymentStatusFilter,
   handleSearch,
 }) {
   const { t } = useTranslation();
@@ -50,6 +52,13 @@ export default function OrderFilter({
     { value: "DELIVERING", label: t("admin:orders.status_delivering", { defaultValue: "Đang giao" }) },
     { value: "COMPLETED", label: t("admin:orders.status_completed", { defaultValue: "Hoàn thành" }) },
     { value: "CANCELLED", label: t("admin:orders.status_cancelled", { defaultValue: "Đã hủy" }) },
+  ];
+
+  const paymentStatusOptions = [
+    { value: "", label: t("admin:orders.payment_all", { defaultValue: "Tất cả thanh toán" }) },
+    { value: "PAID", label: t("admin:orders.paid", { defaultValue: "Đã thanh toán" }) },
+    { value: "UNPAID", label: t("admin:orders.unpaid", { defaultValue: "Chưa thanh toán" }) },
+    { value: "REFUNDED", label: t("admin:orders.refunded", { defaultValue: "Đã hoàn tiền" }) },
   ];
 
   return (
@@ -109,6 +118,17 @@ export default function OrderFilter({
           options={statusOptions}
           onChange={(val) => setStatusFilter(val)}
           placeholder="Tất cả trạng thái"
+          className="w-full lg:w-48 shrink-0"
+          triggerClassName="h-10 px-3 rounded"
+          optionClassName="text-sm"
+        />
+
+        {/* Payment Status Dropdown */}
+        <Dropdown
+          value={paymentStatusFilter}
+          options={paymentStatusOptions}
+          onChange={(val) => setPaymentStatusFilter(val)}
+          placeholder="Tất cả thanh toán"
           className="w-full lg:w-48 shrink-0"
           triggerClassName="h-10 px-3 rounded"
           optionClassName="text-sm"

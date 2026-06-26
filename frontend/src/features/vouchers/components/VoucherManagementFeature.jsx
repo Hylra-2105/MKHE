@@ -13,7 +13,7 @@ const VoucherManagementFeature = () => {
   const [loading, setLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit] = useState(6);
+  const [limit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [editVoucher, setEditVoucher] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, voucher: null, isDelete: false });
@@ -29,9 +29,9 @@ const VoucherManagementFeature = () => {
     setAppliedSearch(search);
   };
 
-  const fetchVouchers = useCallback(async () => {
+  const fetchVouchers = useCallback(async (isBackground = false) => {
     try {
-      setLoading(true);
+      if (!isBackground) setLoading(true);
       const res = await getAdminVouchersApi(page, limit, appliedSearch, statusFilter, typeFilter);
       if (res.data && res.data.success) {
         setVouchers(res.data.data || []);
@@ -42,12 +42,18 @@ const VoucherManagementFeature = () => {
     } catch (error) {
       toast.error(t("voucher.fetch_error"));
     } finally {
-      setLoading(false);
+      if (!isBackground) setLoading(false);
     }
   }, [page, limit, appliedSearch, statusFilter, typeFilter, t]);
 
   useEffect(() => {
     fetchVouchers();
+    
+    const interval = setInterval(() => {
+      fetchVouchers(true);
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, [fetchVouchers]);
 
   // Pagination display

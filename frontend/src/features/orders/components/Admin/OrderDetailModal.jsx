@@ -104,7 +104,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                      order.paymentMethod || "Chưa xác định"}
                   </p>
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-sm font-medium text-mkhe-text/70">{t("admin:orders.table_status", { defaultValue: "Trạng thái" })}:</span>
+                    <span className="text-sm font-medium text-mkhe-text/70">{t("admin:orders.payment_status", { defaultValue: "Trạng thái thanh toán" })}:</span>
                     <Dropdown 
                       value={localPaymentStatus}
                       options={[
