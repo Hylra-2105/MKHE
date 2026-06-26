@@ -171,7 +171,10 @@
     "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。",
     "gallery_upload_success": "Đã thêm media mới thành công",
     "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở"
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
+    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
+    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC标签管理",

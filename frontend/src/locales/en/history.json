@@ -7,8 +7,8 @@
   "confirm_cancel": "Are you sure you want to cancel this order?",
   "cancel_success": "Order cancelled successfully",
   "cancel_error": "Failed to cancel order",
-  "rebuy_success": "Products added to cart",
-  "rebuy_out_of_stock": "Products are out of stock",
+  "rebuy_success": "Added to cart",
+  "rebuy_out_of_stock": "Product out of stock",
   "rebuy_error": "Failed to add to cart",
   "order_detail": "Order Details",
   "order_status": "Order Status",
@@ -37,5 +37,9 @@
   "price": "Unit Price",
   "receive_btn": "Received",
   "confirm_receive": "Confirm you have received the products in good condition?",
-  "confirm_btn": "Confirm"
+  "confirm_btn": "Confirm",
+  "write_review": "Write a Review",
+  "already_reviewed": "Reviewed",
+  "receive_success": "Order received successfully!",
+  "receive_error": "Failed to confirm receipt"
 }

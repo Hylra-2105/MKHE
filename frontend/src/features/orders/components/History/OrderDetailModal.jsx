@@ -39,7 +39,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
           setOrder(response.data);
         }
       } catch (error) {
-        toast.error(t("history:fetch_order_error", { defaultValue: "Lỗi khi tải chi tiết đơn hàng" }));
+        toast.error(t("history:fetch_order_error"));
         onClose();
       } finally {
         setIsLoading(false);
@@ -58,12 +58,12 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
     try {
       const response = await orderApi.cancelOrder(orderId);
       if (response && response.success) {
-        toast.success(t("history:cancel_success", { defaultValue: "Đã hủy đơn hàng thành công" }));
+        toast.success(t("history:cancel_success"));
         setOrder(response.data);
         if (onOrderUpdated) onOrderUpdated();
       }
     } catch (error) {
-      toast.error(t("history:cancel_error", { defaultValue: "Không thể hủy đơn hàng" }));
+      toast.error(t("history:cancel_error"));
     } finally {
       setIsCancelling(false);
     }
@@ -79,12 +79,12 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
     try {
       const response = await orderApi.receiveOrder(orderId);
       if (response && response.success) {
-        toast.success(t("history:receive_success", { defaultValue: "Đã xác nhận nhận hàng thành công!" }));
+        toast.success(t("history:receive_success"));
         setOrder(response.data);
         if (onOrderUpdated) onOrderUpdated();
       }
     } catch (error) {
-      toast.error(t("history:receive_error", { defaultValue: "Lỗi xác nhận nhận hàng" }));
+      toast.error(t("history:receive_error"));
     } finally {
       setIsReceiving(false);
     }
@@ -103,14 +103,14 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
       }
       
       if (successCount > 0) {
-        toast.success(t("history:rebuy_success", { defaultValue: "Đã thêm sản phẩm vào giỏ hàng" }));
+        toast.success(t("history:rebuy_success"));
         setCartOpen(true);
         onClose();
       } else {
-        toast.error(t("history:rebuy_out_of_stock", { defaultValue: "Sản phẩm đã hết hàng" }));
+        toast.error(t("history:rebuy_out_of_stock"));
       }
     } catch (error) {
-      toast.error(t("history:rebuy_error", { defaultValue: "Lỗi khi thêm vào giỏ hàng" }));
+      toast.error(t("history:rebuy_error"));
     } finally {
       setIsRebuying(false);
     }
@@ -270,7 +270,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                             setReviewItem(item);
                             setIsReviewModalOpen(true);
                           }}
-                          className="px-3 py-1.5 text-xs font-bold rounded-lg border border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary hover:text-white transition-colors cursor-pointer"
+                          className="px-3 py-1.5 text-xs font-bold rounded-lg border border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors cursor-pointer"
                         >
                           {t("history:write_review", { defaultValue: "Đánh giá sản phẩm" })}
                         </button>

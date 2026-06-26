@@ -76,14 +76,14 @@ const VoucherManagementFeature = () => {
       }
 
       if (res.data?.success) {
-        toast.success(confirmModal.isDelete ? t("voucher.delete_draft_success", { defaultValue: "Đã xóa bản nháp thành công" }) : t("voucher.end_early_success", { defaultValue: "Đã kết thúc sớm voucher thành công" }));
+        toast.success(confirmModal.isDelete ? t("voucher.delete_draft_success") : t("voucher.end_early_success"));
         fetchVouchers();
       } else {
-        toast.error(res.data?.message || (confirmModal.isDelete ? t("voucher.delete_error") : "Không thể kết thúc voucher"));
+        toast.error(res.data?.message || (confirmModal.isDelete ? t("voucher.delete_error") : t("voucher.end_early_error")));
         setLoading(false);
       }
     } catch (error) {
-      toast.error(confirmModal.isDelete ? t("voucher.delete_error", { defaultValue: "Lỗi xóa voucher" }) : "Lỗi kết thúc voucher");
+      toast.error(confirmModal.isDelete ? t("voucher.delete_error") : t("voucher.end_early_error"));
       setLoading(false);
     } finally {
       closeConfirmModal();

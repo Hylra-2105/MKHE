@@ -91,7 +91,7 @@ export const useCartStore = create(
             return state;
           }
 
-          if (!silent) toast.success(i18n.t("cart:toast.added", { ns: "cart", defaultValue: "Thêm vào giỏ hàng thành công!" }));
+          if (!silent) toast.success(i18n.t("cart:toast.added"));
           shouldSync = true;
           return {
             items: [...state.items, { product, quantity: addQuantity }],
@@ -127,7 +127,7 @@ export const useCartStore = create(
           items: state.items.filter((item) => item.product._id !== productId),
           selectedItems: state.selectedItems.filter((id) => id !== productId),
         }));
-        toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
+        toast.success(i18n.t("cart:toast.removed"));
       },
 
       removeMultipleFromCart: async (productIds, silent = false) => {
@@ -146,7 +146,7 @@ export const useCartStore = create(
           selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
         }));
         if (!silent) {
-          toast.success(i18n.t("cart:toast.removed", { ns: "cart", defaultValue: "Đã xóa sản phẩm khỏi giỏ hàng" }));
+          toast.success(i18n.t("cart:toast.removed"));
         }
       },
 
@@ -179,7 +179,7 @@ export const useCartStore = create(
               const item = get().items.find((i) => i.product._id === productId);
               if (item) {
                 await updateCartItemApi(productId, item.quantity);
-                toast.success(i18n.t("cart:toast.update_success", { ns: "cart", defaultValue: "Đã cập nhật số lượng!" }));
+                toast.success(i18n.t("cart:toast.update_success"));
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);

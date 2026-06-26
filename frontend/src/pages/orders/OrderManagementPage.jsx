@@ -49,7 +49,7 @@ const OrderManagementPage = () => {
         setTotalPages(res.data.pagination.totalPages);
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || t("admin:orders.fetch_error", { defaultValue: "Lỗi tải danh sách đơn hàng" }));
+      toast.error(error?.response?.data?.message || t("admin:orders.fetch_error"));
     } finally {
       setLoading(false);
     }
@@ -69,17 +69,17 @@ const OrderManagementPage = () => {
     try {
       const res = await orderApi.updateOrderStatusAdmin(id, newStatus, newPaymentStatus);
       if (res.success) {
-        toast.success(t("admin:orders.update_success", { defaultValue: "Cập nhật trạng thái thành công" }));
+        toast.success(t("admin:orders.update_success"));
         fetchOrders();
         if (selectedOrder && selectedOrder._id === id) {
           setSelectedOrder({ ...selectedOrder, orderStatus: newStatus, paymentStatus: newPaymentStatus || selectedOrder.paymentStatus });
         }
         setIsModalOpen(false);
       } else {
-        toast.error(res.message || t("admin:orders.update_fail", { defaultValue: "Cập nhật thất bại" }));
+        toast.error(res.message || t("admin:orders.update_fail"));
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || t("admin:orders.system_error", { defaultValue: "Lỗi hệ thống" }));
+      toast.error(error.response?.data?.message || t("admin:orders.system_error"));
     }
   };
 

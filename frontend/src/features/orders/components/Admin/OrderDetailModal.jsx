@@ -22,13 +22,13 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
   const handleSave = () => {
     if (order.paymentMethod === "BANK_TRANSFER" && localPaymentStatus === "UNPAID") {
       if (["CONFIRMED", "DELIVERING", "COMPLETED"].includes(localStatus)) {
-        toast.error(t("admin:orders.error_vietqr_unpaid", { defaultValue: "Không thể lưu: Đơn VietQR phải Đã thanh toán thì mới được xác nhận giao hàng!" }));
+        toast.error(t("admin:orders.error_vietqr_unpaid"));
         return;
       }
     }
 
     if (localStatus === "COMPLETED" && localPaymentStatus === "UNPAID") {
-      toast.error(t("admin:orders.error_completed_unpaid", { defaultValue: "Không thể lưu: Đơn hàng hoàn thành bắt buộc phải Đã thanh toán!" }));
+      toast.error(t("admin:orders.error_completed_unpaid"));
       return;
     }
 

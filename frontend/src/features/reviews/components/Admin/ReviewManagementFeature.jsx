@@ -22,7 +22,7 @@ const ReviewManagementFeature = () => {
         setTotalPages(res.data.data.totalPages || 1);
       }
     } catch (error) {
-      toast.error(t("reviews:fetch_error", { defaultValue: "Lỗi tải danh sách đánh giá" }));
+      toast.error(t("reviews:fetch_error"));
     } finally {
       setLoading(false);
     }
@@ -36,11 +36,11 @@ const ReviewManagementFeature = () => {
     try {
       const res = await reviewApi.toggleVisibility(id);
       if (res && res.data?.success) {
-        toast.success(t("reviews:toggle_success", { defaultValue: "Đã cập nhật trạng thái hiển thị" }));
+        toast.success(t("reviews:toggle_success"));
         setReviews(reviews.map((r) => r._id === id ? { ...r, isHidden: !currentStatus } : r));
       }
     } catch (error) {
-      toast.error(t("reviews:toggle_error", { defaultValue: "Lỗi cập nhật trạng thái" }));
+      toast.error(t("reviews:toggle_error"));
     }
   };
 
@@ -48,7 +48,7 @@ const ReviewManagementFeature = () => {
     <div className="p-6">
       <div className="mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-mkhe-text">
-          {t("reviews:management_title", { defaultValue: "Quản lý Đánh giá" })}
+          {t("reviews:management_title")}
         </h1>
       </div>
 
@@ -57,12 +57,12 @@ const ReviewManagementFeature = () => {
           <table className="w-full text-left text-sm text-[var(--color-mkhe-text)]">
             <thead className="bg-[var(--color-mkhe-input)]/50 text-[var(--color-mkhe-text)]/70 uppercase font-medium">
               <tr>
-                <th className="px-4 py-3">{t("reviews:product", { defaultValue: "Sản phẩm" })}</th>
-                <th className="px-4 py-3">{t("reviews:user", { defaultValue: "Khách hàng" })}</th>
-                <th className="px-4 py-3">{t("reviews:rating", { defaultValue: "Đánh giá" })}</th>
-                <th className="px-4 py-3">{t("reviews:comment", { defaultValue: "Bình luận" })}</th>
-                <th className="px-4 py-3 text-center">{t("reviews:status", { defaultValue: "Trạng thái" })}</th>
-                <th className="px-4 py-3 text-right">{t("common:actions", { defaultValue: "Thao tác" })}</th>
+                <th className="px-4 py-3">{t("reviews:product")}</th>
+                <th className="px-4 py-3">{t("reviews:user")}</th>
+                <th className="px-4 py-3">{t("reviews:rating")}</th>
+                <th className="px-4 py-3">{t("reviews:comment")}</th>
+                <th className="px-4 py-3 text-center">{t("reviews:status")}</th>
+                <th className="px-4 py-3 text-right">{t("common:actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--color-mkhe-border)]/10">
@@ -75,7 +75,7 @@ const ReviewManagementFeature = () => {
               ) : reviews.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-4 py-8 text-center text-[var(--color-mkhe-text)]/50">
-                    {t("reviews:no_data", { defaultValue: "Không có đánh giá nào." })}
+                    {t("reviews:no_data")}
                   </td>
                 </tr>
               ) : (
@@ -106,7 +106,7 @@ const ReviewManagementFeature = () => {
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${review.isHidden ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"}`}>
-                        {review.isHidden ? t("reviews:hidden", { defaultValue: "Bị Ẩn" }) : t("reviews:visible", { defaultValue: "Hiển thị" })}
+                        {review.isHidden ? t("reviews:hidden") : t("reviews:visible")}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -117,7 +117,7 @@ const ReviewManagementFeature = () => {
                             ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" 
                             : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
                         }`}
-                        title={review.isHidden ? t("reviews:show", { defaultValue: "Hiện đánh giá" }) : t("reviews:hide", { defaultValue: "Ẩn đánh giá" })}
+                        title={review.isHidden ? t("reviews:show") : t("reviews:hide")}
                       >
                         {review.isHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>

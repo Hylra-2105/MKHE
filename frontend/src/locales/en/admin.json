@@ -285,15 +285,18 @@
     "payment_status": "Payment Status",
     "paid": "Paid",
     "unpaid": "Unpaid",
-    "fetch_error": "Error loading order list",
+    "fetch_error": "Failed to load orders",
     "update_success": "Status updated successfully",
     "update_fail": "Update failed",
     "system_error": "System error",
     "confirm_lock": "Are you sure you want to lock this user? This action will log them out from all devices.",
     "lock_success": "Account locked successfully",
     "lock_fail": "Error locking account",
-    "error_vietqr_unpaid": "Cannot save: VietQR orders must be Paid to be confirmed for delivery!",
-    "error_completed_unpaid": "Cannot save: Completed orders must be Paid!",
+    "error_vietqr_unpaid": "Cannot save: VietQR order must be Paid before delivery!",
+    "error_completed_unpaid": "Cannot save: Completed order must be Paid!",
     "high_risk_filter": "High Risk Orders"
-  }
+  },
+  "fetch_error": "Failed to load blogs",
+  "delete_success": "Blog deleted successfully",
+  "delete_error": "Failed to delete blog"
 }

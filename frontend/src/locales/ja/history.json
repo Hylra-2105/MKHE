@@ -37,5 +37,7 @@
   "price": "単価",
   "receive_btn": "受け取りました",
   "confirm_receive": "商品を無事に受け取ったことを確認しますか？",
-  "confirm_btn": "確認"
+  "confirm_btn": "確認",
+  "receive_success": "Đã xác nhận nhận hàng thành công!",
+  "receive_error": "Lỗi xác nhận nhận hàng"
 }

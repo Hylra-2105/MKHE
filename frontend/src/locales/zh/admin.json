@@ -295,5 +295,8 @@
       "payment_method": "付款方式:",
       "cod": "代收货款:"
     }
-  }
+  },
+  "fetch_error": "Lỗi khi tải danh sách bài viết",
+  "delete_success": "Xóa bài viết thành công",
+  "delete_error": "Lỗi khi xóa bài viết"
 }

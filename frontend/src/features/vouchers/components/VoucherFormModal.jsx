@@ -235,7 +235,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
     }
 
     if (submitStatus === "PUBLISHED" && new Date(formData.startDate) < new Date()) {
-      return toast.error(t("voucher.publish_time_passed", { defaultValue: "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành." }));
+      return toast.error(t("voucher.publish_time_passed"));
     }
 
     try {
@@ -253,7 +253,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
       if (editData) {
         await updateVoucherApi(editData._id, payload);
-        toast.success(t("voucher.update_success", { defaultValue: "Cập nhật thành công" }));
+        toast.success(t("voucher.update_success"));
       } else {
         await createVoucherApi(payload);
         localStorage.removeItem("mkhe_voucher_draft");
@@ -262,7 +262,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error", { defaultValue: "Lỗi cập nhật" }) : t("voucher.create_error_generic")));
+      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error") : t("voucher.create_error_generic")));
     } finally {
       setLoading(false);
     }

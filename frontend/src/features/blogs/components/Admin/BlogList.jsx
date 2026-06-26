@@ -32,7 +32,7 @@ const BlogList = () => {
       });
       setBlogs(res.blogs || []);
     } catch (error) {
-      toast.error(t("admin.fetch_error", { defaultValue: "Lỗi khi tải danh sách bài viết" }));
+      toast.error(t("admin.fetch_error"));
     } finally {
       setLoading(false);
     }
@@ -51,11 +51,11 @@ const BlogList = () => {
     if (!deleteId) return;
     try {
       await deleteBlogApi(deleteId);
-      toast.success(t("admin.delete_success", { defaultValue: "Xóa bài viết thành công" }));
+      toast.success(t("admin.delete_success"));
       setDeleteId(null);
       fetchBlogs();
     } catch (error) {
-      toast.error(t("admin.delete_error", { defaultValue: "Lỗi khi xóa bài viết" }));
+      toast.error(t("admin.delete_error"));
     }
   };
 

@@ -31,7 +31,7 @@ export default function CheckoutSuccessPage() {
             setTimeout(() => {
               setOrder(res.data);
               setIsProcessing(false);
-              toast.success("Thanh toán thành công!");
+              toast.success(t("success.payment_success_toast"));
             }, 2000);
           }
         } catch (error) {
@@ -42,7 +42,7 @@ export default function CheckoutSuccessPage() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [order]);
+  }, [order, t]);
 
   if (!order && !isPayosReturn) {
     return <Navigate to="/shop" replace />;
@@ -54,7 +54,7 @@ export default function CheckoutSuccessPage() {
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text);
-    toast.success(`Đã sao chép ${label}`);
+    toast.success(t("checkout:copied_success", { label }));
   };
 
   // VietQR generation logic
@@ -91,8 +91,8 @@ export default function CheckoutSuccessPage() {
           >
             <div className="bg-mkhe-input p-8 rounded-2xl flex flex-col items-center shadow-2xl border border-mkhe-border max-w-sm w-full mx-4">
               <Loader2 className="w-12 h-12 text-mkhe-primary animate-spin mb-4" />
-              <h3 className="text-xl font-medium text-mkhe-text mb-2 text-center">Đang xử lý giao dịch...</h3>
-              <p className="text-sm text-mkhe-text opacity-70 text-center">Vui lòng chờ trong giây lát, hệ thống đang xác nhận khoản thanh toán của bạn.</p>
+              <h3 className="text-xl font-medium text-mkhe-text mb-2 text-center">{t("success.processing_transaction")}</h3>
+              <p className="text-sm text-mkhe-text opacity-70 text-center">{t("success.processing_wait")}</p>
             </div>
           </motion.div>
         )}
@@ -130,10 +130,10 @@ export default function CheckoutSuccessPage() {
           {order && (
             <motion.div variants={itemVariants} className="flex justify-center mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3 bg-mkhe-bg border border-mkhe-border rounded-full text-sm transition-colors duration-300">
-                <span className="text-mkhe-text opacity-60 uppercase tracking-wider text-xs">Mã đơn hàng</span>
+                <span className="text-mkhe-text opacity-60 uppercase tracking-wider text-xs">{t("success.order_code")}</span>
                 <span className="font-medium text-mkhe-text tracking-widest">{order.orderCode}</span>
                 <button 
-                  onClick={() => copyToClipboard(order.orderCode, "Mã đơn hàng")}
+                  onClick={() => copyToClipboard(order.orderCode, t("success.order_code"))}
                   className="text-mkhe-primary hover:opacity-70 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
@@ -162,7 +162,7 @@ export default function CheckoutSuccessPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-medium px-2 py-1 bg-mkhe-primary/20 text-mkhe-primary rounded uppercase tracking-wider">
-                        Đang chờ thanh toán...
+                        {t("success.waiting_payment")}
                       </span>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function CheckoutSuccessPage() {
                     <div className="flex-1 w-full space-y-4">
                       <div>
                         <p className="text-xs text-mkhe-text opacity-60 uppercase tracking-wider mb-1">{t("success.bank")}</p>
-                        <p className="font-medium text-mkhe-text">{payosData ? "Chuyển khoản VietQR" : "Ví điện tử MoMo"}</p>
+                        <p className="font-medium text-mkhe-text">{payosData ? t("success.vietqr_transfer") : t("success.momo_wallet")}</p>
                       </div>
                       
                       {/* Fixed Layout to prevent overlap on long names */}
@@ -184,7 +184,7 @@ export default function CheckoutSuccessPage() {
                           <p className="text-xs text-mkhe-text opacity-60 uppercase tracking-wider mb-1">{t("success.account_no")}</p>
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-mkhe-text">{ACCOUNT_NO}</p>
-                            <button onClick={() => copyToClipboard(ACCOUNT_NO, "Số tài khoản")} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors">
+                            <button onClick={() => copyToClipboard(ACCOUNT_NO, t("success.account_no"))} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors">
                               <Copy className="w-3.5 h-3.5" />
                             </button>
                           </div>
@@ -204,7 +204,7 @@ export default function CheckoutSuccessPage() {
                           <p className="text-xs text-mkhe-text opacity-60 uppercase tracking-wider mb-1">{t("success.content")}</p>
                           <div className="flex items-center justify-between p-3 bg-black/5 rounded-lg transition-colors duration-300">
                             <p className="font-medium text-mkhe-primary tracking-wider text-sm break-all">{CONTENT}</p>
-                            <button onClick={() => copyToClipboard(CONTENT, "Nội dung")} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors shrink-0 ml-2">
+                            <button onClick={() => copyToClipboard(CONTENT, t("success.content"))} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors shrink-0 ml-2">
                               <Copy className="w-4 h-4" />
                             </button>
                           </div>
@@ -214,7 +214,7 @@ export default function CheckoutSuccessPage() {
                   </div>
                   
                   <div className="bg-mkhe-primary/10 px-6 py-4 text-xs text-mkhe-primary/90 italic text-center transition-colors duration-300">
-                    Vui lòng quét QR hoặc chuyển khoản đúng nội dung và số tiền để đơn hàng được duyệt tự động.
+                    {t("success.qr_scan_note")}
                   </div>
                 </motion.div>
               )}
@@ -230,9 +230,9 @@ export default function CheckoutSuccessPage() {
                   <div className="w-16 h-16 bg-[#c8e6c9] text-[#2e7d32] rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm">
                     <Check className="w-8 h-8" />
                   </div>
-                  <h3 className="font-medium text-[#1b5e20] text-xl mb-3">Đã thanh toán thành công!</h3>
+                  <h3 className="font-medium text-[#1b5e20] text-xl mb-3">{t("success.payment_success_title")}</h3>
                   <p className="text-sm text-[#2e7d32] leading-relaxed">
-                    Tuyệt vời! Hệ thống đã xác nhận thanh toán của bạn. Đơn hàng đang được chuẩn bị và sẽ sớm giao đến tay bạn.
+                    {t("success.payment_success_desc")}
                   </p>
                 </motion.div>
               )}
@@ -243,8 +243,8 @@ export default function CheckoutSuccessPage() {
                 <div className="w-12 h-12 bg-[#ffcdd2] text-[#c62828] rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl leading-none">&times;</span>
                 </div>
-                <h3 className="font-medium text-[#b71c1c] text-lg mb-2">Đã hủy thanh toán!</h3>
-                <p className="text-sm text-[#c62828]">Bạn đã hủy giao dịch thanh toán. Đơn hàng vẫn được lưu lại chờ thanh toán. Vui lòng kiểm tra lại trong quản lý đơn hàng.</p>
+                <h3 className="font-medium text-[#b71c1c] text-lg mb-2">{t("success.payment_cancelled_title")}</h3>
+                <p className="text-sm text-[#c62828]">{t("success.payment_cancelled_desc")}</p>
               </div>
             )}
 
@@ -267,7 +267,7 @@ export default function CheckoutSuccessPage() {
               to="/profile" 
               className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-mkhe-border text-mkhe-text font-medium text-sm hover:bg-mkhe-bg transition-colors uppercase tracking-widest text-center"
             >
-              Quản lý đơn hàng
+              {t("success.manage_orders")}
             </Link>
             <Link 
               to="/shop" 

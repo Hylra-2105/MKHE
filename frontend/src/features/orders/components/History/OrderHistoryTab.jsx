@@ -24,7 +24,7 @@ const OrderHistoryTab = () => {
       }
     } catch (error) {
       console.error("Lỗi tải lịch sử đơn hàng:", error);
-      toast.error(t("history:fetch_orders_error", { defaultValue: "Không thể tải lịch sử đơn hàng" }));
+      toast.error(t("history:fetch_orders_error"));
     } finally {
       setIsLoading(false);
     }

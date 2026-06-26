@@ -33,7 +33,7 @@ const NFCManagement = ({ productId }) => {
 
   const handleGenerate = async () => {
     if (!generateCount || generateCount <= 0 || generateCount > 100) {
-      return toast.error("Số lượng hợp lệ từ 1 đến 100");
+      return toast.error(t("messages.invalid_quantity"));
     }
     
     setIsGenerating(true);

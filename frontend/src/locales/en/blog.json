@@ -83,5 +83,20 @@
       "view_detail": "View Details",
       "add_to_cart": "Add to Cart"
     }
+  },
+  "fetch_list_error": "Failed to load blogs",
+  "fetch_detail_error": "Failed to load blog",
+  "editor": {
+    "draft_restored": "Auto-saved draft restored",
+    "not_found": "Blog not found",
+    "upload_success": "Image uploaded successfully",
+    "upload_error": "Failed to upload image",
+    "invalid_image": "Please select a valid image file",
+    "upload_to_content_error": "Failed to upload image to content",
+    "title_required": "Please enter a title",
+    "content_required": "Please enter content",
+    "update_success": "Blog updated successfully",
+    "create_success": "Blog created successfully",
+    "save_error": "Failed to save blog"
   }
 }

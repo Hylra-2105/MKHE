@@ -27,13 +27,13 @@ const BlogPage = () => {
           setBlogs(res.blogs);
         }
       } catch (error) {
-        toast.error("Không thể tải danh sách bài viết");
+        toast.error(t("blog:fetch_list_error"));
       } finally {
         setLoading(false);
       }
     };
     fetchBlogs();
-  }, [isStorytelling]);
+  }, [isStorytelling, t]);
 
   return (
     <div className="min-h-screen bg-mkhe-bg py-12">

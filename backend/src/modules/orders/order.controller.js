@@ -517,7 +517,7 @@ export const payosWebhook = async (req, res) => {
     console.error("PayOS Webhook Error:", error);
     return res.status(400).json({
       success: false,
-      message: "Webhook error",
+      message: "WEBHOOK_ERROR",
     });
   }
 };

@@ -220,7 +220,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       for (const file of fileArray) {
         if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-          toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
+          toast.error(t("errors.invalid_file_type"));
           continue;
         }
 
@@ -230,7 +230,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
           processedFile = await compressImage(file);
         } else if (file.size > 100 * 1024 * 1024) {
           // Video giới hạn 100MB
-          toast.error(`Video ${file.name} quá lớn (>100MB).`);
+          toast.error(t("messages.video_too_large", { name: file.name }));
           continue;
         }
 
@@ -241,10 +241,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       setImageFiles((prev) => [...prev, ...validFiles]);
       setPreviewUrls((prev) => [...prev, ...newPreviews]);
       
-      if (validFiles.length > 0) toast.success(t("messages.processing_images_success", "Xử lý file thành công!"), { id: toastId, duration: 3000 });
+      if (validFiles.length > 0) toast.success(t("messages.processing_images_success"), { id: toastId, duration: 3000 });
       else toast.dismiss(toastId);
     } catch (error) {
-      toast.error(t("messages.processing_images_error", "Có lỗi xảy ra khi xử lý file"), { id: toastId, duration: 3000 });
+      toast.error(t("messages.processing_images_error"), { id: toastId, duration: 3000 });
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -277,19 +277,19 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     }
     
     if (file.size > 150 * 1024 * 1024) {
-      return toast.error(t("messages.file_3d_too_large", "File 3D quá lớn (>150MB)..."));
+      return toast.error(t("messages.file_3d_too_large"));
     }
 
     setIsCompressing3D(true);
-    const toastId = toast.loading(t("messages.optimizing_3d", "Đang tối ưu file 3D...", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
+    const toastId = toast.loading(t("messages.optimizing_3d", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
 
     try {
       const compressedFile = await compressGLB(file);
       setFile3D(compressedFile);
-      toast.success(t("messages.optimize_3d_success", "Tối ưu 3D thành công! Dung lượng giảm còn: {{size}}MB", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
+      toast.success(t("messages.optimize_3d_success", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
     } catch (error) {
       console.error(error);
-      toast.error(t("messages.optimize_3d_error", "Tối ưu 3D thất bại: {{error}}", { error: error.message || "Lỗi cấu trúc file" }), { id: toastId, duration: 3000 });
+      toast.error(t("messages.optimize_3d_error", { error: error.message || t("errors.file_structure") }), { id: toastId, duration: 3000 });
       setFile3D(file);
     } finally {
       setIsCompressing3D(false);
@@ -307,15 +307,15 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     e.preventDefault();
 
     if (!formData.name || !formData.sku || !formData.price || !formData.vendor) {
-      return toast.error("Vui lòng điền đủ Tên, SKU, Giá và Nhà cung cấp.");
+      return toast.error(t("messages.missing_fields"));
     }
     if (formData.hasDPP) {
       if (!formData.artisanName || !formData.gpsLocation) {
-        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Vị trí / Địa chỉ Làng nghề.");
+        return toast.error(t("messages.missing_dpp_fields"));
       }
     }
     if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
-      return toast.error("Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.");
+      return toast.error(t("messages.public_stock_error"));
     }
 
     setLoading(true);
@@ -540,7 +540,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                         onChange={(e) => {
                           const val = e.target.value;
                           if (val.includes("http://") || val.includes("https://") || val.includes("maps.")) {
-                            toast.error("Không được dán link! Vui lòng chỉ nhập tên địa điểm hoặc địa chỉ bằng chữ.");
+                            toast.error(t("messages.no_link_allowed"));
                             return;
                           }
                           updateField("gpsLocation", val);
