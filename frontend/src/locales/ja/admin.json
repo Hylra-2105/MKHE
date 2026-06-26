@@ -301,5 +301,25 @@
   },
   "fetch_error": "Lỗi khi tải danh sách bài viết",
   "delete_success": "Xóa bài viết thành công",
-  "delete_error": "Lỗi khi xóa bài viết"
+  "delete_error": "Lỗi khi xóa bài viết",
+  "dashboard": {
+    "title": "ダッシュボード概要",
+    "subtitle": "収益とサプライチェーンのリスクを監視",
+    "syncing": "同期中...",
+    "period_week": "過去7日間",
+    "period_month": "過去30日間",
+    "period_year": "過去1年間",
+    "total_revenue": "総収益",
+    "low_stock_alert": "在庫低下アラート",
+    "products": "製品",
+    "revenue_chart": "キャッシュフローチャート (支払い済み)",
+    "revenue": "収益",
+    "top_products": "トップ5ベストセラー",
+    "sold": "販売済み",
+    "no_data": "データがありません",
+    "low_stock_list": "緊急補充が必要 (< 10)",
+    "stock": "在庫:",
+    "all_good": "在庫は安全で、不足している製品はありません。",
+    "fetch_error": "レポートデータの読み込みエラー"
+  }
 }

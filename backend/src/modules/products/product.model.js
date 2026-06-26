@@ -54,6 +54,11 @@ const productSchema = new mongoose.Schema(
       min: [0, "STOCK_CANNOT_BE_NEGATIVE"],
       default: 0,
     },
+    sold: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
     images: [
       {
         type: String,

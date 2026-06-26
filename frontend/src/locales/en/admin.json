@@ -301,5 +301,25 @@
   },
   "fetch_error": "Failed to load blogs",
   "delete_success": "Blog deleted successfully",
-  "delete_error": "Failed to delete blog"
+  "delete_error": "Failed to delete blog",
+  "dashboard": {
+    "title": "Dashboard Overview",
+    "subtitle": "Monitor revenue and supply chain risks",
+    "syncing": "Syncing...",
+    "period_week": "Last 7 Days",
+    "period_month": "Last 30 Days",
+    "period_year": "Last 1 Year",
+    "total_revenue": "Total Revenue",
+    "low_stock_alert": "Low Stock Alert",
+    "products": "products",
+    "revenue_chart": "Cash Flow Chart (Paid)",
+    "revenue": "Revenue",
+    "top_products": "Top 5 Best Sellers",
+    "sold": "sold",
+    "no_data": "No data available",
+    "low_stock_list": "Urgent Restock Needed (< 10)",
+    "stock": "Stock:",
+    "all_good": "Inventory is safe, no products running low.",
+    "fetch_error": "Error loading report data"
+  }
 }

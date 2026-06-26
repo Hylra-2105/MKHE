@@ -301,5 +301,25 @@
   },
   "fetch_error": "Lỗi khi tải danh sách bài viết",
   "delete_success": "Xóa bài viết thành công",
-  "delete_error": "Lỗi khi xóa bài viết"
+  "delete_error": "Lỗi khi xóa bài viết",
+  "dashboard": {
+    "title": "仪表板概览",
+    "subtitle": "监控收入和供应链风险",
+    "syncing": "正在同步...",
+    "period_week": "过去7天",
+    "period_month": "过去30天",
+    "period_year": "过去1年",
+    "total_revenue": "总收入",
+    "low_stock_alert": "低库存警报",
+    "products": "产品",
+    "revenue_chart": "现金流图表 (已付款)",
+    "revenue": "收入",
+    "top_products": "前5名畅销产品",
+    "sold": "已售出",
+    "no_data": "暂无数据",
+    "low_stock_list": "需要紧急补货 (< 10)",
+    "stock": "库存:",
+    "all_good": "库存安全，没有即将售罄的产品。",
+    "fetch_error": "加载报告数据时出错"
+  }
 }

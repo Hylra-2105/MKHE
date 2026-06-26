@@ -59,4 +59,21 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Hook tự động cập nhật trường `sold` của Product khi thanh toán thành công
+orderSchema.pre("save", async function (next) {
+  if (this.isModified("paymentStatus")) {
+    const Product = mongoose.model("Product");
+    if (this.paymentStatus === "PAID") {
+      for (const item of this.items) {
+        await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+      }
+    } else if (this.paymentStatus === "UNPAID" && !this.isNew) {
+      for (const item of this.items) {
+        await Product.findByIdAndUpdate(item.product, { $inc: { sold: -item.quantity } });
+      }
+    }
+  }
+  next();
+});
+
 export default mongoose.model("Order", orderSchema);

@@ -301,5 +301,25 @@
   },
   "fetch_error": "Lỗi khi tải danh sách bài viết",
   "delete_success": "Xóa bài viết thành công",
-  "delete_error": "Lỗi khi xóa bài viết"
+  "delete_error": "Lỗi khi xóa bài viết",
+  "dashboard": {
+    "title": "Thống kê Tổng quan",
+    "subtitle": "Theo dõi doanh thu và rủi ro chuỗi cung ứng",
+    "syncing": "Đang đồng bộ...",
+    "period_week": "7 Ngày qua",
+    "period_month": "30 Ngày qua",
+    "period_year": "1 Năm qua",
+    "total_revenue": "Tổng doanh thu",
+    "low_stock_alert": "Cảnh báo hết hàng",
+    "products": "sản phẩm",
+    "revenue_chart": "Biểu đồ dòng tiền (Đã thanh toán)",
+    "revenue": "Doanh thu",
+    "top_products": "Top 5 Bán chạy nhất",
+    "sold": "đã bán",
+    "no_data": "Chưa có dữ liệu",
+    "low_stock_list": "Cần nhập hàng khẩn cấp (< 10)",
+    "stock": "Tồn:",
+    "all_good": "Kho hàng an toàn, không có sản phẩm nào sắp hết.",
+    "fetch_error": "Lỗi tải dữ liệu báo cáo"
+  }
 }
