@@ -7,7 +7,8 @@ import {
   uploadAvatar,
   createUser,
   addAddress,
-  setDefaultAddress
+  setDefaultAddress,
+  updateAddress
 } from "./user.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { checkRole } from "../../middlewares/checkRole.js";
@@ -21,6 +22,7 @@ router.put("/profile", verifyToken, normalizeEmailMiddleware, updateMyProfile);
 
 // user address book
 router.post("/profile/addresses", verifyToken, addAddress);
+router.put("/profile/addresses/:addressId", verifyToken, updateAddress);
 router.put("/profile/addresses/:addressId/default", verifyToken, setDefaultAddress);
 
 // Upload avatar route

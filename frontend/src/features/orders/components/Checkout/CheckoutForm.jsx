@@ -4,6 +4,9 @@ import InputField from "@/components/ui/InputField";
 import AddressMap from "./AddressMap";
 import AddressBookModal from "./AddressBookModal";
 import { useTranslation } from "react-i18next";
+import { userApi } from "@/api/userApi";
+import { useAuthStore } from "@/stores/useAuthStore";
+import toast from "react-hot-toast";
 
 export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMethod, setPaymentMethod, userEmail, user, orderStats, note, setNote }) {
   const { t } = useTranslation("checkout");
@@ -12,6 +15,8 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [isUserTyping, setIsUserTyping] = React.useState(false);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isEditingAddress, setIsEditingAddress] = React.useState(false);
+  const [tempShippingInfo, setTempShippingInfo] = React.useState(shippingInfo);
 
   const hasAddresses = user?.addresses?.length > 0;
 
@@ -80,11 +85,19 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
       if (data.result && data.result.geometry) {
         const { lat, lng } = data.result.geometry.location;
         const newCoords = { lat, lng };
-        setShippingInfo(prev => ({
-          ...prev,
-          address: place.description,
-          coordinates: newCoords
-        }));
+        if (hasAddresses && isEditingAddress) {
+          setTempShippingInfo(prev => ({
+            ...prev,
+            address: place.description,
+            coordinates: newCoords
+          }));
+        } else {
+          setShippingInfo(prev => ({
+            ...prev,
+            address: place.description,
+            coordinates: newCoords
+          }));
+        }
         localStorage.setItem("mkhe_saved_coordinates", JSON.stringify(newCoords));
         setIsUserTyping(false);
       }
@@ -93,9 +106,50 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
     }
   };
 
+  const currentInfo = (hasAddresses && isEditingAddress) ? tempShippingInfo : shippingInfo;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setShippingInfo((prev) => ({ ...prev, [name]: value }));
+    if (hasAddresses && isEditingAddress) {
+      setTempShippingInfo((prev) => ({ ...prev, [name]: value }));
+    } else {
+      setShippingInfo((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const startEditing = () => {
+    setTempShippingInfo(shippingInfo);
+    setAddressInput(shippingInfo.address || "");
+    setIsEditingAddress(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditingAddress(false);
+  };
+
+  const saveEditing = async () => {
+    setShippingInfo(tempShippingInfo);
+    setIsEditingAddress(false);
+    
+    // Lưu thẳng vào database nếu địa chỉ này đã có sẵn trong profile (có _id)
+    if (tempShippingInfo._id) {
+      try {
+        const payload = {
+          receiverName: tempShippingInfo.name,
+          receiverPhone: tempShippingInfo.phone,
+          addressText: tempShippingInfo.address,
+          coordinates: tempShippingInfo.coordinates
+        };
+        const res = await userApi.updateAddress(tempShippingInfo._id, payload);
+        if (res.success) {
+           useAuthStore.getState().setUser(res.data);
+           toast.success(t("success.address_updated", "Đã lưu cập nhật vào sổ địa chỉ"));
+        }
+      } catch (e) {
+        console.error("Lỗi khi lưu địa chỉ:", e);
+        toast.error("Không thể đồng bộ thay đổi lên hệ thống");
+      }
+    }
   };
 
   return (
@@ -104,16 +158,24 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
       <div className="bg-mkhe-border/5 p-6 rounded-lg shadow-sm border border-mkhe-border/10">
         <h2 className="text-xl font-medium mb-4 pb-2 border-b border-mkhe-border/10 text-mkhe-text">{t("shipping_info.title")}</h2>
         
-        {hasAddresses ? (
+        {hasAddresses && !isEditingAddress ? (
           <div className="space-y-4">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-medium text-mkhe-text">{t("shipping_info.address_title")}</h3>
-              <button 
-                onClick={() => setIsModalOpen(true)}
-                className="text-sm font-medium text-mkhe-primary hover:underline cursor-pointer"
-              >
-                {t("shipping_info.change_btn")}
-              </button>
+              <div className="flex gap-4">
+                <button 
+                  onClick={startEditing}
+                  className="text-sm font-medium text-mkhe-text/60 hover:text-mkhe-primary hover:underline cursor-pointer"
+                >
+                  Chỉnh sửa
+                </button>
+                <button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-sm font-medium text-mkhe-primary hover:underline cursor-pointer"
+                >
+                  {t("shipping_info.change_btn")}
+                </button>
+              </div>
             </div>
             <div className="p-4 border border-mkhe-primary/30 rounded-lg bg-mkhe-primary/5">
               <div className="flex items-start">
@@ -134,6 +196,22 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
           </div>
         ) : (
           <div className="space-y-4">
+            {hasAddresses && (
+              <div className="flex justify-end gap-3">
+                <button 
+                  onClick={cancelEditing}
+                  className="px-4 py-2 text-sm font-medium text-mkhe-text/60 border border-mkhe-border/20 rounded-md hover:bg-mkhe-border/10 transition-colors cursor-pointer"
+                >
+                  Hủy
+                </button>
+                <button 
+                  onClick={saveEditing}
+                  className="px-4 py-2 text-sm font-medium text-white bg-mkhe-primary rounded-md hover:bg-mkhe-primary/90 transition-colors cursor-pointer"
+                >
+                  Lưu
+                </button>
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-mkhe-text/80 mb-1">{t("shipping_info.email_notification")}</label>
               <InputField
@@ -145,7 +223,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
             <div>
               <label className="block text-sm font-medium text-mkhe-text/80 mb-1">{t("shipping_info.full_name")}</label>
               <InputField
-                type="text" name="name" value={shippingInfo.name} onChange={handleInputChange}
+                type="text" name="name" value={currentInfo.name} onChange={handleInputChange}
                 placeholder={t("shipping_info.full_name_placeholder")}
                 rightElement={<User className="w-5 h-5 cursor-pointer" />}
               />
@@ -153,7 +231,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
             <div>
               <label className="block text-sm font-medium text-mkhe-text/80 mb-1">{t("shipping_info.phone")}</label>
               <InputField
-                type="text" name="phone" value={shippingInfo.phone} onChange={handleInputChange}
+                type="text" name="phone" value={currentInfo.phone} onChange={handleInputChange}
                 placeholder={t("shipping_info.phone_placeholder")}
                 rightElement={<Phone className="w-5 h-5 cursor-pointer" />}
               />
@@ -166,7 +244,11 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
                 onChange={(e) => {
                   setAddressInput(e.target.value);
                   setIsUserTyping(true);
-                  setShippingInfo(prev => ({ ...prev, address: e.target.value }));
+                  if (hasAddresses && isEditingAddress) {
+                    setTempShippingInfo(prev => ({ ...prev, address: e.target.value }));
+                  } else {
+                    setShippingInfo(prev => ({ ...prev, address: e.target.value }));
+                  }
                   if (!isDropdownOpen) setIsDropdownOpen(true);
                 }}
                 onFocus={() => { if (suggestions.length > 0) setIsDropdownOpen(true); }}
@@ -188,12 +270,16 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
                 </ul>
               )}
               
-              {shippingInfo.address && shippingInfo.address.length >= 5 && (
+              {currentInfo.address && currentInfo.address.length >= 5 && (
                 <AddressMap 
-                  address={shippingInfo.address}
-                  coordinates={shippingInfo.coordinates}
+                  address={currentInfo.address}
+                  coordinates={currentInfo.coordinates}
                   onLocationChange={(coords) => {
-                    setShippingInfo(prev => ({ ...prev, coordinates: coords }));
+                    if (hasAddresses && isEditingAddress) {
+                      setTempShippingInfo(prev => ({ ...prev, coordinates: coords }));
+                    } else {
+                      setShippingInfo(prev => ({ ...prev, coordinates: coords }));
+                    }
                     localStorage.setItem("mkhe_saved_coordinates", JSON.stringify(coords));
                   }} 
                 />
@@ -226,7 +312,8 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
             phone: addr.receiverPhone,
             address: addr.addressText,
             coordinates: addr.coordinates,
-            isDefault: addr.isDefault
+            isDefault: addr.isDefault,
+            _id: addr._id
           });
         }}
         onAddressAdded={() => {

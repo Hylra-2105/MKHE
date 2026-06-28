@@ -28,6 +28,7 @@ export default function CheckoutPage() {
     address: defaultAddress?.addressText || "",
     coordinates: defaultAddress?.coordinates || JSON.parse(localStorage.getItem("mkhe_saved_coordinates")) || null,
     isDefault: defaultAddress?.isDefault || false,
+    _id: defaultAddress?._id || null,
   });
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [note, setNote] = useState("");
@@ -93,6 +94,12 @@ export default function CheckoutPage() {
       toast.error(t("errors.missing_info"));
       return;
     }
+    const phoneRegex = /^(0|\+84)[1-9][0-9]{8,9}$/;
+    if (!phoneRegex.test(shippingInfo.phone)) {
+      toast.error("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.");
+      return;
+    }
+
     setOtpSending(true);
     try {
       const res = await orderApi.sendCheckoutOtp({ paymentMethod });
@@ -115,6 +122,12 @@ export default function CheckoutPage() {
     if (e) e.preventDefault();
     if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
       toast.error(t("errors.missing_info"));
+      return;
+    }
+
+    const phoneRegex = /^(0|\+84)[1-9][0-9]{8,9}$/;
+    if (!phoneRegex.test(shippingInfo.phone)) {
+      toast.error("Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.");
       return;
     }
 
@@ -179,13 +192,15 @@ export default function CheckoutPage() {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message;
+      const backendErrorDetails = error.response?.data?.errors;
+      
       if (errorMsg === "VALIDATION_ERROR" && error.response.data.errors?.length > 0) {
         toast.error(error.response.data.errors[0].message);
       } else if (errorMsg && errorMsg.startsWith("INSUFFICIENT_STOCK:")) {
         const productName = errorMsg.split(":")[1];
         toast.error(`${t("errors.insufficient_stock")} ${productName}`);
       } else {
-        toast.error(errorMsg || t("errors.order_failed"));
+        toast.error(typeof backendErrorDetails === 'string' ? backendErrorDetails : (errorMsg || t("errors.order_failed")));
       }
     } finally {
       setIsSubmitting(false);

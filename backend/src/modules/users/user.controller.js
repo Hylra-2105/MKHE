@@ -317,6 +317,10 @@ export const addAddress = async (req, res) => {
       newAddress.isDefault = true;
       // Nếu là default, cập nhật tất cả địa chỉ cũ thành false
       user.addresses.forEach(addr => addr.isDefault = false);
+      
+      // Đồng bộ thông tin ra profile
+      user.phone = receiverPhone;
+      if (!user.name) user.name = receiverName;
     }
 
     user.addresses.push(newAddress);
@@ -347,6 +351,8 @@ export const setDefaultAddress = async (req, res) => {
       if (addr._id.toString() === addressId) {
         addr.isDefault = true;
         addressFound = true;
+        user.phone = addr.receiverPhone;
+        if (!user.name) user.name = addr.receiverName;
       } else {
         addr.isDefault = false;
       }
@@ -365,6 +371,51 @@ export const setDefaultAddress = async (req, res) => {
     return successResponse(res, 200, "SET_DEFAULT_ADDRESS_SUCCESS", userData);
   } catch (error) {
     console.error("Set Default Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Cập nhật địa chỉ cụ thể
+export const updateAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { addressId } = req.params;
+    const { receiverName, receiverPhone, addressText, coordinates } = req.body;
+
+    if (!receiverName || !receiverPhone || !addressText) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return errorResponse(res, 404, "ADDRESS_NOT_FOUND");
+    }
+
+    address.receiverName = receiverName;
+    address.receiverPhone = receiverPhone;
+    address.addressText = addressText;
+    if (coordinates) {
+      address.coordinates = coordinates;
+    }
+
+    // Nếu đây là địa chỉ mặc định, đồng bộ sđt và tên ra profile ngoài cùng
+    if (address.isDefault) {
+      user.phone = receiverPhone;
+      if (!user.name) user.name = receiverName;
+    }
+
+    await user.save();
+    
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "ADDRESS_UPDATED_SUCCESS", userData);
+  } catch (error) {
+    console.error("Update Address Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

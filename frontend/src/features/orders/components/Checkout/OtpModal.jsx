@@ -39,11 +39,12 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
   // Tự submit khi đủ 6 ký tự
   useEffect(() => {
     const otpString = otpArray.join("");
-    // Tự động gọi handleCheckout khi nhập đủ 6 số và chưa submit
-    if (otpString.length === 6 && !isSubmitting) {
+    // Tự động gọi handleCheckout khi nhập đủ 6 số
+    if (otpString.length === 6) {
       handleCheckout();
     }
-  }, [otpArray, isSubmitting, handleCheckout]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [otpArray]);
 
   const handleChange = (e, index) => {
     const value = e.target.value;

@@ -60,7 +60,7 @@ const orderSchema = new mongoose.Schema(
 );
 
 // Hook tự động cập nhật trường `sold` của Product khi thanh toán thành công
-orderSchema.pre("save", async function (next) {
+orderSchema.pre("save", async function () {
   if (this.isModified("paymentStatus")) {
     const Product = mongoose.model("Product");
     if (this.paymentStatus === "PAID") {
@@ -73,7 +73,6 @@ orderSchema.pre("save", async function (next) {
       }
     }
   }
-  next();
 });
 
 export default mongoose.model("Order", orderSchema);
