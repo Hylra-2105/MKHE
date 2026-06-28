@@ -11,6 +11,8 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { authApi } from "@/api/authApi";
 import { getCartApi } from "@/api/cartApi";
 import { useCartStore } from "@/stores/useCartStore";
+import { useNotificationStore } from "@/stores/useNotificationStore";
+import io from "socket.io-client";
 
 import ProtectedRoute from "./components/router/ProtectedRoute";
 import AuthRoute from "./components/router/AuthRoute";
@@ -95,6 +97,52 @@ function App() {
       }
     }
   }, [setUser, token, logoutAction, setFetchingUser]);
+
+  // Setup Socket.io
+  useEffect(() => {
+    if (token) {
+      // Decode token or rely on user object (but user might not be fully fetched yet)
+      // Actually we just wait for `user` to be available
+    }
+  }, [token]);
+
+  const user = useAuthStore((state) => state.user);
+  const addNotification = useNotificationStore((state) => state.addNotification);
+
+  useEffect(() => {
+    let socket;
+    if (user && user._id) {
+      const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+      socket = io(socketUrl, {
+        withCredentials: true,
+      });
+
+      socket.on("connect", () => {
+        socket.emit("join_user_room", user._id);
+        if (user.role === "Admin" || user.role === "Staff") {
+          socket.emit("join_admin_room");
+        }
+      });
+
+      socket.on("new_notification", (notif) => {
+        addNotification(notif);
+        toast(notif.title, {
+          icon: '🔔',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
+        });
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
+  }, [user, addNotification]);
 
   return (
     <Router>

@@ -1,12 +1,12 @@
 import React from "react";
 import DPPContainer from "@/features/dpp/components/DPPContainer";
-import AuthHeader from "@/components/layout/AuthHeader";
+import Header from "@/components/layout/Header";
 
 export default function DPPPage() {
   return (
     <div className="flex flex-col min-h-screen bg-mkhe-bg font-sans">
-      <AuthHeader />
-      <div className="flex-1 relative">
+      <Header />
+      <div className="flex-1 relative pt-20">
         <DPPContainer />
       </div>
     </div>

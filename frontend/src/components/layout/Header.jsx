@@ -6,6 +6,7 @@ import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
+import NotificationDropdown from "./NotificationDropdown";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -200,8 +201,10 @@ export default function Header() {
 
         {/* TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP */}
         {user ? (
-          <div className="relative ml-2" ref={dropdownRef}>
-            <button
+          <>
+            <NotificationDropdown />
+            <div className="relative" ref={dropdownRef}>
+              <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-9 h-9 rounded-full border border-mkhe-primary/50 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
             >
@@ -456,7 +459,8 @@ export default function Header() {
                 )}
               </div>
             )}
-          </div>
+            </div>
+          </>
         ) : (
           /* TRƯỜNG HỢP CHƯA ĐĂNG NHẬP */
           <div className="flex items-center gap-3 ml-2 border-l border-mkhe-border pl-4">

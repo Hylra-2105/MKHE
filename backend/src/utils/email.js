@@ -190,7 +190,10 @@ export const sendCheckoutOtpEmail = async (toEmail, otp, lang = "vi") => {
  */
 export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
   const trans = loadTranslation(lang, "email");
-  const subjectStr = getTranslation(trans, "invoice.subject") || "Xác nhận đơn hàng #{orderCode}";
+  const isPaid = order.paymentStatus === "PAID";
+  const subjectStr = isPaid 
+    ? "Biên lai thanh toán & Xác nhận đơn hàng #{orderCode}" 
+    : (getTranslation(trans, "invoice.subject") || "Xác nhận đơn hàng #{orderCode}");
   const subject = subjectStr.replace("{orderCode}", order.orderCode);
   
   const formatMoney = (amount) => {
@@ -220,11 +223,14 @@ export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
         <div style="background-color: #f8f6f3; padding: 30px 20px; text-align: center; border-bottom: 3px solid #bc9c6a;">
           <h1 style="color: #bc9c6a; margin: 0; font-size: 28px; font-family: Georgia, serif;">MKHE Heritage</h1>
           <p style="margin-top: 10px; color: #666;">${getTranslation(trans, "invoice.greeting")}</p>
+          ${isPaid ? `<div style="display: inline-block; margin-top: 15px; background-color: #4CAF50; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 14px;">ĐÃ THANH TOÁN</div>` : ''}
         </div>
         
         <!-- Content -->
         <div style="padding: 30px 20px;">
-          <p style="color: #333; font-size: 16px;">${getTranslation(trans, "invoice.intro")}</p>
+          <p style="color: #333; font-size: 16px;">
+            ${isPaid ? `Cảm ơn bạn đã thanh toán thành công cho đơn hàng <strong>${order.orderCode}</strong>. Dưới đây là chi tiết biên lai của bạn:` : getTranslation(trans, "invoice.intro")}
+          </p>
           
           <!-- Order Info -->
           <div style="background-color: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 20px; margin: 25px 0;">
@@ -292,6 +298,70 @@ export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
         <div style="background-color: #fcfbfa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
           <p style="color: #999; font-size: 13px; margin: 0;">
             ${getTranslation(trans, "invoice.footer", { time: getFormattedTime(lang) }).replace(/\\n/g, '<br/>')}
+          </p>
+        </div>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email thông báo cập nhật trạng thái đơn hàng
+ */
+export const sendOrderStatusEmail = async (toEmail, order, status, lang = "vi") => {
+  let title = "";
+  let message = "";
+  let color = "#bc9c6a"; // default primary color
+
+  switch (status) {
+    case "CONFIRMED":
+      title = "Đơn hàng đã được xác nhận";
+      message = `Cảm ơn bạn đã đặt hàng! Đơn hàng <strong>${order.orderCode}</strong> của bạn đã được xác nhận và đang được chuẩn bị.`;
+      break;
+    case "DELIVERING":
+      title = "Đơn hàng đang giao";
+      message = `Tuyệt vời! Đơn hàng <strong>${order.orderCode}</strong> của bạn đã được bàn giao cho đơn vị vận chuyển.`;
+      color = "#3b82f6"; // blue
+      break;
+    case "COMPLETED":
+      title = "Giao hàng thành công";
+      message = `Đơn hàng <strong>${order.orderCode}</strong> đã được giao thành công. Mong rằng bạn hài lòng với sản phẩm của MKHE!`;
+      color = "#10b981"; // green
+      break;
+    case "CANCELLED":
+      title = "Đơn hàng đã bị hủy";
+      message = `Rất tiếc, đơn hàng <strong>${order.orderCode}</strong> của bạn đã bị hủy. Vui lòng liên hệ với chúng tôi nếu bạn cần hỗ trợ.`;
+      color = "#ef4444"; // red
+      break;
+    default:
+      return;
+  }
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: `Cập nhật trạng thái đơn hàng #${order.orderCode}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fff; overflow: hidden;">
+        <!-- Header -->
+        <div style="background-color: ${color}; padding: 30px 20px; text-align: center;">
+          <h1 style="color: #fff; margin: 0; font-size: 24px;">${title}</h1>
+        </div>
+        
+        <!-- Content -->
+        <div style="padding: 30px 20px; text-align: center;">
+          <p style="color: #333; font-size: 16px; line-height: 1.6;">${message}</p>
+          <a href="${process.env.FRONTEND_URL || 'https://mkhe.netlify.app'}/profile?tab=orders" style="display: inline-block; margin-top: 20px; background-color: #bc9c6a; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            Xem chi tiết đơn hàng
+          </a>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #fcfbfa; padding: 20px; text-align: center; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 13px; margin: 0;">
+            Gửi lúc: ${getFormattedTime(lang)}<br/>
+            Nếu bạn có thắc mắc, vui lòng liên hệ CSKH.
           </p>
         </div>
       </div>

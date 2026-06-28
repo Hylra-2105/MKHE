@@ -4,9 +4,11 @@ import Cart from "../cart/cart.model.js";
 import UserVoucher from "../vouchers/userVoucher.model.js";
 import Voucher from "../vouchers/voucher.model.js";
 import OTP from "../auth/otp.model.js";
+import Notification from "../notifications/notification.model.js";
+import { getIO } from "../../config/socket.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
-import { sendCheckoutOtpEmail, sendInvoiceEmail } from "../../utils/email.js";
+import { sendCheckoutOtpEmail, sendInvoiceEmail, sendOrderStatusEmail } from "../../utils/email.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 
 const generateOrderCode = () => {
@@ -165,10 +167,28 @@ export const checkout = async (req, res) => {
     }
 
     // 6. Send Email
-    const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendInvoiceEmail(user.email, newOrder[0], userLang).catch((err) => {
-      console.error("Failed to send invoice email:", err);
-    });
+    if (paymentMethod === "COD") {
+      const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
+      sendInvoiceEmail(user.email, newOrder[0], userLang).catch((err) => {
+        console.error("Failed to send invoice email:", err);
+      });
+    }
+
+    // 7. Create Notification for Checkout
+    try {
+      const notif = await Notification.create({
+        user: user._id,
+        title: "Đặt hàng thành công",
+        message: `Đơn hàng ${orderCode} đã được đặt thành công. Đang chờ xử lý.`,
+        type: "ORDER_STATUS_UPDATE",
+        orderId: newOrder[0]._id,
+        status: "PENDING",
+      });
+      const io = getIO();
+      io.to(`user_${user._id}`).emit("new_notification", notif);
+    } catch (err) {
+      console.error("Failed to create checkout notification:", err);
+    }
 
     let payosData = null;
     if (paymentMethod === "BANK_TRANSFER" && process.env.PAYOS_CLIENT_ID) {
@@ -319,10 +339,20 @@ export const receiveOrder = async (req, res) => {
       return errorResponse(res, 400, "CANNOT_RECEIVE_ORDER_NOT_DELIVERING");
     }
 
+    const previousPaymentStatus = order.paymentStatus;
+    
     order.orderStatus = "COMPLETED";
     order.paymentStatus = "PAID";
     
     await order.save();
+
+    // Increment sold count if it just became PAID (for COD orders)
+    if (previousPaymentStatus !== "PAID") {
+      const Product = mongoose.model("Product");
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+      }
+    }
 
     return successResponse(res, 200, "ORDER_RECEIVED", order);
   } catch (error) {
@@ -355,9 +385,9 @@ export const getAllOrdersAdmin = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { orderCode: { $regex: searchRegex } },
-        { "shippingInfo.name": { $regex: searchRegex } },
-        { "shippingInfo.phone": { $regex: searchRegex } },
+        { orderCode: { $regex: searchRegex, $options: "i" } },
+        { "shippingInfo.name": { $regex: searchRegex, $options: "i" } },
+        { "shippingInfo.phone": { $regex: searchRegex, $options: "i" } },
       ];
     }
 
@@ -483,6 +513,87 @@ export const updateOrderStatus = async (req, res) => {
     if (order.paymentStatus === "PAID" && previousPaymentStatus !== "PAID") {
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+      }
+
+      // --- TRIGGER NOTIFICATION FOR PAYMENT SUCCESS ---
+      try {
+        const notif = await Notification.create({
+          user: order.user,
+          title: "Thanh toán thành công",
+          message: `Thanh toán cho đơn hàng ${order.orderCode} đã được ghi nhận.`,
+          type: "ORDER_STATUS_UPDATE",
+          orderId: order._id,
+          status: order.orderStatus,
+        });
+        const io = getIO();
+        io.to(`user_${order.user}`).emit("new_notification", notif);
+
+        const userForEmail = await mongoose.model("User").findById(order.user);
+        if (userForEmail && userForEmail.email) {
+          sendInvoiceEmail(userForEmail.email, order, "vi").catch(err => {
+             console.error("Failed to send payment invoice email:", err);
+          });
+        }
+      } catch (err) {
+        console.error("Failed to handle payment success notification:", err);
+      }
+    }
+
+    // --- TRIGGER NOTIFICATION ---
+    if (order.user && status !== previousStatus) {
+      let title = "";
+      let message = "";
+      
+      switch (status) {
+        case "CONFIRMED":
+          title = "Đơn hàng đã được xác nhận";
+          message = `Đơn hàng ${order.orderCode} của bạn đã được xác nhận và đang chuẩn bị hàng.`;
+          break;
+        case "DELIVERING":
+          title = "Đơn hàng đang giao";
+          message = `Đơn hàng ${order.orderCode} của bạn đã được bàn giao cho đơn vị vận chuyển.`;
+          break;
+        case "COMPLETED":
+          title = "Giao hàng thành công";
+          message = `Đơn hàng ${order.orderCode} đã giao thành công. Cảm ơn bạn đã mua sắm tại MKHE!`;
+          break;
+        case "CANCELLED":
+          title = "Đơn hàng đã hủy";
+          message = `Đơn hàng ${order.orderCode} đã bị hủy.`;
+          break;
+      }
+
+      if (title) {
+        const notif = await Notification.create({
+          user: order.user,
+          title,
+          message,
+          type: "ORDER_STATUS_UPDATE",
+          orderId: order._id,
+          status,
+        });
+
+        try {
+          const io = getIO();
+          io.to(`user_${order.user}`).emit("new_notification", notif);
+        } catch (err) {
+          console.error("Socket emit error:", err);
+        }
+        
+        // --- SEND EMAIL (Only for DELIVERING or CANCELLED) ---
+        if (status === "DELIVERING" || status === "CANCELLED") {
+          try {
+            // Lấy user email
+            const userForEmail = await mongoose.model("User").findById(order.user);
+            if (userForEmail && userForEmail.email) {
+              sendOrderStatusEmail(userForEmail.email, order, status).catch(err => {
+                 console.error("Failed to send status email:", err);
+              });
+            }
+          } catch (err) {
+            console.error("Error sending status email:", err);
+          }
+        }
       }
     }
 

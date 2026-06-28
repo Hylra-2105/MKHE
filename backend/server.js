@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
 import { fileURLToPath } from "url";
+import http from "http";
+import { initSocket } from "./src/config/socket.js";
 
 // Lấy __dirname cho ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +28,7 @@ import blogRoutes from "./src/modules/blogs/blog.routes.js";
 import reviewRoutes from "./src/modules/reviews/review.routes.js";
 import uploadRoutes from "./src/modules/upload/upload.routes.js";
 import analyticsRoutes from "./src/modules/analytics/analytics.route.js";
+import notificationRoutes from "./src/modules/notifications/notification.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 
 connectDB();
@@ -93,8 +96,14 @@ app.use("/api/reviews", reviewRoutes);
 // API liên quan đến Upload
 app.use("/api/upload", uploadRoutes);
 
+// API liên quan đến Notifications
+app.use("/api/notifications", notificationRoutes);
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+initSocket(server);
+
+server.listen(PORT, () => {
   console.info(`Server đang chạy tại http://localhost:${PORT}`);
 });
