@@ -3,6 +3,8 @@ import Voucher from "./voucher.model.js";
 import UserVoucher from "./userVoucher.model.js";
 import NfcClaimHistory from "./nfcClaimHistory.model.js";
 import Product from "../products/product.model.js";
+import Notification from "../notifications/notification.model.js";
+import { getIO } from "../../config/socket.js";
 
 // @desc    Lấy danh sách mã public có thể sưu tầm
 // @route   GET /api/vouchers/public
@@ -59,7 +61,20 @@ export const collectVoucher = async (req, res) => {
       status: "AVAILABLE",
     });
 
-    return successResponse(res, 201, "VOUCHER_COLLECTED_SUCCESS", userVoucher);
+    try {
+      const notif = await Notification.create({
+        user: userId,
+        title: "Lưu mã giảm giá thành công",
+        message: `Bạn đã thu thập thành công mã giảm giá ${voucher.code}.`,
+        type: "SYSTEM",
+      });
+      const io = getIO();
+      io.to(`user_${userId}`).emit("new_notification", notif);
+    } catch (err) {
+      console.error(err);
+    }
+
+    return successResponse(res, 201, "VOUCHER_COLLECTED", userVoucher);
   } catch (error) {
     if (error.code === 11000) {
       return errorResponse(res, 400, "VOUCHER_ALREADY_SAVED");
@@ -327,7 +342,20 @@ export const collectVoucherByCode = async (req, res) => {
       status: "AVAILABLE",
     });
 
-    return successResponse(res, 201, "VOUCHER_COLLECTED_SUCCESS", userVoucher);
+    try {
+      const notif = await Notification.create({
+        user: userId,
+        title: "Nhập mã giảm giá thành công",
+        message: `Bạn đã đổi thành công mã giảm giá ${voucher.code}.`,
+        type: "SYSTEM",
+      });
+      const io = getIO();
+      io.to(`user_${userId}`).emit("new_notification", notif);
+    } catch (err) {
+      console.error(err);
+    }
+
+    return successResponse(res, 201, "VOUCHER_COLLECTED", userVoucher);
   } catch (error) {
     if (error.code === 11000) {
       return errorResponse(res, 400, "VOUCHER_ALREADY_SAVED");
@@ -469,6 +497,19 @@ export const claimNfcGacha = async (req, res) => {
       user: userId,
       voucher: selectedVoucher._id,
     });
+
+    try {
+      const notif = await Notification.create({
+        user: userId,
+        title: "Chúc mừng trúng thưởng!",
+        message: `Bạn vừa nhận được mã giảm giá ${selectedVoucher.code} từ Hộp quà Bí ẩn.`,
+        type: "SYSTEM",
+      });
+      const io = getIO();
+      io.to(`user_${userId}`).emit("new_notification", notif);
+    } catch (err) {
+      console.error(err);
+    }
 
     return successResponse(res, 201, "GACHA_SUCCESS", {
       voucher: {

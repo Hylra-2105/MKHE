@@ -28,6 +28,7 @@
     "node-cron": "^4.5.0",
     "nodemailer": "^8.0.8",
     "slugify": "^1.6.9",
+    "socket.io": "^4.8.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

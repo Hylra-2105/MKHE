@@ -71,7 +71,7 @@ const HeroBanner = () => {
           />
         </div>
         <motion.div
-          className="absolute top-[-5%] left-[-20%] md:left-[-5%] w-[60vw] md:w-[40vw] h-[120vh] pointer-events-none z-10"
+          className="hidden md:block absolute top-[-5%] left-[-20%] md:left-[-5%] w-[60vw] md:w-[40vw] h-[120vh] pointer-events-none z-10"
           style={{
             background: "linear-gradient(180deg, rgba(212, 163, 115, 0.2) 0%, transparent 80%)",
             clipPath: "polygon(45% 0, 55% 0, 100% 100%, 0% 100%)", // Cắt khối thành hình chóp nón (tia sáng)
@@ -85,7 +85,7 @@ const HeroBanner = () => {
 
         {/* 🔦 Đèn rọi bên PHẢI */}
         <motion.div
-          className="absolute top-[-5%] right-[-20%] md:right-[-5%] w-[60vw] md:w-[40vw] h-[120vh] pointer-events-none z-10"
+          className="hidden md:block absolute top-[-5%] right-[-20%] md:right-[-5%] w-[60vw] md:w-[40vw] h-[120vh] pointer-events-none z-10"
           style={{
             background: "linear-gradient(180deg, rgba(212, 163, 115, 0.2) 0%, transparent 80%)",
             clipPath: "polygon(45% 0, 55% 0, 100% 100%, 0% 100%)",

@@ -6,6 +6,7 @@ import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
+import NotificationDropdown from "./NotificationDropdown";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -26,6 +27,7 @@ import {
   FileText,
   Menu,
   Star,
+  X,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -56,6 +58,17 @@ export default function Header() {
   const [activeMenu, setActiveMenu] = useState("main");
   const [isGuestLangOpen, setIsGuestLangOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchKeyword.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchKeyword.trim())}`);
+      setIsSearchOpen(false);
+      setSearchKeyword("");
+    }
+  };
 
   const dropdownRef = useRef(null);
   const guestLangRef = useRef(null);
@@ -120,23 +133,24 @@ export default function Header() {
   };
 
   const navLinks = [
-    { key: "heritage", path: "/heritage" },
-    { key: "craft_villages", path: "/craft-villages" },
+    { key: "home", path: "/home" },
+    { key: "about", path: "/about" },
     { key: "shop", path: "/shop" },
     { key: "storytelling", path: "/storytelling" },
     { key: "blog", path: "/blogs" },
+    { key: "contact", path: "/contact" },
   ];
 
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-50 text-current transition-colors duration-300">
+    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] text-current transition-colors duration-300">
       {/* LOGO AND MOBILE MENU */}
       <div className="flex-shrink-0 lg:w-1/4 flex items-center gap-3">
         {/* Hamburger Menu cho Mobile */}
         <button 
-          className="lg:hidden p-1.5 opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer"
+          className="lg:hidden p-1.5 opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer relative z-50"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -181,7 +195,10 @@ export default function Header() {
         {/* ẨN KÍNH LÚP VÀ GIỎ HÀNG KHI LÀ ADMIN HOẶC STAFF */}
         {!isAdminOrStaff && (
           <>
-            <button className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors">
+            <button 
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors"
+            >
               <Search className="w-5 h-5" />
             </button>
             <button 
@@ -200,8 +217,10 @@ export default function Header() {
 
         {/* TRƯỜNG HỢP ĐÃ ĐĂNG NHẬP */}
         {user ? (
-          <div className="relative ml-2" ref={dropdownRef}>
-            <button
+          <>
+            <NotificationDropdown />
+            <div className="relative" ref={dropdownRef}>
+              <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="w-9 h-9 rounded-full border border-mkhe-primary/50 overflow-hidden hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
             >
@@ -456,11 +475,12 @@ export default function Header() {
                 )}
               </div>
             )}
-          </div>
+            </div>
+          </>
         ) : (
           /* TRƯỜNG HỢP CHƯA ĐĂNG NHẬP */
-          <div className="flex items-center gap-3 ml-2 border-l border-mkhe-border pl-4">
-            <div className="relative" ref={guestLangRef}>
+          <div className="flex items-center gap-2 md:gap-3 ml-1 md:ml-2 border-l border-mkhe-border pl-2 md:pl-4">
+            <div className="relative hidden md:block" ref={guestLangRef}>
               <button
                 onClick={() => setIsGuestLangOpen(!isGuestLangOpen)}
                 className="opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors flex items-center gap-1 text-xs font-semibold uppercase"
@@ -499,7 +519,7 @@ export default function Header() {
 
             <button
               onClick={() => setIsDark(!isDark)}
-              className="opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors"
+              className="hidden md:block opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors"
             >
               {isDark ? (
                 <Moon className="w-4 h-4" />
@@ -510,7 +530,7 @@ export default function Header() {
 
             <Link
               to={`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`}
-              className="text-xs uppercase tracking-wider font-semibold text-mkhe-primary border border-mkhe-primary px-4 py-1.5 rounded hover:bg-mkhe-primary hover:text-white transition-all ml-1 cursor-pointer"
+              className="text-[10px] md:text-xs uppercase tracking-wider font-semibold text-mkhe-primary border border-mkhe-primary px-2 md:px-4 py-1 md:py-1.5 rounded hover:bg-mkhe-primary hover:text-white transition-all ml-1 cursor-pointer whitespace-nowrap"
             >
               {t("guest_menu.login")}
             </Link>
@@ -518,26 +538,60 @@ export default function Header() {
         )}
       </div>
 
-      {/* MOBILE NAV MENU */}
-      {isMobileMenuOpen && (
-        <div className="absolute top-20 left-0 w-full bg-mkhe-bg border-b border-mkhe-border shadow-xl flex flex-col p-4 z-40 lg:hidden">
-          {!isAdminOrStaff ? (
-            navLinks.map((link) => (
-              <Link
-                key={link.key}
-                to={link.path}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="py-3 border-b border-mkhe-border/50 text-sm font-medium hover:text-mkhe-primary transition-colors uppercase tracking-wider"
-              >
-                {t(`nav.${link.key}`)}
-              </Link>
-            ))
-          ) : (
-            <div className="py-3 text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none text-center">
-              {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}
-            </div>
-          )}
+      {/* SEARCH BAR OVERLAY */}
+      {isSearchOpen && (
+        <div className="absolute top-20 left-0 w-full bg-mkhe-bg border-b border-mkhe-border shadow-md z-[55] animate-in slide-in-from-top-2 fade-in p-4 md:px-10 flex justify-center">
+          <form onSubmit={handleSearch} className="relative w-full max-w-2xl flex items-center">
+            <Search className="w-5 h-5 absolute left-4 text-mkhe-text/50" />
+            <input
+              type="text"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              placeholder="Tìm kiếm sản phẩm..."
+              className="w-full bg-mkhe-bg border border-mkhe-border rounded-full py-3 pl-12 pr-12 focus:outline-none focus:border-mkhe-primary transition-colors text-sm shadow-inner"
+              autoFocus
+            />
+            <button 
+              type="button" 
+              onClick={() => setIsSearchOpen(false)}
+              className="absolute right-4 text-mkhe-text/50 hover:text-mkhe-primary transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </form>
         </div>
+      )}
+
+      {/* MOBILE NAV MENU OVERLAY & CONTENT */}
+      {isMobileMenuOpen && (
+        <>
+          {/* Backdrop (Darken the rest of the screen) */}
+          <div 
+            className="fixed inset-0 top-20 bg-black/50 backdrop-blur-sm z-[55] lg:hidden animate-in fade-in duration-300"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          
+          {/* Menu Drawer */}
+          <div className="absolute top-20 left-0 w-full bg-mkhe-bg/95 backdrop-blur-xl border-b border-mkhe-border shadow-2xl flex flex-col px-6 py-4 z-[60] lg:hidden animate-in slide-in-from-top-4 fade-in duration-300">
+            {!isAdminOrStaff ? (
+              navLinks.map((link) => (
+                <Link
+                  key={link.key}
+                  to={link.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="py-4 border-b border-mkhe-border/30 text-sm font-semibold text-mkhe-text/80 hover:text-mkhe-primary hover:pl-2 transition-all duration-300 uppercase tracking-widest flex items-center justify-between group"
+                >
+                  {t(`nav.${link.key}`)}
+                  <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-mkhe-primary" />
+                </Link>
+              ))
+            ) : (
+              <div className="py-6 text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none text-center bg-mkhe-primary/5 rounded-lg border border-mkhe-primary/20">
+                {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}
+              </div>
+            )}
+          </div>
+        </>
       )}
     </header>
   );

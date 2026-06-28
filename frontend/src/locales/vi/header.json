@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "Di Sản",
-    "craft_villages": "Làng Nghề",
-    "shop": "Cửa Hàng",
-    "storytelling": "Ký Sự",
-    "blog": "Blog"
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "shop": "Cửa hàng",
+    "storytelling": "Ký sự",
+    "blog": "Blog",
+    "contact": "Liên hệ"
   },
   "user_menu": {
     "profile": "Hồ sơ cá nhân",
@@ -38,5 +39,31 @@
     "zh": "Tiếng Trung",
     "ko": "Tiếng Hàn",
     "ja": "Tiếng Nhật"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "Đặt hàng thành công",
+      "payment_success": "Thanh toán thành công",
+      "order_confirmed": "Đơn hàng đã được xác nhận",
+      "order_delivering": "Đơn hàng đang giao",
+      "order_completed": "Giao hàng thành công",
+      "order_cancelled": "Đơn hàng đã hủy",
+      "voucher_saved": "Lưu mã giảm giá thành công",
+      "lucky_wheel_won": "Chúc mừng trúng thưởng!"
+    },
+    "message": {
+      "order_placed": "Đơn hàng {{orderCode}} đã được đặt thành công. Đang chờ xử lý.",
+      "payment_success": "Thanh toán cho đơn hàng {{orderCode}} đã được ghi nhận.",
+      "order_confirmed": "Đơn hàng {{orderCode}} của bạn đã được xác nhận và đang chuẩn bị hàng.",
+      "order_delivering": "Đơn hàng {{orderCode}} của bạn đã được bàn giao cho đơn vị vận chuyển.",
+      "order_completed": "Đơn hàng {{orderCode}} đã giao thành công. Cảm ơn bạn đã mua sắm tại MKHE!",
+      "order_cancelled": "Đơn hàng {{orderCode}} đã bị hủy.",
+      "voucher_saved": "Bạn đã thu thập thành công mã giảm giá {{code}}.",
+      "lucky_wheel_won": "Bạn vừa nhận được mã giảm giá {{code}} từ Hộp quà Bí ẩn."
+    },
+    "header_title": "Thông báo",
+    "mark_all_read": "Đánh dấu đã đọc",
+    "empty": "Bạn chưa có thông báo nào",
+    "time_just_now": "vừa xong"
   }
 }

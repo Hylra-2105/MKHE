@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "문화유산",
-    "craft_villages": "공예 마을",
+    "home": "홈",
+    "about": "회사 소개",
     "shop": "상점",
     "storytelling": "스토리텔링",
-    "blog": "블로그"
+    "blog": "블로그",
+    "contact": "문의하기"
   },
   "user_menu": {
     "profile": "프로필",
@@ -39,5 +40,31 @@
     "zh": "중국어",
     "ko": "한국어",
     "ja": "일본어"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "주문이 완료되었습니다",
+      "payment_success": "결제 성공",
+      "order_confirmed": "주문이 확인되었습니다",
+      "order_delivering": "배송 중",
+      "order_completed": "배송 완료",
+      "order_cancelled": "주문이 취소되었습니다",
+      "voucher_saved": "쿠폰이 저장되었습니다",
+      "lucky_wheel_won": "당첨을 축하합니다!"
+    },
+    "message": {
+      "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
+      "payment_success": "주문 {{orderCode}} 의 결제가 기록되었습니다.",
+      "order_confirmed": "주문 {{orderCode}} 이(가) 확인되었으며 상품을 준비 중입니다.",
+      "order_delivering": "주문 {{orderCode}} 이(가) 배송업체에 전달되었습니다.",
+      "order_completed": "주문 {{orderCode}} 의 배송이 완료되었습니다. MKHE를 이용해 주셔서 감사합니다!",
+      "order_cancelled": "주문 {{orderCode}} 이(가) 취소되었습니다.",
+      "voucher_saved": "할인 코드 {{code}} 을(를) 성공적으로 수집했습니다.",
+      "lucky_wheel_won": "미스터리 박스에서 할인 코드 {{code}} 을(를) 방금 받으셨습니다."
+    },
+    "header_title": "알림",
+    "mark_all_read": "모두 읽음으로 표시",
+    "empty": "알림이 없습니다",
+    "time_just_now": "방금"
   }
 }

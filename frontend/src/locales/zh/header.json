@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "遗产",
-    "craft_villages": "手工艺村",
+    "home": "首页",
+    "about": "关于我们",
     "shop": "商店",
-    "storytelling": "品牌故事",
-    "blog": "博客"
+    "storytelling": "故事",
+    "blog": "博客",
+    "contact": "联系我们"
   },
   "user_menu": {
     "profile": "个人资料",
@@ -39,5 +40,31 @@
     "zh": "中文",
     "ko": "韩语",
     "ja": "日语"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "订单已成功提交",
+      "payment_success": "支付成功",
+      "order_confirmed": "订单已确认",
+      "order_delivering": "订单派送中",
+      "order_completed": "订单已完成",
+      "order_cancelled": "订单已取消",
+      "voucher_saved": "优惠券保存成功",
+      "lucky_wheel_won": "恭喜中奖！"
+    },
+    "message": {
+      "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
+      "payment_success": "订单 {{orderCode}} 的付款已记录。",
+      "order_confirmed": "您的订单 {{orderCode}} 已确认，正在准备发货。",
+      "order_delivering": "您的订单 {{orderCode}} 已交由物流公司派送。",
+      "order_completed": "订单 {{orderCode}} 已成功送达。感谢您在 MKHE 购物！",
+      "order_cancelled": "订单 {{orderCode}} 已取消。",
+      "voucher_saved": "您已成功领取优惠券代码 {{code}}。",
+      "lucky_wheel_won": "您刚刚从神秘礼盒中获得了优惠券代码 {{code}}。"
+    },
+    "header_title": "通知",
+    "mark_all_read": "全部标为已读",
+    "empty": "您没有新通知",
+    "time_just_now": "刚刚"
   }
 }
