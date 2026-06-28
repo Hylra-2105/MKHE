@@ -1,18 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar
 } from "recharts";
 import { 
-  TrendingUp, AlertTriangle, Package, Coins, Calendar, RefreshCcw
+  TrendingUp, AlertTriangle, Package, Coins, Calendar, RefreshCcw, X,
+  Users, Ticket, Ban, Award
 } from "lucide-react";
 import toast from "react-hot-toast";
 import analyticsApi from "../../../../api/analyticsApi";
+import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
+import Dropdown from "@/components/ui/Dropdown";
+
+const flatpickrOptions = {
+  locale: Vietnamese,
+  dateFormat: "Y-m-d",
+};
+
+const formatFlatpickrDate = (dateObj) => {
+  if (!dateObj) return "";
+  const d = new Date(dateObj);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+};
+
+const fillMissingDates = (data, startDateStr, endDateStr) => {
+  if (!startDateStr || !endDateStr || !Array.isArray(data)) return data;
+  const result = [];
+  
+  const [y1, m1, d1] = startDateStr.split('-');
+  const [y2, m2, d2] = endDateStr.split('-');
+  
+  let current = new Date(y1, m1 - 1, d1);
+  const end = new Date(y2, m2 - 1, d2);
+  
+  if (isNaN(current.getTime()) || isNaN(end.getTime())) return data;
+
+  const dataMap = new Map();
+  data.forEach(item => dataMap.set(item.date, item.revenue));
+
+  while (current <= end) {
+    const pad = (n) => n.toString().padStart(2, '0');
+    const dateStr = `${current.getFullYear()}-${pad(current.getMonth() + 1)}-${pad(current.getDate())}`;
+    
+    result.push({
+      date: dateStr,
+      revenue: dataMap.get(dateStr) || 0
+    });
+    
+    current.setDate(current.getDate() + 1);
+  }
+  return result;
+};
 
 const DashboardFeature = () => {
   const { t } = useTranslation("admin");
   const [period, setPeriod] = useState("month");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [revenueData, setRevenueData] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [lowStockProducts, setLowStockProducts] = useState([]);
@@ -20,6 +70,11 @@ const DashboardFeature = () => {
   const [orderStatusData, setOrderStatusData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [generalStats, setGeneralStats] = useState({ totalRevenue: 0, totalOrders: 0, uniqueUsersCount: 0, aov: 0, cancelRate: 0, totalAllOrders: 0 });
+  const [voucherStats, setVoucherStats] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
+  const [selectedUserForModal, setSelectedUserForModal] = useState(null);
+  const initialFetch = useRef(true);
   
   // Custom colors for charts
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#A28CF8', '#F88CA2'];
@@ -48,31 +103,60 @@ const DashboardFeature = () => {
 
   const fetchData = async (isBackground = false) => {
     try {
-      if (!isBackground) setLoading(true);
-      else setRefreshing(true);
+      if (initialFetch.current) {
+        setLoading(true);
+        initialFetch.current = false;
+      }
+
+      let params = { period };
+      let currentStartDate = startDate;
+      let currentEndDate = endDate;
+
+      if (period === "custom") {
+        if (!startDate || !endDate) {
+          setLoading(false);
+          setRefreshing(false);
+          return;
+        }
+        params = { period, startDate, endDate };
+      } else {
+        const now = new Date();
+        currentEndDate = formatFlatpickrDate(now);
+        const start = new Date();
+        if (period === "week") start.setDate(now.getDate() - 7);
+        else if (period === "month") start.setDate(now.getDate() - 30);
+        else if (period === "quarter") start.setMonth(now.getMonth() - 3);
+        else if (period === "year") start.setFullYear(now.getFullYear() - 1);
+        currentStartDate = formatFlatpickrDate(start);
+      }
 
       const [revenueRes, productsRes, advancedRes] = await Promise.all([
-        analyticsApi.getRevenue(period),
-        analyticsApi.getProductsReport(),
-        analyticsApi.getAdvancedAnalytics(period)
+        analyticsApi.getRevenue(params),
+        analyticsApi.getProductsReport(params),
+        analyticsApi.getAdvancedAnalytics(params)
       ]);
 
-      setRevenueData(revenueRes || []);
+      const paddedRevenue = fillMissingDates(revenueRes || [], currentStartDate, currentEndDate);
+      setRevenueData(paddedRevenue);
       setTopProducts(productsRes?.topProducts || []);
       setLowStockProducts(productsRes?.lowStockProducts || []);
       setCategoryData(advancedRes?.categoryRevenue || []);
       setOrderStatusData(advancedRes?.orderStatusCounts || []);
+      setGeneralStats(advancedRes?.stats || { totalRevenue: 0, totalOrders: 0, uniqueUsersCount: 0, aov: 0, cancelRate: 0, totalAllOrders: 0 });
+      setVoucherStats(advancedRes?.voucherStats || []);
+      setTopCustomers(advancedRes?.topCustomers || []);
       
     } catch (error) {
       console.error("Dashboard Fetch Error:", error);
       if (!isBackground) toast.error(t("dashboard.fetch_error", { defaultValue: "Lỗi tải dữ liệu báo cáo" }));
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
   };
 
   useEffect(() => {
+    if (period === "custom" && (!startDate || !endDate)) return;
+    
     fetchData();
     
     // Auto refresh every 10 seconds (background)
@@ -81,7 +165,7 @@ const DashboardFeature = () => {
     }, 10000);
     
     return () => clearInterval(interval);
-  }, [period]);
+  }, [period, startDate, endDate]);
 
   const safeRevenueData = Array.isArray(revenueData) ? revenueData : [];
   const totalRevenue = safeRevenueData.reduce((sum, item) => sum + (Number(item?.revenue) || 0), 0);
@@ -94,63 +178,126 @@ const DashboardFeature = () => {
     );
   }
 
+  const periodOptions = [
+    { value: "week", label: t("dashboard.period_week", { defaultValue: "7 Ngày qua" }) },
+    { value: "month", label: t("dashboard.period_month", { defaultValue: "30 Ngày qua" }) },
+    { value: "quarter", label: t("dashboard.period_quarter", { defaultValue: "1 Quý qua" }) },
+    { value: "year", label: t("dashboard.period_year", { defaultValue: "1 Năm qua" }) },
+    { value: "custom", label: t("dashboard.period_custom", { defaultValue: "Tùy chỉnh..." }) },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-mkhe-text flex items-center gap-2">
-            <TrendingUp className="w-7 h-7 text-mkhe-primary" />
+          <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
             {t("dashboard.title", { defaultValue: "Thống kê Tổng quan" })}
           </h1>
-          <p className="text-mkhe-text/60 mt-1">
+          <p className="text-sm text-mkhe-text/60 italic">
             {t("dashboard.subtitle", { defaultValue: "Theo dõi doanh thu và rủi ro chuỗi cung ứng" })}
           </p>
         </div>
         
         <div className="flex items-center gap-3">
-          {refreshing && (
-            <span className="flex items-center text-xs text-mkhe-primary animate-pulse mr-2">
-              <RefreshCcw className="w-3 h-3 mr-1 animate-spin" /> 
-              {t("dashboard.syncing", { defaultValue: "Đang đồng bộ..." })}
-            </span>
+
+          {period === "custom" && (
+            <div className="flex items-center gap-2 mr-2">
+              <div className="relative">
+                <Flatpickr
+                  value={formatFlatpickrDate(startDate)}
+                  onChange={([date]) => setStartDate(formatFlatpickrDate(date))}
+                  options={{ ...flatpickrOptions }}
+                  className="h-10 pl-3 pr-8 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors w-32 cursor-pointer text-sm"
+                  placeholder={t("dashboard.date_from", { defaultValue: "Từ ngày" })}
+                />
+                {startDate && (
+                  <X
+                    className="absolute right-2 top-3 w-4 h-4 text-mkhe-text/40 hover:text-mkhe-text/80 cursor-pointer transition-colors"
+                    onClick={() => setStartDate("")}
+                  />
+                )}
+              </div>
+              <span className="text-mkhe-text/60">-</span>
+              <div className="relative">
+                <Flatpickr
+                  value={formatFlatpickrDate(endDate)}
+                  onChange={([date]) => setEndDate(formatFlatpickrDate(date))}
+                  options={{ ...flatpickrOptions, minDate: startDate || undefined }}
+                  className="h-10 pl-3 pr-8 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors w-32 cursor-pointer text-sm"
+                  placeholder={t("dashboard.date_to", { defaultValue: "Đến ngày" })}
+                />
+                {endDate && (
+                  <X
+                    className="absolute right-2 top-3 w-4 h-4 text-mkhe-text/40 hover:text-mkhe-text/80 cursor-pointer transition-colors"
+                    onClick={() => setEndDate("")}
+                  />
+                )}
+              </div>
+            </div>
           )}
-          <div className="relative">
-            <select
+
+          <div className="flex items-center">
+            <Calendar className="w-4 h-4 text-mkhe-text/50 mr-2" />
+            <Dropdown
               value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="appearance-none bg-white border border-mkhe-border/50 text-mkhe-text rounded-full pl-10 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-mkhe-primary shadow-sm"
-            >
-              <option value="week">{t("dashboard.period_week", { defaultValue: "7 Ngày qua" })}</option>
-              <option value="month">{t("dashboard.period_month", { defaultValue: "30 Ngày qua" })}</option>
-              <option value="year">{t("dashboard.period_year", { defaultValue: "1 Năm qua" })}</option>
-            </select>
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/50 pointer-events-none" />
+              options={periodOptions}
+              onChange={(val) => {
+                setPeriod(val);
+                if (val !== "custom") {
+                  setStartDate("");
+                  setEndDate("");
+                }
+              }}
+              className="w-40 shrink-0"
+              triggerClassName="h-10 px-4 rounded-full border-mkhe-border/50 text-sm bg-white"
+              optionClassName="text-sm"
+            />
           </div>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-            <Coins className="w-7 h-7" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-green-100 flex shrink-0 items-center justify-center text-green-600">
+            <Coins className="w-6 h-6" />
           </div>
-          <div>
-            <p className="text-sm text-mkhe-text/60 font-medium">{t("dashboard.total_revenue", { defaultValue: "Tổng doanh thu" })}</p>
-            <h3 className="text-2xl font-bold text-mkhe-text mt-1">{formatCurrency(totalRevenue)}</h3>
+          <div className="min-w-0">
+            <p className="text-xs text-mkhe-text/60 font-medium truncate">{t("dashboard.total_revenue", { defaultValue: "Tổng doanh thu" })}</p>
+            <h3 className="text-lg font-bold text-mkhe-text mt-1 truncate">{formatCurrency(totalRevenue)}</h3>
           </div>
         </div>
-        
-        <div className="bg-white rounded-2xl p-6 border border-red-200 shadow-sm flex items-center gap-5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0"></div>
-          <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center text-red-600 z-10">
-            <AlertTriangle className="w-7 h-7" />
+
+        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-blue-100 flex shrink-0 items-center justify-center text-blue-600">
+            <TrendingUp className="w-6 h-6" />
           </div>
-          <div className="z-10">
-            <p className="text-sm text-red-600/80 font-medium">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
-            <h3 className="text-2xl font-bold text-red-600 mt-1">
-              {lowStockProducts.length} <span className="text-sm font-normal text-red-500">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
+          <div className="min-w-0">
+            <p className="text-xs text-mkhe-text/60 font-medium truncate">{t("dashboard.aov")}</p>
+            <h3 className="text-lg font-bold text-mkhe-text mt-1 truncate">{formatCurrency(generalStats.aov)}</h3>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-purple-100 flex shrink-0 items-center justify-center text-purple-600">
+            <Users className="w-6 h-6" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-mkhe-text/60 font-medium truncate">{t("dashboard.customers")}</p>
+            <h3 className="text-lg font-bold text-mkhe-text mt-1 truncate">{generalStats.uniqueUsersCount} <span className="text-xs font-normal text-mkhe-text/60 ml-1">{t("dashboard.users")}</span></h3>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 border border-red-200 shadow-sm flex items-center gap-4 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0"></div>
+          <div className="w-12 h-12 rounded-full bg-red-100 flex shrink-0 items-center justify-center text-red-600 z-10">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <div className="z-10 min-w-0">
+            <p className="text-xs text-red-600/80 font-medium truncate">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
+            <h3 className="text-lg font-bold text-red-600 mt-1 truncate">
+              {lowStockProducts.length} <span className="text-xs font-normal text-red-500">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
             </h3>
           </div>
         </div>
@@ -179,9 +326,10 @@ const DashboardFeature = () => {
               <Line 
                 type="monotone" 
                 dataKey="revenue" 
-                name={t("dashboard.revenue", { defaultValue: "Doanh thu" })} 
+                name={t("dashboard.revenue")} 
                 stroke="#C6A87C" 
                 strokeWidth={3}
+                isAnimationActive={false}
                 activeDot={{ r: 8, fill: "#C6A87C", stroke: "#fff", strokeWidth: 2 }} 
               />
             </LineChart>
@@ -189,14 +337,14 @@ const DashboardFeature = () => {
         </div>
       </div>
 
-      {/* Two Columns: Top Products & Low Stock */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Three Columns: Top Products, Low Stock, Top Customers */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Top 5 Products */}
         <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
           <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-mkhe-primary" />
-            {t("dashboard.top_products", { defaultValue: "Top 5 Bán chạy nhất" })}
+            {t("dashboard.top_products")}
           </h2>
           
           <div className="space-y-4">
@@ -257,8 +405,51 @@ const DashboardFeature = () => {
             ))}
             
             {lowStockProducts.length === 0 && (
-              <div className="text-center py-8 text-red-600/50 text-sm">
+              <div className="text-center py-8 text-red-600/50 text-sm h-full flex items-center justify-center">
                 {t("dashboard.no_data", { defaultValue: "Chưa có dữ liệu" })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Top Customers (VIP) */}
+        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
+          <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
+            <Award className="w-5 h-5 text-yellow-500" />
+            {t("dashboard.top_customers")}
+          </h2>
+          
+          <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-1">
+            {topCustomers.map((customer, index) => (
+              <div key={customer.userId} className="flex flex-col gap-1 p-3 bg-gray-50/50 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-xs font-bold">
+                      {index + 1}
+                    </span>
+                    <span 
+                      className="font-bold text-mkhe-primary text-sm truncate max-w-[120px] cursor-pointer hover:underline"
+                      onClick={() => {
+                        if (customer.userDetails) setSelectedUserForModal(customer.userDetails);
+                        else toast.error(t("dashboard.user_detail_not_found"));
+                      }}
+                      title={t("dashboard.view_user_detail")}
+                    >
+                      {customer.name}
+                    </span>
+                  </div>
+                  <span className="text-xs text-mkhe-text/50">{customer.phone?.replace(/(\d{4})\d{3}(\d{3})/, '$1***$2')}</span>
+                </div>
+                <div className="flex justify-between text-xs text-mkhe-text/60 mt-1">
+                  <span>{t("dashboard.orders")}: <span className="font-medium text-mkhe-text">{customer.orderCount}</span></span>
+                  <span>{t("dashboard.spent")}: <span className="text-mkhe-primary font-bold">{formatCurrency(customer.totalSpent)}</span></span>
+                </div>
+              </div>
+            ))}
+            
+            {topCustomers.length === 0 && (
+              <div className="text-center py-8 text-mkhe-text/40 text-sm h-full flex items-center justify-center">
+                {t("dashboard.no_customer_data")}
               </div>
             )}
           </div>
@@ -266,20 +457,20 @@ const DashboardFeature = () => {
       </div>
 
       {/* Advanced Analytics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Pie Chart: Revenue by Category */}
         <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
-          <h2 className="text-lg font-bold text-mkhe-text mb-6">Cơ cấu Doanh thu (Làng nghề)</h2>
-          <div className="h-80 w-full">
+          <h2 className="text-lg font-bold text-mkhe-text mb-6">{t("dashboard.revenue_by_category")}</h2>
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={categoryData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
+                  innerRadius={50}
+                  outerRadius={80}
                   fill="#8884d8"
                   paddingAngle={5}
                   dataKey="value"
@@ -301,21 +492,21 @@ const DashboardFeature = () => {
 
         {/* Bar Chart: Order Status */}
         <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
-          <h2 className="text-lg font-bold text-mkhe-text mb-6">Tình trạng Đơn hàng</h2>
-          <div className="h-80 w-full">
+          <h2 className="text-lg font-bold text-mkhe-text mb-6">{t("dashboard.order_status_chart", { defaultValue: "Tình trạng Đơn hàng" })}</h2>
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={orderStatusData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="name" tick={{ fill: '#888', fontSize: 12 }} />
-                <YAxis allowDecimals={false} tick={{ fill: '#888', fontSize: 12 }} />
+                <XAxis dataKey="name" tick={{ fill: '#888', fontSize: 10 }} />
+                <YAxis allowDecimals={false} tick={{ fill: '#888', fontSize: 10 }} />
                 <Tooltip 
                   cursor={{ fill: 'rgba(0,0,0,0.05)' }}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
-                <Bar dataKey="count" name="Số đơn hàng" radius={[6, 6, 0, 0]}>
+                <Bar dataKey="count" name={t("dashboard.orders")} radius={[6, 6, 0, 0]} isAnimationActive={false}>
                   {orderStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name] || '#8884d8'} />
                   ))}
@@ -324,7 +515,57 @@ const DashboardFeature = () => {
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Voucher Performance */}
+        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
+          <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
+            <Ticket className="w-5 h-5 text-mkhe-primary" />
+            {t("dashboard.top_vouchers")}
+          </h2>
+          <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-1 pb-2">
+            {voucherStats.map((voucher) => {
+              const displayCode = voucher.code ? voucher.code : t("dashboard.auto_code");
+              const isAuto = !voucher.code;
+              
+              return (
+              <div key={voucher.code || 'auto'} className="flex flex-col gap-1.5 p-3.5 bg-white hover:bg-gray-50/80 rounded-xl border border-gray-100 transition-colors">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <Ticket className="w-4 h-4 text-mkhe-primary" />
+                    <span className={`font-bold text-[11px] uppercase px-2 py-0.5 rounded border ${isAuto ? 'bg-gray-50 text-gray-500 border-gray-200' : 'bg-mkhe-primary/10 text-mkhe-primary border-mkhe-primary/30'}`}>
+                      {displayCode}
+                    </span>
+                  </div>
+                  <span className="text-xs font-bold text-mkhe-text">{voucher.usageCount} <span className="font-normal text-mkhe-text/60">{t("dashboard.uses")}</span></span>
+                </div>
+                
+                <div className="flex justify-between text-xs mt-1">
+                  <span className="text-mkhe-text/60">
+                    {t("dashboard.revenue")}: <span className="font-semibold text-mkhe-text">{formatCurrency(voucher.revenueGenerated)}</span>
+                  </span>
+                  <span className="text-mkhe-text/60">
+                    {t("dashboard.discount_cost")}: <span className="font-semibold text-red-500">-{formatCurrency(voucher.totalDiscount)}</span>
+                  </span>
+                </div>
+              </div>
+            )})}
+            {voucherStats.length === 0 && (
+              <div className="text-center py-8 text-mkhe-text/40 text-sm h-full flex items-center justify-center">
+                {t("dashboard.no_voucher_data")}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
+
+      {selectedUserForModal && (
+        <UserDetailModal
+          isOpen={!!selectedUserForModal}
+          onClose={() => setSelectedUserForModal(null)}
+          user={selectedUserForModal}
+          viewOnly={true}
+        />
+      )}
     </div>
   );
 };

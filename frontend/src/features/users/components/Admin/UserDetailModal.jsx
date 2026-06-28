@@ -25,7 +25,7 @@ import {
 } from "@/utils/validators";
 import EditableField from "@/features/users/components/Admin/EditableField";
 
-const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false }) => {
+const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, viewOnly = false }) => {
   const { t } = useTranslation("admin");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
@@ -381,7 +381,8 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
         </div>
 
         {/* FOOTER BUTTONS */}
-        <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
+        {!viewOnly && (
+          <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
           <div className="flex gap-3">
             {!lockOnly && (
               <button
@@ -433,6 +434,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false })
             </div>
           )}
         </div>
+        )}
 
         {/* XÁC NHẬN XÓA TÀI KHOẢN */}
         <ConfirmModal
