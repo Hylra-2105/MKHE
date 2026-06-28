@@ -34,10 +34,10 @@ const VoucherManagementFeature = () => {
       if (!isBackground) setLoading(true);
       const res = await getAdminVouchersApi(page, limit, appliedSearch, statusFilter, typeFilter);
       if (res.data && res.data.success) {
-        setVouchers(res.data.data || []);
+        setVouchers(prev => JSON.stringify(prev) === JSON.stringify(res.data.data || []) ? prev : (res.data.data || []));
         setTotalPages(res.data.pagination?.totalPages || 1);
       } else {
-        setVouchers(res.data || []); 
+        setVouchers(prev => JSON.stringify(prev) === JSON.stringify(res.data || []) ? prev : (res.data || [])); 
       }
     } catch (error) {
       toast.error(t("voucher.fetch_error"));

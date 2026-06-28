@@ -14,6 +14,7 @@ const Dropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,7 +39,16 @@ const Dropdown = ({
       <button
         type="button"
         disabled={disabled}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen(!isOpen);
+            if (!isOpen) {
+              setTimeout(() => {
+                menuRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+              }, 100);
+            }
+          }
+        }}
         className={`w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border ${disabled ? "opacity-60 bg-gray-100 cursor-not-allowed" : "cursor-pointer"} ${triggerClassName}`}
       >
         <span className={`truncate ${selectedColor}`}>{selectedLabel}</span>
@@ -51,7 +61,8 @@ const Dropdown = ({
 
       {isOpen && (
         <div
-          className={`absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 overflow-hidden ${dropdownClassName}`}
+          ref={menuRef}
+          className={`absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 max-h-60 overflow-y-auto custom-scrollbar ${dropdownClassName}`}
         >
           {options.map((opt) => (
             <button

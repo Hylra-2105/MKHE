@@ -52,7 +52,7 @@ const ProductManagementPage = () => {
       );
 
       if (res.success) {
-        setProducts(res.data.data);
+        setProducts(prev => JSON.stringify(prev) === JSON.stringify(res.data.data) ? prev : res.data.data);
         setTotalPages(res.data.pagination?.totalPages || 1);
       }
     } catch (error) {

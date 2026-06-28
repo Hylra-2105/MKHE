@@ -6,6 +6,7 @@ import {
   MapPin,
   Info,
   Lock,
+  Unlock,
   Trash2,
   ShieldCheck,
   Edit2,
@@ -393,16 +394,25 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                 {t("common.delete_account")}
               </button>
             )}
-            <button
-              onClick={handleBlockButtonClick}
-              disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
-            >
-              <Lock className="w-4 h-4 transition-colors" />{" "}
-              {editForm.isBlocked
-                ? t("common.unlock_account")
-                : t("common.lock_account")}
-            </button>
+            {editForm.isBlocked ? (
+              <button
+                onClick={handleBlockButtonClick}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 border border-green-200 text-green-600 rounded-lg font-bold text-sm hover:bg-green-100 hover:border-green-300 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Unlock className="w-4 h-4 transition-colors" />{" "}
+                {t("common.unlock_account")}
+              </button>
+            ) : (
+              <button
+                onClick={handleBlockButtonClick}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Lock className="w-4 h-4 transition-colors" />{" "}
+                {t("common.lock_account")}
+              </button>
+            )}
           </div>
           {!lockOnly && (
             <div className="flex gap-3">

@@ -47,7 +47,7 @@ const OrderManagementPage = () => {
         highRisk
       });
       if (res.success) {
-        setOrders(res.data.data);
+        setOrders(prev => JSON.stringify(prev) === JSON.stringify(res.data.data) ? prev : res.data.data);
         setTotalPages(res.data.pagination.totalPages);
       }
     } catch (error) {

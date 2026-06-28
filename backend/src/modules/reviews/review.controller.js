@@ -141,7 +141,7 @@ export const getAllReviews = async (req, res) => {
     }
 
     const reviews = await Review.find(query)
-      .populate("user", "name email")
+      .populate("user", "name email phone avatar isBlocked role bio addresses")
       .populate("product", "name sku")
       .sort(sortConfig)
       .skip(skip)

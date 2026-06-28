@@ -137,14 +137,43 @@ const DashboardFeature = () => {
       ]);
 
       const paddedRevenue = fillMissingDates(revenueRes || [], currentStartDate, currentEndDate);
-      setRevenueData(paddedRevenue);
-      setTopProducts(productsRes?.topProducts || []);
-      setLowStockProducts(productsRes?.lowStockProducts || []);
-      setCategoryData(advancedRes?.categoryRevenue || []);
-      setOrderStatusData(advancedRes?.orderStatusCounts || []);
-      setGeneralStats(advancedRes?.stats || { totalRevenue: 0, totalOrders: 0, uniqueUsersCount: 0, aov: 0, cancelRate: 0, totalAllOrders: 0 });
-      setVoucherStats(advancedRes?.voucherStats || []);
-      setTopCustomers(advancedRes?.topCustomers || []);
+      
+      setRevenueData(prev => JSON.stringify(prev) === JSON.stringify(paddedRevenue) ? prev : paddedRevenue);
+      
+      setTopProducts(prev => {
+        const next = productsRes?.topProducts || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setLowStockProducts(prev => {
+        const next = productsRes?.lowStockProducts || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setCategoryData(prev => {
+        const next = advancedRes?.categoryRevenue || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setOrderStatusData(prev => {
+        const next = advancedRes?.orderStatusCounts || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setGeneralStats(prev => {
+        const next = advancedRes?.stats || { totalRevenue: 0, totalOrders: 0, uniqueUsersCount: 0, aov: 0, cancelRate: 0, totalAllOrders: 0 };
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setVoucherStats(prev => {
+        const next = advancedRes?.voucherStats || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
+      
+      setTopCustomers(prev => {
+        const next = advancedRes?.topCustomers || [];
+        return JSON.stringify(prev) === JSON.stringify(next) ? prev : next;
+      });
       
     } catch (error) {
       console.error("Dashboard Fetch Error:", error);
@@ -250,7 +279,7 @@ const DashboardFeature = () => {
                 }
               }}
               className="w-40 shrink-0"
-              triggerClassName="h-10 px-4 rounded-full border-mkhe-border/50 text-sm bg-white"
+              triggerClassName="h-10 px-4 rounded-full border-mkhe-border/50 text-sm bg-transparent hover:bg-mkhe-primary/5 transition-colors"
               optionClassName="text-sm"
             />
           </div>
@@ -259,8 +288,8 @@ const DashboardFeature = () => {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-green-100 flex shrink-0 items-center justify-center text-green-600">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-green-500/20 flex shrink-0 items-center justify-center text-green-500">
             <Coins className="w-6 h-6" />
           </div>
           <div className="min-w-0">
@@ -269,8 +298,8 @@ const DashboardFeature = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex shrink-0 items-center justify-center text-blue-600">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-blue-500/20 flex shrink-0 items-center justify-center text-blue-500">
             <TrendingUp className="w-6 h-6" />
           </div>
           <div className="min-w-0">
@@ -279,8 +308,8 @@ const DashboardFeature = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-purple-100 flex shrink-0 items-center justify-center text-purple-600">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-purple-500/20 flex shrink-0 items-center justify-center text-purple-500">
             <Users className="w-6 h-6" />
           </div>
           <div className="min-w-0">
@@ -289,22 +318,22 @@ const DashboardFeature = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 border border-red-200 shadow-sm flex items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-red-50 rounded-bl-full -z-0"></div>
-          <div className="w-12 h-12 rounded-full bg-red-100 flex shrink-0 items-center justify-center text-red-600 z-10">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full -z-0"></div>
+          <div className="w-12 h-12 rounded-full bg-red-500/20 flex shrink-0 items-center justify-center text-red-500 z-10">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div className="z-10 min-w-0">
-            <p className="text-xs text-red-600/80 font-medium truncate">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
-            <h3 className="text-lg font-bold text-red-600 mt-1 truncate">
-              {lowStockProducts.length} <span className="text-xs font-normal text-red-500">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
+            <p className="text-xs text-red-500/80 font-medium truncate">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
+            <h3 className="text-lg font-bold text-red-500 mt-1 truncate">
+              {lowStockProducts.length} <span className="text-xs font-normal text-red-500/70">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
             </h3>
           </div>
         </div>
       </div>
 
       {/* Main Chart */}
-      <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
+      <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
         <h2 className="text-lg font-bold text-mkhe-text mb-6">{t("dashboard.revenue_chart", { defaultValue: "Biểu đồ dòng tiền (Đã thanh toán)" })}</h2>
         <div className="h-80 w-full mt-4">
           <ResponsiveContainer width="100%" height="100%">
@@ -341,7 +370,7 @@ const DashboardFeature = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Top 5 Products */}
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
           <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
             <Package className="w-5 h-5 text-mkhe-primary" />
             {t("dashboard.top_products")}
@@ -349,7 +378,7 @@ const DashboardFeature = () => {
           
           <div className="space-y-4">
             {topProducts.map((product, index) => (
-              <div key={product._id} className="flex items-center gap-4 p-3 hover:bg-mkhe-border/10 rounded-xl transition-colors">
+              <div key={product._id} className="flex items-center gap-4 p-3 hover:bg-mkhe-primary/5 rounded-xl transition-colors">
                 <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 text-mkhe-primary flex items-center justify-center font-bold text-sm">
                   #{index + 1}
                 </div>
@@ -378,26 +407,26 @@ const DashboardFeature = () => {
         </div>
 
         {/* Low Stock Alerts */}
-        <div className="bg-white rounded-2xl p-6 border border-red-200 shadow-sm">
-          <h2 className="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
+          <h2 className="text-lg font-bold text-red-500 mb-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             {t("dashboard.low_stock_list", { defaultValue: "Cần nhập hàng khẩn cấp (< 10)" })}
           </h2>
           
           <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
             {lowStockProducts.map((product) => (
-              <div key={product._id} className="flex items-center gap-4 p-3 bg-red-50/50 hover:bg-red-50 rounded-xl transition-colors border border-red-100">
+              <div key={product._id} className="flex items-center gap-4 p-3 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 rounded-xl transition-colors border border-mkhe-primary/10">
                 <img 
                   src={getImageUrl(product.images?.[0])} 
                   alt={product.name}
-                  className="w-12 h-12 rounded-lg object-cover border border-red-200"
+                  className="w-12 h-12 rounded-lg object-cover border border-mkhe-border/30"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-red-900 truncate">{product.name}</p>
-                  <p className="text-xs text-red-600/70">SKU: {product.sku}</p>
+                  <p className="text-sm font-bold text-mkhe-text truncate">{product.name}</p>
+                  <p className="text-xs text-mkhe-text/50">SKU: {product.sku}</p>
                 </div>
                 <div className="text-right">
-                  <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold border border-red-200 shadow-sm">
+                  <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold border border-red-500/20 shadow-sm">
                     {t("dashboard.stock", { defaultValue: "Tồn:" })} {product.stock}
                   </div>
                 </div>
@@ -405,7 +434,7 @@ const DashboardFeature = () => {
             ))}
             
             {lowStockProducts.length === 0 && (
-              <div className="text-center py-8 text-red-600/50 text-sm h-full flex items-center justify-center">
+              <div className="text-center py-8 text-red-500/50 text-sm h-full flex items-center justify-center">
                 {t("dashboard.no_data", { defaultValue: "Chưa có dữ liệu" })}
               </div>
             )}
@@ -413,7 +442,7 @@ const DashboardFeature = () => {
         </div>
 
         {/* Top Customers (VIP) */}
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
           <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
             <Award className="w-5 h-5 text-yellow-500" />
             {t("dashboard.top_customers")}
@@ -421,10 +450,10 @@ const DashboardFeature = () => {
           
           <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-1">
             {topCustomers.map((customer, index) => (
-              <div key={customer.userId} className="flex flex-col gap-1 p-3 bg-gray-50/50 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
+              <div key={customer.userId} className="flex flex-col gap-1 p-3 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 rounded-xl border border-mkhe-primary/10 transition-colors">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 rounded-full bg-yellow-100 text-yellow-600 flex items-center justify-center text-xs font-bold">
+                    <span className="w-5 h-5 rounded-full bg-yellow-500/20 text-yellow-500 flex items-center justify-center text-xs font-bold">
                       {index + 1}
                     </span>
                     <span 
@@ -460,7 +489,7 @@ const DashboardFeature = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Pie Chart: Revenue by Category */}
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
           <h2 className="text-lg font-bold text-mkhe-text mb-6">{t("dashboard.revenue_by_category")}</h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -491,7 +520,7 @@ const DashboardFeature = () => {
         </div>
 
         {/* Bar Chart: Order Status */}
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
           <h2 className="text-lg font-bold text-mkhe-text mb-6">{t("dashboard.order_status_chart", { defaultValue: "Tình trạng Đơn hàng" })}</h2>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -517,7 +546,7 @@ const DashboardFeature = () => {
         </div>
 
         {/* Voucher Performance */}
-        <div className="bg-white rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
+        <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex flex-col">
           <h2 className="text-lg font-bold text-mkhe-text mb-4 flex items-center gap-2">
             <Ticket className="w-5 h-5 text-mkhe-primary" />
             {t("dashboard.top_vouchers")}
@@ -528,11 +557,11 @@ const DashboardFeature = () => {
               const isAuto = !voucher.code;
               
               return (
-              <div key={voucher.code || 'auto'} className="flex flex-col gap-1.5 p-3.5 bg-white hover:bg-gray-50/80 rounded-xl border border-gray-100 transition-colors">
+              <div key={voucher.code || 'auto'} className="flex flex-col gap-1.5 p-3.5 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 rounded-xl border border-mkhe-primary/10 transition-colors">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
                     <Ticket className="w-4 h-4 text-mkhe-primary" />
-                    <span className={`font-bold text-[11px] uppercase px-2 py-0.5 rounded border ${isAuto ? 'bg-gray-50 text-gray-500 border-gray-200' : 'bg-mkhe-primary/10 text-mkhe-primary border-mkhe-primary/30'}`}>
+                    <span className={`font-bold text-[11px] uppercase px-2 py-0.5 rounded border ${isAuto ? 'bg-mkhe-text/5 text-mkhe-text/60 border-mkhe-border/50' : 'bg-mkhe-primary/10 text-mkhe-primary border-mkhe-primary/30'}`}>
                       {displayCode}
                     </span>
                   </div>

@@ -24,6 +24,70 @@ const formatFlatpickrDate = (dateObj) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
+const MultiSelectDropdown = ({ options, value, onChange, placeholder, t }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleOption = (optValue) => {
+    if (value.includes(optValue)) {
+      onChange(value.filter(v => v !== optValue));
+    } else {
+      onChange([...value, optValue]);
+    }
+  };
+
+  const selectedText = value.length > 0 
+    ? t("voucher.selected_count", { count: value.length, defaultValue: `Đã chọn ${value.length}` })
+    : placeholder;
+
+  return (
+    <div className="relative" ref={dropdownRef} style={{ zIndex: isOpen ? 50 : "auto" }}>
+      <button
+        type="button"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          if (!isOpen) {
+            setTimeout(() => {
+              menuRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }, 100);
+          }
+        }}
+        className="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm text-mkhe-text flex justify-between items-center focus:outline-none focus:border-mkhe-primary transition-colors cursor-pointer"
+      >
+        <span className={value.length > 0 ? "text-mkhe-primary font-medium" : "text-mkhe-text/60"}>{selectedText}</span>
+        <svg className={`w-4 h-4 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      
+      {isOpen && (
+        <div ref={menuRef} className="absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 max-h-60 overflow-y-auto custom-scrollbar">
+          {options.map((opt) => (
+            <label key={opt.value} className="w-[calc(100%-16px)] mx-2 px-3 py-2.5 rounded-md flex items-center gap-3 cursor-pointer hover:bg-mkhe-primary/10 transition-colors">
+              <input 
+                type="checkbox" 
+                checked={value.includes(opt.value)}
+                onChange={() => toggleOption(opt.value)}
+                className="accent-mkhe-primary w-4 h-4 cursor-pointer shrink-0"
+              />
+              <span className="text-sm text-mkhe-text font-medium truncate">{opt.label}</span>
+            </label>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const { t } = useTranslation(["admin"]);
   const [formData, setFormData] = useState({
@@ -525,25 +589,19 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               {fetchingOptions ? (
                 <p className="text-sm text-mkhe-text/60 animate-pulse">{t("voucher.loading_options")}</p>
               ) : (
-                <>
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1.5">{t("voucher.applicable_villages")}</label>
                     {options.villages.length === 0 ? (
                        <p className="text-xs text-mkhe-text/50 italic">{t("voucher.no_villages")}</p>
                     ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {options.villages.map((v) => (
-                          <label key={v} className="flex items-center gap-1.5 cursor-pointer bg-mkhe-primary/5 px-3 py-2 border border-mkhe-border/30 rounded-xl hover:bg-mkhe-primary/10 transition-colors">
-                            <input 
-                              type="checkbox" 
-                              checked={formData.applicableVillages.includes(v)}
-                              onChange={() => toggleArrayItem("applicableVillages", v)}
-                              className="accent-mkhe-primary w-4 h-4 cursor-pointer"
-                            />
-                            <span className="text-xs text-mkhe-text font-medium">{v}</span>
-                          </label>
-                        ))}
-                      </div>
+                      <MultiSelectDropdown 
+                        options={options.villages.map(v => ({ value: v, label: v }))}
+                        value={formData.applicableVillages}
+                        onChange={(newVal) => setFormData(prev => ({ ...prev, applicableVillages: newVal }))}
+                        placeholder={t("voucher.select_villages", { defaultValue: "Chọn làng nghề..." })}
+                        t={t}
+                      />
                     )}
                   </div>
 
@@ -552,22 +610,20 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     {options.categories.length === 0 ? (
                        <p className="text-xs text-mkhe-text/50 italic">{t("voucher.no_categories")}</p>
                     ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {options.categories.map((c) => (
-                          <label key={c} className="flex items-center gap-1.5 cursor-pointer bg-mkhe-primary/5 px-3 py-2 border border-mkhe-border/30 rounded-xl hover:bg-mkhe-primary/10 transition-colors">
-                            <input 
-                              type="checkbox" 
-                              checked={formData.applicableCategories.includes(c)}
-                              onChange={() => toggleArrayItem("applicableCategories", c)}
-                              className="accent-mkhe-primary w-4 h-4 cursor-pointer"
-                            />
-                            <span className="text-xs text-mkhe-text font-medium">{c}</span>
-                          </label>
-                        ))}
-                      </div>
+                      <Dropdown
+                        value={formData.applicableCategories[0] || ""}
+                        options={[
+                          { value: "", label: t("voucher.all_categories", { defaultValue: "Tất cả phân khúc" }) },
+                          ...options.categories.map(c => ({ value: c, label: c }))
+                        ]}
+                        onChange={(val) => setFormData(prev => ({ ...prev, applicableCategories: val ? [val] : [] }))}
+                        placeholder={t("voucher.select_category", { defaultValue: "Chọn phân khúc..." })}
+                        className="w-full"
+                        triggerClassName="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm"
+                      />
                     )}
                   </div>
-                </>
+                </div>
               )}
 
               <div className="flex items-center justify-between p-4 bg-mkhe-primary/5 border border-mkhe-primary/20 rounded-2xl mt-4">

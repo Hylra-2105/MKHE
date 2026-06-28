@@ -19,7 +19,7 @@ const OrderHistoryTab = () => {
     try {
       const response = await orderApi.getMyOrders({ page: currentPage, limit: 3 });
       if (response && response.success) {
-        setOrders(response.data.data || []);
+        setOrders(prev => JSON.stringify(prev) === JSON.stringify(response.data.data || []) ? prev : (response.data.data || []));
         setTotalPages(response.data.pagination?.totalPages || 1);
       }
     } catch (error) {

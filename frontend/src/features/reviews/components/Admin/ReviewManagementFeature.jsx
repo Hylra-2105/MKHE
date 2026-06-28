@@ -6,6 +6,9 @@ import { reviewApi } from "@/api/reviewApi";
 import Pagination from "@/components/ui/Pagination";
 import Dropdown from "@/components/ui/Dropdown";
 import { getImageUrl } from "@/utils/formatters";
+import { FiLock } from "react-icons/fi";
+import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const ReviewManagementFeature = () => {
   const { t } = useTranslation(["admin", "common", "reviews"]);
@@ -15,6 +18,10 @@ const ReviewManagementFeature = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
+  
+  const { user } = useAuthStore();
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
@@ -203,17 +210,28 @@ const ReviewManagementFeature = () => {
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-center">
-                      <button
-                        onClick={() => handleToggleVisibility(review._id, review.isHidden)}
-                        className={`p-2 rounded-lg transition-colors cursor-pointer ${
-                          review.isHidden 
-                            ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" 
-                            : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
-                        }`}
-                        title={review.isHidden ? t("reviews:show") : t("reviews:hide")}
-                      >
-                        {review.isHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                      </button>
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => handleToggleVisibility(review._id, review.isHidden)}
+                          className={`p-2 rounded-full transition-colors cursor-pointer w-9 h-9 flex items-center justify-center shrink-0 ${
+                            review.isHidden 
+                              ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" 
+                              : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
+                          }`}
+                          title={review.isHidden ? t("reviews:show") : t("reviews:hide")}
+                        >
+                          {review.isHidden ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                        </button>
+                        {user?.role === "Admin" && review.user && (
+                          <button 
+                            onClick={() => { setSelectedUser(review.user); setIsUserModalOpen(true); }}
+                            className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${review.user.isBlocked ? "text-green-600 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
+                            title={review.user.isBlocked ? t("common:unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("common:lock_account", { defaultValue: "Khóa Tài Khoản" })}
+                          >
+                            <FiLock size={16} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -306,6 +324,15 @@ const ReviewManagementFeature = () => {
           </div>
         </div>
       )}
+
+      {/* User Detail Modal */}
+      <UserDetailModal
+        isOpen={isUserModalOpen}
+        onClose={() => { setIsUserModalOpen(false); setSelectedUser(null); }}
+        user={selectedUser}
+        onRefresh={fetchReviews}
+        lockOnly={true}
+      />
     </div>
   );
 };
