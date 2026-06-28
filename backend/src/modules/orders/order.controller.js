@@ -424,6 +424,8 @@ export const updateOrderStatus = async (req, res) => {
       return errorResponse(res, 404, "ORDER_NOT_FOUND");
     }
 
+    const previousPaymentStatus = order.paymentStatus;
+
     if (paymentStatus) {
       const allowedPaymentStatuses = ["UNPAID", "PAID"];
       if (allowedPaymentStatuses.includes(paymentStatus)) {
@@ -477,6 +479,13 @@ export const updateOrderStatus = async (req, res) => {
 
     await order.save();
 
+    // Increment sold count if just became PAID
+    if (order.paymentStatus === "PAID" && previousPaymentStatus !== "PAID") {
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+      }
+    }
+
     return successResponse(res, 200, "ORDER_STATUS_UPDATED", order);
   } catch (error) {
     console.error("updateOrderStatus Error:", error);
@@ -509,6 +518,11 @@ export const payosWebhook = async (req, res) => {
       if (order && order.paymentStatus !== "PAID") {
         order.paymentStatus = "PAID";
         await order.save();
+        
+        // Increment sold count
+        for (const item of order.items) {
+          await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+        }
       }
     }
 

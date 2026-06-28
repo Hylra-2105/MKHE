@@ -201,7 +201,7 @@ export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
     <tr>
       <td style="padding: 12px; border-bottom: 1px solid #eee;">
         <div style="display: flex; align-items: center;">
-          ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px; border: 1px solid #eee;" />` : ''}
+          ${item.image ? `<img src="${item.image.startsWith('http') ? item.image : ((process.env.FRONTEND_URL || 'https://mkhe.netlify.app') + (item.image.startsWith('/') ? '' : '/') + item.image)}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 15px; border: 1px solid #eee;" />` : ''}
           <span style="font-weight: 500;">${item.name}</span>
         </div>
       </td>

@@ -29,6 +29,11 @@ export const userApi = {
     return response.data;
   },
 
+  updateAddress: async (addressId, addressData) => {
+    const response = await axiosClient.put(`/users/profile/addresses/${addressId}`, addressData);
+    return response.data;
+  },
+
   setDefaultAddress: async (addressId) => {
     const response = await axiosClient.put(`/users/profile/addresses/${addressId}/default`);
     return response.data;

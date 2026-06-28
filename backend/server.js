@@ -25,6 +25,7 @@ import orderRoutes from "./src/modules/orders/order.routes.js";
 import blogRoutes from "./src/modules/blogs/blog.routes.js";
 import reviewRoutes from "./src/modules/reviews/review.routes.js";
 import uploadRoutes from "./src/modules/upload/upload.routes.js";
+import analyticsRoutes from "./src/modules/analytics/analytics.route.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 
 connectDB();
@@ -67,6 +68,9 @@ app.use("/api/products", productRoutes);
 
 // API liên quan đến NFC Tags
 app.use("/api/nfc-tags", nfcRoutes);
+
+// API Analytics
+app.use("/api/analytics", analyticsRoutes);
 
 // API liên quan đến DPP
 app.use("/api/dpp", dppRoutes);
