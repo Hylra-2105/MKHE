@@ -60,6 +60,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -72,6 +73,8 @@ export default function Header() {
 
   const dropdownRef = useRef(null);
   const guestLangRef = useRef(null);
+  const searchRef = useRef(null);
+  const searchToggleRef = useRef(null);
 
   const [isDark, setIsDark] = useState(() => {
     // Init từ localStorage
@@ -109,9 +112,27 @@ export default function Header() {
       ) {
         setIsGuestLangOpen(false);
       }
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        searchToggleRef.current &&
+        !searchToggleRef.current.contains(event.target)
+      ) {
+        setIsSearchOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Chiều cao màn hình trừ đi chiều cao Header (h-20 ~ 80px)
+      setIsScrolled(window.scrollY > window.innerHeight - 80);
+    };
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = async () => {
@@ -144,8 +165,13 @@ export default function Header() {
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
+  const isHomePage = location.pathname === "/home" || location.pathname === "/";
+  const headerClasses = isHomePage && !isScrolled
+    ? "bg-transparent border-transparent text-white drop-shadow-md" 
+    : "bg-mkhe-bg border-mkhe-border text-current";
+
   return (
-    <header className="h-20 border-b border-mkhe-border bg-mkhe-bg flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] text-current transition-colors duration-300">
+    <header className={`h-20 border-b flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] transition-colors duration-300 ${headerClasses}`}>
       {/* LOGO AND MOBILE MENU */}
       <div className="flex-shrink-0 lg:w-1/4 flex items-center gap-3">
         {/* Hamburger Menu cho Mobile */}
@@ -196,6 +222,7 @@ export default function Header() {
         {!isAdminOrStaff && (
           <>
             <button 
+              ref={searchToggleRef}
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors"
             >
@@ -250,7 +277,7 @@ export default function Header() {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-6 w-60 max-w-[calc(100vw-2rem)] bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 origin-top-right">
+              <div className="absolute right-0 mt-6 w-60 max-w-[calc(100vw-2rem)] bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 origin-top-right text-mkhe-text">
                 {activeMenu === "main" && (
                   <div>
                     <Link
@@ -489,7 +516,7 @@ export default function Header() {
               </button>
 
               {isGuestLangOpen && (
-                <div className="absolute right-0 mt-4 w-32 bg-mkhe-input border border-mkhe-border rounded-md shadow-xl py-1 z-50">
+                <div className="absolute right-0 mt-4 w-32 bg-mkhe-input border border-mkhe-border rounded-md shadow-xl py-1 z-50 text-mkhe-text">
                   {LANGUAGES.map((lang) => (
                     <button
                       key={lang.code}
@@ -540,21 +567,21 @@ export default function Header() {
 
       {/* SEARCH BAR OVERLAY */}
       {isSearchOpen && (
-        <div className="absolute top-20 left-0 w-full bg-mkhe-bg border-b border-mkhe-border shadow-md z-[55] animate-in slide-in-from-top-2 fade-in p-4 md:px-10 flex justify-center">
-          <form onSubmit={handleSearch} className="relative w-full max-w-2xl flex items-center">
-            <Search className="w-5 h-5 absolute left-4 text-mkhe-text/50" />
+        <div className="absolute top-20 left-0 w-full z-[55] animate-in slide-in-from-top-2 fade-in p-4 flex justify-center pointer-events-none">
+          <form ref={searchRef} onSubmit={handleSearch} className="relative w-full max-w-2xl flex items-center pointer-events-auto drop-shadow-2xl">
+            <Search className="w-5 h-5 absolute left-4 text-mkhe-text/50 z-10" />
             <input
               type="text"
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               placeholder="Tìm kiếm sản phẩm..."
-              className="w-full bg-mkhe-bg border border-mkhe-border rounded-full py-3 pl-12 pr-12 focus:outline-none focus:border-mkhe-primary transition-colors text-sm shadow-inner"
+              className="w-full bg-mkhe-bg/95 backdrop-blur-md border border-mkhe-border/50 rounded-full py-3.5 pl-12 pr-12 focus:outline-none focus:border-mkhe-primary focus:ring-1 focus:ring-mkhe-primary transition-all text-sm shadow-xl text-mkhe-text placeholder-mkhe-text/50"
               autoFocus
             />
             <button 
               type="button" 
               onClick={() => setIsSearchOpen(false)}
-              className="absolute right-4 text-mkhe-text/50 hover:text-mkhe-primary transition-colors cursor-pointer"
+              className="absolute right-3 text-mkhe-text/50 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors cursor-pointer p-1.5 rounded-full z-10"
             >
               <X className="w-5 h-5" />
             </button>
