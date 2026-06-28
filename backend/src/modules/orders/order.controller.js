@@ -509,13 +509,22 @@ export const updateOrderStatus = async (req, res) => {
 
     await order.save();
 
-    // Increment sold count if just became PAID
-    if (order.paymentStatus === "PAID" && previousPaymentStatus !== "PAID") {
+    // Adjust sold count based on PAID and CANCELLED states
+    const wasCountedAsSold = previousPaymentStatus === "PAID" && previousStatus !== "CANCELLED";
+    const willBeCountedAsSold = order.paymentStatus === "PAID" && order.orderStatus !== "CANCELLED";
+
+    if (!wasCountedAsSold && willBeCountedAsSold) {
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
       }
+    } else if (wasCountedAsSold && !willBeCountedAsSold) {
+      for (const item of order.items) {
+        await Product.findByIdAndUpdate(item.product, { $inc: { sold: -item.quantity } });
+      }
+    }
 
-      // --- TRIGGER NOTIFICATION FOR PAYMENT SUCCESS ---
+    // --- TRIGGER NOTIFICATION FOR PAYMENT SUCCESS ---
+    if (order.paymentStatus === "PAID" && previousPaymentStatus !== "PAID") {
       try {
         const notif = await Notification.create({
           user: order.user,

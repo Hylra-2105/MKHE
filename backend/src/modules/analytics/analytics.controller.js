@@ -34,6 +34,7 @@ export const getRevenueAnalytics = async (req, res) => {
       {
         $match: {
           paymentStatus: "PAID",
+          orderStatus: { $ne: "CANCELLED" },
           createdAt: { $gte: startDate, $lte: endDate },
         },
       },
@@ -92,6 +93,7 @@ export const getProductsReport = async (req, res) => {
       {
         $match: {
           paymentStatus: "PAID",
+          orderStatus: { $ne: "CANCELLED" },
           createdAt: { $gte: startDate, $lte: endDate },
         },
       },
@@ -171,6 +173,7 @@ export const getAdvancedAnalytics = async (req, res) => {
       {
         $match: {
           paymentStatus: "PAID",
+          orderStatus: { $ne: "CANCELLED" },
           createdAt: { $gte: startDate, $lte: endDate },
         },
       },
@@ -228,6 +231,7 @@ export const getAdvancedAnalytics = async (req, res) => {
       {
         $match: {
           paymentStatus: "PAID",
+          orderStatus: { $ne: "CANCELLED" },
           createdAt: { $gte: startDate, $lte: endDate },
         },
       },
@@ -272,6 +276,7 @@ export const getAdvancedAnalytics = async (req, res) => {
       {
         $match: {
           paymentStatus: "PAID",
+          orderStatus: { $ne: "CANCELLED" },
           createdAt: { $gte: startDate, $lte: endDate },
           voucherCode: { $nin: [null, "", "null", "undefined"] },
           discountAmount: { $gt: 0 },
