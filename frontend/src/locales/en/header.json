@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "Heritage",
-    "craft_villages": "Craft Villages",
+    "home": "Home",
+    "about": "About",
     "shop": "Shop",
     "storytelling": "Storytelling",
-    "blog": "Blog & News"
+    "blog": "Blog & News",
+    "contact": "Contact"
   },
   "user_menu": {
     "profile": "Profile",
@@ -39,5 +40,31 @@
     "zh": "Chinese",
     "ko": "Korean",
     "ja": "Japanese"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "Order Placed Successfully",
+      "payment_success": "Payment Successful",
+      "order_confirmed": "Order Confirmed",
+      "order_delivering": "Order Delivering",
+      "order_completed": "Delivery Completed",
+      "order_cancelled": "Order Cancelled",
+      "voucher_saved": "Voucher Saved Successfully",
+      "lucky_wheel_won": "Congratulations! You Won!"
+    },
+    "message": {
+      "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
+      "payment_success": "Payment for order {{orderCode}} has been recorded.",
+      "order_confirmed": "Your order {{orderCode}} has been confirmed and is being prepared.",
+      "order_delivering": "Your order {{orderCode}} has been handed over to the shipping carrier.",
+      "order_completed": "Order {{orderCode}} has been delivered successfully. Thank you for shopping with MKHE!",
+      "order_cancelled": "Order {{orderCode}} has been cancelled.",
+      "voucher_saved": "You have successfully collected the discount code {{code}}.",
+      "lucky_wheel_won": "You just received a discount code {{code}} from the Mystery Box."
+    },
+    "header_title": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "empty": "You have no notifications",
+    "time_just_now": "just now"
   }
 }

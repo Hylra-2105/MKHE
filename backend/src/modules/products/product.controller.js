@@ -73,6 +73,8 @@ export const createProduct = async (req, res) => {
 };
 
 // [GET] /api/products - Lấy danh sách sản phẩm với phân trang
+import fs from "fs";
+
 export const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -92,8 +94,8 @@ export const getProducts = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { name: { $regex: searchRegex } },
-        { sku: { $regex: searchRegex } },
+        { name: { $regex: searchRegex, $options: "i" } },
+        { sku: { $regex: searchRegex, $options: "i" } },
       ];
     }
 
@@ -127,6 +129,11 @@ export const getProducts = async (req, res) => {
       .limit(limit);
 
     const totalPages = Math.ceil(totalProducts / limit);
+
+    fs.appendFileSync(
+      "c:\\React\\MKHE\\search_debug.txt", 
+      JSON.stringify({ time: new Date(), query, totalProducts, searchStr: search, url: req.originalUrl }) + "\n"
+    );
 
     return successResponse(res, 200, "GET_PRODUCTS_SUCCESS", {
       pagination: {
@@ -407,8 +414,8 @@ export const getShopProducts = async (req, res) => {
       const searchRegex = createVietnameseRegex(search);
       andConditions.push({
         $or: [
-          { name: { $regex: searchRegex } },
-          { sku: { $regex: searchRegex } },
+          { name: { $regex: searchRegex, $options: "i" } },
+          { sku: { $regex: searchRegex, $options: "i" } },
         ]
       });
     }
@@ -435,8 +442,8 @@ export const getShopProducts = async (req, res) => {
       const cvRegex = createVietnameseRegex(craftVillage);
       andConditions.push({
         $or: [
-          { craftVillage: { $regex: cvRegex } },
-          { vendor: { $regex: cvRegex } }
+          { craftVillage: { $regex: cvRegex, $options: "i" } },
+          { vendor: { $regex: cvRegex, $options: "i" } }
         ]
       });
     }

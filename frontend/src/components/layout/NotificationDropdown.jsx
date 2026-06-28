@@ -3,9 +3,10 @@ import { Bell, Check, Package, X } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-function getRelativeTime(date) {
-  const rtf = new Intl.RelativeTimeFormat('vi', { numeric: 'auto' });
+function getRelativeTime(date, lang, t) {
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
   const daysDifference = Math.round((new Date(date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
   const hoursDifference = Math.round((new Date(date).getTime() - new Date().getTime()) / (1000 * 60 * 60));
   const minutesDifference = Math.round((new Date(date).getTime() - new Date().getTime()) / (1000 * 60));
@@ -13,10 +14,57 @@ function getRelativeTime(date) {
   if (Math.abs(daysDifference) > 0) return rtf.format(daysDifference, 'day');
   if (Math.abs(hoursDifference) > 0) return rtf.format(hoursDifference, 'hour');
   if (Math.abs(minutesDifference) > 0) return rtf.format(minutesDifference, 'minute');
-  return "vừa xong";
+  return t("notifications.time_just_now", { defaultValue: "vừa xong" });
 }
 
+const translateNotificationTitle = (title, t) => {
+  const map = {
+    "Đặt hàng thành công": "notifications.title.order_placed",
+    "Thanh toán thành công": "notifications.title.payment_success",
+    "Đơn hàng đã được xác nhận": "notifications.title.order_confirmed",
+    "Đơn hàng đang giao": "notifications.title.order_delivering",
+    "Giao hàng thành công": "notifications.title.order_completed",
+    "Đơn hàng đã hủy": "notifications.title.order_cancelled",
+    "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
+    "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won"
+  };
+  return map[title] ? t(map[title]) : title;
+};
+
+const translateNotificationMessage = (message, title, t) => {
+  const orderMatch = message.match(/((?:ORD-|MKHE-)[A-Z0-9]+)/);
+  const orderCode = orderMatch ? orderMatch[1] : "";
+  
+  if (title === "Lưu mã giảm giá thành công") {
+     const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
+     const voucherCode = voucherMatch ? voucherMatch[1] : "";
+     return t("notifications.message.voucher_saved", { code: voucherCode, defaultValue: message });
+  }
+
+  if (title === "Chúc mừng trúng thưởng!") {
+     const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
+     const voucherCode = voucherMatch ? voucherMatch[1] : "";
+     return t("notifications.message.lucky_wheel_won", { code: voucherCode, defaultValue: message });
+  }
+
+  const map = {
+    "Đặt hàng thành công": "notifications.message.order_placed",
+    "Thanh toán thành công": "notifications.message.payment_success",
+    "Đơn hàng đã được xác nhận": "notifications.message.order_confirmed",
+    "Đơn hàng đang giao": "notifications.message.order_delivering",
+    "Giao hàng thành công": "notifications.message.order_completed",
+    "Đơn hàng đã hủy": "notifications.message.order_cancelled"
+  };
+
+  if (map[title] && orderCode) {
+    return t(map[title], { orderCode, defaultValue: message });
+  }
+
+  return message;
+};
+
 export default function NotificationDropdown() {
+  const { t, i18n } = useTranslation("header");
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -78,14 +126,14 @@ export default function NotificationDropdown() {
         <div className="absolute top-full right-0 mt-4 w-80 sm:w-96 bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl z-50 overflow-hidden origin-top-right animate-in fade-in zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-mkhe-border">
-            <h3 className="font-semibold text-mkhe-text">Thông báo</h3>
+            <h3 className="font-semibold text-mkhe-text">{t("notifications.header_title", "Thông báo")}</h3>
             {unreadCount > 0 && (
               <button
                 onClick={() => markAllAsRead()}
                 className="text-xs text-[#bc9c6a] hover:text-[#a08257] font-medium flex items-center gap-1 cursor-pointer"
               >
                 <Check className="w-3 h-3" />
-                Đánh dấu đã đọc
+                {t("notifications.mark_all_read", "Đánh dấu đã đọc")}
               </button>
             )}
           </div>
@@ -95,7 +143,7 @@ export default function NotificationDropdown() {
             {notifications.length === 0 ? (
               <div className="py-10 text-center opacity-60 flex flex-col items-center justify-center text-mkhe-text">
                 <Bell className="w-10 h-10 mb-2" />
-                <p className="text-sm">Bạn chưa có thông báo nào</p>
+                <p className="text-sm">{t("notifications.empty", "Bạn chưa có thông báo nào")}</p>
               </div>
             ) : (
               <div className="divide-y divide-mkhe-border/50">
@@ -115,13 +163,13 @@ export default function NotificationDropdown() {
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm text-mkhe-text ${!notif.isRead ? 'font-bold' : ''}`}>
-                        {notif.title}
+                        {translateNotificationTitle(notif.title, t)}
                       </p>
                       <p className="text-xs text-mkhe-text opacity-70 mt-1 line-clamp-2 leading-relaxed">
-                        {notif.message}
+                        {translateNotificationMessage(notif.message, notif.title, t)}
                       </p>
                       <p className="text-[11px] text-mkhe-primary mt-2 font-medium">
-                        {getRelativeTime(notif.createdAt)}
+                        {getRelativeTime(notif.createdAt, i18n.language || 'vi', t)}
                       </p>
                     </div>
 

@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 import { authApi } from "@/api/authApi";
