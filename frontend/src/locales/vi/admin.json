@@ -53,7 +53,13 @@
     "other_addresses": "(+{{count}} địa chỉ khác)",
     "other_addresses_plural": "(+{{count}} địa chỉ khác)",
     "contact": "LIÊN HỆ",
-    "default_address": "ĐỊA CHỈ MẶC ĐỊNH"
+    "default_address": "ĐỊA CHỈ MẶC ĐỊNH",
+    "errors": {
+      "name_required": "Vui lòng điền họ và tên",
+      "email_required": "Vui lòng điền email",
+      "pass_required": "Vui lòng điền mật khẩu",
+      "pass_short": "Mật khẩu phải có ít nhất 6 ký tự"
+    }
   },
   "pagination": {
     "showing_page": "Đang hiển thị trang",
@@ -141,7 +147,6 @@
     "drop_rate": "Tỷ lệ rớt",
     "time": "Thời gian",
     "status": "Trạng thái",
-    "status_all": "Tất cả trạng thái",
     "status_running": "Đang chạy",
     "status_upcoming": "Sắp diễn ra",
     "badge_upcoming": "Sắp diễn ra",
@@ -158,7 +163,7 @@
     "cancel": "Hủy",
     "processing": "Đang xử lý...",
     "confirm": "Xác nhận",
-    "publish_time_passed": "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành.",
+    "publish_time_passed": "Thời gian bắt đầu không được trong quá khứ",
     "save_changes": "Lưu Thay Đổi",
     "publish_btn": "Phát Hành",
     "update_success": "Cập nhật thành công",
@@ -175,7 +180,6 @@
     "limited_products": "Có giới hạn SP",
     "to_date": "đến",
     "badge_inactive": "Đã tắt",
-    "badge_upcoming": "Sắp diễn ra",
     "expired": "Hết hạn",
     "out_of_stock": "Hết lượt",
     "running": "Đang chạy",
@@ -185,8 +189,8 @@
     "type_freeship": "Miễn phí vận chuyển",
     "restore_success": "Đã khôi phục dữ liệu đang nhập dở",
     "load_options_error": "Không thể tải tuỳ chọn Danh mục/Làng nghề",
-    "time_empty_error": "Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc",
-    "time_invalid_error": "Thời gian kết thúc phải diễn ra sau thời gian bắt đầu",
+    "time_empty_error": "Vui lòng chọn thời gian",
+    "time_invalid_error": "Thời gian kết thúc phải sau thời gian bắt đầu",
     "create_success": "Tạo mã giảm giá thành công!",
     "create_error_generic": "Có lỗi xảy ra khi tạo mã",
     "create_title": "Tạo Mã Mới",
@@ -238,7 +242,21 @@
     "use_now": "Dùng ngay",
     "scan_at_counter": "Mã quét tại quầy",
     "use_online": "Dùng Online",
-    "min_order_card": "Đơn tối thiểu {{value}}đ"
+    "min_order_card": "Đơn tối thiểu {{value}}đ",
+    "errors": {
+      "MISSING_REQUIRED_FIELDS": "Vui lòng điền đủ thông tin",
+      "INVALID_PERCENTAGE": "Phần trăm không hợp lệ",
+      "INVALID_DATE_RANGE": "Ngày kết thúc phải sau ngày bắt đầu",
+      "VOUCHER_CODE_EXISTS": "Mã Voucher đã tồn tại, vui lòng chọn mã khác",
+      "CANNOT_UPDATE_LOCKED_FIELDS": "Không thể sửa trường này do Voucher đang chạy",
+      "CANNOT_REVERT_RUNNING_VOUCHER": "Không thể chuyển Voucher đang chạy về Nháp",
+      "VOUCHER_NOT_FOUND": "Không tìm thấy Voucher"
+    },
+    "code_required": "Vui lòng nhập mã ưu đãi",
+    "discount_required": "Vui lòng nhập mức giảm hợp lệ",
+    "selected_count": "Đã chọn {{count}}",
+    "send_notification": "Gửi thông báo",
+    "send_notification_desc": "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành"
   },
   "orders": {
     "title": "Quản lý Đơn hàng",
@@ -300,7 +318,12 @@
     "lock_fail": "Lỗi khi khóa tài khoản",
     "error_vietqr_unpaid": "Không thể lưu: Đơn VietQR phải Đã thanh toán thì mới được xác nhận giao hàng!",
     "error_completed_unpaid": "Không thể lưu: Đơn hàng hoàn thành bắt buộc phải Đã thanh toán!",
-    "high_risk_filter": "Đơn rủi ro cao"
+    "high_risk_filter": "Đơn rủi ro cao",
+    "payment": {
+      "paid": "Đã thanh toán",
+      "refunded": "Hoàn tiền",
+      "unpaid": "Chưa thanh toán"
+    }
   },
   "fetch_error": "Lỗi khi tải danh sách bài viết",
   "delete_success": "Xóa bài viết thành công",
@@ -348,5 +371,22 @@
     "no_customer_data": "Chưa có dữ liệu khách hàng",
     "revenue_by_category": "Cơ cấu Làng nghề",
     "order_status_chart": "Tình trạng Đơn hàng"
+  },
+  "products": {
+    "errors": {
+      "name_required": "Vui lòng điền tên sản phẩm",
+      "sku_required": "Vui lòng điền mã SKU",
+      "vendor_required": "Vui lòng chọn nhà cung cấp",
+      "price_required": "Vui lòng điền giá bán",
+      "artisan_required": "Vui lòng điền tên nghệ nhân",
+      "gps_required": "Vui lòng điền vị trí GPS",
+      "sale_price_invalid": "Giá Sale phải nhỏ hơn giá gốc",
+      "sale_start_required": "Vui lòng chọn ngày bắt đầu Sale",
+      "sale_end_required": "Vui lòng chọn ngày kết thúc Sale",
+      "sale_end_invalid": "Kết thúc phải sau thời gian bắt đầu",
+      "sale_end_future": "Kết thúc phải ở tương lai",
+      "sale_start_past": "Thời gian bắt đầu không được trong quá khứ"
+    },
+    "no_linked_story": "-- Không liên kết Ký sự --"
   }
 }

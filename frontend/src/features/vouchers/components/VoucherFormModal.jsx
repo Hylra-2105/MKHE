@@ -364,7 +364,18 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error.response?.data?.message || (editData ? t("voucher.update_error") : t("voucher.create_error_generic")));
+      const msg = error.response?.data?.message;
+      if (msg === "VOUCHER_CODE_EXISTS") {
+        setFormErrors({ code: t("voucher.errors.VOUCHER_CODE_EXISTS", { defaultValue: "Mã giảm giá này đã tồn tại" }) });
+      } else if (msg === "INVALID_PERCENTAGE") {
+        setFormErrors({ discountValue: t("voucher.errors.INVALID_PERCENTAGE", { defaultValue: "Phần trăm giảm giá không hợp lệ" }) });
+      } else if (msg === "INVALID_DATE_RANGE") {
+        setFormErrors({ endDate: t("voucher.errors.INVALID_DATE_RANGE", { defaultValue: "Ngày kết thúc phải sau ngày bắt đầu" }) });
+      } else if (msg === "MISSING_REQUIRED_FIELDS") {
+        toast.error(t("voucher.errors.MISSING_REQUIRED_FIELDS", { defaultValue: "Vui lòng nhập đầy đủ các trường bắt buộc" }));
+      } else {
+        toast.error(msg ? t(`voucher.errors.${msg}`, { defaultValue: msg }) : (editData ? t("voucher.update_error") : t("voucher.create_error_generic")));
+      }
     } finally {
       setLoading(false);
     }
@@ -642,8 +653,8 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
               <div className="flex items-center justify-between p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mt-4">
                 <div>
-                  <div className="font-semibold text-yellow-600 text-sm">Gửi thông báo Push</div>
-                  <div className="text-xs text-mkhe-text/60 mt-0.5">Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành</div>
+                  <div className="font-semibold text-yellow-600 text-sm">{t("voucher.send_notification")}</div>
+                  <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.send_notification_desc")}</div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} className="sr-only peer" />

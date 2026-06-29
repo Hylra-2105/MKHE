@@ -382,32 +382,32 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     e.preventDefault();
 
     let errors = {};
-    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền tên sản phẩm");
-    if (!formData.sku) errors.sku = t("messages.required_field", "Vui lòng điền mã SKU");
-    if (!formData.price) errors.price = t("messages.required_field", "Vui lòng điền giá bán");
-    if (!formData.vendor) errors.vendor = t("messages.required_field", "Vui lòng chọn nhà cung cấp");
+    if (!formData.name) errors.name = t("products.errors.name_required", "Vui lòng điền tên sản phẩm");
+    if (!formData.sku) errors.sku = t("products.errors.sku_required", "Vui lòng điền mã SKU");
+    if (!formData.price) errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    if (!formData.vendor) errors.vendor = t("products.errors.vendor_required", "Vui lòng chọn nhà cung cấp");
 
     if (formData.hasDPP) {
-      if (!formData.artisanName) errors.artisanName = t("messages.required_field", "Vui lòng điền tên nghệ nhân");
-      if (!formData.gpsLocation) errors.gpsLocation = t("messages.required_field", "Vui lòng điền vị trí GPS");
+      if (!formData.artisanName) errors.artisanName = t("products.errors.artisan_required", "Vui lòng điền tên nghệ nhân");
+      if (!formData.gpsLocation) errors.gpsLocation = t("products.errors.gps_required", "Vui lòng điền vị trí GPS");
     }
 
     if (formData.hasSale && formData.salePrice && Number(formData.salePrice) > 0) {
       if (Number(formData.salePrice) >= Number(formData.price)) {
-        errors.salePrice = "Giá Sale phải nhỏ hơn giá gốc";
+        errors.salePrice = t("products.errors.sale_price_invalid", "Giá Sale phải nhỏ hơn giá gốc");
       }
       if (!formData.saleStartDate) {
-        errors.saleStartDate = "Vui lòng chọn ngày bắt đầu Sale";
+        errors.saleStartDate = t("products.errors.sale_start_required", "Vui lòng chọn ngày bắt đầu Sale");
       }
       if (!formData.saleEndDate) {
-        errors.saleEndDate = "Vui lòng chọn ngày kết thúc Sale";
+        errors.saleEndDate = t("products.errors.sale_end_required", "Vui lòng chọn ngày kết thúc Sale");
       }
       if (formData.saleStartDate && formData.saleEndDate) {
         if (new Date(formData.saleEndDate) <= new Date(formData.saleStartDate)) {
-          errors.saleEndDate = "Kết thúc phải sau thời gian bắt đầu";
+          errors.saleEndDate = t("products.errors.sale_end_invalid", "Kết thúc phải sau thời gian bắt đầu");
         }
         if (new Date(formData.saleEndDate) <= new Date()) {
-          errors.saleEndDate = "Kết thúc phải ở tương lai";
+          errors.saleEndDate = t("products.errors.sale_end_future", "Kết thúc phải ở tương lai");
         }
         
         const start = new Date(formData.saleStartDate);
@@ -416,7 +416,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         now.setSeconds(0, 0);
 
         if (start < now) {
-          errors.saleStartDate = "Thời gian bắt đầu không được trong quá khứ";
+          errors.saleStartDate = t("products.errors.sale_start_past", "Thời gian bắt đầu không được trong quá khứ");
         }
       }
     }
@@ -749,7 +749,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     {/* TOGGLE GỬI THÔNG BÁO PUSH */}
                     <div className="flex items-center justify-between mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold text-yellow-700">{t("form.sale.sendPush", "Gửi thông báo Push")}</span>
+                        <span className="text-sm font-bold text-yellow-700">{t("form.sale.sendPush", "Gửi thông báo")}</span>
                         <span className="text-[11px] text-yellow-700/70">{t("form.sale.sendPushDesc", "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành")}</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -838,10 +838,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                         value={formData.storyBlogId}
                         onChange={(val) => updateField("storyBlogId", val)}
                         options={[
-                          { value: "", label: "-- Không liên kết Ký sự --" },
+                          { value: "", label: t("products.no_linked_story", "-- Không liên kết Ký sự --") },
                           ...storyBlogs.map(blog => ({ value: blog._id, label: blog.title }))
                         ]}
-                        placeholder="-- Không liên kết Ký sự --"
+                        placeholder={t("products.no_linked_story", "-- Không liên kết Ký sự --")}
                         className="w-full"
                         triggerClassName="p-3.5 rounded-xl text-sm cursor-pointer"
                         optionClassName="text-sm truncate"

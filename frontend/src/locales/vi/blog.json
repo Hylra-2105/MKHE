@@ -68,6 +68,11 @@
       "thumbnail_change": "Thay đổi ảnh",
       "thumbnail_drag": "Nhấn hoặc kéo thả ảnh vào đây",
       "category_placeholder": "Chọn danh mục"
+    },
+    "categories": {
+      "Ký sự": "Ký sự",
+      "Sự kiện": "Sự kiện",
+      "Cẩm nang": "Cẩm nang"
     }
   },
   "public": {

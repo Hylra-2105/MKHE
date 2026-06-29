@@ -51,7 +51,8 @@
       "order_cancelled": "Order Cancelled",
       "voucher_saved": "Voucher Saved Successfully",
       "lucky_wheel_won": "Congratulations! You Won!",
-      "flash_sale": "Huge Product Sale!"
+      "flash_sale": "Huge Product Sale!",
+      "voucher_published": "You have a new offer code!"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
@@ -62,7 +63,8 @@
       "order_cancelled": "Order {{orderCode}} has been cancelled.",
       "voucher_saved": "You have successfully collected the discount code {{code}}.",
       "lucky_wheel_won": "You just received a discount code {{code}} from the Mystery Box.",
-      "flash_sale": "Product {{productName}} has an attractive sale program. Don't miss out!"
+      "flash_sale": "Product {{productName}} has an attractive sale program. Don't miss out!",
+      "voucher_published": "Discount code {{code}} has just been published. Collect it now before it's gone!"
     },
     "header_title": "Notifications",
     "mark_all_read": "Mark all as read",

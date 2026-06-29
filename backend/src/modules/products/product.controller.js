@@ -168,11 +168,6 @@ export const getProducts = async (req, res) => {
 
     const totalPages = Math.ceil(totalProducts / limit);
 
-    fs.appendFileSync(
-      "c:\\React\\MKHE\\search_debug.txt", 
-      JSON.stringify({ time: new Date(), query, totalProducts, searchStr: search, url: req.originalUrl }) + "\n"
-    );
-
     return successResponse(res, 200, "GET_PRODUCTS_SUCCESS", {
       pagination: {
         totalItems: totalProducts,

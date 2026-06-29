@@ -54,6 +54,7 @@ import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
 import OrderManagementPage from "./pages/orders/OrderManagementPage";
 
 function App() {
+  const { t } = useTranslation(["header"]);
   const setUser = useAuthStore((state) => state.setUser);
   const token = useAuthStore((state) => state.token);
   const logoutAction = useAuthStore((state) => state.logoutAction);
@@ -142,7 +143,9 @@ function App() {
         "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
         "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
         "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-        "Sản phẩm Sale Khủng!": "notifications.title.flash_sale"
+        "Sản phẩm Sale Khủng!": "notifications.title.flash_sale",
+        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
+        "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published"
       };
       const translatedTitle = map[notif.title] ? t(map[notif.title], { defaultValue: notif.title }) : notif.title;
 

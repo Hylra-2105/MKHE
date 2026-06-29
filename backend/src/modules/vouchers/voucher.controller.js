@@ -222,10 +222,12 @@ export const createVoucher = async (req, res) => {
       status: status || "DRAFT",
     });
 
-    if (voucher.status === "PUBLISHED" && voucher.isPublicEvent) {
-      createBulkMarketingNotifications("Bạn có mã ưu đãi mới!", `Mã giảm giá ${voucher.code} đã có sẵn trong ví của bạn.`, "/profile?tab=vouchers");
+    // The push notification for isPublicEvent will be handled by voucherCron when the startDate is reached
+    try {
+      getIO().emit("voucher_updated", voucher);
+    } catch (e) {
+      console.error(e);
     }
-
     return successResponse(res, 201, "VOUCHER_CREATED_SUCCESS", voucher);
   } catch (error) {
     console.error("Lỗi createVoucher:", error);
@@ -611,9 +613,7 @@ export const updateVoucher = async (req, res) => {
 
     await voucher.save();
 
-    if (justPublished && voucher.isPublicEvent) {
-      createBulkMarketingNotifications("Bạn có mã ưu đãi mới!", `Mã giảm giá ${voucher.code} đã có sẵn trong ví của bạn.`, "/profile?tab=vouchers");
-    }
+    // The push notification for isPublicEvent will be handled by voucherCron when the startDate is reached
 
     return successResponse(res, 200, "VOUCHER_UPDATED_SUCCESS", voucher);
   } catch (error) {
@@ -642,7 +642,13 @@ export const deleteVoucher = async (req, res) => {
     voucher.isActive = false;
     await voucher.save();
     
-    return successResponse(res, 200, "VOUCHER_DELETED_SUCCESS", voucher);
+    try {
+      getIO().emit("voucher_updated", voucher);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return successResponse(res, 200, "VOUCHER_UPDATED", voucher);
   } catch (error) {
     console.error("Lỗi deleteVoucher:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

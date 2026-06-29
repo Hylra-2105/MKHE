@@ -42,6 +42,7 @@
     "discount_percentage_val": "Discount {{value}}%",
     "no_min_order": "No minimum order",
     "max_discount_card": "Max {{value}} VND",
+    "free_shipping": "Free Shipping",
     "applying": "Applying",
     "use_now": "Use Now",
     "scan_at_counter": "Scan at counter",

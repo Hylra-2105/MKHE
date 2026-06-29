@@ -2,26 +2,37 @@ import React, { useEffect, useState } from "react";
 import { X, Ticket } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useVoucherStore } from "@/stores/useVoucherStore";
+import { useSocketStore } from "@/stores/useSocketStore";
 import VoucherCard from "./VoucherCard";
 import { formatNumber } from "@/utils/formatters";
 
 const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selectedVoucherId, onSelectVoucher }) => {
   const { t } = useTranslation(["cart"]);
   const { walletVouchers, fetchWalletVouchers, isLoadingWallet } = useVoucherStore();
+  const socket = useSocketStore((state) => state.socket);
   const [activeTab, setActiveTab] = useState("AVAILABLE");
 
   useEffect(() => {
-    let intervalId;
     if (isOpen) {
       fetchWalletVouchers();
-      intervalId = setInterval(() => {
-        fetchWalletVouchers();
-      }, 10000);
     }
-    return () => {
-      if (intervalId) clearInterval(intervalId);
+  }, [isOpen, fetchWalletVouchers]);
+
+  useEffect(() => {
+    if (!socket || !isOpen) return;
+
+    const handleUpdate = () => {
+      fetchWalletVouchers();
     };
-  }, [isOpen]);
+
+    socket.on("voucher_updated", handleUpdate);
+    socket.on("new_notification", handleUpdate); // Cập nhật khi có notification (như được airdrop)
+
+    return () => {
+      socket.off("voucher_updated", handleUpdate);
+      socket.off("new_notification", handleUpdate);
+    };
+  }, [socket, isOpen, fetchWalletVouchers]);
 
   const checkEligibility = (voucher) => {
     if (cartTotal < voucher.minOrderValue) {

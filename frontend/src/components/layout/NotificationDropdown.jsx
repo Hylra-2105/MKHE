@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Bell, Check, Package, X, Gift } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -28,7 +29,9 @@ const translateNotificationTitle = (title, t) => {
     "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
     "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
     "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-    "Sản phẩm Sale Khủng!": "notifications.title.flash_sale"
+    "Sản phẩm Sale Khủng!": "notifications.title.flash_sale",
+    "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
+    "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
@@ -59,6 +62,18 @@ const translateNotificationMessage = (message, title, t) => {
       productName = saleMatch[1];
     }
     return t("notifications.message.flash_sale", { productName, defaultValue: `Sản phẩm ${productName} đang có chương trình Sale hấp dẫn. Đừng bỏ lỡ!` });
+  }
+
+  if (title === "VOUCHER_PUBLISHED_TITLE" || title === "Bạn có mã ưu đãi mới!" || message.startsWith("VOUCHER_PUBLISHED_MESSAGE::")) {
+    const parts = message.split("::");
+    const voucherMatch = message.match(/Mã giảm giá (.*?) đã có sẵn/);
+    let voucherCode = "";
+    if (parts.length > 1) {
+      voucherCode = parts[1];
+    } else if (voucherMatch) {
+      voucherCode = voucherMatch[1];
+    }
+    return t("notifications.message.voucher_published", { code: voucherCode, defaultValue: `Mã giảm giá ${voucherCode} đã có sẵn trong ví của bạn.` });
   }
 
   const map = {
@@ -111,6 +126,10 @@ export default function NotificationDropdown() {
       await markAsRead(notif._id);
     }
     setIsOpen(false);
+    if (notif.title === "Lưu mã giảm giá thành công" || notif.title === "VOUCHER_PUBLISHED_TITLE" || (notif.message && notif.message.startsWith("VOUCHER_PUBLISHED_MESSAGE::"))) {
+      useCartStore.getState().setCartOpen(true);
+      return;
+    }
     
     if (notif.link) {
       navigate(notif.link);

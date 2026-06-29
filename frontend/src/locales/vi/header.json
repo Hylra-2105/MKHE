@@ -50,7 +50,8 @@
       "order_cancelled": "Đơn hàng đã hủy",
       "voucher_saved": "Lưu mã giảm giá thành công",
       "lucky_wheel_won": "Chúc mừng trúng thưởng!",
-      "flash_sale": "Sản phẩm Sale Khủng!"
+      "flash_sale": "Sản phẩm Sale Khủng!",
+      "voucher_published": "Bạn có mã ưu đãi mới!"
     },
     "message": {
       "order_placed": "Đơn hàng {{orderCode}} đã được đặt thành công. Đang chờ xử lý.",
@@ -61,7 +62,8 @@
       "order_cancelled": "Đơn hàng {{orderCode}} đã bị hủy.",
       "voucher_saved": "Bạn đã thu thập thành công mã giảm giá {{code}}.",
       "lucky_wheel_won": "Bạn vừa nhận được mã giảm giá {{code}} từ Hộp quà Bí ẩn.",
-      "flash_sale": "Sản phẩm {{productName}} đang có chương trình Sale hấp dẫn. Đừng bỏ lỡ!"
+      "flash_sale": "Sản phẩm {{productName}} đang có chương trình Sale hấp dẫn. Đừng bỏ lỡ!",
+      "voucher_published": "Mã giảm giá {{code}} mới được phát hành. Hãy sưu tầm ngay kẻo lỡ!"
     },
     "header_title": "Thông báo",
     "mark_all_read": "Đánh dấu đã đọc",

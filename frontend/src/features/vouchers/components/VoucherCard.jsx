@@ -11,7 +11,9 @@ const VoucherCard = ({
   isSelected, 
   onSelect,
   onShowQR,
-  mode = "selector" // 'selector' (in cart) | 'wallet' (in profile)
+  onCollect,
+  isCollecting = false,
+  mode = "selector" // 'selector' (in cart) | 'wallet' (in profile) | 'public' (in profile public list)
 }) => {
   const { t } = useTranslation(["cart"]);
 
@@ -85,22 +87,34 @@ const VoucherCard = ({
               {isSelected ? t("voucher.applying") : t("voucher.use_now")}
             </button>
           ) : (
-            // Wallet Mode
             <div className="flex gap-2">
-              {voucher.isO2O && onShowQR && (
+              {mode === "wallet" ? (
+                <>
+                  {voucher.isO2O && onShowQR && (
+                    <button
+                      onClick={() => onShowQR(userVoucherId)}
+                      className="p-1.5 rounded-full bg-mkhe-border/10 text-mkhe-text hover:bg-mkhe-border/20 transition-colors"
+                      title={t("voucher.scan_at_counter")}
+                    >
+                      <QrCode className="w-4 h-4" />
+                    </button>
+                  )}
+                  <button
+                    className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors"
+                  >
+                    {t("voucher.use_online")}
+                  </button>
+                </>
+              ) : (
+                // Public mode
                 <button
-                  onClick={() => onShowQR(userVoucherId)}
-                  className="p-1.5 rounded-full bg-mkhe-border/10 text-mkhe-text hover:bg-mkhe-border/20 transition-colors"
-                  title={t("voucher.scan_at_counter")}
+                  disabled={isCollecting}
+                  onClick={() => onCollect && onCollect(voucher._id)}
+                  className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <QrCode className="w-4 h-4" />
+                  {isCollecting ? t("voucher.collecting", { defaultValue: "Đang lưu..." }) : t("voucher.collect", { defaultValue: "Lưu mã" })}
                 </button>
               )}
-              <button
-                className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors"
-              >
-                {t("voucher.use_online")}
-              </button>
             </div>
           )}
         </div>

@@ -249,10 +249,27 @@
       "salePricePlaceholder": "Enter Sale price...",
       "startSale": "Start Sale",
       "endSale": "End Sale",
-      "sendPush": "Send Push notification",
+      "sendPush": "Send notification",
       "sendPushDesc": "The system will automatically send notifications to ALL users upon release",
       "ongoing": "On Sale",
       "upcoming": "Upcoming Sale"
     }
+  },
+  "products": {
+    "errors": {
+      "name_required": "Please enter product name",
+      "sku_required": "Please enter SKU",
+      "vendor_required": "Please select vendor",
+      "price_required": "Please enter price",
+      "artisan_required": "Please enter artisan name",
+      "gps_required": "Please enter GPS location",
+      "sale_price_invalid": "Sale price must be less than original price",
+      "sale_start_required": "Please select Sale start date",
+      "sale_end_required": "Please select Sale end date",
+      "sale_end_invalid": "End time must be after start time",
+      "sale_end_future": "End time must be in the future",
+      "sale_start_past": "Start time cannot be in the past"
+    },
+    "no_linked_story": "-- No linked story --"
   }
 }

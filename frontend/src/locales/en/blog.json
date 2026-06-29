@@ -68,6 +68,11 @@
       "thumbnail_change": "Change image",
       "thumbnail_drag": "Click or drag and drop image here",
       "category_placeholder": "Select category"
+    },
+    "categories": {
+      "Ký sự": "Story",
+      "Sự kiện": "Event",
+      "Cẩm nang": "Handbook"
     }
   },
   "public": {
