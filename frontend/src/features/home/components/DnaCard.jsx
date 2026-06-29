@@ -16,6 +16,22 @@ const DnaCard = ({
 }) => {
   const { t } = useTranslation("home");
   const navigate = useNavigate();
+  const dragStartPos = React.useRef({ x: 0, y: 0 });
+
+  const handlePointerDown = (e) => {
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleClick = (e) => {
+    const dx = Math.abs(e.clientX - dragStartPos.current.x);
+    const dy = Math.abs(e.clientY - dragStartPos.current.y);
+    // Threshold of 5px to distinguish between click and drag
+    if (dx > 5 || dy > 5) {
+      e.preventDefault();
+      return;
+    }
+    navigate(`/shop/${item._id}`);
+  };
 
   // === TÍNH TOÁN HIỆU ỨNG 2D/3D ===
   // Vẫn giữ hiệu ứng cong/nghiêng 3D trên mobile để đẹp mắt
@@ -38,9 +54,8 @@ const DnaCard = ({
       }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      onClick={() => {
-        navigate(`/shop/${item._id}`);
-      }}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
     >
       <div
         className="max-w-[500px] mx-auto"

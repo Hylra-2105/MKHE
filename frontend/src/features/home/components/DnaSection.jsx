@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import DnaCard from "./DnaCard";
 
 const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
@@ -98,124 +99,133 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     setDragStart(clientX);
     setIsDragging(true);
-    setIsHovered(true);
-    setDragOffset(0);
+    setIsTransitioning(false);
+    if (autoRef.current) clearInterval(autoRef.current);
   };
 
   const handleDragMove = (e) => {
-    if (!shouldSlide || !isDragging) return;
+    if (!isDragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const delta = clientX - dragStart;
-    setDragOffset(delta);
+    const currentOffset = clientX - dragStart;
+    setDragOffset(currentOffset);
   };
 
-  const handleDragEnd = (e) => {
-    if (!shouldSlide || !isDragging) return;
-    const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-    const deltaX = dragStart - clientX;
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    setIsTransitioning(true);
 
-    const itemsMoved = Math.max(1, Math.round(Math.abs(deltaX) / 80));
-
-    if (Math.abs(deltaX) > dragThreshold) {
-      setIsTransitioning(true);
-      if (deltaX > 0) {
-        setCurrentIndex((prev) => Math.min(prev + itemsMoved, maxIndex));
-      } else {
-        setCurrentIndex((prev) => Math.max(prev - itemsMoved, 0));
-      }
+    if (dragOffset > dragThreshold) {
+      setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    } else if (dragOffset < -dragThreshold) {
+      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
     }
 
-    setIsDragging(false);
     setDragOffset(0);
-    setIsHovered(false);
     startAuto();
   };
 
-  if (data.length === 0) return null;
+  if (!data || data.length === 0) return null;
 
   return (
-    <div className="mb-2 md:mb-5">
-      {/* HEADER */}
-      <div className="max-w-[1100px] mx-auto flex items-end justify-between mb-2 md:mb-4 px-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold uppercase tracking-widest font-logo text-transparent bg-clip-text bg-gradient-to-r from-mkhe-primary via-[#D4A373] to-[#C38D64] drop-shadow-sm">
-            {title}
-          </h3>
-          <button 
-            onClick={() => navigate(`/shop?culturalDNA=${dnaType}`)}
-            className="group flex items-center gap-2 px-4 py-2 mt-2 border border-mkhe-primary/30 rounded-full text-mkhe-primary/80 text-xs md:text-sm font-medium hover:bg-mkhe-primary hover:text-white transition-all duration-300 w-fit cursor-pointer"
-          >
-            {t("dna.view_all", "Xem toàn bộ")}
-          </button>
-        </div>
-
-        <div className="flex gap-3 pb-1">
-          <button
-            onClick={handlePrev}
-            className="w-11 h-11 rounded-full bg-mkhe-primary/5 border border-mkhe-primary/30 flex items-center justify-center text-mkhe-primary hover:bg-mkhe-primary/10 hover:border-mkhe-primary/60 transition-all cursor-pointer z-10"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-
-          <button
-            onClick={handleNext}
-            className="w-11 h-11 rounded-full bg-mkhe-primary/5 border border-mkhe-primary/30 flex items-center justify-center text-mkhe-primary hover:bg-mkhe-primary/10 hover:border-mkhe-primary/60 transition-all cursor-pointer z-10"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
+    <motion.div 
+      initial={{ opacity: 0, x: isReverse ? 100 : -100 }} 
+      whileInView={{ opacity: 1, x: 0 }} 
+      viewport={{ once: true, amount: 0.2 }} 
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="relative w-full bg-transparent group/section pb-12"
+    >
+      {/* GIANT SECTION TYPOGRAPHY */}
+      <div className={`absolute top-0 ${isReverse ? '-right-10' : '-left-10'} pointer-events-none opacity-5 z-0`}>
+        <span className="text-[150px] md:text-[250px] font-logo font-bold text-mkhe-text tracking-tighter leading-none">
+          {title.toUpperCase()}
+        </span>
       </div>
 
-      {/* KHU VỰC SLIDER */}
-      <div
-        className="max-w-[1100px] mx-auto py-2 -my-2 md:py-6 md:-my-6 px-4 select-none overflow-hidden"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setIsDragging(false);
-          setHoveredCard(null);
-          setDragOffset(0);
-        }}
-        onMouseDown={handleDragStart}
-        onMouseUp={handleDragEnd}
-        onMouseMove={handleDragMove}
-        onTouchStart={handleDragStart}
-        onTouchEnd={handleDragEnd}
-        onTouchMove={handleDragMove}
-      >
+      <div className="max-w-[1600px] mx-auto px-6 relative z-10">
+        
+        {/* EDITORIAL HEADER */}
+        <div className={`flex flex-col md:flex-row items-end justify-between mb-16 ${isReverse ? "md:flex-row-reverse text-right" : "text-left"}`}>
+          <div className="relative">
+            <h3 className="text-5xl md:text-8xl font-logo font-light text-mkhe-text tracking-tight mb-2 flex items-center gap-6">
+              {!isReverse && <span className="w-12 h-[1px] bg-mkhe-primary"></span>}
+              {title}
+              {isReverse && <span className="w-12 h-[1px] bg-mkhe-primary"></span>}
+            </h3>
+            <button
+              onClick={() => navigate(`/shop?category=${dnaType}`)}
+              className={`group flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-mkhe-text/50 hover:text-mkhe-primary transition-colors ${isReverse ? "justify-end" : ""}`}
+            >
+              <span className="w-0 h-[1px] bg-mkhe-primary transition-all duration-300 group-hover:w-4"></span>
+              {t("dna.view_all", "Xem toàn bộ")}
+            </button>
+          </div>
+
+          {/* CUSTOM NAVIGATION ARROWS */}
+          <div className={`hidden md:flex items-center gap-4 ${isReverse ? "justify-start" : "justify-end"}`}>
+            <button
+              onClick={handlePrev}
+              className="w-12 h-12 rounded-full border border-mkhe-text/20 flex items-center justify-center text-mkhe-text/50 hover:text-mkhe-primary hover:border-mkhe-primary transition-all hover:-translate-x-1"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="w-12 h-12 rounded-full border border-mkhe-text/20 flex items-center justify-center text-mkhe-text/50 hover:text-mkhe-primary hover:border-mkhe-primary transition-all hover:translate-x-1"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* CASCADING CAROUSEL WRAPPER */}
         <div
-          style={{ perspective: "1200px", perspectiveOrigin: "center center" }}
+          className="relative w-full touch-pan-y pt-8 pb-16"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            setHoveredCard(null);
+          }}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
+          onMouseDown={handleDragStart}
+          onMouseMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          onMouseLeaveCapture={handleDragEnd}
         >
-          {/* Responsive padding: ít hơn trên mobile vì không có hiệu ứng phóng to (scale 1.25) */}
-          <div
-            className="flex items-end pt-2 pb-4 md:pt-6 md:pb-12"
-            style={{
-              transform: `translateX(calc(-${currentIndex * (100 / itemsPerView)}% + ${dragOffset}px))`,
-              transition:
-                isDragging || !isTransitioning
-                  ? "none"
-                  : "transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
-              willChange: "transform",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            {data.map((item, idx) => (
-              <DnaCard
-                key={`${item._id}-${idx}`}
-                item={item}
-                idx={idx}
-                itemsPerView={itemsPerView}
-                isHoveredCard={hoveredCard === idx}
-                isDimmed={hoveredCard !== null && hoveredCard !== idx}
-                isMobile={windowWidth < 768}
-                onHover={() => setHoveredCard(idx)}
-                onLeave={() => setHoveredCard(null)}
-              />
-            ))}
+          <div className="w-full relative">
+            <div
+              className="flex"
+              style={{
+                transform: `translateX(calc(-${currentIndex * (100 / itemsPerView)}% + ${dragOffset}px))`,
+                transition: isTransitioning ? "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)" : "none",
+                willChange: "transform",
+              }}
+            >
+              {data.map((item, idx) => {
+                const isHoveredCard = hoveredCard === idx;
+                const isDimmed = hoveredCard !== null && hoveredCard !== idx;
+
+                return (
+                  <DnaCard
+                    key={item._id || idx}
+                    item={item}
+                    idx={idx}
+                    itemsPerView={itemsPerView}
+                    isHoveredCard={isHoveredCard}
+                    isDimmed={isDimmed}
+                    isMobile={windowWidth < 768}
+                    onHover={() => setHoveredCard(idx)}
+                    onLeave={() => setHoveredCard(null)}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

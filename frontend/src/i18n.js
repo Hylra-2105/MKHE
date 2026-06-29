@@ -21,6 +21,7 @@ import checkoutVI from "./locales/vi/checkout.json";
 import historyVI from "./locales/vi/history.json";
 import blogVI from "./locales/vi/blog.json";
 import reviewsVI from "./locales/vi/reviews.json";
+import chatbotVI from "./locales/vi/chatbot.json";
 
 // EN
 
@@ -41,6 +42,7 @@ import checkoutEN from "./locales/en/checkout.json";
 import historyEN from "./locales/en/history.json";
 import blogEN from "./locales/en/blog.json";
 import reviewsEN from "./locales/en/reviews.json";
+import chatbotEN from "./locales/en/chatbot.json";
 
 // ZH
 
@@ -61,6 +63,7 @@ import checkoutZH from "./locales/zh/checkout.json";
 import historyZH from "./locales/zh/history.json";
 import blogZH from "./locales/zh/blog.json";
 import reviewsZH from "./locales/zh/reviews.json";
+import chatbotZH from "./locales/zh/chatbot.json";
 
 // KO
 
@@ -81,6 +84,7 @@ import checkoutKO from "./locales/ko/checkout.json";
 import historyKO from "./locales/ko/history.json";
 import blogKO from "./locales/ko/blog.json";
 import reviewsKO from "./locales/ko/reviews.json";
+import chatbotKO from "./locales/ko/chatbot.json";
 
 // JA
 
@@ -101,6 +105,7 @@ import checkoutJA from "./locales/ja/checkout.json";
 import historyJA from "./locales/ja/history.json";
 import blogJA from "./locales/ja/blog.json";
 import reviewsJA from "./locales/ja/reviews.json";
+import chatbotJA from "./locales/ja/chatbot.json";
 
 
 const resources = {
@@ -122,6 +127,7 @@ const resources = {
     history: historyVI,
     blog: blogVI,
     reviews: reviewsVI,
+    chatbot: chatbotVI,
   },
   en: {
     login: loginEN,
@@ -141,6 +147,7 @@ const resources = {
     history: historyEN,
     blog: blogEN,
     reviews: reviewsEN,
+    chatbot: chatbotEN,
   },
   zh: {
     login: loginZH,
@@ -160,6 +167,7 @@ const resources = {
     history: historyZH,
     blog: blogZH,
     reviews: reviewsZH,
+    chatbot: chatbotZH,
   },
   ko: {
     login: loginKO,
@@ -179,6 +187,7 @@ const resources = {
     history: historyKO,
     blog: blogKO,
     reviews: reviewsKO,
+    chatbot: chatbotKO,
   },
   ja: {
     login: loginJA,
@@ -198,6 +207,7 @@ const resources = {
     history: historyJA,
     blog: blogJA,
     reviews: reviewsJA,
+    chatbot: chatbotJA,
   },
 };
 

@@ -18,6 +18,7 @@ import io from "socket.io-client";
 
 import ProtectedRoute from "./components/router/ProtectedRoute";
 import AuthRoute from "./components/router/AuthRoute";
+import ScrollToTop from "./components/router/ScrollToTop";
 
 // Import Layout
 import AuthLayout from "./components/layout/AuthLayout";
@@ -48,6 +49,7 @@ import NotFoundPage from "./pages/errors/NotFoundPage";
 import ProfilePage from "@/pages/users/ProfilePage";
 
 import DPPPage from "@/pages/dpp/DPPPage";
+import AboutPage from "@/pages/about/AboutPage";
 
 import CheckoutPage from "./pages/orders/CheckoutPage";
 import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
@@ -213,6 +215,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
@@ -244,6 +247,7 @@ function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:id" element={<ShopDetailPage />} />
           <Route path="/storytelling" element={<BlogPage />} />
