@@ -5,6 +5,7 @@ import NfcClaimHistory from "./nfcClaimHistory.model.js";
 import Product from "../products/product.model.js";
 import Notification from "../notifications/notification.model.js";
 import { getIO } from "../../config/socket.js";
+import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
 
 // @desc    Lấy danh sách mã public có thể sưu tầm
 // @route   GET /api/vouchers/public
@@ -170,6 +171,7 @@ export const createVoucher = async (req, res) => {
       applicableVillages,
       applicableCategories,
       isO2O,
+      isPublicEvent,
       dropRate,
       status,
     } = req.body;
@@ -215,9 +217,14 @@ export const createVoucher = async (req, res) => {
       applicableVillages: applicableVillages || [],
       applicableCategories: applicableCategories || [],
       isO2O: isO2O || false,
+      isPublicEvent: isPublicEvent || false,
       dropRate: dropRate || 0,
       status: status || "DRAFT",
     });
+
+    if (voucher.status === "PUBLISHED" && voucher.isPublicEvent) {
+      createBulkMarketingNotifications("Bạn có mã ưu đãi mới!", `Mã giảm giá ${voucher.code} đã có sẵn trong ví của bạn.`, "/profile?tab=vouchers");
+    }
 
     return successResponse(res, 201, "VOUCHER_CREATED_SUCCESS", voucher);
   } catch (error) {
@@ -572,11 +579,15 @@ export const updateVoucher = async (req, res) => {
     if (updateData.applicableVillages) voucher.applicableVillages = updateData.applicableVillages;
     if (updateData.applicableCategories) voucher.applicableCategories = updateData.applicableCategories;
     if (updateData.isO2O !== undefined) voucher.isO2O = updateData.isO2O;
+    if (updateData.isPublicEvent !== undefined) voucher.isPublicEvent = updateData.isPublicEvent;
     if (updateData.dropRate !== undefined) voucher.dropRate = updateData.dropRate;
     
+    let justPublished = false;
+
     // Hỗ trợ chuyển đổi trạng thái (từ DRAFT sang PUBLISHED)
     if (updateData.status === "PUBLISHED" && voucher.status === "DRAFT") {
       voucher.status = "PUBLISHED";
+      justPublished = true;
     }
     
     // Hỗ trợ chuyển đổi trạng thái (từ PUBLISHED về DRAFT nếu voucher chưa chạy)
@@ -599,6 +610,11 @@ export const updateVoucher = async (req, res) => {
     }
 
     await voucher.save();
+
+    if (justPublished && voucher.isPublicEvent) {
+      createBulkMarketingNotifications("Bạn có mã ưu đãi mới!", `Mã giảm giá ${voucher.code} đã có sẵn trong ví của bạn.`, "/profile?tab=vouchers");
+    }
+
     return successResponse(res, 200, "VOUCHER_UPDATED_SUCCESS", voucher);
   } catch (error) {
     console.error("Lỗi updateVoucher:", error);

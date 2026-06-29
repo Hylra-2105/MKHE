@@ -102,6 +102,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
     applicableVillages: [],
     applicableCategories: [],
     isO2O: false,
+    isPublicEvent: false,
     dropRate: 0,
     status: "DRAFT",
   });
@@ -146,6 +147,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           applicableVillages: editData.applicableVillages || [],
           applicableCategories: editData.applicableCategories || [],
           isO2O: editData.isO2O || false,
+          isPublicEvent: editData.isPublicEvent || false,
           dropRate: editData.dropRate || 0,
           status: editData.status || "DRAFT",
         });
@@ -190,6 +192,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           applicableVillages: [],
           applicableCategories: [],
           isO2O: false,
+          isPublicEvent: false,
           dropRate: 0,
           status: "DRAFT",
         });
@@ -634,6 +637,17 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" name="isO2O" checked={formData.isO2O} onChange={handleChange} className="sr-only peer" />
                   <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
+                </label>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mt-4">
+                <div>
+                  <div className="font-semibold text-yellow-600 text-sm">Gửi thông báo Push</div>
+                  <div className="text-xs text-mkhe-text/60 mt-0.5">Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành</div>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} className="sr-only peer" />
+                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
                 </label>
               </div>
             </div>

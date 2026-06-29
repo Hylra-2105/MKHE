@@ -245,5 +245,19 @@
       "back": "返回",
       "nfc_badge": "集成NFC数字护照的产品"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "促销计划",
+      "subtitle": "设置促销价格和时间",
+      "salePrice": "促销价格",
+      "salePricePlaceholder": "输入促销价格...",
+      "startSale": "开始促销",
+      "endSale": "结束促销",
+      "sendPush": "发送推送通知",
+      "sendPushDesc": "发布时，系统将自动向所有用户发送通知",
+      "ongoing": "促销中",
+      "upcoming": "即将促销"
+    }
   }
 }

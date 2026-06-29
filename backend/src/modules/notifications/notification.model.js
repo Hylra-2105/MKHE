@@ -17,7 +17,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["ORDER_STATUS_UPDATE", "SYSTEM"],
+      enum: ["ORDER_STATUS_UPDATE", "SYSTEM", "MARKETING"],
       default: "ORDER_STATUS_UPDATE",
     },
     orderId: {
@@ -26,6 +26,9 @@ const notificationSchema = new mongoose.Schema(
     },
     status: {
       type: String, // e.g. "CONFIRMED", "DELIVERING"
+    },
+    link: {
+      type: String,
     },
     isRead: {
       type: Boolean,

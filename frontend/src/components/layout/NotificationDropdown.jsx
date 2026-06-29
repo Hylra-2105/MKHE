@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Bell, Check, Package, X } from "lucide-react";
+import { Bell, Check, Package, X, Gift } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useNavigate } from "react-router-dom";
@@ -26,9 +26,11 @@ const translateNotificationTitle = (title, t) => {
     "Giao hàng thành công": "notifications.title.order_completed",
     "Đơn hàng đã hủy": "notifications.title.order_cancelled",
     "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
-    "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won"
+    "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
+    "FLASH_SALE_TITLE": "notifications.title.flash_sale",
+    "Sản phẩm Sale Khủng!": "notifications.title.flash_sale"
   };
-  return map[title] ? t(map[title]) : title;
+  return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
 
 const translateNotificationMessage = (message, title, t) => {
@@ -45,6 +47,18 @@ const translateNotificationMessage = (message, title, t) => {
      const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
      const voucherCode = voucherMatch ? voucherMatch[1] : "";
      return t("notifications.message.lucky_wheel_won", { code: voucherCode, defaultValue: message });
+  }
+
+  if (title === "FLASH_SALE_TITLE" || title === "Sản phẩm Sale Khủng!" || message.startsWith("FLASH_SALE_MESSAGE::")) {
+    const parts = message.split("::");
+    const saleMatch = message.match(/Sản phẩm (.*?) đang có chương trình Sale hấp dẫn/);
+    let productName = "";
+    if (parts.length > 1) {
+      productName = parts[1];
+    } else if (saleMatch) {
+      productName = saleMatch[1];
+    }
+    return t("notifications.message.flash_sale", { productName, defaultValue: `Sản phẩm ${productName} đang có chương trình Sale hấp dẫn. Đừng bỏ lỡ!` });
   }
 
   const map = {
@@ -98,9 +112,12 @@ export default function NotificationDropdown() {
     }
     setIsOpen(false);
     
-    // Nếu là thông báo đơn hàng thì chuyển qua trang Đơn hàng
-    if (notif.orderId || notif.type === "ORDER_STATUS_UPDATE") {
+    if (notif.link) {
+      navigate(notif.link);
+    } else if (notif.orderId || notif.type === "ORDER_STATUS_UPDATE") {
       navigate("/profile?tab=orders");
+    } else if (notif.type === "MARKETING") {
+      navigate("/shop");
     }
   };
 
@@ -156,8 +173,8 @@ export default function NotificationDropdown() {
                     }`}
                   >
                     {/* Icon */}
-                    <div className={`mt-0.5 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full ${!notif.isRead ? 'bg-mkhe-primary text-[#1a110a]' : 'bg-mkhe-border/30 text-mkhe-text opacity-70'}`}>
-                      {notif.type === "ORDER_STATUS_UPDATE" ? <Package className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
+                    <div className={`mt-0.5 flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full ${!notif.isRead ? 'bg-mkhe-primary text-[#1a110a]' : 'bg-mkhe-border/30 text-mkhe-text opacity-70'} ${notif.type === 'MARKETING' ? 'bg-yellow-500/20 text-yellow-500' : ''}`}>
+                      {notif.type === "ORDER_STATUS_UPDATE" ? <Package className="w-5 h-5" /> : notif.type === "MARKETING" ? <Gift className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
                     </div>
                     
                     {/* Content */}

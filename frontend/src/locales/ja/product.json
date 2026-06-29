@@ -245,5 +245,19 @@
       "back": "戻る",
       "nfc_badge": "NFCデジタルパスポート統合製品"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "セールプログラム",
+      "subtitle": "プロモーション価格と時間を設定する",
+      "salePrice": "セール価格",
+      "salePricePlaceholder": "セール価格を入力...",
+      "startSale": "セール開始",
+      "endSale": "セール終了",
+      "sendPush": "プッシュ通知を送信する",
+      "sendPushDesc": "リリース時に、システムは自動的にすべてのユーザーに通知を送信します",
+      "ongoing": "セール中",
+      "upcoming": "今後のセール"
+    }
   }
 }

@@ -240,5 +240,19 @@
       "back": "Go Back",
       "nfc_badge": "Integrated with NFC Digital Passport"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "Sale Program",
+      "subtitle": "Set promotional price and time",
+      "salePrice": "Sale Price",
+      "salePricePlaceholder": "Enter Sale price...",
+      "startSale": "Start Sale",
+      "endSale": "End Sale",
+      "sendPush": "Send Push notification",
+      "sendPushDesc": "The system will automatically send notifications to ALL users upon release",
+      "ongoing": "On Sale",
+      "upcoming": "Upcoming Sale"
+    }
   }
 }

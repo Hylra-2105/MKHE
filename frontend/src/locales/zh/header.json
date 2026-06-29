@@ -50,7 +50,8 @@
       "order_completed": "订单已完成",
       "order_cancelled": "订单已取消",
       "voucher_saved": "优惠券保存成功",
-      "lucky_wheel_won": "恭喜中奖！"
+      "lucky_wheel_won": "恭喜中奖！",
+      "flash_sale": "巨大产品促销！"
     },
     "message": {
       "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
@@ -60,7 +61,8 @@
       "order_completed": "订单 {{orderCode}} 已成功送达。感谢您在 MKHE 购物！",
       "order_cancelled": "订单 {{orderCode}} 已取消。",
       "voucher_saved": "您已成功领取优惠券代码 {{code}}。",
-      "lucky_wheel_won": "您刚刚从神秘礼盒中获得了优惠券代码 {{code}}。"
+      "lucky_wheel_won": "您刚刚从神秘礼盒中获得了优惠券代码 {{code}}。",
+      "flash_sale": "产品 {{productName}} 正在举行促销活动。不要错过！"
     },
     "header_title": "通知",
     "mark_all_read": "全部标为已读",

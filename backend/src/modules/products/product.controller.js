@@ -2,6 +2,8 @@ import Product from "./product.model.js";
 import { cloudinary } from "../../config/cloudinary.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
+import { getIO } from "../../config/socket.js";
 
 // [POST] /api/products - Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
@@ -22,6 +24,11 @@ export const createProduct = async (req, res) => {
       file3D,
       craftVillage,
       material,
+      salePrice,
+      saleStartDate,
+      saleEndDate,
+      status,
+      isPublicEvent,
     } = req.body;
 
     // Validate cơ bản 
@@ -58,9 +65,40 @@ export const createProduct = async (req, res) => {
       artisanName: hasDPP ? artisanName : undefined,
       gpsLocation: hasDPP ? gpsLocation : undefined,
       file3D: hasDPP ? file3D : undefined,
+      salePrice: salePrice ? Number(salePrice) : undefined,
+      saleStartDate: saleStartDate || undefined,
+      saleEndDate: saleEndDate || undefined,
+      status: status || "DRAFT",
+      isPublicEvent: isPublicEvent === "true" || isPublicEvent === true,
     });
 
     await newProduct.save();
+
+    if (newProduct.status === "PUBLISHED") {
+      try {
+        getIO().emit("product_created", newProduct);
+      } catch (err) {
+        console.error("Socket emit product_created error:", err);
+      }
+    }
+
+    if (newProduct.status === "PUBLISHED" && newProduct.isPublicEvent) {
+      const now = new Date();
+      const saleStarts = new Date(newProduct.saleStartDate);
+      if (newProduct.salePrice > 0 && saleStarts <= now) {
+        await createBulkMarketingNotifications(
+          "FLASH_SALE_TITLE",
+          `FLASH_SALE_MESSAGE::${newProduct.name}`,
+          `/shop/${newProduct._id}`
+        );
+        newProduct.isPublicEvent = false;
+        await newProduct.save();
+
+        try {
+          getIO().emit("product_updated", newProduct);
+        } catch (err) {}
+      }
+    }
 
     return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
@@ -242,6 +280,26 @@ export const updateProduct = async (req, res) => {
 
     const updatedProduct = await product.save();
 
+    if (updatedProduct.status === "PUBLISHED" && updatedProduct.isPublicEvent) {
+      const now = new Date();
+      const saleStarts = new Date(updatedProduct.saleStartDate);
+      if (updatedProduct.salePrice > 0 && saleStarts <= now) {
+        createBulkMarketingNotifications(
+          "FLASH_SALE_TITLE",
+          `FLASH_SALE_MESSAGE::${updatedProduct.name}`,
+          `/shop/${updatedProduct._id}`
+        );
+        updatedProduct.isPublicEvent = false;
+        await updatedProduct.save();
+      }
+    }
+
+    try {
+      getIO().emit("product_updated", updatedProduct);
+    } catch (err) {
+      console.error("[Socket] Emit product_updated error:", err);
+    }
+
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
@@ -262,6 +320,11 @@ export const deleteProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!deletedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    
+    try {
+      getIO().emit("product_updated", deletedProduct);
+    } catch (err) {}
+
     return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");

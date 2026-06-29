@@ -6,12 +6,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 import { useAuthStore } from "@/stores/useAuthStore";
 import { authApi } from "@/api/authApi";
 import { getCartApi } from "@/api/cartApi";
 import { useCartStore } from "@/stores/useCartStore";
 import { useNotificationStore } from "@/stores/useNotificationStore";
+import { useSocketStore } from "@/stores/useSocketStore";
 import io from "socket.io-client";
 
 import ProtectedRoute from "./components/router/ProtectedRoute";
@@ -108,45 +110,89 @@ function App() {
 
   const user = useAuthStore((state) => state.user);
   const addNotification = useNotificationStore((state) => state.addNotification);
+  const setSocket = useSocketStore((state) => state.setSocket);
 
   useEffect(() => {
-    let socket;
-    if (user && user._id) {
-      const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
-      socket = io(socketUrl, {
-        withCredentials: true,
-      });
+    const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+    const socket = io(socketUrl, {
+      auth: { token: localStorage.getItem("accessToken") || "" },
+    });
 
-      socket.on("connect", () => {
+    setSocket(socket);
+
+    socket.on("connect", () => {
+      if (user && user._id) {
         socket.emit("join_user_room", user._id);
         if (user.role === "Admin" || user.role === "Staff") {
           socket.emit("join_admin_room");
         }
-      });
+      }
+    });
 
-      socket.on("new_notification", (notif) => {
-        addNotification(notif);
-        toast(notif.title, {
-          icon: '🔔',
-          style: {
-            borderRadius: '10px',
-            background: '#333',
-            color: '#fff',
-          },
-        });
+    socket.on("new_notification", (notif) => {
+      addNotification(notif);
+      
+      const map = {
+        "Đặt hàng thành công": "notifications.title.order_placed",
+        "Thanh toán thành công": "notifications.title.payment_success",
+        "Đơn hàng đã được xác nhận": "notifications.title.order_confirmed",
+        "Đơn hàng đang giao": "notifications.title.order_delivering",
+        "Giao hàng thành công": "notifications.title.order_completed",
+        "Đơn hàng đã hủy": "notifications.title.order_cancelled",
+        "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
+        "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
+        "FLASH_SALE_TITLE": "notifications.title.flash_sale",
+        "Sản phẩm Sale Khủng!": "notifications.title.flash_sale"
+      };
+      const translatedTitle = map[notif.title] ? t(map[notif.title], { defaultValue: notif.title }) : notif.title;
+
+      toast(translatedTitle, {
+        icon: '🔔',
       });
-    }
+    });
+
+    socket.on("product_updated", (updatedProduct) => {
+      const updateProductInItems = useCartStore.getState().updateProductInItems;
+      if (updateProductInItems) {
+        updateProductInItems(updatedProduct);
+      }
+    });
 
     return () => {
       if (socket) {
         socket.disconnect();
+        setSocket(null);
       }
     };
   }, [user, addNotification]);
 
   return (
     <Router>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
+        toastOptions={{
+          className: '!bg-mkhe-bg !text-mkhe-text !border !border-mkhe-border !rounded-xl !shadow-lg',
+          style: {
+            padding: '12px 16px',
+            fontSize: '14px',
+            fontWeight: '500',
+            zIndex: 9999
+          },
+          success: {
+            iconTheme: {
+              primary: 'var(--color-mkhe-primary)',
+              secondary: 'var(--color-mkhe-bg)',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: 'var(--color-mkhe-bg)',
+            },
+          },
+        }}
+      />
 
       <Routes>
         <Route path="/" element={<Navigate to="/home" replace />} />

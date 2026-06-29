@@ -239,5 +239,19 @@
       "back": "Trở về",
       "nfc_badge": "Sản phẩm tích hợp Hộ chiếu số NFC"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "Chương trình Sale",
+      "subtitle": "Thiết lập giá khuyến mãi và thời gian",
+      "salePrice": "Giá Sale",
+      "salePricePlaceholder": "Nhập giá Sale...",
+      "startSale": "Bắt đầu Sale",
+      "endSale": "Kết thúc Sale",
+      "sendPush": "Gửi thông báo Push",
+      "sendPushDesc": "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành",
+      "ongoing": "Đang Sale",
+      "upcoming": "Sắp Sale"
+    }
   }
 }

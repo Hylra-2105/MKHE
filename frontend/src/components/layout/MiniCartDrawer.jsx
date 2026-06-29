@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
-import { formatNumber, getImageUrl } from "@/utils/formatters";
+import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
@@ -160,11 +160,23 @@ const MiniCartDrawer = () => {
                     </div>
 
                     <div className="w-24 h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative">
-                      <img 
-                        src={getImageUrl(item.product.images[0])} 
-                        alt={item.product.name}
-                        className="w-full h-full object-cover"
-                      />
+                      {item.product.images && item.product.images.length > 0 ? (
+                        <img
+                          src={getImageUrl(item.product.images[0])}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={DEFAULT_FALLBACK_IMAGE}
+                          alt={item.product.name}
+                          className="w-full h-full object-cover opacity-80"
+                        />
+                      )}
                     </div>
                   
                   <div className="flex-1 flex flex-col justify-between">
@@ -183,9 +195,20 @@ const MiniCartDrawer = () => {
                     </div>
                     
                     <div className="flex items-end justify-between mt-2">
-                      <p className="text-mkhe-primary font-medium">
-                        {formatNumber(item.product.price)} đ
-                      </p>
+                      <div className="flex flex-col">
+                        <p className="text-mkhe-primary font-medium">
+                          {formatNumber(
+                            item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date()
+                            ? item.product.salePrice 
+                            : item.product.price
+                          )} đ
+                        </p>
+                        {item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date() && (
+                          <p className="text-xs text-mkhe-text/50 line-through">
+                            {formatNumber(item.product.price)} đ
+                          </p>
+                        )}
+                      </div>
                       
                       <div className="flex items-center gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10">
                         <button 
@@ -299,9 +322,9 @@ const MiniCartDrawer = () => {
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center justify-between pt-2 border-t border-mkhe-border/10 mt-1">
-                    <span className="text-mkhe-text/80 text-lg">{t("total", "Tổng cộng:")}</span>
-                    <span className="text-2xl font-sans font-semibold text-mkhe-primary">
+                  <div className="flex justify-between items-center text-lg font-bold pt-2 border-t border-mkhe-border/10 mt-1">
+                    <span className="text-mkhe-text">{t("total", "Tổng cộng:")}</span>
+                    <span className="text-mkhe-primary">
                       {formatNumber(getDiscountedTotal())} đ
                     </span>
                   </div>

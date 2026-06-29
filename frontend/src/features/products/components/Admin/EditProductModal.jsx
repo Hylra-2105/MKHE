@@ -2,15 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
 import {
   X,
+  Package,
+  Fingerprint,
+  AlertCircle,
+  ChevronDown,
+  Tag,
   Edit3,
   Trash2,
   RotateCcw,
-  Fingerprint,
   Box,
   ExternalLink,
-  Cpu,
-  AlertCircle,
-  ChevronDown
+  Cpu
 } from "lucide-react";
 import Button from "@/components/ui/Button";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -26,6 +28,24 @@ import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import { getBlogsApi } from "@/api/blogApi";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
+
+const flatpickrOptions = {
+  locale: Vietnamese,
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  time_24hr: true,
+};
+
+const formatFlatpickrDate = (dateObj) => {
+  if (!dateObj) return "";
+  const d = new Date(dateObj);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const MAX_IMAGES = 10;
 
@@ -45,12 +65,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     categoryMatrix: "B2B_Luxury",
     culturalDNA: "OTHER",
     price: "",
+    salePrice: "",
+    saleStartDate: "",
+    saleEndDate: "",
     stock: "",
     status: "DRAFT",
     hasDPP: false,
     artisanName: "",
     gpsLocation: "",
     storyBlogId: "",
+    isPublicEvent: false,
+    hasSale: false,
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -59,6 +84,52 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const [formErrors, setFormErrors] = useState({});
   const [isMaterialDropdownOpen, setIsMaterialDropdownOpen] = useState(false);
   const materialDropdownRef = useRef(null);
+
+  const minStartDate = React.useMemo(() => {
+    if (product && product.saleStartDate) {
+      const pStartDate = new Date(product.saleStartDate);
+      if (pStartDate < new Date()) {
+        return pStartDate;
+      }
+    }
+    return new Date();
+  }, [product]);
+
+  const saleStartDateOptions = React.useMemo(() => {
+    const d = new Date(minStartDate);
+    d.setHours(0,0,0,0);
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+
+    return {
+      ...flatpickrOptions,
+      minDate: d,
+      defaultHour: now.getHours(),
+      defaultMinute: now.getMinutes(),
+    };
+  }, [minStartDate]);
+
+  const saleEndDateOptions = React.useMemo(() => {
+    let minD;
+    if (formData.saleStartDate) {
+      minD = new Date(formData.saleStartDate);
+      minD.setHours(0,0,0,0);
+    } else {
+      minD = new Date(minStartDate);
+      minD.setHours(0,0,0,0);
+    }
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 65);
+
+    return {
+      ...flatpickrOptions,
+      minDate: minD,
+      defaultHour: formData.saleStartDate ? new Date(formData.saleStartDate).getHours() : now.getHours(),
+      defaultMinute: formData.saleStartDate ? new Date(formData.saleStartDate).getMinutes() : now.getMinutes(),
+    };
+  }, [formData.saleStartDate, minStartDate]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -180,12 +251,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         categoryMatrix: product.categoryMatrix || "B2B_Luxury",
         culturalDNA: product.culturalDNA || "OTHER",
         price: product.price || "",
+        salePrice: product.salePrice || "",
+        saleStartDate: product.saleStartDate || "",
+        saleEndDate: product.saleEndDate || "",
         stock: product.stock || "",
-        status: product.status || "DRAFT",
-        hasDPP: product.hasDPP || false,
-        artisanName: product.artisanName || "",
-        gpsLocation: product.gpsLocation || "",
-        storyBlogId: product.storyBlogId || "",
+        status: product?.status || "DRAFT",
+        hasDPP: product?.hasDPP || false,
+        artisanName: product?.artisanName || "",
+        gpsLocation: product?.gpsLocation || "",
+        storyBlogId: product?.storyBlogId || "",
+        isPublicEvent: product?.isPublicEvent || false,
+        hasSale: !!product.salePrice || !!product.saleStartDate,
       });
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
@@ -349,19 +425,44 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     setNewImagePreviews((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
 
-  // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = {};
-    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền tên sản phẩm");
-    if (!formData.sku) errors.sku = t("messages.required_field", "Vui lòng điền mã SKU");
-    if (!formData.price) errors.price = t("messages.required_field", "Vui lòng điền giá bán");
-    if (!formData.vendor) errors.vendor = t("messages.required_field", "Vui lòng chọn nhà cung cấp");
+    let errors = {};
+    if (!formData.name) errors.name = t("errors.name_required");
+    if (!formData.sku) errors.sku = t("errors.sku_required");
+    if (!formData.vendor) errors.vendor = t("errors.vendor_required");
+    if (!formData.price) errors.price = t("errors.price_required");
 
-    if (formData.hasDPP) {
-      if (!formData.artisanName) errors.artisanName = t("messages.required_field", "Vui lòng điền tên nghệ nhân");
-      if (!formData.gpsLocation) errors.gpsLocation = t("messages.required_field", "Vui lòng điền vị trí GPS");
+    if (formData.hasSale && formData.salePrice && Number(formData.salePrice) > 0) {
+      if (Number(formData.salePrice) >= Number(formData.price)) {
+        errors.salePrice = "Giá Sale phải nhỏ hơn giá gốc";
+      }
+      if (!formData.saleStartDate) {
+        errors.saleStartDate = "Vui lòng chọn ngày bắt đầu Sale";
+      }
+      if (!formData.saleEndDate) {
+        errors.saleEndDate = "Vui lòng chọn ngày kết thúc Sale";
+      }
+      if (formData.saleStartDate && formData.saleEndDate) {
+        if (new Date(formData.saleEndDate) <= new Date(formData.saleStartDate)) {
+          errors.saleEndDate = "Kết thúc phải sau thời gian bắt đầu";
+        }
+        if (new Date(formData.saleEndDate) <= new Date()) {
+          errors.saleEndDate = "Kết thúc phải ở tương lai";
+        }
+        
+        const start = new Date(formData.saleStartDate);
+        start.setSeconds(0, 0);
+        const now = new Date();
+        now.setSeconds(0, 0);
+        
+        const isUnchanged = product && new Date(product.saleStartDate).getTime() === start.getTime();
+
+        if (!isUnchanged && start < now) {
+          errors.saleStartDate = "Thời gian bắt đầu không được trong quá khứ";
+        }
+      }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -378,8 +479,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       const updatePayload = {
         ...formData,
         price: Number(formData.price),
+        salePrice: formData.hasSale && formData.salePrice ? Number(formData.salePrice) : 0,
         stock: Number(formData.stock) || 0,
       };
+
+      if (!updatePayload.hasSale) {
+        updatePayload.saleStartDate = null;
+        updatePayload.saleEndDate = null;
+        updatePayload.isPublicEvent = false;
+      }
 
       if (!updatePayload.hasDPP) {
         updatePayload.artisanName = "";
@@ -567,6 +675,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
               <div className={activeTab === "info" ? "block" : "hidden"}>
                 <form id="edit-product-form" onSubmit={handleSubmit} className="space-y-6">
               
+              {formData.salePrice > 0 && formData.saleStartDate && new Date(formData.saleStartDate) > new Date() && (
+                <div className="bg-blue-500/10 text-blue-500 p-4 rounded-lg mb-6 flex items-start gap-3 border border-blue-500/20">
+                  <AlertCircle className="w-5 h-5 mt-0.5 shrink-0" />
+                  <p className="text-sm">Sản phẩm này đang được lên lịch Sale. Bạn có thể chỉnh sửa thời gian hoặc đưa giá Sale về 0 để hủy lên lịch.</p>
+                </div>
+              )}
+
               {/* KHỐI 1: THÔNG TIN CƠ BẢN */}
               <div className="space-y-4">
                 
@@ -688,6 +803,102 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
                     <input type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  </div>
+                </div>
+
+                {/* KHỐI MỚI: CHƯƠNG TRÌNH SALE (VỚI TOGGLE) */}
+                <div className="p-5 border border-yellow-500/30 bg-yellow-500/5 rounded-2xl relative overflow-hidden">
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-yellow-500/20 rounded-md">
+                        <Tag className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-yellow-700">{t("form.sale.title", "Chương trình Sale")}</h3>
+                        <p className="text-[11px] text-yellow-600/70">{t("form.sale.subtitle", "Thiết lập giá khuyến mãi và thời gian")}</p>
+                      </div>
+                    </div>
+                    {/* NÚT GẠT TOGGLE CHO HAS SALE */}
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        name="hasSale" 
+                        checked={formData.hasSale} 
+                        onChange={(e) => {
+                          handleChange(e);
+                          if (e.target.checked) {
+                            setFormData(prev => ({ ...prev, hasSale: true, isPublicEvent: true }));
+                          }
+                        }} 
+                        className="sr-only peer" 
+                      />
+                      <div className="w-11 h-6 bg-yellow-500/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                    </label>
+                  </div>
+
+                  <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasSale ? "max-h-[700px] mt-5 opacity-100" : "max-h-0 opacity-0"}`}>
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.salePrice", "Giá Sale")}</label>
+                        <input type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.salePrice ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm`} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} />
+                        {formErrors.salePrice && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.salePrice}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.startSale", "Bắt đầu Sale")}</label>
+                        <Flatpickr
+                          value={formatFlatpickrDate(formData.saleStartDate)}
+                          onChange={([date]) => updateField("saleStartDate", date)}
+                          options={saleStartDateOptions}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          placeholder="dd/mm/yyyy --:--"
+                        />
+                        {formErrors.saleStartDate && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.saleStartDate}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.endSale", "Kết thúc Sale")}</label>
+                        <Flatpickr
+                          value={formatFlatpickrDate(formData.saleEndDate)}
+                          onChange={([date]) => updateField("saleEndDate", date)}
+                          options={saleEndDateOptions}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          placeholder="dd/mm/yyyy --:--"
+                        />
+                        {formErrors.saleEndDate && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.saleEndDate}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* TOGGLE GỬI THÔNG BÁO PUSH */}
+                    <div className="flex items-center justify-between mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-yellow-700">{t("form.sale.sendPush", "Gửi thông báo Push")}</span>
+                        <span className="text-[11px] text-yellow-700/70">{t("form.sale.sendPushDesc", "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành")}</span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          name="isPublicEvent" 
+                          checked={formData.isPublicEvent} 
+                          onChange={handleChange} 
+                          className="sr-only peer" 
+                        />
+                        <div className="w-11 h-6 bg-yellow-500/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                      </label>
+                    </div>
                   </div>
                 </div>
 

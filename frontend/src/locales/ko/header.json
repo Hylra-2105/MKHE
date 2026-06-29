@@ -50,7 +50,8 @@
       "order_completed": "배송 완료",
       "order_cancelled": "주문이 취소되었습니다",
       "voucher_saved": "쿠폰이 저장되었습니다",
-      "lucky_wheel_won": "당첨을 축하합니다!"
+      "lucky_wheel_won": "당첨을 축하합니다!",
+      "flash_sale": "거대한 제품 세일!"
     },
     "message": {
       "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
@@ -60,7 +61,8 @@
       "order_completed": "주문 {{orderCode}} 의 배송이 완료되었습니다. MKHE를 이용해 주셔서 감사합니다!",
       "order_cancelled": "주문 {{orderCode}} 이(가) 취소되었습니다.",
       "voucher_saved": "할인 코드 {{code}} 을(를) 성공적으로 수집했습니다.",
-      "lucky_wheel_won": "미스터리 박스에서 할인 코드 {{code}} 을(를) 방금 받으셨습니다."
+      "lucky_wheel_won": "미스터리 박스에서 할인 코드 {{code}} 을(를) 방금 받으셨습니다.",
+      "flash_sale": "제품 {{productName}}이(가) 할인 행사를 진행 중입니다. 놓치지 마세요!"
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",

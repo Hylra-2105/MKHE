@@ -6,6 +6,7 @@ import Pagination from "@/components/ui/Pagination";
 import { shopService } from "@/features/shop/shop.service";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const ShopPage = () => {
   const { t } = useTranslation("product");
@@ -16,6 +17,8 @@ const ShopPage = () => {
     currentPage: 1,
     totalPages: 1,
   });
+  
+  const { socket } = useSocketStore();
 
   // Chuyển URL Search Params thành Object để dễ quản lý
   const currentFilters = {
@@ -85,6 +88,46 @@ const ShopPage = () => {
     // Scroll to top when page/filters change
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [fetchProducts, searchParams]);
+
+  // Real-time updates for Shop Page
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleProductUpdated = (updatedProduct) => {
+      setProducts((prev) => {
+        const exists = prev.some((p) => p._id === updatedProduct._id);
+        
+        if (exists) {
+          // If it's no longer published, remove it from the shop view
+          if (updatedProduct.status !== "PUBLISHED") {
+            return prev.filter((p) => p._id !== updatedProduct._id);
+          }
+          // Otherwise update its data
+          return prev.map((p) => p._id === updatedProduct._id ? updatedProduct : p);
+        } else {
+          // If it doesn't exist but is now PUBLISHED, fetch the list again to add it 
+          // (fetching ensures correct filtering/pagination)
+          if (updatedProduct.status === "PUBLISHED") {
+            setTimeout(() => fetchProducts(), 0);
+          }
+          return prev;
+        }
+      });
+    };
+
+    const handleProductCreated = () => {
+      // Re-fetch to get correct sorting and filtering for the new product
+      fetchProducts();
+    };
+
+    socket.on("product_updated", handleProductUpdated);
+    socket.on("product_created", handleProductCreated);
+
+    return () => {
+      socket.off("product_updated", handleProductUpdated);
+      socket.off("product_created", handleProductCreated);
+    };
+  }, [socket, fetchProducts]);
 
   return (
     <ShopLayout filters={currentFilters} onFilterChange={handleFilterChange}>

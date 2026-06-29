@@ -24,6 +24,14 @@ export const useCartStore = create(
           : [...state.selectedItems, productId],
       })),
 
+      updateProductInItems: (updatedProduct) => set((state) => ({
+        items: state.items.map((item) => 
+          item.product._id === updatedProduct._id 
+            ? { ...item, product: updatedProduct } 
+            : item
+        )
+      })),
+
       selectAllItems: (isSelected) => set((state) => ({
         selectedItems: isSelected ? state.items.map((item) => item.product._id) : [],
       })),
@@ -194,9 +202,16 @@ export const useCartStore = create(
 
       getCartTotal: () => {
         const { items, selectedItems } = get();
+        const now = new Date();
         return items
           .filter((item) => selectedItems.includes(item.product._id))
-          .reduce((total, item) => total + item.product.price * item.quantity, 0);
+          .reduce((total, item) => {
+            const product = item.product;
+            const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
+                                && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
+            const effectivePrice = isSaleValid ? product.salePrice : product.price;
+            return total + effectivePrice * item.quantity;
+          }, 0);
       },
 
       getDiscountedTotal: () => {

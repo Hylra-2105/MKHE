@@ -245,5 +245,19 @@
       "back": "돌아가기",
       "nfc_badge": "NFC 디지털 여권 통합 상품"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "세일 프로그램",
+      "subtitle": "프로모션 가격 및 시간 설정",
+      "salePrice": "세일 가격",
+      "salePricePlaceholder": "세일 가격 입력...",
+      "startSale": "세일 시작",
+      "endSale": "세일 종료",
+      "sendPush": "푸시 알림 보내기",
+      "sendPushDesc": "릴리스 시 시스템이 모든 사용자에게 알림을 자동으로 보냅니다",
+      "ongoing": "세일 중",
+      "upcoming": "다가오는 세일"
+    }
   }
 }

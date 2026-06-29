@@ -48,6 +48,17 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: [0, "PRICE_CANNOT_BE_NEGATIVE"], 
     },
+    salePrice: {
+      type: Number,
+      default: 0,
+      min: [0, "SALE_PRICE_CANNOT_BE_NEGATIVE"],
+    },
+    saleStartDate: {
+      type: Date,
+    },
+    saleEndDate: {
+      type: Date,
+    },
     stock: {
       type: Number,
       required: true,
@@ -70,6 +81,10 @@ const productSchema = new mongoose.Schema(
       default: "DRAFT",
     },
     hasDPP: {
+      type: Boolean,
+      default: false,
+    },
+    isPublicEvent: {
       type: Boolean,
       default: false,
     },
@@ -128,6 +143,19 @@ productSchema.pre("save", async function () {
     }
     if (!this.gpsLocation) {
       throw new Error("GPS_LOCATION_REQUIRED");
+    }
+  }
+
+  // Validate sale price
+  if (this.salePrice > 0) {
+    if (this.salePrice >= this.price) {
+      throw new Error("SALE_PRICE_MUST_BE_LESS_THAN_PRICE");
+    }
+    if (!this.saleStartDate || !this.saleEndDate) {
+      throw new Error("SALE_DATES_REQUIRED");
+    }
+    if (new Date(this.saleEndDate) <= new Date(this.saleStartDate)) {
+      throw new Error("INVALID_SALE_DATE_RANGE");
     }
   }
 });
