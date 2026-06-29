@@ -11,7 +11,7 @@ import ReviewModal from "@/features/reviews/components/ReviewModal";
 const STATUS_STEPS = ["PENDING", "CONFIRMED", "DELIVERING", "COMPLETED"];
 
 const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["history", "common"]);
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);

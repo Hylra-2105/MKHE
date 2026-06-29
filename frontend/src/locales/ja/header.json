@@ -52,7 +52,11 @@
       "voucher_saved": "クーポンが保存されました",
       "lucky_wheel_won": "おめでとうございます！",
       "flash_sale": "巨大な製品セール！",
-      "voucher_published": "新しいオファーコードがあります！"
+      "voucher_published": "新しいオファーコードがあります！",
+      "admin_order_new": "新規注文",
+      "admin_order_paid": "支払い済み注文",
+      "admin_order_completed": "注文完了",
+      "admin_stock_alert": "在庫不足アラート"
     },
     "message": {
       "order_placed": "注文 {{orderCode}} が正常に行われました。処理を待っています。",
@@ -64,7 +68,11 @@
       "voucher_saved": "割引コード {{code}} を正常に取得しました。",
       "lucky_wheel_won": "ミステリーボックスから割引コード {{code}} を受け取りました。",
       "flash_sale": "製品 {{productName}} のセール開催中です。お見逃しなく！",
-      "voucher_published": "割引コード {{code}} が公開されました。なくなる前に今すぐ手に入れよう！"
+      "voucher_published": "割引コード {{code}} が公開されました。なくなる前に今すぐ手に入れよう！",
+      "admin_order_new": "新しい注文 #{{orderCode}} が正常に作成されました (COD)。",
+      "admin_order_paid": "注文 #{{orderCode}} の支払いが正常に完了しました (オンライン)。",
+      "admin_order_completed": "お客様が注文 #{{orderCode}} の受取と支払いを確認しました。",
+      "admin_stock_alert": "製品 {{productName}} の在庫が少なくなっています (残り {{currentStock}} 個)。"
     },
     "header_title": "通知",
     "mark_all_read": "すべて既読にする",
@@ -74,6 +82,7 @@
     "time_just_now": "たった今",
     "tab_all": "すべて",
     "tab_unread": "未読",
+    "tab_system": "システム",
     "recent": "以前",
     "load_more": "以前の通知を見る",
     "deleted_success": "通知を削除しました",

@@ -136,6 +136,13 @@ function App() {
       }
     });
 
+    if (socket.connected && user && user._id) {
+      socket.emit("join_user_room", user._id);
+      if (user.role === "Admin" || user.role === "Staff") {
+        socket.emit("join_admin_room");
+      }
+    }
+
     socket.on("new_notification", (notif) => {
       addNotification(notif);
       
@@ -159,6 +166,34 @@ function App() {
       toast(translatedTitle, {
         icon: '🔔',
       });
+    });
+
+    socket.on("new_admin_notification", (notif) => {
+      if (user && (user.role === "Admin" || user.role === "Staff")) {
+        addNotification(notif);
+        
+        const adminMap = {
+          "Đơn hàng mới": "notifications.title.admin_order_new",
+          "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
+          "Đơn hàng đã thanh toán": "notifications.title.admin_order_paid",
+          "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
+          "Đơn hàng hoàn tất": "notifications.title.admin_order_completed",
+          "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
+          "Cảnh báo tồn kho": "notifications.title.admin_stock_alert",
+          "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
+        };
+        const currentT = tRef.current;
+        const translatedTitle = adminMap[notif.title] ? currentT(adminMap[notif.title], { defaultValue: notif.title }) : notif.title;
+
+        toast(`[${currentT("notifications.header_title", { defaultValue: "Hệ thống" })}] ${translatedTitle}`, {
+          icon: '🚨',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          },
+        });
+      }
     });
 
     socket.on("product_updated", (updatedProduct) => {

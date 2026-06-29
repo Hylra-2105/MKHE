@@ -276,6 +276,11 @@ export const updateProduct = async (req, res) => {
 
     Object.assign(product, updates);
 
+    // Reset low stock alert if stock is replenished > 10
+    if (product.stock > 10) {
+      product.lowStockAlerted = false;
+    }
+
     const updatedProduct = await product.save();
 
     if (updatedProduct.status === "PUBLISHED" && updatedProduct.isPublicEvent) {

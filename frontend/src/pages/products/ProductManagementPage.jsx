@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { Trash2 } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { productApi } from "@/api/productApi";
 import ProductTable from "@/features/products/components/Admin/ProductTable";
@@ -16,6 +17,8 @@ import { useSocketStore } from "@/stores/useSocketStore";
 const ProductManagementPage = () => {
   const { t } = useTranslation("product");
   const { socket } = useSocketStore();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,6 +81,21 @@ const ProductManagementPage = () => {
       };
     }
   }, [fetchProducts, socket]);
+
+  useEffect(() => {
+    if (location.state?.openProductId && products.length > 0) {
+      const productId = location.state.openProductId;
+      const product = products.find(p => p._id === productId);
+      
+      if (product) {
+        setSelectedProduct(product);
+        setIsEditModalOpen(true);
+      }
+      
+      // Clear the state so it doesn't reopen on refresh
+      navigate(".", { replace: true, state: {} });
+    }
+  }, [location.state?.openProductId, products, navigate]);
 
   const handleSearch = (e) => {
     e.preventDefault();

@@ -32,7 +32,15 @@ const translateNotificationTitle = (title, t) => {
     "FLASH_SALE_TITLE": "notifications.title.flash_sale",
     "Sản phẩm Sale Khủng!": "notifications.title.flash_sale",
     "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
-    "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published"
+    "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published",
+    "Đơn hàng mới": "notifications.title.admin_order_new",
+    "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
+    "Đơn hàng đã thanh toán": "notifications.title.admin_order_paid",
+    "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
+    "Đơn hàng hoàn tất": "notifications.title.admin_order_completed",
+    "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
+    "Cảnh báo tồn kho": "notifications.title.admin_stock_alert",
+    "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
@@ -51,6 +59,18 @@ const translateNotificationMessage = (message, title, t) => {
      const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
      const voucherCode = voucherMatch ? voucherMatch[1] : "";
      return t("notifications.message.lucky_wheel_won", { code: voucherCode, defaultValue: message });
+  }
+
+  if (title === "Cảnh báo tồn kho" || title === "ADMIN_STOCK_ALERT") {
+     if (message.startsWith("ADMIN_STOCK_ALERT::")) {
+       const parts = message.split("::");
+       return t("notifications.message.admin_stock_alert", { productName: parts[1], currentStock: parts[2], defaultValue: message });
+     }
+     const productMatch = message.match(/Sản phẩm (.*?) sắp hết hàng/);
+     const stockMatch = message.match(/còn (\d+) cái/);
+     const productName = productMatch ? productMatch[1] : "";
+     const currentStock = stockMatch ? stockMatch[1] : "";
+     return t("notifications.message.admin_stock_alert", { productName, currentStock, defaultValue: message });
   }
 
   if (title === "FLASH_SALE_TITLE" || title === "Sản phẩm Sale Khủng!" || message.startsWith("FLASH_SALE_MESSAGE::")) {
@@ -83,11 +103,21 @@ const translateNotificationMessage = (message, title, t) => {
     "Đơn hàng đã được xác nhận": "notifications.message.order_confirmed",
     "Đơn hàng đang giao": "notifications.message.order_delivering",
     "Giao hàng thành công": "notifications.message.order_completed",
-    "Đơn hàng đã hủy": "notifications.message.order_cancelled"
+    "Đơn hàng đã hủy": "notifications.message.order_cancelled",
+    "Đơn hàng mới": "notifications.message.admin_order_new",
+    "ADMIN_ORDER_NEW": "notifications.message.admin_order_new",
+    "Đơn hàng đã thanh toán": "notifications.message.admin_order_paid",
+    "ADMIN_ORDER_PAID": "notifications.message.admin_order_paid",
+    "Đơn hàng hoàn tất": "notifications.message.admin_order_completed",
+    "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed"
   };
 
-  if (map[title] && orderCode) {
-    return t(map[title], { orderCode, defaultValue: message });
+  if (map[title]) {
+    let resolvedOrderCode = orderCode;
+    if (message.includes("::")) {
+      resolvedOrderCode = message.split("::")[1];
+    }
+    return t(map[title], { orderCode: resolvedOrderCode, defaultValue: message });
   }
 
   return message;
@@ -95,7 +125,7 @@ const translateNotificationMessage = (message, title, t) => {
 
 export default function NotificationDropdown() {
   const { t, i18n } = useTranslation("header");
-  const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, optimisticDelete, undoDelete, page, hasMore, loading, tab, setTab } = useNotificationStore();
+  const { notifications, unreadCount, systemUnreadCount, fetchUnreadCounts, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, optimisticDelete, undoDelete, page, hasMore, loading, tab, setTab } = useNotificationStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -104,11 +134,20 @@ export default function NotificationDropdown() {
   const [showGlobalMenu, setShowGlobalMenu] = useState(false);
 
   useEffect(() => {
+    if (user) {
+      fetchUnreadCounts();
+      if ((user.role === "Admin" || user.role === "Staff") && tab === "all") {
+        useNotificationStore.setState({ tab: "system" });
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (user && isOpen) {
       fetchNotifications({ page: 1, tab });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isOpen, tab]);
+  }, [user, isOpen]);
 
   // Click ra ngoài để đóng dropdown
   useEffect(() => {
@@ -147,9 +186,19 @@ export default function NotificationDropdown() {
     }
     
     if (notif.link) {
-      navigate(notif.link);
+      if (notif.isAdmin && notif.orderId && notif.link.includes("/admin/orders")) {
+        navigate(notif.link, { state: { openOrderId: notif.orderId } });
+      } else if (notif.isAdmin && notif.productId && notif.link.includes("/admin/products")) {
+        navigate(notif.link, { state: { openProductId: notif.productId } });
+      } else {
+        navigate(notif.link);
+      }
     } else if (notif.orderId || notif.type === "ORDER_STATUS_UPDATE") {
-      navigate("/profile?tab=orders");
+      if (notif.isAdmin) {
+        navigate("/admin/orders", { state: { openOrderId: notif.orderId } });
+      } else {
+        navigate("/profile?tab=orders");
+      }
     } else if (notif.type === "MARKETING") {
       navigate("/shop");
     }
@@ -199,9 +248,9 @@ export default function NotificationDropdown() {
         className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
       >
         <Bell className="w-5 h-5" />
-        {unreadCount > 0 && (
+        {(unreadCount + systemUnreadCount) > 0 && (
           <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-mkhe-primary text-[#1a110a] text-[10px] font-bold rounded-full flex items-center justify-center">
-            {unreadCount > 99 ? "99+" : unreadCount}
+            {(unreadCount + systemUnreadCount) > 99 ? "99+" : (unreadCount + systemUnreadCount)}
           </span>
         )}
       </button>
@@ -235,12 +284,30 @@ export default function NotificationDropdown() {
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 px-4 pb-2">
+          <div className="flex gap-2 px-4 pb-2 border-b border-mkhe-border/50 overflow-x-auto no-scrollbar whitespace-nowrap">
+            {(user.role === "Admin" || user.role === "Staff") && (
+              <button 
+                onClick={() => setTab("system")}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer flex items-center gap-2 ${tab === "system" ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
+              >
+                {t("notifications.tab_system", "Hệ thống")}
+                {systemUnreadCount > 0 && (
+                  <span className="bg-mkhe-primary text-[#1a110a] text-[10px] px-1.5 py-0.5 rounded-full">
+                    {systemUnreadCount}
+                  </span>
+                )}
+              </button>
+            )}
             <button 
               onClick={() => setTab("all")}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer ${tab === "all" ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer flex items-center gap-2 ${tab === "all" ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
             >
               {t("notifications.tab_all", "Tất cả")}
+              {unreadCount > 0 && tab !== "system" && (
+                <span className="bg-mkhe-primary text-[#1a110a] text-[10px] px-1.5 py-0.5 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
             </button>
             <button 
               onClick={() => setTab("unread")}
@@ -250,9 +317,14 @@ export default function NotificationDropdown() {
             </button>
           </div>
 
-          {/* List */}
+          {/* Notifications List */}
           <div className="max-h-[450px] overflow-y-auto pb-4 custom-scrollbar">
-            {notifications.length === 0 && !loading ? (
+            {loading && page === 1 ? (
+              <div className="py-10 text-center text-mkhe-text/60 flex flex-col items-center justify-center">
+                <div className="w-6 h-6 border-2 border-mkhe-primary border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p>Đang tải...</p>
+              </div>
+            ) : notifications.length === 0 ? (
               <div className="py-10 text-center opacity-60 flex flex-col items-center justify-center text-mkhe-text">
                 <Bell className="w-10 h-10 mb-2" />
                 <p className="text-sm">{t("notifications.empty", "Bạn chưa có thông báo nào")}</p>

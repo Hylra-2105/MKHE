@@ -5,8 +5,18 @@ const notificationSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    readBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     title: {
       type: String,
       required: true,
@@ -23,6 +33,10 @@ const notificationSchema = new mongoose.Schema(
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
+    },
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
     },
     status: {
       type: String, // e.g. "CONFIRMED", "DELIVERING"
