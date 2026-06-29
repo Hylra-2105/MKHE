@@ -48,6 +48,7 @@ import NotFoundPage from "./pages/errors/NotFoundPage";
 import ProfilePage from "@/pages/users/ProfilePage";
 
 import DPPPage from "@/pages/dpp/DPPPage";
+import AboutPage from "@/pages/about/AboutPage";
 
 import CheckoutPage from "./pages/orders/CheckoutPage";
 import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
@@ -244,6 +245,7 @@ function App() {
 
         <Route element={<MainLayout />}>
           <Route path="/home" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:id" element={<ShopDetailPage />} />
           <Route path="/storytelling" element={<BlogPage />} />
