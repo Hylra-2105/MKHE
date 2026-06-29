@@ -68,6 +68,11 @@
       "thumbnail_change": "更改图片",
       "thumbnail_drag": "点击或将图片拖放到此处",
       "category_placeholder": "选择类别"
+    },
+    "categories": {
+      "Ký sự": "故事",
+      "Sự kiện": "活动",
+      "Cẩm nang": "手册"
     }
   },
   "public": {

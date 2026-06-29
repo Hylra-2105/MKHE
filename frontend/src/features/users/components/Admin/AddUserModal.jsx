@@ -30,10 +30,10 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
     e.preventDefault();
 
     const errors = {};
-    if (!formData.name) errors.name = t("messages.required_field", "Vui lòng điền vào trường này.");
-    if (!formData.email) errors.email = t("messages.required_field", "Vui lòng điền vào trường này.");
-    if (!formData.password) errors.password = t("messages.required_field", "Vui lòng điền vào trường này.");
-    else if (formData.password.length < 6) errors.password = t("messages.pass_short", "Mật khẩu phải có ít nhất 6 ký tự.");
+    if (!formData.name) errors.name = t("users.errors.name_required", "Vui lòng điền họ và tên");
+    if (!formData.email) errors.email = t("users.errors.email_required", "Vui lòng điền email");
+    if (!formData.password) errors.password = t("users.errors.pass_required", "Vui lòng điền mật khẩu");
+    else if (formData.password.length < 6) errors.password = t("users.errors.pass_short", "Mật khẩu phải có ít nhất 6 ký tự.");
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);

@@ -5,6 +5,7 @@ import NfcClaimHistory from "./nfcClaimHistory.model.js";
 import Product from "../products/product.model.js";
 import Notification from "../notifications/notification.model.js";
 import { getIO } from "../../config/socket.js";
+import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
 
 // @desc    Lấy danh sách mã public có thể sưu tầm
 // @route   GET /api/vouchers/public
@@ -170,6 +171,7 @@ export const createVoucher = async (req, res) => {
       applicableVillages,
       applicableCategories,
       isO2O,
+      isPublicEvent,
       dropRate,
       status,
     } = req.body;
@@ -215,10 +217,17 @@ export const createVoucher = async (req, res) => {
       applicableVillages: applicableVillages || [],
       applicableCategories: applicableCategories || [],
       isO2O: isO2O || false,
+      isPublicEvent: isPublicEvent || false,
       dropRate: dropRate || 0,
       status: status || "DRAFT",
     });
 
+    // The push notification for isPublicEvent will be handled by voucherCron when the startDate is reached
+    try {
+      getIO().emit("voucher_updated", voucher);
+    } catch (e) {
+      console.error(e);
+    }
     return successResponse(res, 201, "VOUCHER_CREATED_SUCCESS", voucher);
   } catch (error) {
     console.error("Lỗi createVoucher:", error);
@@ -572,11 +581,15 @@ export const updateVoucher = async (req, res) => {
     if (updateData.applicableVillages) voucher.applicableVillages = updateData.applicableVillages;
     if (updateData.applicableCategories) voucher.applicableCategories = updateData.applicableCategories;
     if (updateData.isO2O !== undefined) voucher.isO2O = updateData.isO2O;
+    if (updateData.isPublicEvent !== undefined) voucher.isPublicEvent = updateData.isPublicEvent;
     if (updateData.dropRate !== undefined) voucher.dropRate = updateData.dropRate;
     
+    let justPublished = false;
+
     // Hỗ trợ chuyển đổi trạng thái (từ DRAFT sang PUBLISHED)
     if (updateData.status === "PUBLISHED" && voucher.status === "DRAFT") {
       voucher.status = "PUBLISHED";
+      justPublished = true;
     }
     
     // Hỗ trợ chuyển đổi trạng thái (từ PUBLISHED về DRAFT nếu voucher chưa chạy)
@@ -599,6 +612,9 @@ export const updateVoucher = async (req, res) => {
     }
 
     await voucher.save();
+
+    // The push notification for isPublicEvent will be handled by voucherCron when the startDate is reached
+
     return successResponse(res, 200, "VOUCHER_UPDATED_SUCCESS", voucher);
   } catch (error) {
     console.error("Lỗi updateVoucher:", error);
@@ -626,7 +642,13 @@ export const deleteVoucher = async (req, res) => {
     voucher.isActive = false;
     await voucher.save();
     
-    return successResponse(res, 200, "VOUCHER_DELETED_SUCCESS", voucher);
+    try {
+      getIO().emit("voucher_updated", voucher);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return successResponse(res, 200, "VOUCHER_UPDATED", voucher);
   } catch (error) {
     console.error("Lỗi deleteVoucher:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

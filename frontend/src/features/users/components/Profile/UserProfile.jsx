@@ -11,6 +11,7 @@ import {
   UploadCloud,
   X,
   ShoppingBag,
+  Gift
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getLastNameInitial, isVideoMedia } from "@/utils/validators";

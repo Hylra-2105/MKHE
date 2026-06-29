@@ -68,6 +68,11 @@
       "thumbnail_change": "이미지 변경",
       "thumbnail_drag": "클릭하거나 여기에 이미지를 끌어다 놓으세요",
       "category_placeholder": "카테고리 선택"
+    },
+    "categories": {
+      "Ký sự": "스토리",
+      "Sự kiện": "이벤트",
+      "Cẩm nang": "핸드북"
     }
   },
   "public": {

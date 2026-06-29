@@ -30,9 +30,13 @@ import uploadRoutes from "./src/modules/upload/upload.routes.js";
 import analyticsRoutes from "./src/modules/analytics/analytics.route.js";
 import notificationRoutes from "./src/modules/notifications/notification.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
+import { startSaleCron } from "./src/cron/saleCron.js";
+import { startVoucherCron } from "./src/cron/voucherCron.js";
 
 connectDB();
 startOrderCron();
+startSaleCron();
+startVoucherCron();
 
 const app = express();
 

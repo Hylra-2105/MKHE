@@ -6,6 +6,7 @@ import orderApi from "@/api/orderApi";
 import { userApi } from "@/api/userApi";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
+import { useSocketStore } from "@/stores/useSocketStore";
 import { ChevronLeft } from "lucide-react";
 
 import CheckoutForm from "@/features/orders/components/Checkout/CheckoutForm";
@@ -17,9 +18,11 @@ export default function CheckoutPage() {
   const { t } = useTranslation("checkout");
   const navigate = useNavigate();
   const location = useLocation();
-  const buyNowItem = location.state?.buyNowItem;
+  const initialBuyNowItem = location.state?.buyNowItem;
+  const [localBuyNowItem, setLocalBuyNowItem] = useState(initialBuyNowItem);
   const { user, setUser } = useAuthStore();
-  const { items, selectedItems, selectedVoucher, removeMultipleFromCart } = useCartStore();
+  const { items, selectedItems, selectedVoucher, removeMultipleFromCart, updateProductInItems } = useCartStore();
+  const { socket } = useSocketStore();
 
   const defaultAddress = user?.addresses?.find((a) => a.isDefault) || user?.addresses?.[0];
   const [shippingInfo, setShippingInfo] = useState({
@@ -38,10 +41,38 @@ export default function CheckoutPage() {
   const [otp, setOtp] = useState("");
   const [otpSending, setOtpSending] = useState(false);
 
-  const checkoutItems = buyNowItem 
-    ? [buyNowItem] 
+  // Listen to product updates
+  useEffect(() => {
+    if (socket) {
+      const handleProductUpdate = (updatedProduct) => {
+        // Update local buyNowItem if it matches
+        if (localBuyNowItem && localBuyNowItem.product._id === updatedProduct._id) {
+          setLocalBuyNowItem({ ...localBuyNowItem, product: updatedProduct });
+        }
+        // Also update cart items in store if it exists there
+        if (updateProductInItems) {
+          updateProductInItems(updatedProduct);
+        }
+      };
+      
+      socket.on("product_updated", handleProductUpdate);
+      return () => {
+        socket.off("product_updated", handleProductUpdate);
+      };
+    }
+  }, [socket, localBuyNowItem, updateProductInItems]);
+
+  const checkoutItems = localBuyNowItem 
+    ? [localBuyNowItem] 
     : items.filter((item) => selectedItems.includes(item.product._id));
-  const subtotal = checkoutItems.reduce((total, item) => total + item.product.price * item.quantity, 0);
+  const subtotal = checkoutItems.reduce((total, item) => {
+    const product = item.product;
+    const now = new Date();
+    const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
+                        && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
+    const effectivePrice = isSaleValid ? product.salePrice : product.price;
+    return total + effectivePrice * item.quantity;
+  }, 0);
   
   // Calculate discount logic again to display
   let discountAmount = 0;
@@ -82,11 +113,11 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
-    if (!buyNowItem && checkoutItems.length === 0 && !isSuccess) {
+    if (!localBuyNowItem && checkoutItems.length === 0 && !isSuccess) {
       toast.error(t("errors.no_items"));
       navigate("/cart"); // Or shop
     }
-  }, [checkoutItems.length, navigate, isSuccess, buyNowItem, t]);
+  }, [checkoutItems.length, navigate, isSuccess, localBuyNowItem, t]);
 
 
   const handleSendOtp = async () => {

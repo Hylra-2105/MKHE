@@ -1,5 +1,6 @@
 import { Loader2, Ticket } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 
 export default function OrderSummary({ checkoutItems, subtotal, shippingFee, discountAmount, totalAmount, handleCheckout, isSubmitting, otpSending, selectedVoucher, onOpenVoucherDrawer }) {
   const { t } = useTranslation("checkout");
@@ -17,16 +18,35 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
             <div key={item.product._id} className="flex gap-4">
               <div className="w-16 h-16 bg-mkhe-border/10 rounded-md overflow-hidden flex-shrink-0">
                 {item.product.images?.[0] ? (
-                  <img src={item.product.images[0]} alt={item.product.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={getImageUrl(item.product.images[0])} 
+                    alt={item.product.name} 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = DEFAULT_FALLBACK_IMAGE;
+                    }}
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-mkhe-text/40">No img</div>
+                  <img 
+                    src={DEFAULT_FALLBACK_IMAGE} 
+                    alt={item.product.name} 
+                    className="w-full h-full object-cover opacity-80" 
+                  />
                 )}
               </div>
               <div className="flex-1">
                 <h4 className="font-medium text-sm line-clamp-2 text-mkhe-text">{item.product.name}</h4>
                 <div className="flex justify-between items-center mt-1">
                   <span className="text-mkhe-text/60 text-sm">{t("summary.qty")}: {item.quantity}</span>
-                  <span className="font-medium text-mkhe-primary">{formatMoney(item.product.price)}</span>
+                  <span className="font-medium text-mkhe-primary">
+                    {(() => {
+                      const now = new Date();
+                      const isSaleValid = item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate 
+                                          && new Date(item.product.saleStartDate) <= now && new Date(item.product.saleEndDate) >= now;
+                      return formatMoney(isSaleValid ? item.product.salePrice : item.product.price);
+                    })()}
+                  </span>
                 </div>
               </div>
             </div>

@@ -42,6 +42,7 @@
     "discount_percentage_val": "{{value}}% 할인",
     "no_min_order": "최소 주문 없음",
     "max_discount_card": "최대 {{value}} VND",
+    "free_shipping": "무료 배송",
     "applying": "적용 중",
     "use_now": "지금 사용",
     "scan_at_counter": "카운터에서 스캔",

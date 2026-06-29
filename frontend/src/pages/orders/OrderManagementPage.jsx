@@ -179,9 +179,9 @@ const OrderManagementPage = () => {
                       order.paymentStatus === "REFUNDED" ? "bg-yellow-500/10 text-yellow-500" :
                       "bg-red-500/10 text-red-500"
                     }`}>
-                      {order.paymentStatus === "PAID" ? "Đã thanh toán" :
-                       order.paymentStatus === "REFUNDED" ? "Hoàn tiền" :
-                       "Chưa thanh toán"}
+                      {order.paymentStatus === "PAID" ? t("admin:orders.payment.paid", { defaultValue: "Đã thanh toán" }) :
+                       order.paymentStatus === "REFUNDED" ? t("admin:orders.payment.refunded", { defaultValue: "Hoàn tiền" }) :
+                       t("admin:orders.payment.unpaid", { defaultValue: "Chưa thanh toán" })}
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-center">

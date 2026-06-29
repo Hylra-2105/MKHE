@@ -53,7 +53,13 @@
     "other_addresses": "(+{{count}} other address)",
     "other_addresses_plural": "(+{{count}} other addresses)",
     "contact": "CONTACT",
-    "default_address": "DEFAULT ADDRESS"
+    "default_address": "DEFAULT ADDRESS",
+    "errors": {
+      "name_required": "Please enter full name",
+      "email_required": "Please enter email",
+      "pass_required": "Please enter password",
+      "pass_short": "Password must be at least 6 characters"
+    }
   },
   "pagination": {
     "showing_page": "Showing page",
@@ -153,7 +159,7 @@
     "cancel": "Cancel",
     "processing": "Processing...",
     "confirm": "Confirm",
-    "publish_time_passed": "Start time has passed. Please select a time from now onwards to publish.",
+    "publish_time_passed": "Start time cannot be in the past",
     "save_changes": "Save Changes",
     "publish_btn": "Publish",
     "update_success": "Update successful",
@@ -170,7 +176,6 @@
     "limited_products": "Limited products",
     "to_date": "to",
     "badge_inactive": "Inactive",
-    "badge_upcoming": "Upcoming",
     "expired": "Expired",
     "out_of_stock": "Out of Stock",
     "running": "Running",
@@ -178,11 +183,10 @@
     "type_percentage": "Percentage Discount (%)",
     "type_fixed": "Fixed Amount Discount (VND)",
     "type_freeship": "Free Shipping",
-    "status_all": "All statuses",
     "type_all": "All types",
     "restore_success": "Restored unsaved data",
     "load_options_error": "Could not load Category/Village options",
-    "time_empty_error": "Please select both start and end times",
+    "time_empty_error": "Please select time",
     "time_invalid_error": "End time must be after start time",
     "create_success": "Voucher created successfully!",
     "create_error_generic": "An error occurred while creating the voucher",
@@ -238,7 +242,21 @@
     "min_order_card": "Min order {{value}} VND",
     "percentage": "Phần trăm (%)",
     "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển"
+    "free_ship": "Miễn phí vận chuyển",
+    "errors": {
+      "MISSING_REQUIRED_FIELDS": "Please fill all required fields",
+      "INVALID_PERCENTAGE": "Invalid percentage",
+      "INVALID_DATE_RANGE": "End date must be after start date",
+      "VOUCHER_CODE_EXISTS": "Voucher code already exists",
+      "CANNOT_UPDATE_LOCKED_FIELDS": "Cannot update locked fields while running",
+      "CANNOT_REVERT_RUNNING_VOUCHER": "Cannot revert running voucher to draft",
+      "VOUCHER_NOT_FOUND": "Voucher not found"
+    },
+    "code_required": "Please enter voucher code",
+    "discount_required": "Please enter a valid discount value",
+    "selected_count": "{{count}} selected",
+    "send_notification": "Send notification",
+    "send_notification_desc": "The system will automatically send notifications to ALL users upon publish"
   },
   "orders": {
     "title": "Order Management",
@@ -300,7 +318,12 @@
     "lock_fail": "Error locking account",
     "error_vietqr_unpaid": "Cannot save: VietQR order must be Paid before delivery!",
     "error_completed_unpaid": "Cannot save: Completed order must be Paid!",
-    "high_risk_filter": "High Risk Orders"
+    "high_risk_filter": "High Risk Orders",
+    "payment": {
+      "paid": "Paid",
+      "refunded": "Refunded",
+      "unpaid": "Unpaid"
+    }
   },
   "fetch_error": "Failed to load blogs",
   "delete_success": "Blog deleted successfully",
@@ -348,5 +371,22 @@
     "no_customer_data": "No customer data",
     "revenue_by_category": "Revenue by Category",
     "order_status_chart": "Order Status"
+  },
+  "products": {
+    "errors": {
+      "name_required": "Please enter product name",
+      "sku_required": "Please enter SKU",
+      "vendor_required": "Please select vendor",
+      "price_required": "Please enter price",
+      "artisan_required": "Please enter artisan name",
+      "gps_required": "Please enter GPS location",
+      "sale_price_invalid": "Sale price must be less than original price",
+      "sale_start_required": "Please select Sale start date",
+      "sale_end_required": "Please select Sale end date",
+      "sale_end_invalid": "End time must be after start time",
+      "sale_end_future": "End time must be in the future",
+      "sale_start_past": "Start time cannot be in the past"
+    },
+    "no_linked_story": "-- No linked story --"
   }
 }

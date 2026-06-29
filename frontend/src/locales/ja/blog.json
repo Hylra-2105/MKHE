@@ -68,6 +68,11 @@
       "thumbnail_change": "画像を変更する",
       "thumbnail_drag": "クリックするか、画像をここにドラッグアンドドロップします",
       "category_placeholder": "カテゴリを選択"
+    },
+    "categories": {
+      "Ký sự": "ストーリー",
+      "Sự kiện": "イベント",
+      "Cẩm nang": "ハンドブック"
     }
   },
   "public": {

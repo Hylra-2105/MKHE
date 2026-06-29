@@ -245,5 +245,36 @@
       "back": "戻る",
       "nfc_badge": "NFCデジタルパスポート統合製品"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "セールプログラム",
+      "subtitle": "プロモーション価格と時間を設定する",
+      "salePrice": "セール価格",
+      "salePricePlaceholder": "セール価格を入力...",
+      "startSale": "セール開始",
+      "endSale": "セール終了",
+      "sendPush": "通知を送信",
+      "sendPushDesc": "リリース時に、システムは自動的にすべてのユーザーに通知を送信します",
+      "ongoing": "セール中",
+      "upcoming": "今後のセール"
+    }
+  },
+  "products": {
+    "errors": {
+      "name_required": "商品名を入力してください",
+      "sku_required": "SKUを入力してください",
+      "vendor_required": "ベンダーを選択してください",
+      "price_required": "価格を入力してください",
+      "artisan_required": "職人名を入力してください",
+      "gps_required": "GPS位置を入力してください",
+      "sale_price_invalid": "セール価格は元の価格より小さくする必要があります",
+      "sale_start_required": "セールの開始日を選択してください",
+      "sale_end_required": "セールの終了日を選択してください",
+      "sale_end_invalid": "終了時間は開始時間より後である必要があります",
+      "sale_end_future": "終了時間は未来である必要があります",
+      "sale_start_past": "開始時間は過去に設定できません"
+    },
+    "no_linked_story": "-- リンクされたストーリーなし --"
   }
 }

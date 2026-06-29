@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
 import { useCartStore } from "@/stores/useCartStore";
-import { getImageUrl, formatNumber } from "@/utils/formatters";
+import { useSocketStore } from "@/stores/useSocketStore";
+import { getImageUrl, formatNumber, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { ChevronLeft, ShoppingCart, Info, Plus, Minus, ShieldCheck, MapPin, Layers, Hash, X, ChevronDown, CreditCard, Star } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, EffectFade } from "swiper/modules";
@@ -31,6 +32,8 @@ export default function ShopDetailPage() {
   
   const [isStoryExpanded, setIsStoryExpanded] = useState(false);
   const [showExpandButton, setShowExpandButton] = useState(false);
+  
+  const { socket } = useSocketStore();
   const storyRef = useRef(null);
   
   const { addToCart } = useCartStore();
@@ -61,6 +64,22 @@ export default function ShopDetailPage() {
       }, 100);
     }
   }, [product]);
+
+  // Listen to real-time product updates
+  useEffect(() => {
+    if (socket && product) {
+      const handleProductUpdate = (updatedProduct) => {
+        if (updatedProduct._id === product._id) {
+          setProduct(updatedProduct);
+        }
+      };
+      
+      socket.on("product_updated", handleProductUpdate);
+      return () => {
+        socket.off("product_updated", handleProductUpdate);
+      };
+    }
+  }, [socket, product]);
 
   const handleAddToCart = () => {
     if (!product || product.stock === 0) return;
@@ -100,6 +119,10 @@ export default function ShopDetailPage() {
 
   const isOutOfStock = product.stock === 0;
 
+  const now = new Date();
+  const isSaleValid = product && product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
+                      && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
+
   return (
     <div className="min-h-screen bg-mkhe-bg font-sans pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -117,9 +140,18 @@ export default function ShopDetailPage() {
           
           {/* CỘT TRÁI: Gallery Hình ảnh */}
           <div className="flex flex-col gap-4">
-            <div className="rounded-3xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10">
-              <Swiper
-                modules={[Pagination, Thumbs, EffectFade]}
+            <div className="rounded-3xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10 relative">
+              {(!product.images || product.images.length === 0) ? (
+                <div className="w-full aspect-square">
+                  <img 
+                    src={DEFAULT_FALLBACK_IMAGE} 
+                    alt={product.name}
+                    className="w-full h-full object-cover opacity-80"
+                  />
+                </div>
+              ) : (
+                <Swiper
+                  modules={[Pagination, Thumbs, EffectFade]}
                 effect="fade"
                 pagination={{ clickable: true }}
                 thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
@@ -137,11 +169,16 @@ export default function ShopDetailPage() {
                         src={getImageUrl(img)} 
                         alt={`${product.name} - ${index + 1}`}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 ease-out"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = DEFAULT_FALLBACK_IMAGE;
+                        }}
                       />
                     </div>
                   </SwiperSlide>
                 ))}
               </Swiper>
+              )}
             </div>
 
             {/* Thumbnail Slider */}
@@ -161,6 +198,10 @@ export default function ShopDetailPage() {
                           src={getImageUrl(img)} 
                           alt={`Thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                          }}
                         />
                       </div>
                     </SwiperSlide>
@@ -177,9 +218,21 @@ export default function ShopDetailPage() {
                 {product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
               </h1>
               <div className="flex items-center gap-4 mb-4">
-                <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
-                  {formatNumber(product.price)} đ
-                </p>
+                <div className="flex items-end gap-3">
+                  <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
+                    {formatNumber(isSaleValid ? product.salePrice : product.price)} đ
+                  </p>
+                  {isSaleValid && (
+                    <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
+                      {formatNumber(product.price)} đ
+                    </p>
+                  )}
+                  {isSaleValid && (
+                    <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
+                      -{Math.round((1 - product.salePrice / product.price) * 100)}%
+                    </div>
+                  )}
+                </div>
                 {product.ratingCount > 0 && (
                   <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-sm font-bold">
                     <Star className="w-4 h-4 fill-current" />

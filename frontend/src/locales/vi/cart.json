@@ -42,6 +42,7 @@
     "discount_percentage_val": "Giảm {{value}}%",
     "no_min_order": "Không giới hạn đơn tối thiểu",
     "max_discount_card": "Tối đa {{value}}đ",
+    "free_shipping": "Miễn phí vận chuyển",
     "applying": "Đang áp dụng",
     "use_now": "Dùng ngay",
     "scan_at_counter": "Mã quét tại quầy",

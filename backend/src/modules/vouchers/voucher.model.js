@@ -62,6 +62,10 @@ const voucherSchema = new mongoose.Schema(
       type: Boolean,
       default: false, // true = Có thể dùng offline tại quầy
     },
+    isPublicEvent: {
+      type: Boolean,
+      default: false, // true = Auto trigger marketing push notification on publish
+    },
     dropRate: {
       type: Number,
       default: 0,

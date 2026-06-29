@@ -6,6 +6,7 @@ import { formatNumber } from "@/utils/formatters";
 import toast from "react-hot-toast";
 import VoucherFormModal from "./VoucherFormModal";
 import Dropdown from "@/components/ui/Dropdown";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const VoucherManagementFeature = () => {
   const { t } = useTranslation(["admin", "common"]);
@@ -17,6 +18,7 @@ const VoucherManagementFeature = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [editVoucher, setEditVoucher] = useState(null);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, voucher: null, isDelete: false });
+  const socket = useSocketStore((state) => state.socket);
 
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
@@ -49,12 +51,16 @@ const VoucherManagementFeature = () => {
   useEffect(() => {
     fetchVouchers();
     
-    const interval = setInterval(() => {
+    if (!socket) return;
+    const handleVoucherUpdate = () => {
       fetchVouchers(true);
-    }, 10000);
+    };
     
-    return () => clearInterval(interval);
-  }, [fetchVouchers]);
+    socket.on("voucher_updated", handleVoucherUpdate);
+    return () => {
+      socket.off("voucher_updated", handleVoucherUpdate);
+    };
+  }, [fetchVouchers, socket]);
 
   // Pagination display
   const pageNumbers = [page - 1, page, page + 1];

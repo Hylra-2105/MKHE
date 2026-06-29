@@ -1,4 +1,6 @@
 import Notification from "./notification.model.js";
+import User from "../users/user.model.js";
+import { getIO } from "../../config/socket.js";
 import { errorResponse, successResponse } from "../../utils/response.js";
 
 // GET /api/notifications
@@ -65,5 +67,36 @@ export const markAllAsRead = async (req, res) => {
   } catch (error) {
     console.error("markAllAsRead Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Helper for background task: Create bulk marketing notifications
+export const createBulkMarketingNotifications = async (title, message, link = "") => {
+  try {
+    const users = await User.find({ isBlocked: false }).select("_id");
+    if (!users.length) return;
+
+    const notifications = users.map((user) => ({
+      user: user._id,
+      title,
+      message,
+      type: "MARKETING",
+      link,
+      isRead: false,
+    }));
+
+    // Bulk insert for performance
+    await Notification.insertMany(notifications);
+
+    // Emit socket event to all clients to refresh notifications
+    try {
+      getIO().emit("new_notification", { type: "MARKETING", title, message, link });
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit marketing notification:", socketErr);
+    }
+    
+    console.info(`[Notification] Successfully pushed marketing notification to ${users.length} users.`);
+  } catch (error) {
+    console.error("[Notification] createBulkMarketingNotifications Error:", error);
   }
 };

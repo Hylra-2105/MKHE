@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { formatNumber, getImageUrl } from "@/utils/formatters";
+import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +51,10 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
         const mediaUrl = getImageUrl(mainMedia);
         const isVideo = mainMedia ? isVideoMedia(mainMedia) : false;
 
+        const now = new Date();
+        const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
+                            && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
+
         return (
           <div 
             key={product._id}
@@ -75,15 +79,17 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
                     alt={product.name}
                     onError={(e) => {
                       e.target.onerror = null; 
-                      e.target.src = "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=600&q=80"; 
+                      e.target.src = DEFAULT_FALLBACK_IMAGE; 
                     }}
                     className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out ${product.status === 'OUT_OF_STOCK' ? 'opacity-80' : ''}`}
                   />
                 )
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-mkhe-primary/5">
-                  <Star className="w-12 h-12 text-mkhe-text/20" />
-                </div>
+                <img 
+                  src={DEFAULT_FALLBACK_IMAGE} 
+                  alt={product.name}
+                  className={`w-full h-full object-cover opacity-80 transition-transform duration-1000 group-hover:scale-105 ease-out`}
+                />
               )}
 
 
@@ -110,6 +116,11 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
                     <PlayCircle className="w-4 h-4" />
                   </div>
                 )}
+                {isSaleValid && (
+                  <div className="bg-red-600/90 text-white px-2.5 py-1 rounded-xl shadow-lg backdrop-blur-md border border-red-500/50">
+                    <span className="text-[11px] font-bold tracking-wider">-{Math.round((1 - product.salePrice / product.price) * 100)}%</span>
+                  </div>
+                )}
               </div>
 
               {/* Vendor & Category TOP RIGHT */}
@@ -127,9 +138,16 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
               <h3 className="text-base md:text-lg font-medium text-mkhe-text line-clamp-1 h-6 transition-colors group-hover:text-mkhe-primary leading-snug" title={product.name}>
                 {product.name}
               </h3>
-              <p className="text-lg font-bold text-mkhe-primary mt-1">
-                {formatNumber(product.price)}
-              </p>
+              <div className="flex items-end gap-2 mt-1">
+                <p className="text-lg font-bold text-mkhe-primary">
+                  {formatNumber(isSaleValid ? product.salePrice : product.price)} đ
+                </p>
+                {isSaleValid && (
+                  <p className="text-xs text-mkhe-text/50 line-through mb-1">
+                    {formatNumber(product.price)} đ
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         );

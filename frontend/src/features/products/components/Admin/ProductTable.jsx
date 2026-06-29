@@ -84,17 +84,30 @@ const ProductTable = ({ products, loading, onEdit }) => {
                   {product.stock || 0}
                 </td>
                 <td className="px-4 py-2.5 text-center">
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${
-                      product.status === "PUBLISHED"
-                        ? "bg-green-500/10 text-green-600 border-green-500/30"
-                        : product.status === "DRAFT"
-                          ? "bg-gray-500/10 text-gray-600 border-gray-500/30"
-                          : "bg-red-500/10 text-red-600 border-red-500/30"
-                    }`}
-                  >
-                    {t(`statuses.${product.status}`, product.status)}
-                  </span>
+                  <div className="flex flex-col items-center justify-center gap-1">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${
+                        product.status === "PUBLISHED"
+                          ? "bg-green-500/10 text-green-600 border-green-500/30"
+                          : product.status === "DRAFT"
+                            ? "bg-gray-500/10 text-gray-600 border-gray-500/30"
+                            : "bg-red-500/10 text-red-600 border-red-500/30"
+                      }`}
+                    >
+                      {t(`statuses.${product.status}`, product.status)}
+                    </span>
+                    
+                    {product.saleStartDate && new Date(product.saleStartDate) > new Date() && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold border bg-blue-500/10 text-blue-600 border-blue-500/30 whitespace-nowrap">
+                        {t("form.sale.upcoming", "Sắp Sale")}
+                      </span>
+                    )}
+                    {product.saleStartDate && product.saleEndDate && new Date(product.saleStartDate) <= new Date() && new Date(product.saleEndDate) > new Date() && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold border bg-purple-500/10 text-purple-600 border-purple-500/30 whitespace-nowrap">
+                        {t("form.sale.ongoing", "Đang Sale")}
+                      </span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-4 py-2.5 text-center">
                   <div className="flex items-center justify-center gap-2">

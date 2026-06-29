@@ -245,5 +245,36 @@
       "back": "返回",
       "nfc_badge": "集成NFC数字护照的产品"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "促销计划",
+      "subtitle": "设置促销价格和时间",
+      "salePrice": "促销价格",
+      "salePricePlaceholder": "输入促销价格...",
+      "startSale": "开始促销",
+      "endSale": "结束促销",
+      "sendPush": "发送通知",
+      "sendPushDesc": "发布时，系统将自动向所有用户发送通知",
+      "ongoing": "促销中",
+      "upcoming": "即将促销"
+    }
+  },
+  "products": {
+    "errors": {
+      "name_required": "请输入产品名称",
+      "sku_required": "请输入SKU代码",
+      "vendor_required": "请选择供应商",
+      "price_required": "请输入价格",
+      "artisan_required": "请输入工匠名称",
+      "gps_required": "请输入GPS位置",
+      "sale_price_invalid": "促销价格必须低于原价",
+      "sale_start_required": "请选择促销开始日期",
+      "sale_end_required": "请选择促销结束日期",
+      "sale_end_invalid": "结束时间必须晚于开始时间",
+      "sale_end_future": "结束时间必须在将来",
+      "sale_start_past": "开始时间不能在过去"
+    },
+    "no_linked_story": "-- 无链接故事 --"
   }
 }

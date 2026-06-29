@@ -245,5 +245,36 @@
       "back": "돌아가기",
       "nfc_badge": "NFC 디지털 여권 통합 상품"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "세일 프로그램",
+      "subtitle": "프로모션 가격 및 시간 설정",
+      "salePrice": "세일 가격",
+      "salePricePlaceholder": "세일 가격 입력...",
+      "startSale": "세일 시작",
+      "endSale": "세일 종료",
+      "sendPush": "알림 보내기",
+      "sendPushDesc": "릴리스 시 시스템이 모든 사용자에게 알림을 자동으로 보냅니다",
+      "ongoing": "세일 중",
+      "upcoming": "다가오는 세일"
+    }
+  },
+  "products": {
+    "errors": {
+      "name_required": "제품명을 입력해주세요",
+      "sku_required": "SKU 코드를 입력해주세요",
+      "vendor_required": "공급업체를 선택해주세요",
+      "price_required": "가격을 입력해주세요",
+      "artisan_required": "장인 이름을 입력해주세요",
+      "gps_required": "GPS 위치를 입력해주세요",
+      "sale_price_invalid": "할인 가격은 원래 가격보다 작아야 합니다",
+      "sale_start_required": "할인 시작일을 선택해주세요",
+      "sale_end_required": "할인 종료일을 선택해주세요",
+      "sale_end_invalid": "종료 시간은 시작 시간 이후여야 합니다",
+      "sale_end_future": "종료 시간은 미래여야 합니다",
+      "sale_start_past": "시작 시간은 과거일 수 없습니다"
+    },
+    "no_linked_story": "-- 연결된 스토리 없음 --"
   }
 }

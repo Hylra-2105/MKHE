@@ -53,7 +53,13 @@
     "other_addresses": "(+{{count}} 其他地址)",
     "other_addresses_plural": "(+{{count}} 其他地址)",
     "contact": "联系方式",
-    "default_address": "默认地址"
+    "default_address": "默认地址",
+    "errors": {
+      "name_required": "请输入全名",
+      "email_required": "请输入电子邮件",
+      "pass_required": "请输入密码",
+      "pass_short": "密码长度至少为 6 个字符"
+    }
   },
   "pagination": {
     "showing_page": "显示页面",
@@ -153,7 +159,7 @@
     "cancel": "取消",
     "processing": "处理中...",
     "confirm": "确认",
-    "publish_time_passed": "开始时间已过。请选择从现在起的时间来发布。",
+    "publish_time_passed": "开始时间不能在过去",
     "save_changes": "保存更改",
     "publish_btn": "发布",
     "update_success": "更新成功",
@@ -170,7 +176,6 @@
     "limited_products": "限制产品",
     "to_date": "至",
     "badge_inactive": "未激活",
-    "badge_upcoming": "即将开始",
     "expired": "已过期",
     "out_of_stock": "已发完",
     "running": "进行中",
@@ -178,12 +183,11 @@
     "type_percentage": "百分比折扣 (%)",
     "type_fixed": "固定金额折扣 (VND)",
     "type_freeship": "免费送货",
-    "status_all": "所有状态",
     "type_all": "所有类型",
     "restore_success": "已恢复未保存的数据",
     "load_options_error": "无法加载类别/村庄选项",
-    "time_empty_error": "请选择开始和结束时间",
-    "time_invalid_error": "结束时间必须在开始时间之后",
+    "time_empty_error": "请选择时间",
+    "time_invalid_error": "结束时间必须晚于开始时间",
     "create_success": "代金券创建成功！",
     "create_error_generic": "创建代金券时出错",
     "create_title": "创建新代金券",
@@ -238,7 +242,21 @@
     "min_order_card": "最低订单 {{value}} VND",
     "percentage": "Phần trăm (%)",
     "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển"
+    "free_ship": "Miễn phí vận chuyển",
+    "errors": {
+      "MISSING_REQUIRED_FIELDS": "请填写所有必填字段",
+      "INVALID_PERCENTAGE": "无效的百分比",
+      "INVALID_DATE_RANGE": "结束日期必须晚于开始日期",
+      "VOUCHER_CODE_EXISTS": "代金券代码已存在",
+      "CANNOT_UPDATE_LOCKED_FIELDS": "无法更新运行中被锁定的字段",
+      "CANNOT_REVERT_RUNNING_VOUCHER": "无法将正在运行的代金券还原为草稿",
+      "VOUCHER_NOT_FOUND": "找不到代金券"
+    },
+    "code_required": "请输入优惠券代码",
+    "discount_required": "请输入有效的折扣值",
+    "selected_count": "已选择 {{count}} 项",
+    "send_notification": "发送通知",
+    "send_notification_desc": "系统将在发布时自动向所有用户发送通知。"
   },
   "orders": {
     "title": "订单管理",
@@ -300,6 +318,11 @@
       "total_amount": "订单总计:",
       "payment_method": "付款方式:",
       "cod": "代收货款:"
+    },
+    "payment": {
+      "paid": "已付款",
+      "refunded": "已退款",
+      "unpaid": "未付款"
     }
   },
   "fetch_error": "Lỗi khi tải danh sách bài viết",
@@ -348,5 +371,22 @@
     "no_customer_data": "无客户数据",
     "revenue_by_category": "按类别收入",
     "order_status_chart": "订单状态"
+  },
+  "products": {
+    "errors": {
+      "name_required": "请输入产品名称",
+      "sku_required": "请输入SKU代码",
+      "vendor_required": "请选择供应商",
+      "price_required": "请输入价格",
+      "artisan_required": "请输入工匠名称",
+      "gps_required": "请输入GPS位置",
+      "sale_price_invalid": "促销价格必须低于原价",
+      "sale_start_required": "请选择促销开始日期",
+      "sale_end_required": "请选择促销结束日期",
+      "sale_end_invalid": "结束时间必须晚于开始时间",
+      "sale_end_future": "结束时间必须在将来",
+      "sale_start_past": "开始时间不能在过去"
+    },
+    "no_linked_story": "-- 无链接故事 --"
   }
 }

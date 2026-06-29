@@ -239,5 +239,36 @@
       "back": "Trở về",
       "nfc_badge": "Sản phẩm tích hợp Hộ chiếu số NFC"
     }
+  },
+  "form": {
+    "sale": {
+      "title": "Chương trình Sale",
+      "subtitle": "Thiết lập giá khuyến mãi và thời gian",
+      "salePrice": "Giá Sale",
+      "salePricePlaceholder": "Nhập giá Sale...",
+      "startSale": "Bắt đầu Sale",
+      "endSale": "Kết thúc Sale",
+      "sendPush": "Gửi thông báo",
+      "sendPushDesc": "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành",
+      "ongoing": "Đang Sale",
+      "upcoming": "Sắp Sale"
+    }
+  },
+  "products": {
+    "errors": {
+      "name_required": "Vui lòng điền tên sản phẩm",
+      "sku_required": "Vui lòng điền mã SKU",
+      "vendor_required": "Vui lòng chọn nhà cung cấp",
+      "price_required": "Vui lòng điền giá bán",
+      "artisan_required": "Vui lòng điền tên nghệ nhân",
+      "gps_required": "Vui lòng điền vị trí GPS",
+      "sale_price_invalid": "Giá Sale phải nhỏ hơn giá gốc",
+      "sale_start_required": "Vui lòng chọn ngày bắt đầu Sale",
+      "sale_end_required": "Vui lòng chọn ngày kết thúc Sale",
+      "sale_end_invalid": "Kết thúc phải sau thời gian bắt đầu",
+      "sale_end_future": "Kết thúc phải ở tương lai",
+      "sale_start_past": "Thời gian bắt đầu không được trong quá khứ"
+    },
+    "no_linked_story": "-- Không liên kết Ký sự --"
   }
 }
