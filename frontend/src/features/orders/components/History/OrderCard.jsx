@@ -19,7 +19,7 @@ const getStatusConfig = (status, t) => {
 };
 
 const OrderCard = ({ order, onClick }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["history", "common"]);
   const formatMoney = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };

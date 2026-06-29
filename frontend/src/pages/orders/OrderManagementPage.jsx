@@ -11,9 +11,12 @@ import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
 import StatusBadge from "@/features/orders/components/Admin/StatusBadge";
 import { printInvoice } from "@/features/orders/utils/printInvoice";
 import { useSocketStore } from "@/stores/useSocketStore";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrderManagementPage = () => {
   const { t, i18n } = useTranslation();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { socket } = useSocketStore();
   const [orders, setOrders] = useState([]);
@@ -79,6 +82,24 @@ const OrderManagementPage = () => {
       }
     };
   }, [page, statusFilter, paymentStatusFilter, searchInput, startDate, endDate, highRisk, socket]); 
+
+  // Handle opening modal from notification link
+  useEffect(() => {
+    if (location.state?.openOrderId && orders.length > 0) {
+      const orderToOpen = orders.find(o => o._id === location.state.openOrderId);
+      if (orderToOpen) {
+        setSelectedOrder(orderToOpen);
+        setIsModalOpen(true);
+        // Clear the state so it doesn't reopen unexpectedly later
+        navigate(location.pathname, { replace: true, state: {} });
+      } else {
+        // If the order isn't in the current view, we might try searching for it
+        setSearchInput(location.state.openOrderId);
+        setPage(1);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [location.state, orders, navigate, location.pathname]);
 
   const handleStatusChange = async (id, newStatus, newPaymentStatus) => {
     try {

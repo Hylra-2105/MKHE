@@ -52,7 +52,11 @@
       "voucher_saved": "쿠폰이 저장되었습니다",
       "lucky_wheel_won": "당첨을 축하합니다!",
       "flash_sale": "거대한 제품 세일!",
-      "voucher_published": "새로운 할인 코드가 있습니다!"
+      "voucher_published": "새로운 할인 코드가 있습니다!",
+      "admin_order_new": "새로운 주문",
+      "admin_order_paid": "결제 완료 주문",
+      "admin_order_completed": "주문 완료",
+      "admin_stock_alert": "재고 부족 경고"
     },
     "message": {
       "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
@@ -64,7 +68,11 @@
       "voucher_saved": "할인 코드 {{code}} 을(를) 성공적으로 수집했습니다.",
       "lucky_wheel_won": "미스터리 박스에서 할인 코드 {{code}} 을(를) 방금 받으셨습니다.",
       "flash_sale": "제품 {{productName}}이(가) 할인 행사를 진행 중입니다. 놓치지 마세요!",
-      "voucher_published": "할인 코드 {{code}}가 방금 게시되었습니다. 늦기 전에 지금 수집하세요!"
+      "voucher_published": "할인 코드 {{code}}가 방금 게시되었습니다. 늦기 전에 지금 수집하세요!",
+      "admin_order_new": "새로운 주문 #{{orderCode}} 이(가) 성공적으로 생성되었습니다 (COD).",
+      "admin_order_paid": "주문 #{{orderCode}} 이(가) 성공적으로 결제되었습니다 (온라인).",
+      "admin_order_completed": "고객이 주문 #{{orderCode}} 의 수령 및 결제를 확인했습니다.",
+      "admin_stock_alert": "제품 {{productName}} 의 재고가 부족합니다 ({{currentStock}} 개 남음)."
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",
@@ -74,6 +82,7 @@
     "time_just_now": "방금",
     "tab_all": "전체",
     "tab_unread": "읽지 않음",
+    "tab_system": "시스템",
     "recent": "이전",
     "load_more": "이전 알림 보기",
     "deleted_success": "알림이 삭제되었습니다",

@@ -8,7 +8,7 @@ import OrderDetailModal from "./OrderDetailModal";
 import { useSocketStore } from "@/stores/useSocketStore";
 
 const OrderHistoryTab = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["history", "common"]);
   const { socket } = useSocketStore();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

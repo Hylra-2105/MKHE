@@ -52,7 +52,11 @@
       "voucher_saved": "Voucher Saved Successfully",
       "lucky_wheel_won": "Congratulations! You Won!",
       "flash_sale": "Huge Product Sale!",
-      "voucher_published": "You have a new offer code!"
+      "voucher_published": "You have a new offer code!",
+      "admin_order_new": "New Order",
+      "admin_order_paid": "Order Paid",
+      "admin_order_completed": "Order Completed",
+      "admin_stock_alert": "Low Stock Alert"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
@@ -64,7 +68,11 @@
       "voucher_saved": "You have successfully collected the discount code {{code}}.",
       "lucky_wheel_won": "You just received a discount code {{code}} from the Mystery Box.",
       "flash_sale": "Product {{productName}} has an attractive sale program. Don't miss out!",
-      "voucher_published": "Discount code {{code}} has just been published. Collect it now before it's gone!"
+      "voucher_published": "Discount code {{code}} has just been published. Collect it now before it's gone!",
+      "admin_order_new": "A new order #{{orderCode}} has been successfully placed (COD).",
+      "admin_order_paid": "Order #{{orderCode}} has been successfully paid (Online).",
+      "admin_order_completed": "Customer has confirmed receipt and payment for order #{{orderCode}}.",
+      "admin_stock_alert": "Product {{productName}} is running low on stock ({{currentStock}} left)."
     },
     "header_title": "Notifications",
     "mark_all_read": "Mark all as read",
@@ -74,6 +82,7 @@
     "time_just_now": "just now",
     "tab_all": "All",
     "tab_unread": "Unread",
+    "tab_system": "System",
     "recent": "Earlier",
     "load_more": "See previous notifications",
     "deleted_success": "Notification deleted",

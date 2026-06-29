@@ -65,6 +65,7 @@ export const checkout = async (req, res) => {
     // 2. Check stock & calculate subtotal
     let subtotal = 0;
     const orderItems = [];
+    const lowStockAlerts = []; // To trigger after order is successfully created
 
     for (const item of items) {
       const product = await Product.findById(item.productId);
@@ -81,7 +82,18 @@ export const checkout = async (req, res) => {
         quantity: item.quantity,
       });
 
+      const oldStock = product.stock;
       product.stock -= item.quantity;
+      
+      if (product.stock <= 10 && !product.lowStockAlerted) {
+        lowStockAlerts.push({
+          productName: product.name,
+          productId: product._id,
+          currentStock: product.stock
+        });
+        product.lowStockAlerted = true;
+      }
+
       await product.save();
     }
 
@@ -188,6 +200,32 @@ export const checkout = async (req, res) => {
       io.to(`user_${user._id}`).emit("new_notification", notif);
       io.emit("admin_order_updated");
       io.to(`user_${user._id}`).emit("user_order_updated", newOrder[0]);
+
+      // Admin Notifications
+      if (paymentMethod === "COD") {
+        const adminNotif = await Notification.create({
+          isAdmin: true,
+          title: "ADMIN_ORDER_NEW",
+          message: `ADMIN_ORDER_NEW::${orderCode}`,
+          type: "SYSTEM",
+          link: `/admin/orders`,
+          orderId: newOrder[0]._id
+        });
+        io.to("admin_room").emit("new_admin_notification", adminNotif);
+      }
+
+      for (const alert of lowStockAlerts) {
+        const stockNotif = await Notification.create({
+          isAdmin: true,
+          title: "ADMIN_STOCK_ALERT",
+          message: `ADMIN_STOCK_ALERT::${alert.productName}::${alert.currentStock}`,
+          type: "SYSTEM",
+          link: `/admin/products`,
+          productId: alert.productId
+        });
+        io.to("admin_room").emit("new_admin_notification", stockNotif);
+      }
+
     } catch (err) {
       console.error("Failed to create checkout notification:", err);
     }
@@ -361,6 +399,20 @@ export const receiveOrder = async (req, res) => {
       for (const item of order.items) {
         await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
       }
+    }
+
+    try {
+      const adminNotif = await Notification.create({
+        isAdmin: true,
+        title: "ADMIN_ORDER_COMPLETED",
+        message: `ADMIN_ORDER_COMPLETED::${order.orderCode}`,
+        type: "SYSTEM",
+        link: `/admin/orders`,
+        orderId: order._id
+      });
+      io.to("admin_room").emit("new_admin_notification", adminNotif);
+    } catch (err) {
+      console.error("Failed to create admin notification for receiveOrder:", err);
     }
 
     return successResponse(res, 200, "ORDER_RECEIVED", order);
@@ -655,6 +707,22 @@ export const payosWebhook = async (req, res) => {
         // Increment sold count
         for (const item of order.items) {
           await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
+        }
+
+        // Admin Notification
+        try {
+          const adminNotif = await Notification.create({
+            isAdmin: true,
+            title: "ADMIN_ORDER_PAID",
+            message: `ADMIN_ORDER_PAID::${order.orderCode}`,
+            type: "SYSTEM",
+            link: `/admin/orders`,
+            orderId: order._id
+          });
+          const io = getIO();
+          io.to("admin_room").emit("new_admin_notification", adminNotif);
+        } catch (err) {
+          console.error("Failed to create webhook admin notification:", err);
         }
       }
     }

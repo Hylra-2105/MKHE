@@ -5,22 +5,47 @@ import toast from "react-hot-toast";
 export const useNotificationStore = create((set, get) => ({
   notifications: [],
   unreadCount: 0,
+  systemUnreadCount: 0,
   loading: false,
   page: 1,
   hasMore: true,
-  tab: "all", // "all" | "unread"
+  tab: "all", // "all" | "unread" | "system"
 
   setTab: (tab) => {
-    set({ tab });
+    set({ tab, notifications: [] });
     get().fetchNotifications({ page: 1, tab });
+  },
+
+  fetchUnreadCounts: async () => {
+    try {
+      const res = await axiosInstance.get("/notifications/unread-count");
+      if (res.data?.success) {
+        set({ 
+          unreadCount: res.data.data.userUnread,
+          systemUnreadCount: res.data.data.systemUnread 
+        });
+      }
+    } catch (error) {
+      console.error("Lỗi fetch unread counts:", error);
+    }
   },
 
   fetchNotifications: async ({ page = 1, tab = get().tab } = {}) => {
     try {
       set({ loading: true });
       const limit = 5;
-      const unreadOnly = tab === "unread";
-      const res = await axiosInstance.get(`/notifications?page=${page}&limit=${limit}&unreadOnly=${unreadOnly}`);
+      
+      let endpoint = `/notifications?page=${page}&limit=${limit}`;
+      if (tab === "unread") {
+        endpoint += `&unreadOnly=true`;
+      } else if (tab === "system") {
+        endpoint = `/notifications/admin?page=${page}&limit=${limit}`;
+      }
+
+      const res = await axiosInstance.get(endpoint);
+
+      // Prevent race conditions: if tab changed during fetch, ignore this response
+      if (get().tab !== tab) return;
       
       if (res.data?.success) {
         const newNotifications = res.data.data.data;
@@ -29,7 +54,7 @@ export const useNotificationStore = create((set, get) => ({
 
         set((state) => ({
           notifications: page === 1 ? newNotifications : [...state.notifications, ...newNotifications],
-          unreadCount: currentUnreadCount,
+          ...(tab === "system" ? { systemUnreadCount: currentUnreadCount } : { unreadCount: currentUnreadCount }),
           page,
           hasMore: page < totalPages,
           loading: false,
@@ -50,7 +75,14 @@ export const useNotificationStore = create((set, get) => ({
           let updatedList = state.notifications.map((n) =>
             n._id === id ? { ...n, isRead: true } : n
           );
-          // Remove from list if in "unread" tab
+          if (state.tab === "system") {
+             // Admin notification
+             return {
+               notifications: updatedList,
+               systemUnreadCount: Math.max(0, state.systemUnreadCount - 1),
+             };
+          }
+
           if (state.tab === "unread") {
              updatedList = updatedList.filter(n => n._id !== id || !n.isRead);
           }
@@ -72,6 +104,7 @@ export const useNotificationStore = create((set, get) => ({
         set((state) => ({
           notifications: state.tab === "unread" ? [] : state.notifications.map((n) => ({ ...n, isRead: true })),
           unreadCount: 0,
+          systemUnreadCount: 0,
         }));
       }
     } catch (error) {
@@ -109,9 +142,29 @@ export const useNotificationStore = create((set, get) => ({
   },
 
   addNotification: (notification) => {
-    set((state) => ({
-      notifications: state.tab === "all" || !notification.isRead ? [notification, ...state.notifications] : state.notifications,
-      unreadCount: state.unreadCount + 1,
-    }));
+    set((state) => {
+      const isAdminNotif = notification.isAdmin;
+      let newSystemCount = state.systemUnreadCount;
+      let newUserCount = state.unreadCount;
+      let newNotifs = [...state.notifications];
+
+      if (isAdminNotif) {
+        newSystemCount += 1;
+        if (state.tab === "system") {
+          newNotifs = [notification, ...state.notifications];
+        }
+      } else {
+        newUserCount += 1;
+        if (state.tab === "all" || (state.tab === "unread" && !notification.isRead)) {
+          newNotifs = [notification, ...state.notifications];
+        }
+      }
+
+      return {
+        notifications: newNotifs,
+        systemUnreadCount: newSystemCount,
+        unreadCount: newUserCount,
+      };
+    });
   },
 }));
