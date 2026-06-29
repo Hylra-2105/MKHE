@@ -68,17 +68,12 @@ const OrderManagementPage = () => {
   useEffect(() => {
     fetchOrders();
 
-    const interval = setInterval(() => {
-      fetchOrders(true);
-    }, 10000);
-
     const handleAdminUpdate = () => fetchOrders(true);
     if (socket) {
       socket.on("admin_order_updated", handleAdminUpdate);
     }
 
     return () => {
-      clearInterval(interval);
       if (socket) {
         socket.off("admin_order_updated", handleAdminUpdate);
       }

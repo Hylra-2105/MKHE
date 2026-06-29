@@ -473,7 +473,7 @@ export const getShopProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
-    const { search, category, culturalDNA, craftVillage, material } = req.query;
+    const { search, category, culturalDNA, craftVillage, material, onSale } = req.query;
 
     const skip = (page - 1) * limit;
 
@@ -524,6 +524,15 @@ export const getShopProducts = async (req, res) => {
           { craftVillage: { $regex: cvRegex, $options: "i" } },
           { vendor: { $regex: cvRegex, $options: "i" } }
         ]
+      });
+    }
+
+    if (onSale === 'true') {
+      const now = new Date();
+      andConditions.push({
+        salePrice: { $gt: 0 },
+        saleStartDate: { $lte: now },
+        saleEndDate: { $gte: now }
       });
     }
     

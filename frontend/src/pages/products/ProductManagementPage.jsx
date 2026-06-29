@@ -10,8 +10,7 @@ import AddProductModal from "@/features/products/components/Admin/AddProductModa
 import EditProductModal from "@/features/products/components/Admin/EditProductModal";
 import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
 import ProductFilter from "@/features/products/components/Admin/ProductFilter";
-import ConfirmModal from "@/components/common/ConfirmModal";
-import Tooltip from "@/components/common/Tooltip";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useSocketStore } from "@/stores/useSocketStore";
 
 const ProductManagementPage = () => {

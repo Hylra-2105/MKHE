@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Filter, X } from "lucide-react";
+import { Filter, X, Check } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useTranslation } from "react-i18next";
 
@@ -111,6 +111,23 @@ const ShopFilters = ({ filters, onFilterChange, onCloseMobile }) => {
             onChange={(e) => setSearchValue(e.target.value)}
             className="w-full p-3 bg-transparent border-b border-mkhe-border/20 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors text-sm placeholder:text-mkhe-text/40 placeholder:font-light"
           />
+        </div>
+
+        {/* Ưu đãi */}
+        <div className="space-y-4">
+          <h3 className="text-xs font-bold text-mkhe-text uppercase tracking-[0.2em]">{t("product:shop.filters.offers_title", { defaultValue: "Ưu đãi" })}</h3>
+          <div className="flex items-center mt-1">
+            <input 
+              id="filterOnSale"
+              type="checkbox" 
+              className="magic-cb-input"
+              checked={filters.onSale || false}
+              onChange={(e) => onFilterChange("onSale", e.target.checked ? "true" : null)}
+            />
+            <label htmlFor="filterOnSale" className="magic-cb-label text-sm text-mkhe-text">
+              <span></span> {t("product:shop.filters.on_sale", { defaultValue: "Đang giảm giá" })}
+            </label>
+          </div>
         </div>
 
         {/* Làng nghề */}

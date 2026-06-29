@@ -27,6 +27,7 @@ const ShopPage = () => {
     culturalDNA: searchParams.get("culturalDNA") || null,
     craftVillage: searchParams.get("craftVillage") || null,
     material: searchParams.getAll("material").length > 0 ? searchParams.getAll("material") : null,
+    onSale: searchParams.get("onSale") === "true",
     page: parseInt(searchParams.get("page")) || 1,
   };
 
@@ -64,6 +65,7 @@ const ShopPage = () => {
       if (currentFilters.culturalDNA) params.culturalDNA = currentFilters.culturalDNA;
       if (currentFilters.craftVillage) params.craftVillage = currentFilters.craftVillage;
       if (currentFilters.material) params.material = currentFilters.material.join(",");
+      if (currentFilters.onSale) params.onSale = true;
       params.page = currentFilters.page;
       params.limit = 12; // 12 item mỗi trang phù hợp với grid 3/4
 
@@ -80,7 +82,7 @@ const ShopPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentFilters.search, currentFilters.category, currentFilters.culturalDNA, currentFilters.craftVillage, currentFilters.page, t]);
+  }, [currentFilters.search, currentFilters.category, currentFilters.culturalDNA, currentFilters.craftVillage, currentFilters.onSale, currentFilters.page, t]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

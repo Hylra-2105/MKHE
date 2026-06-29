@@ -214,6 +214,8 @@
       "title": "필터",
       "search_title": "상품 검색",
       "search_placeholder": "상품명, SKU...",
+      "offers_title": "혜택",
+      "on_sale": "할인 중",
       "craft_village_title": "공예 마을 / 원산지",
       "craft_village_placeholder": "공예 마을로 검색...",
       "material_title": "재질",

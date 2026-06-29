@@ -55,6 +55,12 @@ import OrderManagementPage from "./pages/orders/OrderManagementPage";
 
 function App() {
   const { t } = useTranslation(["header"]);
+  const tRef = React.useRef(t);
+  
+  React.useEffect(() => {
+    tRef.current = t;
+  }, [t]);
+
   const setUser = useAuthStore((state) => state.setUser);
   const token = useAuthStore((state) => state.token);
   const logoutAction = useAuthStore((state) => state.logoutAction);
@@ -147,7 +153,8 @@ function App() {
         "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
         "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published"
       };
-      const translatedTitle = map[notif.title] ? t(map[notif.title], { defaultValue: notif.title }) : notif.title;
+      const currentT = tRef.current;
+      const translatedTitle = map[notif.title] ? currentT(map[notif.title], { defaultValue: notif.title }) : notif.title;
 
       toast(translatedTitle, {
         icon: '🔔',
