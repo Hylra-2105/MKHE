@@ -6,7 +6,7 @@ import BoardGameTeaser from "@/features/home/components/BoardGameTeaser";
 
 const HomePage = () => {
   return (
-    <div className="bg-mkhe-bg min-h-screen text-mkhe-text overflow-x-hidden">
+    <div className="bg-mkhe-bg min-h-screen text-mkhe-text overflow-x-clip">
       <HeroBanner />
       <HeritageStory />
       <CulturalDNA />

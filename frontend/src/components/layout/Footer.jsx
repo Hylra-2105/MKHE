@@ -24,7 +24,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-mkhe-bg dark:bg-[#110A06] border-t border-mkhe-primary/20 pt-20 pb-8 px-6 text-mkhe-text dark:text-gray-300 relative overflow-hidden">
+    <footer className="bg-mkhe-bg dark:bg-[#110A06] pt-20 pb-8 px-6 text-mkhe-text dark:text-gray-300 relative overflow-hidden">
       {/* Background Decorative Element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-mkhe-primary/5 rounded-full blur-[80px] -z-10"></div>
       

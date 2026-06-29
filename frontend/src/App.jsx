@@ -18,6 +18,7 @@ import io from "socket.io-client";
 
 import ProtectedRoute from "./components/router/ProtectedRoute";
 import AuthRoute from "./components/router/AuthRoute";
+import ScrollToTop from "./components/router/ScrollToTop";
 
 // Import Layout
 import AuthLayout from "./components/layout/AuthLayout";
@@ -214,6 +215,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
