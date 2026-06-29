@@ -5,9 +5,11 @@ import toast from "react-hot-toast";
 import orderApi from "@/api/orderApi";
 import OrderCard from "./OrderCard";
 import OrderDetailModal from "./OrderDetailModal";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const OrderHistoryTab = () => {
   const { t } = useTranslation();
+  const { socket } = useSocketStore();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -33,12 +35,14 @@ const OrderHistoryTab = () => {
   useEffect(() => {
     fetchOrders(page);
     
-    const interval = setInterval(() => {
-      fetchOrders(page, true);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchOrders, page]);
+    if (socket) {
+      const handleUpdate = () => fetchOrders(page);
+      socket.on("user_order_updated", handleUpdate);
+      return () => {
+        socket.off("user_order_updated", handleUpdate);
+      };
+    }
+  }, [fetchOrders, page, socket]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {

@@ -64,6 +64,7 @@ const OrderCard = ({ order, onClick }) => {
                 src={firstItem.image || "https://placehold.co/100x100?text=No+Image"} 
                 alt={firstItem.name}
                 className="w-full h-full object-cover"
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100?text=No+Image"; }}
               />
             </div>
             <div>

@@ -207,11 +207,10 @@ export default function CheckoutPage() {
            localStorage.setItem("is_trusted_device", "true");
         }
         setIsSuccess(true);
-        if (!buyNowItem) {
+        if (!localBuyNowItem) {
           await removeMultipleFromCart(checkoutItems.map(i => i.product._id), true);
         }
         useCartStore.getState().setSelectedVoucher(null);
-        toast.success(t("success.order_placed"));
         setShowOtpModal(false);
         const orderData = res.data.order || res.data;
         

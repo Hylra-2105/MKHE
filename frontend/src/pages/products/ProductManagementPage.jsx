@@ -10,9 +10,13 @@ import AddProductModal from "@/features/products/components/Admin/AddProductModa
 import EditProductModal from "@/features/products/components/Admin/EditProductModal";
 import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
 import ProductFilter from "@/features/products/components/Admin/ProductFilter";
+import ConfirmModal from "@/components/common/ConfirmModal";
+import Tooltip from "@/components/common/Tooltip";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const ProductManagementPage = () => {
   const { t } = useTranslation("product");
+  const { socket } = useSocketStore();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -67,12 +71,14 @@ const ProductManagementPage = () => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
     
-    const interval = setInterval(() => {
-      fetchProducts(true);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [fetchProducts]);
+    if (socket) {
+      const handleUpdate = () => fetchProducts(true);
+      socket.on("admin_product_updated", handleUpdate);
+      return () => {
+        socket.off("admin_product_updated", handleUpdate);
+      };
+    }
+  }, [fetchProducts, socket]);
 
   const handleSearch = (e) => {
     e.preventDefault();

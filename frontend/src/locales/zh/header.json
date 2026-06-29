@@ -68,7 +68,15 @@
     },
     "header_title": "通知",
     "mark_all_read": "全部标为已读",
+    "mark_read": "标为已读",
+    "delete": "删除此通知",
     "empty": "您没有新通知",
-    "time_just_now": "刚刚"
+    "time_just_now": "刚刚",
+    "tab_all": "全部",
+    "tab_unread": "未读",
+    "recent": "较早",
+    "load_more": "查看较早的通知",
+    "deleted_success": "通知已删除",
+    "undo": "撤销"
   }
 }

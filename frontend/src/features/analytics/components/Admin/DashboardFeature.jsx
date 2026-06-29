@@ -15,6 +15,7 @@ import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
 import Dropdown from "@/components/ui/Dropdown";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const flatpickrOptions = {
   locale: Vietnamese,
@@ -60,6 +61,7 @@ const fillMissingDates = (data, startDateStr, endDateStr) => {
 
 const DashboardFeature = () => {
   const { t } = useTranslation("admin");
+  const { socket } = useSocketStore();
   const [period, setPeriod] = useState("month");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -188,13 +190,16 @@ const DashboardFeature = () => {
     
     fetchData();
     
-    // Auto refresh every 10 seconds (background)
-    const interval = setInterval(() => {
-      fetchData(true);
-    }, 10000);
-    
-    return () => clearInterval(interval);
-  }, [period, startDate, endDate]);
+    if (socket) {
+      const handleUpdate = () => fetchData(true);
+      socket.on("admin_order_updated", handleUpdate);
+      socket.on("admin_product_updated", handleUpdate);
+      return () => {
+        socket.off("admin_order_updated", handleUpdate);
+        socket.off("admin_product_updated", handleUpdate);
+      };
+    }
+  }, [period, startDate, endDate, socket]);
 
   const safeRevenueData = Array.isArray(revenueData) ? revenueData : [];
   const totalRevenue = safeRevenueData.reduce((sum, item) => sum + (Number(item?.revenue) || 0), 0);

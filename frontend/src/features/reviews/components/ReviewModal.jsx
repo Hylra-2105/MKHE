@@ -138,9 +138,10 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
           <div className="flex items-center gap-4 p-4 bg-[var(--color-mkhe-input)]/30 rounded-xl mb-6">
             <div className="w-16 h-16 rounded-lg bg-[var(--color-mkhe-bg)] overflow-hidden flex-shrink-0">
               <img 
-                src={getImageUrl(item.image)} 
+                src={getImageUrl(item.image) || "https://placehold.co/100x100?text=No+Image"} 
                 alt={item.name} 
                 className="w-full h-full object-cover" 
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100?text=No+Image"; }}
               />
             </div>
             <div>
