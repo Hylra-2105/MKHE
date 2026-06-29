@@ -1,0 +1,10 @@
+{
+  "title": "Mekong AI",
+  "subtitle": "Always ready to help",
+  "initial_greeting": "Hello! I am the Mekong Culture Virtual Assistant. How can I help you with information about the project, team members, or traditional craft villages?",
+  "placeholder": "Ask Mekong AI anything...",
+  "thinking": "Thinking...",
+  "error": "Sorry, I am currently experiencing connection issues. Please try again later!",
+  "balloon_unread": "I have an answer for you!",
+  "balloon_default": "Do you have any questions or need any information? Just ask me!"
+}
