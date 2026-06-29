@@ -214,6 +214,8 @@
       "title": "筛选",
       "search_title": "搜索产品",
       "search_placeholder": "产品名称, SKU...",
+      "offers_title": "优惠",
+      "on_sale": "促销中",
       "craft_village_title": "工艺村 / 产地",
       "craft_village_placeholder": "按工艺村搜索...",
       "material_title": "材质",

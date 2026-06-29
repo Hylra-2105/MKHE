@@ -68,7 +68,15 @@
     },
     "header_title": "通知",
     "mark_all_read": "すべて既読にする",
+    "mark_read": "既読にする",
+    "delete": "この通知を削除",
     "empty": "通知はありません",
-    "time_just_now": "たった今"
+    "time_just_now": "たった今",
+    "tab_all": "すべて",
+    "tab_unread": "未読",
+    "recent": "以前",
+    "load_more": "以前の通知を見る",
+    "deleted_success": "通知を削除しました",
+    "undo": "元に戻す"
   }
 }

@@ -66,8 +66,16 @@
       "voucher_published": "Mã giảm giá {{code}} mới được phát hành. Hãy sưu tầm ngay kẻo lỡ!"
     },
     "header_title": "Thông báo",
-    "mark_all_read": "Đánh dấu đã đọc",
+    "mark_all_read": "Đánh dấu tất cả là đã đọc",
+    "mark_read": "Đánh dấu là đã đọc",
+    "delete": "Xóa thông báo này",
     "empty": "Bạn chưa có thông báo nào",
-    "time_just_now": "vừa xong"
+    "time_just_now": "vừa xong",
+    "tab_all": "Tất cả",
+    "tab_unread": "Chưa đọc",
+    "recent": "Trước đó",
+    "load_more": "Xem thông báo trước đó",
+    "deleted_success": "Đã xóa thông báo",
+    "undo": "Hoàn tác"
   }
 }

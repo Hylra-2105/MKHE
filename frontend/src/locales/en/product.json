@@ -209,6 +209,8 @@
       "title": "Filters",
       "search_title": "Search Products",
       "search_placeholder": "Product name, SKU...",
+      "offers_title": "Offers",
+      "on_sale": "On Sale",
       "craft_village_title": "Craft Village / Origin",
       "craft_village_placeholder": "Search by craft village...",
       "material_title": "Material",

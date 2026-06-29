@@ -68,7 +68,15 @@
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",
+    "mark_read": "읽음으로 표시",
+    "delete": "이 알림 삭제",
     "empty": "알림이 없습니다",
-    "time_just_now": "방금"
+    "time_just_now": "방금",
+    "tab_all": "전체",
+    "tab_unread": "읽지 않음",
+    "recent": "이전",
+    "load_more": "이전 알림 보기",
+    "deleted_success": "알림이 삭제되었습니다",
+    "undo": "실행 취소"
   }
 }

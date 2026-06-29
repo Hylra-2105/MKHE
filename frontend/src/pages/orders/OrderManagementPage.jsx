@@ -10,10 +10,12 @@ import OrderDetailModal from "@/features/orders/components/Admin/OrderDetailModa
 import UserDetailModal from "@/features/users/components/Admin/UserDetailModal";
 import StatusBadge from "@/features/orders/components/Admin/StatusBadge";
 import { printInvoice } from "@/features/orders/utils/printInvoice";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const OrderManagementPage = () => {
   const { t, i18n } = useTranslation();
   const { user } = useAuthStore();
+  const { socket } = useSocketStore();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -66,12 +68,17 @@ const OrderManagementPage = () => {
   useEffect(() => {
     fetchOrders();
 
-    const interval = setInterval(() => {
-      fetchOrders(true);
-    }, 10000);
+    const handleAdminUpdate = () => fetchOrders(true);
+    if (socket) {
+      socket.on("admin_order_updated", handleAdminUpdate);
+    }
 
-    return () => clearInterval(interval);
-  }, [page, statusFilter, searchInput, startDate, endDate, highRisk]); 
+    return () => {
+      if (socket) {
+        socket.off("admin_order_updated", handleAdminUpdate);
+      }
+    };
+  }, [page, statusFilter, paymentStatusFilter, searchInput, startDate, endDate, highRisk, socket]); 
 
   const handleStatusChange = async (id, newStatus, newPaymentStatus) => {
     try {

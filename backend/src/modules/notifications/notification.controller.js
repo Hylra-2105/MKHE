@@ -10,8 +10,13 @@ export const getMyNotifications = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const total = await Notification.countDocuments({ user: req.user.id });
-    const notifications = await Notification.find({ user: req.user.id })
+    const query = { user: req.user.id };
+    if (req.query.unreadOnly === "true") {
+      query.isRead = false;
+    }
+
+    const total = await Notification.countDocuments(query);
+    const notifications = await Notification.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -66,6 +71,23 @@ export const markAllAsRead = async (req, res) => {
     return successResponse(res, 200, "ALL_MARKED_AS_READ");
   } catch (error) {
     console.error("markAllAsRead Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// DELETE /api/notifications/:id
+export const deleteNotification = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const notification = await Notification.findOneAndDelete({ _id: id, user: req.user.id });
+
+    if (!notification) {
+      return errorResponse(res, 404, "NOTIFICATION_NOT_FOUND");
+    }
+
+    return successResponse(res, 200, "NOTIFICATION_DELETED");
+  } catch (error) {
+    console.error("deleteNotification Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

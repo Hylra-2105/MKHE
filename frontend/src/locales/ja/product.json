@@ -214,6 +214,8 @@
       "title": "フィルター",
       "search_title": "商品検索",
       "search_placeholder": "商品名, SKU...",
+      "offers_title": "オファー",
+      "on_sale": "セール中",
       "craft_village_title": "工芸村 / 産地",
       "craft_village_placeholder": "工芸村で検索...",
       "material_title": "素材",

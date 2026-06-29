@@ -100,6 +100,9 @@ export const createProduct = async (req, res) => {
       }
     }
 
+    const io = getIO();
+    io.emit("admin_product_updated", newProduct);
+    io.emit("product_updated", newProduct);
     return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
     console.error("Error in createProduct:", error);
@@ -295,6 +298,9 @@ export const updateProduct = async (req, res) => {
       console.error("[Socket] Emit product_updated error:", err);
     }
 
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
@@ -320,6 +326,9 @@ export const deleteProduct = async (req, res) => {
       getIO().emit("product_updated", deletedProduct);
     } catch (err) {}
 
+    const io = getIO();
+    io.emit("admin_product_updated", deletedProduct);
+    io.emit("product_updated", deletedProduct);
     return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -356,6 +365,9 @@ export const restoreProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!restoredProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND_IN_TRASH");
+    const io = getIO();
+    io.emit("admin_product_updated", restoredProduct);
+    io.emit("product_updated", restoredProduct);
     return successResponse(res, 200, "PRODUCT_RESTORED_SUCCESS", restoredProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -378,6 +390,9 @@ export const uploadProductGallery = async (req, res) => {
     );
     
     if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload Gallery] Error:", error);
@@ -400,6 +415,9 @@ export const uploadProduct3D = async (req, res) => {
     );
     
     if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload 3D] Error:", error);
@@ -441,6 +459,9 @@ export const deleteProductImages = async (req, res) => {
       { new: true }
     );
 
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -452,7 +473,7 @@ export const getShopProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
-    const { search, category, culturalDNA, craftVillage, material } = req.query;
+    const { search, category, culturalDNA, craftVillage, material, onSale } = req.query;
 
     const skip = (page - 1) * limit;
 
@@ -503,6 +524,15 @@ export const getShopProducts = async (req, res) => {
           { craftVillage: { $regex: cvRegex, $options: "i" } },
           { vendor: { $regex: cvRegex, $options: "i" } }
         ]
+      });
+    }
+
+    if (onSale === 'true') {
+      const now = new Date();
+      andConditions.push({
+        salePrice: { $gt: 0 },
+        saleStartDate: { $lte: now },
+        saleEndDate: { $gte: now }
       });
     }
     

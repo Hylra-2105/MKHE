@@ -186,6 +186,8 @@ export const checkout = async (req, res) => {
       });
       const io = getIO();
       io.to(`user_${user._id}`).emit("new_notification", notif);
+      io.emit("admin_order_updated");
+      io.to(`user_${user._id}`).emit("user_order_updated", newOrder[0]);
     } catch (err) {
       console.error("Failed to create checkout notification:", err);
     }
@@ -318,6 +320,9 @@ export const cancelOrder = async (req, res) => {
       }
     }
 
+    const io = getIO();
+    io.emit("admin_order_updated");
+    io.to(`user_${req.user._id}`).emit("user_order_updated", order);
     return successResponse(res, 200, "ORDER_CANCELLED", order);
   } catch (error) {
     console.error("cancelOrder Error:", error);
@@ -345,6 +350,10 @@ export const receiveOrder = async (req, res) => {
     order.paymentStatus = "PAID";
     
     await order.save();
+
+    const io = getIO();
+    io.emit("admin_order_updated");
+    io.to(`user_${req.user._id}`).emit("user_order_updated", order);
 
     // Increment sold count if it just became PAID (for COD orders)
     if (previousPaymentStatus !== "PAID") {
@@ -605,6 +614,10 @@ export const updateOrderStatus = async (req, res) => {
         }
       }
     }
+
+    const ioMain = getIO();
+    ioMain.emit("admin_order_updated");
+    ioMain.to(`user_${order.user}`).emit("user_order_updated", order);
 
     return successResponse(res, 200, "ORDER_STATUS_UPDATED", order);
   } catch (error) {
