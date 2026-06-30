@@ -228,27 +228,30 @@ export const useAuthStore = create((set) => ({
 
   // LOGOUT
   logoutAction: async () => {
+    // 1. CLEAR TOKENS FIRST TO PREVENT INFINITE INTERCEPTOR LOOPS
+    const currentRefreshToken = getSafeRefreshToken();
+    
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
+    localStorage.removeItem("mkhe_was_logged_in");
+    
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("refreshToken");
+    sessionStorage.removeItem("user");
+
+    set({ user: null, token: null, refreshToken: null });
+    
+    // Xoá giỏ hàng khi đăng xuất để tránh lưu lại dữ liệu của người dùng trước
+    useCartStore.getState().clearCart();
+
+    // 2. MAKE API CALL
     try {
-      const currentRefreshToken = getSafeRefreshToken();
       if (currentRefreshToken) {
         await authService.logout({ refreshToken: currentRefreshToken });
       }
     } catch (error) {
       console.error("Lỗi khi logout backend:", error);
-    } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("mkhe_was_logged_in");
-      
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("refreshToken");
-      sessionStorage.removeItem("user");
-
-      set({ user: null, token: null, refreshToken: null });
-      
-      // Xoá giỏ hàng khi đăng xuất để tránh lưu lại dữ liệu của người dùng trước
-      useCartStore.getState().clearCart();
     }
   },
 }));
