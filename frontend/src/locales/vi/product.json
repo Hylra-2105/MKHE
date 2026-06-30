@@ -239,7 +239,11 @@
       "sold_out": "Tạm hết",
       "sku": "Mã SKU",
       "back": "Trở về",
-      "nfc_badge": "Sản phẩm tích hợp Hộ chiếu số NFC"
+      "nfc_badge": "Sản phẩm tích hợp Hộ chiếu số NFC",
+      "b2b_wholesale_title": "Bảng giá sỉ dành cho Doanh nghiệp:",
+      "b2b_from_quantity": "Từ {{quantity}} sản phẩm",
+      "b2b_buy_more": "Mua thêm {{count}} sản phẩm nữa để được nâng mức chiết khấu lên {{discount}}%.",
+      "b2b_max_discount": "Bạn đã đạt mức chiết khấu tối đa!"
     }
   },
   "form": {
@@ -257,6 +261,21 @@
     }
   },
   "products": {
+    "b2b": {
+      "tiers_title": "Bảng Giá Sỉ (B2B Tiers)",
+      "tiers_info": "Mốc sau phải có số lượng và % giảm giá lớn hơn mốc trước.",
+      "add_tier": "Thêm mốc",
+      "no_tiers": "Chưa có mốc chiết khấu nào.",
+      "min_quantity": "Từ số lượng",
+      "min_quantity_placeholder": "VD: 50",
+      "discount_percent": "% Giảm giá",
+      "discount_placeholder": "VD: 10",
+      "remove_tier": "Xóa mốc",
+      "delete_confirm_title": "Xóa mốc chiết khấu?",
+      "delete_confirm_msg": "Bạn có chắc chắn muốn xóa mốc chiết khấu này không? Hành động này không thể hoàn tác.",
+      "delete_confirm_yes": "Xóa mốc",
+      "delete_confirm_no": "Hủy"
+    },
     "errors": {
       "name_required": "Vui lòng điền tên sản phẩm",
       "sku_required": "Vui lòng điền mã SKU",
@@ -269,7 +288,12 @@
       "sale_end_required": "Vui lòng chọn ngày kết thúc Sale",
       "sale_end_invalid": "Kết thúc phải sau thời gian bắt đầu",
       "sale_end_future": "Kết thúc phải ở tương lai",
-      "sale_start_past": "Thời gian bắt đầu không được trong quá khứ"
+      "sale_start_past": "Thời gian bắt đầu không được trong quá khứ",
+      "b2b_min_tiers": "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.",
+      "b2b_missing_fields": "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.",
+      "b2b_invalid_values": "Số lượng phải > 0 và % giảm giá từ 0 - 100.",
+      "b2b_quantity_order": "Mốc {{current}}: Số lượng phải lớn hơn mốc {{prev}} ({{prevQ}}).",
+      "b2b_discount_order": "Mốc {{current}}: % Giảm giá phải lớn hơn mốc {{prev}} ({{prevD}}%)."
     },
     "no_linked_story": "-- Không liên kết Ký sự --"
   }

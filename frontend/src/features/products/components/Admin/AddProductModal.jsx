@@ -12,6 +12,7 @@ import { compressImage } from "@/utils/imageCompressor";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
+import B2BTiersInput from "./B2BTiersInput";
 import { getBlogsApi } from "@/api/blogApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -77,6 +78,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     storyBlogId: "",
     isPublicEvent: false,
     hasSale: false,
+    b2bTiers: [],
   });
 
   const saleStartDateOptions = React.useMemo(() => {
@@ -421,6 +423,39 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       }
     }
 
+    if (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") {
+      if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
+        errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
+      } else {
+        for (let i = 0; i < formData.b2bTiers.length; i++) {
+          const q = parseInt(formData.b2bTiers[i].minQuantity);
+          const d = parseInt(formData.b2bTiers[i].discountPercent);
+
+          if (!formData.b2bTiers[i].minQuantity || !formData.b2bTiers[i].discountPercent) {
+            errors.b2bTiers = t("products.errors.b2b_missing_fields", "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.");
+            break;
+          }
+          if (q <= 0 || d < 0 || d > 100) {
+            errors.b2bTiers = t("products.errors.b2b_invalid_values", "Số lượng phải > 0 và % giảm giá từ 0 - 100.");
+            break;
+          }
+          
+          if (i > 0) {
+            const prevQ = parseInt(formData.b2bTiers[i - 1].minQuantity);
+            const prevD = parseInt(formData.b2bTiers[i - 1].discountPercent);
+            if (q <= prevQ) {
+              errors.b2bTiers = t("products.errors.b2b_quantity_order", { current: i + 1, prev: i, prevQ });
+              break;
+            }
+            if (d <= prevD) {
+              errors.b2bTiers = t("products.errors.b2b_discount_order", { current: i + 1, prev: i, prevD });
+              break;
+            }
+          }
+        }
+      }
+    }
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -493,11 +528,12 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const resetForm = () => {
     setFormData({
       name: "", sku: "", vendor: "", craftVillage: "", material: [], description: "", categoryMatrix: "B2C_Mass_Premium",
-      culturalDNA: "OTHER", price: "", salePrice: "", saleStartDate: "", saleEndDate: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "", storyBlogId: "",
+      culturalDNA: "OTHER", price: "", salePrice: "", saleStartDate: "", saleEndDate: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "", storyBlogId: "", b2bTiers: [],
     });
     setImageFiles([]); setFile3D(null);
     previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
     setPreviewUrls([]);
+    setFormErrors({});
   };
 
   const handleCancel = async () => {
@@ -518,7 +554,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
             <Package className="w-5 h-5 mb-1 text-mkhe-primary" />
             <h2 className="text-lg font-bold text-gradient-gold">{t("modal.add_title")}</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-mkhe-primary/10 cursor-pointer rounded-full transition-colors">
+          <button onClick={handleCancel} className="p-2 hover:bg-mkhe-primary/10 cursor-pointer rounded-full transition-colors">
             <X className="w-5 h-5 text-mkhe-text/70" />
           </button>
         </div>
@@ -765,6 +801,17 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     </div>
                   </div>
                 </div>
+
+                {/* BẢNG GIÁ SỈ (CHỈ HIỂN THỊ NẾU LÀ SẢN PHẨM B2B) */}
+                {(formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") && (
+                  <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                    <B2BTiersInput
+                      tiers={formData.b2bTiers}
+                      onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
+                      error={formErrors.b2bTiers}
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">{t("modal.story")}</label>

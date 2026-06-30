@@ -30,6 +30,7 @@ import uploadRoutes from "./src/modules/upload/upload.routes.js";
 import analyticsRoutes from "./src/modules/analytics/analytics.route.js";
 import notificationRoutes from "./src/modules/notifications/notification.routes.js";
 import aiRoutes from "./src/modules/ai/ai.routes.js";
+import b2bRoutes from "./src/modules/b2b/b2b.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 import { startSaleCron } from "./src/cron/saleCron.js";
 import { startVoucherCron } from "./src/cron/voucherCron.js";
@@ -106,6 +107,9 @@ app.use("/api/notifications", notificationRoutes);
 
 // API liên quan đến AI Chatbot
 app.use("/api/ai", aiRoutes);
+
+// API liên quan đến B2B
+app.use("/api/b2b", b2bRoutes);
 
 const PORT = process.env.PORT || 5000;
 

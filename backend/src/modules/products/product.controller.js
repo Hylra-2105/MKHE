@@ -29,6 +29,7 @@ export const createProduct = async (req, res) => {
       saleEndDate,
       status,
       isPublicEvent,
+      b2bTiers,
     } = req.body;
 
     // Validate cơ bản 
@@ -70,6 +71,7 @@ export const createProduct = async (req, res) => {
       saleEndDate: saleEndDate || undefined,
       status: status || "DRAFT",
       isPublicEvent: isPublicEvent === "true" || isPublicEvent === true,
+      b2bTiers: b2bTiers || [],
     });
 
     await newProduct.save();
@@ -487,8 +489,8 @@ export const getShopProducts = async (req, res) => {
     };
 
     // --- LOGIC BẢO MẬT B2B ---
-    // Khách vãng lai (!req.user) HOẶC user là Guest -> Chỉ xem B2C
-    if (!req.user || req.user.role === "Guest") {
+    // Chỉ có Enterprise mới được xem B2B
+    if (!req.user || req.user.role !== "Enterprise") {
       query.categoryMatrix = { $in: ["B2C_Premium", "B2C_Mass_Premium"] };
     }
 
@@ -505,10 +507,8 @@ export const getShopProducts = async (req, res) => {
     }
 
     // Các bộ lọc
-    // Chú ý: Nếu Guest truyền bộ lọc B2B_Luxury, nó sẽ ghi đè categoryMatrix thành "B2B_Luxury".
-    // Nên ta phải cẩn thận: nếu Guest truyền bộ lọc B2B, ta bỏ qua hoặc trả về rỗng.
     if (category) {
-      if (!req.user || req.user.role === "Guest") {
+      if (!req.user || req.user.role !== "Enterprise") {
         if (!category.startsWith("B2B_")) {
           query.categoryMatrix = category;
         } else {

@@ -245,7 +245,11 @@
       "sold_out": "已售罄",
       "sku": "SKU代码",
       "back": "返回",
-      "nfc_badge": "集成NFC数字护照的产品"
+      "nfc_badge": "集成NFC数字护照的产品",
+      "b2b_wholesale_title": "企业批发价格：",
+      "b2b_from_quantity": "起步 {{quantity}} 件",
+      "b2b_buy_more": "再购买 {{count}} 件即可获得 {{discount}}% 折扣。",
+      "b2b_max_discount": "您已达到最高折扣！"
     }
   },
   "form": {
@@ -263,6 +267,21 @@
     }
   },
   "products": {
+    "b2b": {
+      "tiers_title": "批发价格 (B2B Tiers)",
+      "tiers_info": "下一个级别的数量和折扣必须大于上一个级别。",
+      "add_tier": "添加级别",
+      "no_tiers": "尚无折扣级别。",
+      "min_quantity": "起订数量",
+      "min_quantity_placeholder": "例如: 50",
+      "discount_percent": "折扣 %",
+      "discount_placeholder": "例如: 10",
+      "remove_tier": "删除级别",
+      "delete_confirm_title": "删除折扣级别？",
+      "delete_confirm_msg": "您确定要删除此折扣级别吗？此操作无法撤销。",
+      "delete_confirm_yes": "删除级别",
+      "delete_confirm_no": "取消"
+    },
     "errors": {
       "name_required": "请输入产品名称",
       "sku_required": "请输入SKU代码",
@@ -275,7 +294,12 @@
       "sale_end_required": "请选择促销结束日期",
       "sale_end_invalid": "结束时间必须晚于开始时间",
       "sale_end_future": "结束时间必须在将来",
-      "sale_start_past": "开始时间不能在过去"
+      "sale_start_past": "开始时间不能在过去",
+      "b2b_min_tiers": "请为B2B产品配置至少一个折扣级别。",
+      "b2b_missing_fields": "请为所有级别输入起订数量和折扣 (%)。",
+      "b2b_invalid_values": "数量必须 > 0，且折扣 (%) 介于 0 - 100 之间。",
+      "b2b_quantity_order": "级别 {{current}}：数量必须大于级别 {{prev}} ({{prevQ}})。",
+      "b2b_discount_order": "级别 {{current}}：折扣 (%) 必须大于级别 {{prev}} ({{prevD}}%)。"
     },
     "no_linked_story": "-- 无链接故事 --"
   }
