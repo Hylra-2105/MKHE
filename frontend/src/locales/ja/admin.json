@@ -95,6 +95,7 @@
   "roles": {
     "all": "すべての役割",
     "customer": "お客様",
+    "enterprise": "エンタープライズ",
     "staff": "スタッフ",
     "admin": "管理者"
   },

@@ -369,3 +369,42 @@ export const sendOrderStatusEmail = async (toEmail, order, status, lang = "vi") 
   };
   await sendEmail(mailOptions);
 };
+
+/**
+ * Gửi email cấp tài khoản B2B kèm link tạo mật khẩu (Activation)
+ * @param {string} toEmail - Email doanh nghiệp
+ * @param {string} activationToken - Token kích hoạt tài khoản
+ * @param {string} lang - Ngôn ngữ (en, vi). Default: vi
+ */
+export const sendB2BActivationEmail = async (toEmail, activationToken, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  // Nếu có translation b2bActivation thì dùng, không thì tạm fix cứng tiếng Việt
+  const subject = getTranslation(trans, "b2bActivation.subject") || "Kích hoạt tài khoản Doanh nghiệp - Cổng B2B MKHE";
+  const greeting = getTranslation(trans, "b2bActivation.greeting") || "Chào mừng Quý đối tác,";
+  const instruction = getTranslation(trans, "b2bActivation.instruction") || "Tài khoản Doanh nghiệp của bạn trên hệ thống MKHE đã được tạo thành công. Vui lòng click vào nút bên dưới để thiết lập mật khẩu và kích hoạt tài khoản.";
+  const buttonText = getTranslation(trans, "b2bActivation.buttonText") || "Truy cập Cổng Doanh Nghiệp MKHE";
+  
+  // URL dẫn đến trang set-password trên frontend
+  const activationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activate-b2b?token=${activationToken}`;
+
+  const mailOptions = {
+    from: `"MKHE B2B Portal" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: subject,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${greeting}</h2>
+        <p style="text-align: center; color: #333; line-height: 1.6;">${instruction}</p>
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${activationUrl}" style="background-color: #bc9c6a; color: #fff; padding: 15px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block;">
+            ${buttonText}
+          </a>
+        </div>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${getTranslation(trans, "verification.footer", { time: getFormattedTime(lang) }) || 'Nếu bạn cần hỗ trợ, vui lòng liên hệ CSKH.'}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};

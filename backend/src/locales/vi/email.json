@@ -61,5 +61,11 @@
     "discountAmount": "Giảm giá",
     "totalAmount": "Tổng thanh toán",
     "footer": "Gửi lúc: {time}\nCám ơn bạn đã đồng hành cùng MKHE Heritage."
+  },
+  "b2bActivation": {
+    "subject": "Kích hoạt tài khoản Doanh nghiệp - Cổng B2B MKHE",
+    "greeting": "Chào mừng Quý đối tác,",
+    "instruction": "Tài khoản Doanh nghiệp của bạn trên hệ thống MKHE đã được tạo thành công. Vui lòng click vào nút bên dưới để thiết lập mật khẩu và kích hoạt tài khoản.",
+    "buttonText": "Truy cập Cổng Doanh Nghiệp MKHE"
   }
 }

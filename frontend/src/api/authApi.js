@@ -65,6 +65,12 @@ export const authApi = {
     return response.data;
   },
 
+  // activate b2b account
+  activateB2BAccount: async (data) => {
+    const response = await axiosClient.post("/auth/activate-b2b", data);
+    return response.data;
+  },
+
   // send change password otp
   sendChangePasswordOtp: async (data) => {
     const response = await axiosClient.post(

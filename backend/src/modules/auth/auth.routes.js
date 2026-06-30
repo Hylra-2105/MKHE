@@ -14,6 +14,7 @@ import {
   changePasswordWithOtp,
   getMe,
   refreshToken,
+  activateB2BAccount
 } from "./auth.controller.js";
 
 // Import các Middleware cần thiết
@@ -77,5 +78,8 @@ router.put("/change-password-otp", verifyToken, changePasswordWithOtp);
 
 // get current user info
 router.get("/me", verifyToken, getMe);
+
+// B2B activation route
+router.post("/activate-b2b", activateB2BAccount);
 
 export default router;

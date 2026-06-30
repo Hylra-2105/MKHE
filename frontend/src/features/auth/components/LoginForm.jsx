@@ -63,6 +63,8 @@ export default function LoginForm() {
             navigate("/admin/users");
           } else if (userRole === "Staff") {
             navigate("/admin/products");
+          } else if (userRole === "Enterprise") {
+            navigate("/b2b/dashboard");
           } else {
             navigate("/home");
           }
@@ -128,6 +130,8 @@ export default function LoginForm() {
           navigate("/admin/users");
         } else if (userRole === "Staff") {
           navigate("/admin/products");
+        } else if (userRole === "Enterprise") {
+          navigate("/b2b/dashboard");
         } else {
           navigate("/home");
         }

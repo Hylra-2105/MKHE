@@ -95,6 +95,7 @@
   "roles": {
     "all": "Tất cả vai trò",
     "customer": "Khách hàng",
+    "enterprise": "Doanh nghiệp",
     "staff": "Nhân viên",
     "admin": "Quản trị viên"
   },

@@ -95,6 +95,7 @@
   "roles": {
     "all": "All Roles",
     "customer": "Customer",
+    "enterprise": "Enterprise",
     "staff": "Staff",
     "admin": "Admin"
   },

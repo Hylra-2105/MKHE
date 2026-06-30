@@ -30,10 +30,18 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Guest", "Customer", "Staff", "Admin"],
+      enum: ["Guest", "Customer", "Staff", "Admin", "Enterprise"],
       default: "Customer",
     },
     phone: {
+      type: String,
+      default: "",
+    },
+    companyName: {
+      type: String,
+      default: "",
+    },
+    taxCode: {
       type: String,
       default: "",
     },

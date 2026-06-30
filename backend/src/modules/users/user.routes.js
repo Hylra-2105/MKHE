@@ -8,7 +8,8 @@ import {
   createUser,
   addAddress,
   setDefaultAddress,
-  updateAddress
+  updateAddress,
+  createB2BAccount
 } from "./user.controller.js";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { checkRole } from "../../middlewares/checkRole.js";
@@ -55,6 +56,15 @@ router.post(
   checkRole(["Admin"]),
   normalizeEmailMiddleware,
   createUser,
+);
+
+// Admin tạo B2B account (Enterprise)
+router.post(
+  "/admin/b2b/accounts",
+  verifyToken,
+  checkRole(["Admin", "Staff"]),
+  normalizeEmailMiddleware,
+  createB2BAccount,
 );
 
 export default router;

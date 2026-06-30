@@ -61,5 +61,11 @@
     "discountAmount": "Discount",
     "totalAmount": "Total",
     "footer": "Sent at: {time}\nThank you for choosing MKHE Heritage."
+  },
+  "b2bActivation": {
+    "subject": "Activate Enterprise Account - MKHE B2B Portal",
+    "greeting": "Welcome to MKHE B2B,",
+    "instruction": "Your Enterprise account has been successfully created. Please click the button below to set up your password and activate your account.",
+    "buttonText": "Access MKHE B2B Portal"
   }
 }

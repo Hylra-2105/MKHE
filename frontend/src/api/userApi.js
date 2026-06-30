@@ -15,6 +15,12 @@ export const userApi = {
     return response.data;
   },
 
+  createB2BAccount: async (userData) => {
+    const response = await axiosClient.post("/users/admin/b2b/accounts", userData);
+    return response.data;
+  },
+
+
   // Cập nhật profile của user hiện tại
   updateProfile: async (profileData) => {
     const response = await axiosClient.put(

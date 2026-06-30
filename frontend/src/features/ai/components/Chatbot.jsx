@@ -9,6 +9,7 @@ const Chatbot = () => {
   const { t, i18n } = useTranslation('chatbot');
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -81,21 +82,38 @@ const Chatbot = () => {
 
   return (
     <>
+      {/* Minimize Button */}
+      {!isOpen && !isMinimized && (
+        <button
+          onClick={() => setIsMinimized(true)}
+          className="fixed bottom-[148px] right-1 p-1 bg-white/80 dark:bg-[#2d1c15]/80 backdrop-blur-sm rounded-full shadow-sm border border-black/5 dark:border-white/10 text-gray-500 hover:text-gray-700 dark:text-mkhe-text/80 dark:hover:text-mkhe-text z-50 transition-colors cursor-pointer"
+          title="Minimize buttons"
+        >
+          <X size={18} />
+        </button>
+      )}
+
       {/* Floating Facebook Button */}
       <a
         href="https://www.facebook.com/profile.php?id=61590251406483"
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed bottom-[92px] right-6 p-4 bg-[#1877F2] text-white rounded-full shadow-xl hover:scale-110 transition-transform z-50 flex items-center justify-center cursor-pointer ${isOpen ? 'hidden' : 'flex'}`}
+        onClick={(e) => {
+          if (isMinimized) {
+            e.preventDefault();
+            setIsMinimized(false);
+          }
+        }}
+        className={`fixed bottom-[92px] p-4 bg-[#1877F2] text-white rounded-full shadow-xl transition-all duration-300 z-50 flex items-center justify-center cursor-pointer ${isOpen ? 'hidden' : 'flex'} ${isMinimized ? '-right-8 opacity-60 hover:opacity-100 hover:-right-6' : 'right-6 hover:scale-110'}`}
       >
         <FaFacebook size={28} />
       </a>
 
       {/* Floating Chat Container */}
-      <div className={`fixed bottom-6 right-6 z-50 flex items-end ${isOpen ? 'hidden' : 'flex'}`}>
+      <div className={`fixed bottom-6 z-50 flex items-end transition-all duration-300 ${isOpen ? 'hidden' : 'flex'} ${isMinimized ? '-right-8' : 'right-6'}`}>
         
         {/* Chatbot Greeting Balloon */}
-        {showGreeting && (
+        {showGreeting && !isMinimized && (
           <div className="absolute right-[calc(100%+16px)] bottom-2 bg-white dark:bg-[#2d1c15] text-gray-800 dark:text-mkhe-text text-[13px] p-3 pr-8 rounded-2xl rounded-br-sm shadow-xl border border-black/5 dark:border-mkhe-border/30 w-52 text-left animate-[bounce_2s_infinite]">
              <p className="font-bold mb-0.5 text-mkhe-primary">{t('title')}</p>
              {hasUnread ? t('balloon_unread') : t('balloon_default')}
@@ -115,15 +133,19 @@ const Chatbot = () => {
 
         <button
           onClick={() => {
-            setIsOpen(true);
-            setShowGreeting(false);
-            setHasUnread(false);
+            if (isMinimized) {
+              setIsMinimized(false);
+            } else {
+              setIsOpen(true);
+              setShowGreeting(false);
+              setHasUnread(false);
+            }
           }}
-          className="relative p-4 bg-mkhe-primary text-white rounded-full shadow-xl hover:scale-110 transition-transform flex items-center justify-center cursor-pointer"
+          className={`relative p-4 bg-mkhe-primary text-white rounded-full shadow-xl transition-all duration-300 flex items-center justify-center cursor-pointer ${isMinimized ? 'opacity-60 hover:opacity-100 hover:-translate-x-2' : 'hover:scale-110'}`}
         >
           <MessageCircle size={28} />
           {/* Unread Dot Indicator */}
-          {hasUnread && (
+          {hasUnread && !isMinimized && (
             <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white dark:border-mkhe-bg rounded-full animate-pulse"></span>
           )}
         </button>
