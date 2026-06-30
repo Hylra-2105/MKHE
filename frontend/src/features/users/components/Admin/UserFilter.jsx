@@ -16,7 +16,7 @@ const UserFilter = ({
 }) => {
   const { t } = useTranslation("admin");
 
-  const roles = ["Customer", "Staff", "Admin"];
+  const roles = ["Customer", "Enterprise", "Staff", "Admin"];
   const roleOptions = [
     { value: "", label: t("roles.all") },
     ...roles.map((role) => ({

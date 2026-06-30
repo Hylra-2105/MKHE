@@ -95,6 +95,7 @@
   "roles": {
     "all": "모든 역할",
     "customer": "고객",
+    "enterprise": "엔터프라이즈",
     "staff": "직원",
     "admin": "관리자"
   },

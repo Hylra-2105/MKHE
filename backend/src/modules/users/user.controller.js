@@ -419,3 +419,70 @@ export const updateAddress = async (req, res) => {
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
+
+import crypto from "crypto";
+import { sendB2BActivationEmail } from "../../utils/email.js";
+
+// Admin tạo tài khoản B2B Enterprise
+export const createB2BAccount = async (req, res) => {
+  try {
+    const { name, email, companyName, taxCode } = req.body;
+
+    if (!name || !email || !companyName || !taxCode) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    if (!isValidEmail(email)) {
+      return errorResponse(res, 400, "INVALID_EMAIL_FORMAT");
+    }
+
+    if (!/^\d{10}(-\d{3})?$/.test(taxCode)) {
+      return errorResponse(res, 400, "INVALID_TAX_CODE");
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
+    }
+
+    // Generate activation token
+    const activationToken = crypto.randomBytes(20).toString("hex");
+    const activationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+    // Generate random dummy password, user will reset it anyway
+    const dummyPassword = crypto.randomBytes(8).toString("hex");
+
+    const newUser = new User({
+      name,
+      email,
+      password: dummyPassword,
+      role: "Enterprise",
+      companyName,
+      taxCode,
+      isVerified: true,
+      provider: "local",
+      resetPasswordToken: activationToken,
+      resetPasswordExpires: activationExpires
+    });
+
+    await newUser.save();
+
+    // Send email
+    const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
+    await sendB2BActivationEmail(email, activationToken, userLang);
+
+    const userData = newUser.toObject();
+    delete userData.password;
+    delete userData.resetPasswordToken;
+    delete userData.resetPasswordExpires;
+
+    return res.status(201).json({
+      success: true,
+      message: "B2B_ACCOUNT_CREATED",
+      user: userData,
+    });
+  } catch (error) {
+    console.error("Error in createB2BAccount:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};

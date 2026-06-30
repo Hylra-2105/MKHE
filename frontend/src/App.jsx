@@ -29,6 +29,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import VerifyOTPPage from "./pages/auth/VerifyOTPPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
+import B2BActivationPage from "./pages/auth/B2BActivationPage";
 
 import HomePage from "./pages/home/HomePage";
 import BlogList from "./features/blogs/components/Admin/BlogList";
@@ -42,6 +43,7 @@ import ProductManagementPage from "./pages/products/ProductManagementPage";
 import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
 import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
 import DashboardPage from "./pages/admin/DashboardPage";
+import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -330,6 +332,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
+          <Route
+            path="/b2b/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BDashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/profile"
@@ -395,6 +406,14 @@ function App() {
             element={
               <AuthRoute>
                 <ResetPasswordPage />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/activate-b2b"
+            element={
+              <AuthRoute>
+                <B2BActivationPage />
               </AuthRoute>
             }
           />

@@ -95,6 +95,7 @@
   "roles": {
     "all": "所有角色",
     "customer": "顾客",
+    "enterprise": "企业",
     "staff": "职员",
     "admin": "行政"
   },

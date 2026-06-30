@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
-    const userLang = ["en", "vi"].includes(language) ? language : "vi";
+    const userLang = language || "vi";
 
     const user = await User.create({
       name: name.trim(),
@@ -523,6 +523,42 @@ export const getMe = async (req, res) => {
     return successResponse(res, 200, "GET_ME_SUCCESS", userData);
   } catch (error) {
     console.error("Get Me Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+export const activateB2BAccount = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+    
+    if (password.length < 6) {
+      return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+      role: "Enterprise"
+    });
+
+    if (!user) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_TOKEN");
+    }
+
+    // Hash is handled by the pre("save") hook in user.model.js
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    
+    await user.save();
+
+    return successResponse(res, 200, "ACCOUNT_ACTIVATED_SUCCESS");
+  } catch (error) {
+    console.error("Activate B2B Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
