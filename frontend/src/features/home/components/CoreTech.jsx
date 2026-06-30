@@ -51,8 +51,8 @@ const CoreTech = () => {
             <div className="relative z-10 flex flex-col items-center">
               <Nfc className="w-20 h-20 lg:w-24 lg:h-24 text-mkhe-text/80 group-hover:text-mkhe-text transition-colors duration-500 mb-6 drop-shadow-lg" />
               <div className="text-center">
-                <p className="text-xs font-logo uppercase tracking-[0.3em] text-mkhe-primary font-bold mb-2">MKHE Phygital</p>
-                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">Tap to Authenticate</p>
+                <p className="text-xs font-logo uppercase tracking-[0.2em] text-mkhe-primary font-bold mb-2">HỘ CHIẾU VĂN HÓA SỐ</p>
+                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">CHẠM ĐỂ XÁC THỰC</p>
               </div>
             </div>
           </div>
@@ -92,11 +92,11 @@ const CoreTech = () => {
             {features.map((item, idx) => (
               <div
                 key={idx}
-                className="group border-b border-mkhe-border py-8 flex flex-col md:flex-row gap-6 md:gap-12 hover:bg-mkhe-primary/5 transition-colors"
+                className="group border-b border-mkhe-border py-8 px-4 md:px-8 flex flex-col md:flex-row md:items-center gap-6 md:gap-12 hover:bg-mkhe-primary/5 transition-colors"
               >
                 {/* Numbered Index */}
-                <div className="flex-shrink-0 w-12 pt-1">
-                  <span className="text-2xl font-logo font-light text-mkhe-text/30 group-hover:text-mkhe-primary transition-colors">
+                <div className="flex-shrink-0 w-12 text-center md:text-left">
+                  <span className="text-3xl font-logo font-light text-mkhe-text/30 group-hover:text-mkhe-primary transition-colors">
                     0{idx + 1}
                   </span>
                 </div>

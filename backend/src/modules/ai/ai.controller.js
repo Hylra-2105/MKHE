@@ -49,12 +49,29 @@ Khách hàng có thể nhận mã ưu đãi (Ví dụ: HERITAGE15) qua 3 cách:
 3. Câu trả lời cần ngắn gọn, tối đa 150 chữ. Trình bày rõ ràng, xuống dòng dễ đọc. Luôn mang tinh thần tự hào về di sản miền Tây.
 `;
 
+import Chat from "./chat.model.js";
+
+export const getChatHistory = async (req, res) => {
+  try {
+    const chat = await Chat.findOne({ user: req.user.id });
+    if (!chat) {
+      return successResponse(res, 200, "CHAT_HISTORY_EMPTY", { messages: [] });
+    }
+    return successResponse(res, 200, "CHAT_HISTORY_SUCCESS", {
+      messages: chat.messages
+    });
+  } catch (error) {
+    console.error("Error fetching chat history:", error);
+    return errorResponse(res, 500, "CHAT_HISTORY_ERROR");
+  }
+};
+
 export const handleChat = async (req, res) => {
   try {
     const { message } = req.body;
     
     if (!message) {
-      return errorResponse(res, 400, "Vui lòng nhập câu hỏi.");
+      return errorResponse(res, 400, "MISSING_MESSAGE");
     }
 
     // Initialize the model
@@ -62,20 +79,69 @@ export const handleChat = async (req, res) => {
       model: "gemini-2.5-flash",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
-        maxOutputTokens: 500,
         temperature: 0.7,
       }
     });
 
-    const result = await model.generateContent(message);
+    let historyContext = [];
+    let chatDoc = null;
+
+    if (req.user) {
+      chatDoc = await Chat.findOne({ user: req.user.id });
+      if (chatDoc && chatDoc.messages.length > 0) {
+        // Lấy 20 tin nhắn gần nhất để làm ngữ cảnh
+        const recentMessages = chatDoc.messages.slice(-20);
+        historyContext = recentMessages.map(msg => ({
+          role: msg.role === 'assistant' ? 'model' : msg.role,
+          parts: [{ text: msg.content }]
+        }));
+      }
+    }
+
+    let result;
+    if (historyContext.length > 0) {
+      const chatSession = model.startChat({
+        history: historyContext,
+      });
+      result = await chatSession.sendMessage(message);
+    } else {
+      result = await model.generateContent(message);
+    }
+    
     const responseText = result.response.text();
 
-    return successResponse(res, 200, "Lấy câu trả lời thành công", {
+    // Lưu vào DB nếu user đăng nhập
+    if (req.user) {
+      const userMsg = { role: "user", content: message };
+      const aiMsg = { role: "assistant", content: responseText };
+
+      if (chatDoc) {
+        await Chat.updateOne(
+          { user: req.user.id },
+          {
+            $push: {
+              messages: {
+                $each: [userMsg, aiMsg],
+                $slice: -500 // Giới hạn tối đa 500 tin nhắn mỗi người
+              }
+            }
+          }
+        );
+      } else {
+        await Chat.create({
+          user: req.user.id,
+          messages: [userMsg, aiMsg]
+        });
+      }
+    }
+
+    return successResponse(res, 200, "CHAT_REPLY_SUCCESS", {
       reply: responseText
     });
     
   } catch (error) {
     console.error("Error in AI Chat:", error);
-    return errorResponse(res, 500, "Lỗi khi kết nối với AI Assistant. Vui lòng thử lại sau.");
+    return errorResponse(res, 500, "AI_CONNECTION_ERROR");
   }
 };
+

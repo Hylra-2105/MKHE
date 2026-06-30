@@ -115,10 +115,16 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
     setIsDragging(false);
     setIsTransitioning(true);
 
+    const itemWidth = windowWidth / itemsPerView;
+    let moveCount = Math.round(Math.abs(dragOffset) / itemWidth);
+    if (moveCount === 0 && Math.abs(dragOffset) > dragThreshold) {
+      moveCount = 1;
+    }
+
     if (dragOffset > dragThreshold) {
-      setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+      setCurrentIndex((prev) => Math.max(0, prev - moveCount));
     } else if (dragOffset < -dragThreshold) {
-      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+      setCurrentIndex((prev) => Math.min(maxIndex, prev + moveCount));
     }
 
     setDragOffset(0);
@@ -129,7 +135,7 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, x: isReverse ? 100 : -100 }} 
+      initial={{ opacity: 0, x: isReverse ? -100 : 100 }} 
       whileInView={{ opacity: 1, x: 0 }} 
       viewport={{ once: true, amount: 0.2 }} 
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -147,33 +153,101 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
         {/* EDITORIAL HEADER */}
         <div className={`flex flex-col md:flex-row items-end justify-between mb-16 ${isReverse ? "md:flex-row-reverse text-right" : "text-left"}`}>
           <div className="relative">
-            <h3 className="text-5xl md:text-8xl font-logo font-light text-mkhe-text tracking-tight mb-2 flex items-center gap-6">
-              {!isReverse && <span className="w-12 h-[1px] bg-mkhe-primary"></span>}
-              {title}
-              {isReverse && <span className="w-12 h-[1px] bg-mkhe-primary"></span>}
+            {/* Sub-label: Dấu ấn di sản */}
+            <div className={`flex items-center gap-4 mb-4 opacity-80 ${isReverse ? "justify-end" : "justify-start"}`}>
+              {!isReverse && (
+                <>
+                  <div className="w-1.5 h-1.5 bg-mkhe-primary rotate-45 shadow-[0_0_8px_#D4A373]"></div>
+                  <div className="w-12 md:w-20 h-[1px] bg-gradient-to-r from-mkhe-primary to-transparent"></div>
+                </>
+              )}
+              <span className="text-mkhe-primary tracking-[0.4em] text-xs md:text-sm uppercase font-bold">
+                Dấu ấn di sản
+              </span>
+              {isReverse && (
+                <>
+                  <div className="w-12 md:w-20 h-[1px] bg-gradient-to-l from-mkhe-primary to-transparent"></div>
+                  <div className="w-1.5 h-1.5 bg-mkhe-primary rotate-45 shadow-[0_0_8px_#D4A373]"></div>
+                </>
+              )}
+            </div>
+
+            {/* Main Title */}
+            <h3 className={`text-6xl md:text-[7rem] lg:text-[8rem] font-logo font-light tracking-tight mb-6 flex items-baseline ${isReverse ? "justify-end" : "justify-start"}`}>
+              <span className="bg-clip-text text-transparent bg-gradient-to-b from-mkhe-text via-mkhe-text/90 to-mkhe-text/40 drop-shadow-sm filter">
+                {title}
+              </span>
+              <span className="text-mkhe-primary text-5xl md:text-7xl italic ml-1 font-serif animate-pulse">.</span>
             </h3>
             <button
-              onClick={() => navigate(`/shop?category=${dnaType}`)}
-              className={`group flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-mkhe-text/50 hover:text-mkhe-primary transition-colors ${isReverse ? "justify-end" : ""}`}
+              onClick={() => navigate(`/shop?culturalDNA=${dnaType}`)}
+              className={`group flex items-center cursor-pointer gap-2 text-xs uppercase tracking-[0.2em] text-mkhe-text/50 hover:text-mkhe-primary transition-colors ${isReverse ? "justify-end" : ""}`}
             >
               <span className="w-0 h-[1px] bg-mkhe-primary transition-all duration-300 group-hover:w-4"></span>
-              {t("dna.view_all", "Xem toàn bộ")}
+              {t("dna.view_all")}
             </button>
           </div>
 
-          {/* CUSTOM NAVIGATION ARROWS */}
-          <div className={`hidden md:flex items-center gap-4 ${isReverse ? "justify-start" : "justify-end"}`}>
+          {/* CUSTOM NAVIGATION ARROWS (Magic Bird/Bow) */}
+          <div className={`hidden md:flex items-center gap-6 ${isReverse ? "justify-start" : "justify-end"}`}>
             <button
               onClick={handlePrev}
-              className="w-12 h-12 rounded-full border border-mkhe-text/20 flex items-center justify-center text-mkhe-text/50 hover:text-mkhe-primary hover:border-mkhe-primary transition-all hover:-translate-x-1"
+              className="group relative w-16 h-12 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
             >
-              <ChevronLeft className="w-5 h-5" />
+              {/* Vòng sáng tỏa ra khi hover */}
+              <div className="absolute inset-0 bg-mkhe-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <svg viewBox="0 0 60 60" className="w-12 h-12 fill-none stroke-current transform transition-transform duration-500 group-hover:-translate-x-3" xmlns="http://www.w3.org/2000/svg">
+                {/* Trục mũi tên đứt đoạn mờ ảo */}
+                <path d="M 55,30 L 45,30" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.5"/>
+                <path d="M 45,30 L 20,30" strokeWidth="1.5" opacity="0.8" />
+                
+                {/* Các vòng cung bọc ngoài như cánh hoa sen / khiên bảo vệ */}
+                <path d="M 35,12 C 12,22 12,38 35,48" strokeWidth="1.5" />
+                <path d="M 40,18 C 22,25 22,35 40,42" strokeWidth="1" opacity="0.3" />
+                
+                {/* Đầu mũi giáo (Spearhead) sắc lẹm */}
+                <polygon points="10,30 24,20 21,30 24,40" className="fill-current drop-shadow-[0_0_8px_rgba(212,163,115,0.8)]" stroke="none" />
+                
+                {/* Tâm la bàn năng lượng (Energy Node) */}
+                <circle cx="35" cy="30" r="4" strokeWidth="1.5" className="fill-mkhe-bg" />
+                <circle cx="35" cy="30" r="1.5" className="fill-current" stroke="none" />
+                <circle cx="45" cy="30" r="1" className="fill-current" stroke="none" opacity="0.5" />
+                
+                {/* Tàn dư ma thuật (Sparks) lơ lửng */}
+                <circle cx="28" cy="15" r="1" className="fill-current" stroke="none" opacity="0.6"/>
+                <circle cx="28" cy="45" r="1" className="fill-current" stroke="none" opacity="0.6"/>
+              </svg>
             </button>
+            
             <button
               onClick={handleNext}
-              className="w-12 h-12 rounded-full border border-mkhe-text/20 flex items-center justify-center text-mkhe-text/50 hover:text-mkhe-primary hover:border-mkhe-primary transition-all hover:translate-x-1"
+              className="group relative w-16 h-12 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
             >
-              <ChevronRight className="w-5 h-5" />
+              {/* Vòng sáng tỏa ra khi hover */}
+              <div className="absolute inset-0 bg-mkhe-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              
+              <svg viewBox="0 0 60 60" className="w-12 h-12 fill-none stroke-current transform rotate-180 transition-transform duration-500 group-hover:translate-x-3" xmlns="http://www.w3.org/2000/svg">
+                {/* Trục mũi tên đứt đoạn mờ ảo */}
+                <path d="M 55,30 L 45,30" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.5"/>
+                <path d="M 45,30 L 20,30" strokeWidth="1.5" opacity="0.8" />
+                
+                {/* Các vòng cung bọc ngoài như cánh hoa sen / khiên bảo vệ */}
+                <path d="M 35,12 C 12,22 12,38 35,48" strokeWidth="1.5" />
+                <path d="M 40,18 C 22,25 22,35 40,42" strokeWidth="1" opacity="0.3" />
+                
+                {/* Đầu mũi giáo (Spearhead) sắc lẹm */}
+                <polygon points="10,30 24,20 21,30 24,40" className="fill-current drop-shadow-[0_0_8px_rgba(212,163,115,0.8)]" stroke="none" />
+                
+                {/* Tâm la bàn năng lượng (Energy Node) */}
+                <circle cx="35" cy="30" r="4" strokeWidth="1.5" className="fill-mkhe-bg" />
+                <circle cx="35" cy="30" r="1.5" className="fill-current" stroke="none" />
+                <circle cx="45" cy="30" r="1" className="fill-current" stroke="none" opacity="0.5" />
+                
+                {/* Tàn dư ma thuật (Sparks) lơ lửng */}
+                <circle cx="28" cy="15" r="1" className="fill-current" stroke="none" opacity="0.6"/>
+                <circle cx="28" cy="45" r="1" className="fill-current" stroke="none" opacity="0.6"/>
+              </svg>
             </button>
           </div>
         </div>

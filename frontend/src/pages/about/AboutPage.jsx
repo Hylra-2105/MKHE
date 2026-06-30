@@ -3,16 +3,16 @@ import { motion } from 'framer-motion';
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#0C0805] text-mkhe-text font-sans selection:bg-mkhe-primary selection:text-white">
+    <div className="min-h-screen bg-mkhe-bg text-mkhe-text font-sans selection:bg-mkhe-primary selection:text-white">
       
       {/* CREATIVE HERO SECTION */}
-      <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-mkhe-bg dark:bg-[#0C0805]">
+      <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-mkhe-bg">
         <div className="absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/20 rounded-full blur-[100px] animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
         
         {/* Large Watermark Text */}
-        <div className="absolute inset-0 flex items-center justify-start pointer-events-none opacity-[0.02] dark:opacity-[0.04] overflow-hidden -left-[5vw]">
-          <span className="text-[35vw] font-logo font-bold text-black dark:text-white whitespace-nowrap">MKHE</span>
+        <div className="absolute inset-0 flex items-center justify-start pointer-events-none opacity-5 overflow-hidden -left-[5vw]">
+          <span className="text-[35vw] font-logo font-bold text-mkhe-text whitespace-nowrap">MKHE</span>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center justify-between gap-16 py-20">
@@ -25,7 +25,7 @@ const AboutPage = () => {
               <span className="w-16 h-[1px] bg-mkhe-primary"></span>
               <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">Mekong Culture</span>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text dark:text-white font-bold leading-[1.1] mb-8 relative z-10">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative z-10">
               Giao lộ của <br/>
               <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Di sản</span>
             </h1>
@@ -39,7 +39,7 @@ const AboutPage = () => {
             className="md:w-1/2 relative flex justify-center md:justify-end"
           >
             <div className="relative w-full max-w-[320px] lg:max-w-[400px] aspect-[3/4] rounded-t-[200px] rounded-b-[20px] overflow-hidden p-3 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-md border border-white/10 dark:border-white/5">
-              <div className="w-full h-full rounded-t-[200px] rounded-b-[10px] overflow-hidden bg-mkhe-bg dark:bg-[#150D08] relative group">
+              <div className="w-full h-full rounded-t-[200px] rounded-b-[10px] overflow-hidden bg-mkhe-bg relative group">
                 <img 
                   src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1972&auto=format&fit=crop" 
                   alt="Mekong Heritage" 
@@ -61,7 +61,7 @@ const AboutPage = () => {
         
         {/* SECTION 1: VỀ CHÚNG TÔI - EDITORIAL STYLE */}
         <section className="py-32 relative">
-          <div className="absolute right-0 top-20 text-[15vw] font-logo font-bold text-black/5 dark:text-white/5 leading-none select-none pointer-events-none italic">
+          <div className="absolute right-0 top-20 text-[15vw] font-logo font-bold text-mkhe-text/5 leading-none select-none pointer-events-none italic">
             Story
           </div>
           
@@ -84,7 +84,7 @@ const AboutPage = () => {
               initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
               className="lg:col-span-6 lg:col-start-7 relative mt-10 lg:mt-0"
             >
-              <div className="relative w-full aspect-[4/5] bg-gray-200 dark:bg-[#150D08] overflow-hidden rounded-sm">
+              <div className="relative w-full aspect-[4/5] bg-mkhe-input overflow-hidden rounded-sm">
                 <img 
                   src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=2070&auto=format&fit=crop" 
                   alt="Mekong Artisan" 
@@ -97,8 +97,8 @@ const AboutPage = () => {
               </div>
               
               {/* Overlapping text box */}
-              <div className="absolute -bottom-10 -left-10 lg:-left-20 bg-white dark:bg-[#1A120D] p-8 shadow-2xl border-l-[3px] border-mkhe-primary max-w-[280px]">
-                <p className="font-logo italic text-2xl text-mkhe-text dark:text-white">Bảo tồn và <br/><span className="text-mkhe-primary">Thương mại hóa</span></p>
+              <div className="absolute -bottom-10 -left-10 lg:-left-20 bg-mkhe-bg p-8 shadow-2xl border-l-[3px] border-mkhe-primary max-w-[280px]">
+                <p className="font-logo italic text-2xl text-mkhe-text">Bảo tồn và <br/><span className="text-mkhe-primary">Thương mại hóa</span></p>
               </div>
             </motion.div>
           </div>
@@ -116,7 +116,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">01</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text dark:text-white font-bold tracking-tight">Tầm <span className="font-logo italic text-mkhe-primary font-normal">nhìn</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Tầm <span className="font-logo italic text-mkhe-primary font-normal">nhìn</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed">
@@ -132,7 +132,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">02</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text dark:text-white font-bold tracking-tight">Sứ <span className="font-logo italic text-mkhe-primary font-normal">mệnh</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Sứ <span className="font-logo italic text-mkhe-primary font-normal">mệnh</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed">
@@ -148,7 +148,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">03</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text dark:text-white font-bold tracking-tight">Giá trị <span className="font-logo italic text-mkhe-primary font-normal">cốt lõi</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Giá trị <span className="font-logo italic text-mkhe-primary font-normal">cốt lõi</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <ul className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed space-y-3">
@@ -171,7 +171,7 @@ const AboutPage = () => {
           <div className="max-w-5xl mx-auto px-6 relative z-10">
             <div className="text-center mb-24">
               <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-4 font-bold">02 — Báu vật sống</h3>
-              <h2 className="text-5xl md:text-6xl text-mkhe-text dark:text-white font-logo italic">Tôn vinh làng nghề</h2>
+              <h2 className="text-5xl md:text-6xl text-mkhe-text font-logo italic">Tôn vinh làng nghề</h2>
             </div>
             
             <div className="space-y-20 md:space-y-32">
@@ -187,18 +187,18 @@ const AboutPage = () => {
                 >
                   <div className={`md:w-1/2 flex ${idx % 2 === 0 ? 'md:justify-end md:pr-16' : 'md:justify-start md:pl-16'} text-center md:text-left`}>
                     <div>
-                      <h4 className={`text-2xl md:text-3xl font-bold text-mkhe-text dark:text-white mb-4 ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>{item.name}</h4>
+                      <h4 className={`text-2xl md:text-3xl font-bold text-mkhe-text mb-4 ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>{item.name}</h4>
                       <p className={`text-gray-500 dark:text-gray-400 italic text-lg font-light ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>"{item.desc}"</p>
                     </div>
                   </div>
                   
                   {/* Center Dot */}
-                  <div className="hidden md:flex w-16 h-16 rounded-full bg-mkhe-bg dark:bg-[#0C0805] border-[1px] border-mkhe-primary/40 items-center justify-center absolute left-1/2 -translate-x-1/2 z-10">
+                  <div className="hidden md:flex w-16 h-16 rounded-full bg-mkhe-bg border-[1px] border-mkhe-primary/40 items-center justify-center absolute left-1/2 -translate-x-1/2 z-10">
                     <div className="w-2 h-2 rounded-full bg-mkhe-primary"></div>
                   </div>
 
                   <div className={`md:w-1/2 flex ${idx % 2 === 0 ? 'md:pl-16' : 'md:pr-16 md:justify-end'}`}>
-                    <div className="text-[80px] font-logo italic text-black/5 dark:text-white/5 leading-none select-none">
+                    <div className="text-[80px] font-logo italic font-bold text-mkhe-text/20 leading-none select-none">
                       0{idx + 1}
                     </div>
                   </div>
@@ -209,19 +209,19 @@ const AboutPage = () => {
         </section>
 
         {/* SECTION 4: PHYGITAL - OVERLAPPING ABSTRACT */}
-        <section className="py-32 bg-[#F5F2EB] dark:bg-[#120C08] relative">
+        <section className="py-32 bg-mkhe-input/30 relative">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div 
               initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
               className="relative z-10"
             >
               <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-6 font-bold">03 — Tiên phong</h3>
-              <h2 className="text-5xl md:text-6xl text-mkhe-text dark:text-white font-bold leading-tight mb-8">
+              <h2 className="text-5xl md:text-6xl text-mkhe-text font-bold leading-tight mb-8">
                 Điểm chạm <br/>
                 <span className="font-logo italic text-mkhe-primary font-normal text-6xl md:text-7xl">Phygital</span>
               </h2>
               
-              <div className="bg-white/50 dark:bg-black/30 backdrop-blur-sm border-[1px] border-mkhe-primary/20 p-8 md:p-10 rounded-br-[50px]">
+              <div className="bg-mkhe-input/50 backdrop-blur-sm border-[1px] border-mkhe-primary/20 p-8 md:p-10 rounded-br-[50px]">
                 <p className="text-xl text-gray-800 dark:text-gray-200 font-light leading-relaxed mb-6">
                   Giới thiệu <strong className="font-bold text-mkhe-primary">Hộ chiếu số DPP (Digital Product Passport)</strong>. Mekong Culture tự hào là đơn vị tiên phong ứng dụng mô hình Phygital vào các sản phẩm thủ công.
                 </p>
@@ -237,7 +237,7 @@ const AboutPage = () => {
             >
               <div className="absolute inset-0 bg-mkhe-primary/5 dark:bg-mkhe-primary/10 rounded-full blur-[80px]"></div>
               
-              <div className="relative w-64 h-[400px] bg-white dark:bg-[#1A120D] shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden z-10 rotate-[-5deg] hover:rotate-0 transition-transform duration-700">
+              <div className="relative w-64 h-[400px] bg-mkhe-bg shadow-2xl rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden z-10 rotate-[-5deg] hover:rotate-0 transition-transform duration-700">
                 <img 
                   src="https://images.unsplash.com/photo-1620325867502-221ddb5faa5f?q=80&w=2058&auto=format&fit=crop" 
                   alt="NFC Scan" 
@@ -254,7 +254,7 @@ const AboutPage = () => {
                 </div>
               </div>
               
-              <div className="absolute top-10 right-10 w-48 h-64 bg-mkhe-bg dark:bg-[#0C0805] shadow-xl border border-mkhe-primary/20 rotate-[10deg] -z-0 hidden md:block opacity-60">
+              <div className="absolute top-10 right-10 w-48 h-64 bg-mkhe-bg shadow-xl border border-mkhe-primary/20 rotate-[10deg] -z-0 hidden md:block opacity-60">
                 <div className="p-4 flex flex-col gap-2 h-full justify-end">
                   <div className="w-1/2 h-1 bg-mkhe-primary/30"></div>
                   <div className="w-3/4 h-1 bg-mkhe-primary/20"></div>
@@ -274,7 +274,7 @@ const AboutPage = () => {
             >
               <div>
                 <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-4 font-bold">04 — Con người</h3>
-                <h2 className="text-5xl md:text-7xl text-mkhe-text dark:text-white font-logo italic leading-none">Đội ngũ sáng tạo</h2>
+                <h2 className="text-5xl md:text-7xl text-mkhe-text font-logo italic leading-none">Đội ngũ sáng tạo</h2>
               </div>
               <p className="text-gray-500 max-w-sm text-sm font-light uppercase tracking-widest text-right">
                 Kết hợp tư duy nhạy bén và sức mạnh công nghệ đột phá.
@@ -297,7 +297,7 @@ const AboutPage = () => {
                 >
                   <h4 className="text-3xl md:text-5xl lg:text-6xl font-logo font-bold text-mkhe-text dark:text-gray-300 group-hover:text-mkhe-primary transition-colors">{member.name}</h4>
                   <div className="flex-1 border-b border-dashed border-gray-300 dark:border-gray-700 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <p className="text-sm md:text-base text-gray-500 dark:text-gray-500 uppercase tracking-[0.2em] group-hover:text-mkhe-text dark:group-hover:text-white transition-colors">{member.role}</p>
+                  <p className="text-sm md:text-base text-gray-500 dark:text-gray-500 uppercase tracking-[0.2em] group-hover:text-mkhe-text transition-colors">{member.role}</p>
                 </motion.div>
               ))}
             </div>

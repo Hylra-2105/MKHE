@@ -170,6 +170,12 @@ export default function Header() {
     ? "bg-transparent border-transparent text-white drop-shadow-md" 
     : "bg-mkhe-bg border-mkhe-border text-current";
 
+  const isActive = (path) => {
+    if (path === "/home" && (location.pathname === "/" || location.pathname === "/home")) return true;
+    if (path !== "/home" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
   return (
     <header className={`h-20 border-b flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] transition-colors duration-300 ${headerClasses}`}>
       {/* LOGO AND MOBILE MENU */}
@@ -200,15 +206,22 @@ export default function Header() {
       {/* THANH ĐIỀU HƯỚNG Ở GIỮA */}
       <nav className="flex-1 flex justify-center gap-8 hidden lg:flex">
         {!isAdminOrStaff ? (
-          navLinks.map((link) => (
+          navLinks.map((link) => {
+            const active = isActive(link.path);
+            return (
             <Link
               key={link.key}
               to={link.path}
-              className="text-sm font-medium opacity-80 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors uppercase tracking-wider text-[11px]"
+              className={`relative text-sm cursor-pointer transition-colors uppercase tracking-wider text-[11px] group py-1 ${
+                active ? "text-mkhe-primary opacity-100 font-bold" : "opacity-80 hover:opacity-100 hover:text-mkhe-primary font-medium"
+              }`}
             >
               {t(`nav.${link.key}`)}
+              <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] bg-mkhe-primary rounded-full transition-all duration-300 ${
+                active ? "w-full" : "w-0 group-hover:w-full opacity-50"
+              }`}></span>
             </Link>
-          ))
+          )})
         ) : (
           <div className="text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none">
             {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}
@@ -601,17 +614,23 @@ export default function Header() {
           {/* Menu Drawer */}
           <div className="absolute top-20 left-0 w-full bg-mkhe-bg/95 backdrop-blur-xl border-b border-mkhe-border shadow-2xl flex flex-col px-6 py-4 z-[60] lg:hidden animate-in slide-in-from-top-4 fade-in duration-300">
             {!isAdminOrStaff ? (
-              navLinks.map((link) => (
+              navLinks.map((link) => {
+                const active = isActive(link.path);
+                return (
                 <Link
                   key={link.key}
                   to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-4 border-b border-mkhe-border/30 text-sm font-semibold text-mkhe-text/80 hover:text-mkhe-primary hover:pl-2 transition-all duration-300 uppercase tracking-widest flex items-center justify-between group"
+                  className={`py-4 border-b text-sm font-semibold transition-all duration-300 uppercase tracking-widest flex items-center justify-between group ${
+                    active ? "text-mkhe-primary pl-2 border-mkhe-primary/40 bg-mkhe-primary/5" : "text-mkhe-text/80 hover:text-mkhe-primary hover:pl-2 border-mkhe-border/30"
+                  }`}
                 >
                   {t(`nav.${link.key}`)}
-                  <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 text-mkhe-primary" />
+                  <ChevronRight className={`w-4 h-4 transition-all duration-300 text-mkhe-primary ${
+                    active ? "opacity-100 translate-x-1" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"
+                  }`} />
                 </Link>
-              ))
+              )})
             ) : (
               <div className="py-6 text-gradient-gold font-logo text-lg font-bold tracking-widest uppercase select-none text-center bg-mkhe-primary/5 rounded-lg border border-mkhe-primary/20">
                 {isStaff ? t("user_menu.staff_area") : t("user_menu.admin_area")}

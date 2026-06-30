@@ -14,7 +14,7 @@ const DnaCard = ({
   onHover, 
   onLeave 
 }) => {
-  const { t } = useTranslation("home");
+  const { t, i18n } = useTranslation("home");
   const navigate = useNavigate();
   const dragStartPos = React.useRef({ x: 0, y: 0 });
 
@@ -117,10 +117,16 @@ const DnaCard = ({
               <div className="flex flex-col gap-2 transform transition-all duration-500 delay-100">
                 {/* Rating */}
                 <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 text-mkhe-primary fill-mkhe-primary" />
-                  ))}
-                  <span className="text-[10px] text-white/70 ml-1">(12)</span>
+                  {[...Array(5)].map((_, i) => {
+                    const rating = item.ratingAverage || 0;
+                    return (
+                      <Star 
+                        key={i} 
+                        className={`w-3.5 h-3.5 text-mkhe-primary ${i < Math.round(rating) ? "fill-mkhe-primary" : "fill-transparent"}`} 
+                      />
+                    );
+                  })}
+                  <span className="text-[10px] text-white/70 ml-1">({item.ratingCount || 0})</span>
                 </div>
 
                 {/* Tên & Giá bên trong Popup */}
@@ -128,7 +134,7 @@ const DnaCard = ({
                   {item.name}
                 </h4>
                 <p className="text-mkhe-primary font-bold text-base drop-shadow-md">
-                  {item.price?.toLocaleString("vi-VN")} đ
+                  {item.price?.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {i18n.language === 'vi' ? 'đ' : 'VND'}
                 </p>
 
                 {/* Nút Mua Ngay */}

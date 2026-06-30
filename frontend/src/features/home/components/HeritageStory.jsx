@@ -131,7 +131,7 @@ const HeritageStory = () => {
               >
                 <button 
                   onClick={() => setActiveTab(index)}
-                  className={`relative w-40 h-40 rounded-full border-4 overflow-hidden transition-all duration-500 group ${isActive ? 'border-mkhe-primary scale-110 shadow-[0_0_20px_rgba(212,163,115,0.4)] z-10' : 'border-mkhe-border hover:border-mkhe-primary/50 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 z-0'}`}
+                  className={`cursor-pointer relative w-40 h-40 rounded-full border-4 overflow-hidden transition-all duration-500 group ${isActive ? 'border-mkhe-primary scale-110 shadow-[0_0_20px_rgba(212,163,115,0.4)] z-10' : 'border-mkhe-border hover:border-mkhe-primary/50 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 z-0'}`}
                 >
                   <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
                   <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40 group-hover:bg-transparent'}`}></div>
@@ -141,7 +141,7 @@ const HeritageStory = () => {
                 </button>
                 
                 {/* Node Label */}
-                <div className={`absolute text-center w-64 transition-all duration-500 ${index === 1 ? 'bottom-[120%]' : 'top-[120%]'}`}>
+                <div className="absolute text-center w-64 transition-all duration-500 top-[120%]">
                   <h4 className={`text-2xl font-bold tracking-wide ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
                   <p className="text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
                 </div>
@@ -159,7 +159,7 @@ const HeritageStory = () => {
               <div key={tab.id} className="relative flex items-center gap-6">
                 <button 
                   onClick={() => setActiveTab(index)}
-                  className={`relative z-10 w-20 h-20 rounded-full flex-shrink-0 border-2 overflow-hidden transition-all duration-300 ${isActive ? 'border-mkhe-primary shadow-[0_0_15px_rgba(212,163,115,0.4)] scale-110' : 'border-mkhe-border grayscale opacity-70'}`}
+                  className={`cursor-pointer relative z-10 w-20 h-20 rounded-full flex-shrink-0 border-2 overflow-hidden transition-all duration-300 ${isActive ? 'border-mkhe-primary shadow-[0_0_15px_rgba(212,163,115,0.4)] scale-110' : 'border-mkhe-border grayscale opacity-70'}`}
                 >
                   <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
                   <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40'}`}></div>
@@ -207,7 +207,7 @@ const HeritageStory = () => {
               </div>
               
               <div className="pt-4 flex justify-center">
-                <button className="group flex items-center gap-4 text-sm font-bold uppercase tracking-widest text-mkhe-text hover:text-mkhe-primary transition-colors border border-mkhe-border px-8 py-4 hover:border-mkhe-primary rounded-sm">
+                <button className="cursor-pointer group flex items-center gap-4 text-sm font-bold uppercase tracking-widest text-mkhe-text hover:text-mkhe-primary transition-colors border border-mkhe-border px-8 py-4 hover:border-mkhe-primary rounded-sm">
                   Tới trạm di sản
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>

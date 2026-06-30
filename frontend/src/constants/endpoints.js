@@ -52,4 +52,8 @@ export const ENDPOINTS = {
   UPLOAD: {
     IMAGE: `${API_BASE_URL}/upload/image`,
   },
+  AI: {
+    CHAT: `${API_BASE_URL}/ai/chat`,
+    HISTORY: `${API_BASE_URL}/ai/chat/history`,
+  },
 };

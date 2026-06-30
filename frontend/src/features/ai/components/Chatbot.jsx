@@ -1,25 +1,38 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { FaFacebook } from 'react-icons/fa';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { getChatHistoryApi, sendChatMessageApi } from '@/api/aiApi';
 
 const Chatbot = () => {
   const { t, i18n } = useTranslation('chatbot');
+  const { user } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    setMessages(prev => {
-      if (prev.length <= 1) {
-        return [{ role: 'assistant', content: t('initial_greeting') }];
+    const loadHistory = async () => {
+      if (user) {
+        try {
+          const res = await getChatHistoryApi();
+          if (res.data && res.data.messages && res.data.messages.length > 0) {
+            setMessages(res.data.messages);
+            return;
+          }
+        } catch (error) {
+          console.error('Failed to load chat history', error);
+        }
       }
-      return prev;
-    });
-  }, [t]);
+      
+      setMessages([{ role: 'assistant', content: t('initial_greeting') }]);
+    };
+    
+    loadHistory();
+  }, [user, t]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -52,8 +65,8 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/ai/chat', { message: userMessage });
-      const reply = response.data.data.reply;
+      const response = await sendChatMessageApi(userMessage);
+      const reply = response.data.reply;
       setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
       
       if (!isOpenRef.current) {
