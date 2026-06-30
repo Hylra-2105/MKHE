@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-mkhe-bg text-mkhe-text font-sans selection:bg-mkhe-primary selection:text-white">
+    <div className="min-h-screen bg-mkhe-bg text-mkhe-text font-sans ">
       
       {/* CREATIVE HERO SECTION */}
       <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-mkhe-bg">
@@ -29,7 +29,7 @@ const AboutPage = () => {
               Giao lộ của <br/>
               <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Di sản</span>
             </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 font-light">
+            <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 font-light">
               Nơi những tinh hoa thủ công truyền thống được đánh thức và tái sinh qua lăng kính của nghệ thuật đương đại và công nghệ.
             </p>
           </motion.div>
@@ -71,11 +71,11 @@ const AboutPage = () => {
               className="lg:col-span-5 lg:col-start-2 pt-10"
             >
               <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-6 font-bold">01 — Về chúng tôi</h3>
-              <p className="text-xl md:text-2xl text-gray-800 dark:text-gray-200 leading-relaxed font-light mb-8 relative">
+              <p className="text-xl md:text-2xl text-mkhe-text/90 leading-relaxed font-light mb-8 relative">
                 <span className="absolute -left-6 md:-left-10 -top-4 text-6xl text-mkhe-primary/30 font-logo italic">"</span>
                 Mekong Culture không chỉ là một thương hiệu, mà là một hành trình khơi dậy và trân trọng <span className="text-mkhe-primary font-semibold">mã gen di sản</span> của vùng đất Tây Nam Bộ.
               </p>
-              <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed font-light text-justify">
+              <p className="text-base text-mkhe-text/70 leading-relaxed font-light text-justify">
                 Chúng tôi tự hào mang đến mô hình <strong>"Hệ sinh thái Đôi" (Dual-Project Ecosystem)</strong> độc bản. Bằng việc chắt lọc tinh hoa từ ba cộng đồng dân tộc Kinh – Chăm – Khmer, Mekong Culture kiến tạo nên những không gian nội thất nghệ thuật và các bộ sưu tập mang tính ứng dụng cao, giúp nối dài mạch sống của di sản trong dòng chảy hiện đại.
               </p>
             </motion.div>
@@ -119,7 +119,7 @@ const AboutPage = () => {
                   <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Tầm <span className="font-logo italic text-mkhe-primary font-normal">nhìn</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
-                  <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed">
+                  <p className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed">
                     Trở thành điểm chạm Phygital tiên phong, nơi công nghệ đánh thức và kết nối thế hệ trẻ với dòng chảy di sản văn hóa Mekong.
                   </p>
                 </div>
@@ -135,7 +135,7 @@ const AboutPage = () => {
                   <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Sứ <span className="font-logo italic text-mkhe-primary font-normal">mệnh</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
-                  <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed">
+                  <p className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed">
                     Số hóa câu chuyện làng nghề, tôn vinh nghệ nhân bản địa và đưa các tác phẩm thủ công độc bản vươn xa khỏi biên giới địa lý.
                   </p>
                 </div>
@@ -151,7 +151,7 @@ const AboutPage = () => {
                   <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">Giá trị <span className="font-logo italic text-mkhe-primary font-normal">cốt lõi</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
-                  <ul className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light leading-relaxed space-y-3">
+                  <ul className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed space-y-3">
                     <li className="flex items-center gap-4"><span className="w-2 h-2 rounded-full bg-mkhe-primary"></span> Độc bản trong Chế tác</li>
                     <li className="flex items-center gap-4"><span className="w-2 h-2 rounded-full bg-mkhe-primary"></span> Tiên phong trong Công nghệ</li>
                     <li className="flex items-center gap-4"><span className="w-2 h-2 rounded-full bg-mkhe-primary"></span> Bền vững với Di sản</li>
@@ -188,7 +188,7 @@ const AboutPage = () => {
                   <div className={`md:w-1/2 flex ${idx % 2 === 0 ? 'md:justify-end md:pr-16' : 'md:justify-start md:pl-16'} text-center md:text-left`}>
                     <div>
                       <h4 className={`text-2xl md:text-3xl font-bold text-mkhe-text mb-4 ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>{item.name}</h4>
-                      <p className={`text-gray-500 dark:text-gray-400 italic text-lg font-light ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>"{item.desc}"</p>
+                      <p className={`text-mkhe-text/70 italic text-lg font-light ${idx % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>"{item.desc}"</p>
                     </div>
                   </div>
                   
@@ -222,10 +222,10 @@ const AboutPage = () => {
               </h2>
               
               <div className="bg-mkhe-input/50 backdrop-blur-sm border-[1px] border-mkhe-primary/20 p-8 md:p-10 rounded-br-[50px]">
-                <p className="text-xl text-gray-800 dark:text-gray-200 font-light leading-relaxed mb-6">
+                <p className="text-xl text-mkhe-text/90 font-light leading-relaxed mb-6">
                   Giới thiệu <strong className="font-bold text-mkhe-primary">Hộ chiếu số DPP (Digital Product Passport)</strong>. Mekong Culture tự hào là đơn vị tiên phong ứng dụng mô hình Phygital vào các sản phẩm thủ công.
                 </p>
-                <p className="text-base text-gray-600 dark:text-gray-400 font-light italic">
+                <p className="text-base text-mkhe-text/70 font-light italic">
                   Khẳng định mỗi sản phẩm MKHE bán ra không chỉ là vật chất, mà là một kho lưu trữ kỹ thuật số minh bạch về nguồn gốc và câu chuyện độc bản.
                 </p>
               </div>
@@ -276,7 +276,7 @@ const AboutPage = () => {
                 <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-4 font-bold">04 — Con người</h3>
                 <h2 className="text-5xl md:text-7xl text-mkhe-text font-logo italic leading-none">Đội ngũ sáng tạo</h2>
               </div>
-              <p className="text-gray-500 max-w-sm text-sm font-light uppercase tracking-widest text-right">
+              <p className="text-mkhe-text/70 max-w-sm text-sm font-light uppercase tracking-widest text-right">
                 Kết hợp tư duy nhạy bén và sức mạnh công nghệ đột phá.
               </p>
             </motion.div>
@@ -295,9 +295,9 @@ const AboutPage = () => {
                   initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
                   className={`group relative flex flex-col md:flex-row items-baseline gap-4 md:gap-12 pb-8 border-b border-gray-200 dark:border-gray-800 hover:border-mkhe-primary transition-colors cursor-crosshair ${idx % 2 !== 0 ? 'md:pl-24 lg:pl-48' : ''}`}
                 >
-                  <h4 className="text-3xl md:text-5xl lg:text-6xl font-logo font-bold text-mkhe-text dark:text-gray-300 group-hover:text-mkhe-primary transition-colors">{member.name}</h4>
+                  <h4 className="text-3xl md:text-5xl lg:text-6xl font-logo font-bold text-mkhe-text text-mkhe-text/80 group-hover:text-mkhe-primary transition-colors">{member.name}</h4>
                   <div className="flex-1 border-b border-dashed border-gray-300 dark:border-gray-700 hidden md:block opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <p className="text-sm md:text-base text-gray-500 dark:text-gray-500 uppercase tracking-[0.2em] group-hover:text-mkhe-text transition-colors">{member.role}</p>
+                  <p className="text-sm md:text-base text-mkhe-text/70 uppercase tracking-[0.2em] group-hover:text-mkhe-text transition-colors">{member.role}</p>
                 </motion.div>
               ))}
             </div>
@@ -306,8 +306,8 @@ const AboutPage = () => {
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
               className="mt-32 text-center"
             >
-              <p className="text-xs text-gray-400 tracking-[0.3em] uppercase">Bảo trợ chuyên môn</p>
-              <p className="text-sm mt-4 text-gray-600 dark:text-gray-300 font-light">
+              <p className="text-xs text-mkhe-text/50 tracking-[0.3em] uppercase">Bảo trợ chuyên môn</p>
+              <p className="text-sm mt-4 text-mkhe-text/70 font-light">
                 TS. Nguyễn Trọng Luân & Mentor Võ Thiên Ân
               </p>
             </motion.div>
