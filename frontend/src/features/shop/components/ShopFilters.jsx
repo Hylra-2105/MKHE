@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const ShopFilters = ({ filters, onFilterChange, onCloseMobile }) => {
   const { user } = useAuthStore();
   const { t } = useTranslation(["common", "product"]);
-  const isGuest = !user || user.role === "Guest";
+  const isEnterprise = user?.role === "Enterprise";
 
   // Local state for debounced inputs
   const [searchValue, setSearchValue] = useState(filters.search || "");
@@ -40,7 +40,7 @@ const ShopFilters = ({ filters, onFilterChange, onCloseMobile }) => {
     return () => clearTimeout(timer);
   }, [craftVillageValue]);
 
-  const categories = isGuest ? [
+  const categories = !isEnterprise ? [
     { value: "B2C_Premium", label: t("product:categories.B2C_Premium") },
     { value: "B2C_Mass_Premium", label: t("product:categories.B2C_Mass_Premium") },
   ] : [

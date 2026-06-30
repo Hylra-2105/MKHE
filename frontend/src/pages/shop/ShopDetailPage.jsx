@@ -17,11 +17,16 @@ import "swiper/css/pagination";
 import "swiper/css/thumbs";
 import "swiper/css/effect-fade";
 
+import { useAuthStore } from "@/stores/useAuthStore";
+
 export default function ShopDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation(["product"]);
   
+  const { user } = useAuthStore();
+  const isEnterprise = user?.role === "Enterprise";
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -123,6 +128,35 @@ export default function ShopDetailPage() {
   const isSaleValid = product && product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                       && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
 
+  const isB2BProduct = product?.categoryMatrix === "B2B_Luxury" || product?.categoryMatrix === "B2B_Standard";
+  const hasB2BTiers = isB2BProduct && product?.b2bTiers?.length > 0;
+
+  let currentDiscountPercent = 0;
+  let nextTier = null;
+
+  if (isEnterprise && hasB2BTiers) {
+    const sortedTiers = [...product.b2bTiers].sort((a, b) => a.minQuantity - b.minQuantity);
+    
+    for (let i = 0; i < sortedTiers.length; i++) {
+      if (quantity >= sortedTiers[i].minQuantity) {
+        currentDiscountPercent = sortedTiers[i].discountPercent;
+      } else {
+        if (!nextTier) {
+          nextTier = sortedTiers[i];
+        }
+      }
+    }
+    
+    if (currentDiscountPercent === 0 && sortedTiers.length > 0 && quantity < sortedTiers[0].minQuantity) {
+      nextTier = sortedTiers[0];
+    }
+  }
+
+  const basePrice = isSaleValid ? product.salePrice : product.price;
+  const finalPrice = (isEnterprise && hasB2BTiers) 
+    ? basePrice * (1 - currentDiscountPercent / 100) 
+    : basePrice;
+
   return (
     <div className="min-h-screen bg-mkhe-bg font-sans pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -220,16 +254,21 @@ export default function ShopDetailPage() {
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-end gap-3">
                   <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
-                    {formatNumber(isSaleValid ? product.salePrice : product.price)} đ
+                    {formatNumber(finalPrice)} đ
                   </p>
-                  {isSaleValid && (
+                  {(isSaleValid || currentDiscountPercent > 0) && (
                     <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
                       {formatNumber(product.price)} đ
                     </p>
                   )}
-                  {isSaleValid && (
+                  {isSaleValid && currentDiscountPercent === 0 && (
                     <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
                       -{Math.round((1 - product.salePrice / product.price) * 100)}%
+                    </div>
+                  )}
+                  {currentDiscountPercent > 0 && (
+                    <div className="bg-mkhe-primary text-white px-2 py-0.5 rounded-lg shadow-lg border border-mkhe-primary/50 text-sm font-bold mb-0.5">
+                      Sỉ -{currentDiscountPercent}%
                     </div>
                   )}
                 </div>
@@ -241,6 +280,36 @@ export default function ShopDetailPage() {
                   </div>
                 )}
               </div>
+
+              {/* Bảng giá sỉ (Chỉ dành cho Doanh nghiệp) */}
+              {isEnterprise && hasB2BTiers && (
+                <div className="mb-6 p-4 bg-mkhe-primary/5 border border-mkhe-primary/20 rounded-xl">
+                  <h3 className="text-sm font-semibold text-mkhe-primary mb-3">{t('product:shop.detail.b2b_wholesale_title')}</h3>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {product.b2bTiers
+                      .slice()
+                      .sort((a, b) => a.minQuantity - b.minQuantity)
+                      .map((tier, idx) => (
+                      <div key={idx} className={`flex justify-between items-center p-2 rounded-lg ${quantity >= tier.minQuantity ? (idx === product.b2bTiers.length - 1 || quantity < [...product.b2bTiers].sort((a,b) => a.minQuantity - b.minQuantity)[idx + 1].minQuantity ? "bg-mkhe-primary/20 font-bold" : "bg-mkhe-primary/10") : "bg-mkhe-border/5 text-mkhe-text/70"}`}>
+                        <span>{t('product:shop.detail.b2b_from_quantity', { quantity: tier.minQuantity })}</span>
+                        <span className="text-mkhe-primary">- {tier.discountPercent}%</span>
+                      </div>
+                    ))}
+                  </div>
+                  {nextTier && (
+                    <p className="text-xs text-mkhe-primary/80 mt-3 flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5" />
+                      {t('product:shop.detail.b2b_buy_more', { count: nextTier.minQuantity - quantity, discount: nextTier.discountPercent })}
+                    </p>
+                  )}
+                  {!nextTier && (
+                    <p className="text-xs text-mkhe-primary/80 mt-3 flex items-center gap-1.5">
+                      <Info className="w-3.5 h-3.5" />
+                      {t('product:shop.detail.b2b_max_discount')}
+                    </p>
+                  )}
+                </div>
+              )}
               {product.hasDPP && (
                 <div className="inline-flex items-center gap-2 mt-4 px-3 py-1.5 bg-mkhe-primary/10 border border-mkhe-primary/20 text-mkhe-primary rounded-full text-sm font-medium shadow-sm">
                   <ShieldCheck className="w-4 h-4" />

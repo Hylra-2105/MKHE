@@ -24,6 +24,7 @@ export const ENDPOINTS = {
   },
   SHOP: {
     GET_PRODUCTS: `${API_BASE_URL}/products/shop`,
+    GET_B2B_PRODUCTS: `${API_BASE_URL}/b2b/products`,
   },
   CART: {
     GET: `${API_BASE_URL}/cart`,

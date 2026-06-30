@@ -59,6 +59,12 @@ const productSchema = new mongoose.Schema(
     saleEndDate: {
       type: Date,
     },
+    b2bTiers: [
+      {
+        minQuantity: { type: Number, required: true },
+        discountPercent: { type: Number, required: true, min: 0, max: 100 },
+      }
+    ],
     stock: {
       type: Number,
       required: true,

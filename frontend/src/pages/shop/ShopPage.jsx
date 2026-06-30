@@ -7,9 +7,12 @@ import { shopService } from "@/features/shop/shop.service";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useSocketStore } from "@/stores/useSocketStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const ShopPage = () => {
   const { t } = useTranslation("product");
+  const { user } = useAuthStore();
+  
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +37,7 @@ const ShopPage = () => {
   const handleFilterChange = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
     
-    // Nếu thay đổi bộ lọc, reset về trang 1
+    // Reset về trang 1 nếu thay đổi bất kỳ bộ lọc nào khác (để tránh lỗi ở trang quá lớn)
     if (key !== "page") {
       newParams.set("page", "1");
     }
@@ -70,6 +73,7 @@ const ShopPage = () => {
       params.limit = 12; // 12 item mỗi trang phù hợp với grid 3/4
 
       const response = await shopService.getProducts(params);
+        
       if (response.success) {
         setProducts(response.data.data);
         setPagination({
@@ -87,8 +91,6 @@ const ShopPage = () => {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
-    // Scroll to top when page/filters change
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [fetchProducts, searchParams]);
 
   // Real-time updates for Shop Page
@@ -133,6 +135,7 @@ const ShopPage = () => {
 
   return (
     <ShopLayout filters={currentFilters} onFilterChange={handleFilterChange}>
+
       <ProductGrid products={products} loading={loading} />
       
       {pagination.totalPages > 1 && (

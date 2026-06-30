@@ -12,4 +12,14 @@ export const shopService = {
       throw error;
     }
   },
+  getB2BProducts: async (params) => {
+    try {
+      const response = await axiosClient.get(ENDPOINTS.SHOP.GET_B2B_PRODUCTS, {
+        params,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

@@ -27,6 +27,7 @@ import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
+import B2BTiersInput from "./B2BTiersInput";
 import { getBlogsApi } from "@/api/blogApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -76,6 +77,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     storyBlogId: "",
     isPublicEvent: false,
     hasSale: false,
+    b2bTiers: [],
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -262,6 +264,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         storyBlogId: product?.storyBlogId || "",
         isPublicEvent: product?.isPublicEvent || false,
         hasSale: !!product.salePrice || !!product.saleStartDate,
+        b2bTiers: product.b2bTiers || [],
       });
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
@@ -272,6 +275,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       setIsDeleted3D(false);
       setShowDeleteConfirm(false);
       setActiveTab("info");
+      setFormErrors({});
     }
   }, [product, isOpen]);
 
@@ -466,6 +470,39 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
         if (!isUnchanged && start < now) {
           errors.saleStartDate = t("products.errors.sale_start_past", "Thời gian bắt đầu không được trong quá khứ");
+        }
+      }
+    }
+
+    if (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") {
+      if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
+        errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
+      } else {
+        for (let i = 0; i < formData.b2bTiers.length; i++) {
+          const q = parseInt(formData.b2bTiers[i].minQuantity);
+          const d = parseInt(formData.b2bTiers[i].discountPercent);
+
+          if (!formData.b2bTiers[i].minQuantity || !formData.b2bTiers[i].discountPercent) {
+            errors.b2bTiers = t("products.errors.b2b_missing_fields", "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.");
+            break;
+          }
+          if (q <= 0 || d < 0 || d > 100) {
+            errors.b2bTiers = t("products.errors.b2b_invalid_values", "Số lượng phải > 0 và % giảm giá từ 0 - 100.");
+            break;
+          }
+          
+          if (i > 0) {
+            const prevQ = parseInt(formData.b2bTiers[i - 1].minQuantity);
+            const prevD = parseInt(formData.b2bTiers[i - 1].discountPercent);
+            if (q <= prevQ) {
+              errors.b2bTiers = t("products.errors.b2b_quantity_order", { current: i + 1, prev: i, prevQ });
+              break;
+            }
+            if (d <= prevD) {
+              errors.b2bTiers = t("products.errors.b2b_discount_order", { current: i + 1, prev: i, prevD });
+              break;
+            }
+          }
         }
       }
     }
@@ -906,6 +943,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     </div>
                   </div>
                 </div>
+
+                {/* BẢNG GIÁ SỈ (CHỈ HIỂN THỊ NẾU LÀ SẢN PHẨM B2B) */}
+                {(formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") && (
+                  <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                    <B2BTiersInput
+                      tiers={formData.b2bTiers}
+                      onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
+                      error={formErrors.b2bTiers}
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">{t("modal.story")}</label>

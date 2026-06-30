@@ -245,7 +245,11 @@
       "sold_out": "売り切れ",
       "sku": "SKUコード",
       "back": "戻る",
-      "nfc_badge": "NFCデジタルパスポート統合製品"
+      "nfc_badge": "NFCデジタルパスポート統合製品",
+      "b2b_wholesale_title": "法人向け卸売価格：",
+      "b2b_from_quantity": "{{quantity}}個から",
+      "b2b_buy_more": "あと{{count}}個購入すると、割引率が{{discount}}%にアップします。",
+      "b2b_max_discount": "最大割引率に達しました！"
     }
   },
   "form": {
@@ -263,6 +267,21 @@
     }
   },
   "products": {
+    "b2b": {
+      "tiers_title": "卸売価格 (B2B Tiers)",
+      "tiers_info": "次の階層は、前の階層よりも数量と割引率が大きくなければなりません。",
+      "add_tier": "階層を追加",
+      "no_tiers": "割引階層はありません。",
+      "min_quantity": "最小数量",
+      "min_quantity_placeholder": "例: 50",
+      "discount_percent": "割引率(%)",
+      "discount_placeholder": "例: 10",
+      "remove_tier": "階層を削除",
+      "delete_confirm_title": "割引階層を削除しますか？",
+      "delete_confirm_msg": "この割引階層を削除してもよろしいですか？この操作は元に戻せません。",
+      "delete_confirm_yes": "削除する",
+      "delete_confirm_no": "キャンセル"
+    },
     "errors": {
       "name_required": "商品名を入力してください",
       "sku_required": "SKUを入力してください",
@@ -275,7 +294,12 @@
       "sale_end_required": "セールの終了日を選択してください",
       "sale_end_invalid": "終了時間は開始時間より後である必要があります",
       "sale_end_future": "終了時間は未来である必要があります",
-      "sale_start_past": "開始時間は過去に設定できません"
+      "sale_start_past": "開始時間は過去にすることはできません",
+      "b2b_min_tiers": "B2B製品の割引階層を少なくとも1つ設定してください。",
+      "b2b_missing_fields": "すべての階層について、数量と割引率 (%) を入力してください。",
+      "b2b_invalid_values": "数量は0より大きく、割引率は0〜100の間でなければなりません。",
+      "b2b_quantity_order": "階層 {{current}}：数量は階層 {{prev}} ({{prevQ}}) より大きくなければなりません。",
+      "b2b_discount_order": "階層 {{current}}：割引率は階層 {{prev}} ({{prevD}}%) より大きくなければなりません。"
     },
     "no_linked_story": "-- リンクされたストーリーなし --"
   }

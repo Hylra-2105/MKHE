@@ -240,7 +240,11 @@
       "sold_out": "Sold Out",
       "sku": "SKU",
       "back": "Go Back",
-      "nfc_badge": "Integrated with NFC Digital Passport"
+      "nfc_badge": "Integrated with NFC Digital Passport",
+      "b2b_wholesale_title": "Wholesale Prices for Enterprise:",
+      "b2b_from_quantity": "From {{quantity}} items",
+      "b2b_buy_more": "Buy {{count}} more items to reach the {{discount}}% discount tier.",
+      "b2b_max_discount": "You have reached the maximum discount tier!"
     }
   },
   "form": {
@@ -258,6 +262,21 @@
     }
   },
   "products": {
+    "b2b": {
+      "tiers_title": "Wholesale Price (B2B Tiers)",
+      "tiers_info": "The next tier must have a greater quantity and discount percentage than the previous one.",
+      "add_tier": "Add tier",
+      "no_tiers": "No discount tiers available.",
+      "min_quantity": "Min quantity",
+      "min_quantity_placeholder": "Ex: 50",
+      "discount_percent": "Discount %",
+      "discount_placeholder": "Ex: 10",
+      "remove_tier": "Remove tier",
+      "delete_confirm_title": "Delete discount tier?",
+      "delete_confirm_msg": "Are you sure you want to delete this discount tier? This action cannot be undone.",
+      "delete_confirm_yes": "Delete tier",
+      "delete_confirm_no": "Cancel"
+    },
     "errors": {
       "name_required": "Please enter product name",
       "sku_required": "Please enter SKU",
@@ -270,7 +289,12 @@
       "sale_end_required": "Please select Sale end date",
       "sale_end_invalid": "End time must be after start time",
       "sale_end_future": "End time must be in the future",
-      "sale_start_past": "Start time cannot be in the past"
+      "sale_start_past": "Start time cannot be in the past",
+      "b2b_min_tiers": "Please configure at least 1 discount tier for B2B product.",
+      "b2b_missing_fields": "Please enter both Quantity and Discount % for all tiers.",
+      "b2b_invalid_values": "Quantity must be > 0 and discount % between 0 - 100.",
+      "b2b_quantity_order": "Tier {{current}}: Quantity must be greater than tier {{prev}} ({{prevQ}}).",
+      "b2b_discount_order": "Tier {{current}}: Discount % must be greater than tier {{prev}} ({{prevD}}%)."
     },
     "no_linked_story": "-- No linked story --"
   }
