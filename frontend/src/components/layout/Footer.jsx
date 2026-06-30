@@ -160,9 +160,9 @@ const Footer = () => {
               <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 flex items-center justify-center shrink-0 group-hover:bg-mkhe-primary transition-colors">
                 <Phone className="w-4 h-4 text-mkhe-primary group-hover:text-white transition-colors" />
               </div>
-              <a href="tel:0394248611" className="group-hover:text-mkhe-primary transition-colors pt-1">
+              <p className="group-hover:text-mkhe-primary transition-colors pt-1">
                 039 424 8611
-              </a>
+              </p>
             </li>
 
             {/* Email */}
@@ -170,9 +170,9 @@ const Footer = () => {
               <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 flex items-center justify-center shrink-0 group-hover:bg-mkhe-primary transition-colors">
                 <Mail className="w-4 h-4 text-mkhe-primary group-hover:text-white transition-colors" />
               </div>
-              <a href="mailto:mkheagency@gmail.com" className="group-hover:text-mkhe-primary transition-colors pt-1">
+              <p className="group-hover:text-mkhe-primary transition-colors pt-1">
                 mkheagency@gmail.com
-              </a>
+              </p>
             </li>
           </ul>
         </motion.div>
