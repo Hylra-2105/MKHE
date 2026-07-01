@@ -98,10 +98,10 @@ const ContactPage = () => {
             <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">Mekong Culture</span>
             <span className="w-12 h-[1px] bg-mkhe-primary"></span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-light tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-mkhe-text via-mkhe-text to-mkhe-text/60 mb-6">
+          <h1 className="text-5xl md:text-7xl font-logo italic tracking-wide text-mkhe-primary mb-6 drop-shadow-md">
             Kết nối & Hợp tác
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl font-light leading-relaxed">
+          <p className="text-mkhe-text/80 text-lg max-w-2xl font-light leading-relaxed">
             Nơi những ý tưởng thăng hoa và những giá trị di sản được tiếp nối. Hãy cùng MKHE kiến tạo nên những không gian và tác phẩm mang đậm dấu ấn bản địa.
           </p>
         </motion.div>
@@ -186,7 +186,7 @@ const ContactPage = () => {
             <div className="bg-gradient-to-br from-white/5 to-transparent backdrop-blur-xl border border-white/10 dark:border-white/5 rounded-sm p-8 lg:p-14 shadow-2xl relative z-10">
               
               <div className="mb-12">
-                <h3 className="text-3xl lg:text-4xl font-light text-mkhe-text mb-4">Gửi Yêu Cầu Cho Chúng Tôi</h3>
+                <h3 className="text-3xl lg:text-4xl font-logo italic text-mkhe-primary mb-4 drop-shadow-sm">Gửi Yêu Cầu Cho Chúng Tôi</h3>
                 <div className="w-16 h-[2px] bg-mkhe-primary mb-6"></div>
                 <p className="text-mkhe-text/60 text-sm font-light leading-relaxed">
                   Bất kể bạn là khách hàng cá nhân hay doanh nghiệp đang tìm kiếm cơ hội hợp tác, đội ngũ chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và đồng hành cùng bạn.

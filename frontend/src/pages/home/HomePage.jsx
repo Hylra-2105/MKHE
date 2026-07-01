@@ -1,4 +1,5 @@
 import HeroBanner from "@/features/home/components/HeroBanner";
+import SectionTransition from "@/features/home/components/SectionTransition";
 import CulturalDNA from "@/features/home/components/CulturalDNA";
 import CoreTech from "@/features/home/components/CoreTech";
 import HeritageStory from "@/features/home/components/HeritageStory";
@@ -8,6 +9,7 @@ const HomePage = () => {
   return (
     <div className="bg-mkhe-bg min-h-screen text-mkhe-text overflow-x-clip">
       <HeroBanner />
+      <SectionTransition />
       <HeritageStory />
       <CulturalDNA />
       <BoardGameTeaser />

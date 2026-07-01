@@ -18,10 +18,10 @@ const HeroBanner = () => {
       />
       
       {/* Cinematic Vignette Shadow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)] pointer-events-none"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] pointer-events-none"></div>
       
-      {/* Top & Bottom Gradient for seamless blending */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-mkhe-bg pointer-events-none"></div>
+      {/* Top Gradient for navbar contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
 
     </section>
   );

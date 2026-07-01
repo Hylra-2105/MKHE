@@ -65,7 +65,7 @@ const HeritageStory = () => {
   ];
 
   return (
-    <section className="pt-20 pb-48 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10 border-t border-mkhe-primary/10">
+    <section className="pt-20 pb-48 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10">
       {/* Background Orbs */}
       <Fireflies />
       

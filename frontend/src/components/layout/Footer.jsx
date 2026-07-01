@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTiktok } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Footer = () => {
@@ -54,14 +54,7 @@ const Footer = () => {
             >
               <FaFacebook className="w-5 h-5 cursor-pointer" />
             </a>
-            <a
-              href="https://www.tiktok.com/@mkheagency?is_from_webapp=1&sender_device=pc"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-10 h-10 rounded-full border border-mkhe-primary/30 flex items-center justify-center hover:bg-mkhe-primary hover:text-white transition-all duration-300"
-            >
-              <FaTiktok className="w-5 h-5 cursor-pointer" />
-            </a>
+
           </div>
         </motion.div>
 
