@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import Fireflies from "./Fireflies";
 
 // Tự import ảnh
 import langPhongChauImg from "@/assets/images/lang-phong-chau.png";
@@ -66,9 +65,6 @@ const HeritageStory = () => {
 
   return (
     <section className="pt-20 pb-48 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10">
-      {/* Background Orbs */}
-      <Fireflies />
-      
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         
         {/* EDITORIAL HEADER */}
