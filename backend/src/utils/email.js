@@ -407,4 +407,4 @@ export const sendB2BActivationEmail = async (toEmail, activationToken, lang = "v
     `,
   };
   await sendEmail(mailOptions);
-};
+};

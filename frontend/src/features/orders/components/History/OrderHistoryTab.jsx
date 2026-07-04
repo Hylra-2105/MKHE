@@ -36,7 +36,7 @@ const OrderHistoryTab = () => {
     fetchOrders(page);
     
     if (socket) {
-      const handleUpdate = () => fetchOrders(page);
+      const handleUpdate = () => fetchOrders(page, true); // true = isBackground
       socket.on("user_order_updated", handleUpdate);
       return () => {
         socket.off("user_order_updated", handleUpdate);
