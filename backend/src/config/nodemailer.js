@@ -6,11 +6,18 @@ let transporter = null;
 export const getTransporter = () => {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      requireTLS: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      // Đảm bảo không bị timeout do IPv6 trên Render
+      pool: true,
+      maxConnections: 1,
+      maxMessages: 10
     });
   }
   return transporter;
