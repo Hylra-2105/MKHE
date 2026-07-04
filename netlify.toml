@@ -5,7 +5,7 @@
 
 [build.environment]
   NPM_FLAGS = "--legacy-peer-deps"
-  VITE_API_BASE_URL = "https://mkhe-be.onrender.com/api"
+  VITE_API_BASE_URL = "https://mkhe-production.up.railway.app/api"
 
 [[redirects]]
   from = "/*"
