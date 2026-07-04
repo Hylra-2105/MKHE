@@ -1,17 +1,46 @@
-import { getTransporter } from "../config/nodemailer.js";
+import nodemailer from "nodemailer";
+import { getGmailClient } from "../config/nodemailer.js";
 import { loadTranslation, getTranslation } from "../config/i18n.js";
 
-// Hàm gửi email chung (giúp tránh lặp lại code)
+// Hàm gửi email chung qua Gmail HTTP API (bypass chặn port SMTP)
 const sendEmail = async (mailOptions) => {
   try {
-    const transporter = getTransporter();
-    const result = await transporter.sendMail(mailOptions);
+    // 1. Build raw email message (MIME) bằng Nodemailer
+    const transporter = nodemailer.createTransport({
+      streamTransport: true,
+      newline: "windows",
+    });
+    const info = await transporter.sendMail(mailOptions);
+    
+    // Gom các stream chunk lại thành 1 cục
+    const chunks = [];
+    for await (let chunk of info.message) {
+      chunks.push(chunk);
+    }
+    const messageBuffer = Buffer.concat(chunks);
+    
+    // Đổi sang base64 url-safe (Chuẩn của Google)
+    const rawMessage = messageBuffer
+      .toString("base64")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    // 2. Lấy client Gmail và gửi qua giao thức HTTP
+    const gmail = getGmailClient();
+    const result = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: {
+        raw: rawMessage,
+      },
+    });
+
     console.info(
-      `✓ Email đã được gửi tới: ${mailOptions.to} (MessageID: ${result.messageId})`,
+      `✓ Email đã được gửi tới: ${mailOptions.to} (MessageID: ${result.data.id})`,
     );
-    return result;
+    return result.data;
   } catch (error) {
-    console.error("✗ Lỗi chi tiết khi gửi email:", {
+    console.error("✗ Lỗi chi tiết khi gửi email (Gmail API):", {
       to: mailOptions.to,
       subject: mailOptions.subject,
       errorMessage: error.message,
