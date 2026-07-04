@@ -38,9 +38,14 @@ export const sendCheckoutOtp = async (req, res) => {
     console.info(`[SIMULATE SMS] OTP for Checkout (${user.email}): ${otp}`);
     
     const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendCheckoutOtpEmail(user.email, otp, userLang).catch((err) => {
+    
+    try {
+      await sendCheckoutOtpEmail(user.email, otp, userLang);
+    } catch (err) {
       console.error("Failed to send checkout OTP email:", err);
-    });
+      // Nếu gửi email thất bại, báo lỗi luôn để người dùng biết
+      return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+    }
 
     return successResponse(res, 200, "OTP_SENT", { simulatedOtp: otp });
   } catch (error) {
@@ -190,8 +195,8 @@ export const checkout = async (req, res) => {
     try {
       const notif = await Notification.create({
         user: user._id,
-        title: "Đặt hàng thành công",
-        message: `Đơn hàng ${orderCode} đã được đặt thành công. Đang chờ xử lý.`,
+        title: "ORDER_PLACED",
+        message: `ORDER_PLACED_MESSAGE::${orderCode}`,
         type: "ORDER_STATUS_UPDATE",
         orderId: newOrder[0]._id,
         status: "PENDING",
@@ -589,8 +594,8 @@ export const updateOrderStatus = async (req, res) => {
       try {
         const notif = await Notification.create({
           user: order.user,
-          title: "Thanh toán thành công",
-          message: `Thanh toán cho đơn hàng ${order.orderCode} đã được ghi nhận.`,
+          title: "ORDER_PAYMENT_SUCCESS",
+          message: `ORDER_PAYMENT_SUCCESS_MESSAGE::${order.orderCode}`,
           type: "ORDER_STATUS_UPDATE",
           orderId: order._id,
           status: order.orderStatus,
@@ -616,20 +621,20 @@ export const updateOrderStatus = async (req, res) => {
       
       switch (status) {
         case "CONFIRMED":
-          title = "Đơn hàng đã được xác nhận";
-          message = `Đơn hàng ${order.orderCode} của bạn đã được xác nhận và đang chuẩn bị hàng.`;
+          title = "ORDER_CONFIRMED";
+          message = `ORDER_CONFIRMED_MESSAGE::${order.orderCode}`;
           break;
         case "DELIVERING":
-          title = "Đơn hàng đang giao";
-          message = `Đơn hàng ${order.orderCode} của bạn đã được bàn giao cho đơn vị vận chuyển.`;
+          title = "ORDER_DELIVERING";
+          message = `ORDER_DELIVERING_MESSAGE::${order.orderCode}`;
           break;
         case "COMPLETED":
-          title = "Giao hàng thành công";
-          message = `Đơn hàng ${order.orderCode} đã giao thành công. Cảm ơn bạn đã mua sắm tại MKHE!`;
+          title = "ORDER_COMPLETED";
+          message = `ORDER_COMPLETED_MESSAGE::${order.orderCode}`;
           break;
         case "CANCELLED":
-          title = "Đơn hàng đã hủy";
-          message = `Đơn hàng ${order.orderCode} đã bị hủy.`;
+          title = "ORDER_CANCELLED";
+          message = `ORDER_CANCELLED_MESSAGE::${order.orderCode}`;
           break;
       }
 
@@ -723,6 +728,39 @@ export const payosWebhook = async (req, res) => {
           io.to("admin_room").emit("new_admin_notification", adminNotif);
         } catch (err) {
           console.error("Failed to create webhook admin notification:", err);
+        }
+
+        // User Notification & Socket Event
+        try {
+          const userNotif = await Notification.create({
+            user: order.user,
+            title: "ORDER_PAYMENT_SUCCESS",
+            message: `ORDER_PAYMENT_SUCCESS_MESSAGE::${order.orderCode}`,
+            type: "ORDER_STATUS_UPDATE",
+            orderId: order._id,
+            orderCode: order.orderCode,
+            link: `/profile?tab=orders`
+          });
+          const io = getIO();
+          io.to(`user_${order.user}`).emit("new_notification", userNotif);
+          io.to(`user_${order.user}`).emit("order_payment_status_updated", {
+            orderId: order._id,
+            orderCode: order.orderCode,
+            paymentStatus: "PAID"
+          });
+          
+          // Gửi email hóa đơn
+          const userForEmail = await User.findById(order.user);
+          if (userForEmail) {
+            try {
+              const userLang = userForEmail.language || "vi";
+              await sendInvoiceEmail(userForEmail.email, order, userLang);
+            } catch (err) {
+              console.error("Failed to send invoice email in webhook:", err.message);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to create webhook user notification:", err);
         }
       }
     }

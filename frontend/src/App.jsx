@@ -125,7 +125,7 @@ function App() {
   const setSocket = useSocketStore((state) => state.setSocket);
 
   useEffect(() => {
-    const socketUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
+    const socketUrl = import.meta.env.VITE_API_BASE_URL ? import.meta.env.VITE_API_BASE_URL.replace('/api', '') : 'http://localhost:5000';
     const socket = io(socketUrl, {
       auth: { token: localStorage.getItem("accessToken") || "" },
     });
@@ -152,18 +152,16 @@ function App() {
       addNotification(notif);
       
       const map = {
-        "Đặt hàng thành công": "notifications.title.order_placed",
-        "Thanh toán thành công": "notifications.title.payment_success",
-        "Đơn hàng đã được xác nhận": "notifications.title.order_confirmed",
-        "Đơn hàng đang giao": "notifications.title.order_delivering",
-        "Giao hàng thành công": "notifications.title.order_completed",
-        "Đơn hàng đã hủy": "notifications.title.order_cancelled",
-        "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
-        "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
+        "ORDER_PLACED": "notifications.title.order_placed",
+        "ORDER_PAYMENT_SUCCESS": "notifications.title.payment_success",
+        "ORDER_CONFIRMED": "notifications.title.order_confirmed",
+        "ORDER_DELIVERING": "notifications.title.order_delivering",
+        "ORDER_COMPLETED": "notifications.title.order_completed",
+        "ORDER_CANCELLED": "notifications.title.order_cancelled",
+        "VOUCHER_SAVED": "notifications.title.voucher_saved",
+        "LUCKY_WHEEL_WON": "notifications.title.lucky_wheel_won",
         "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-        "Sản phẩm Sale Khủng!": "notifications.title.flash_sale",
-        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
-        "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published"
+        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published"
       };
       const currentT = tRef.current;
       const translatedTitle = map[notif.title] ? currentT(map[notif.title], { defaultValue: notif.title }) : notif.title;
@@ -178,13 +176,9 @@ function App() {
         addNotification(notif);
         
         const adminMap = {
-          "Đơn hàng mới": "notifications.title.admin_order_new",
           "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
-          "Đơn hàng đã thanh toán": "notifications.title.admin_order_paid",
           "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
-          "Đơn hàng hoàn tất": "notifications.title.admin_order_completed",
           "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
-          "Cảnh báo tồn kho": "notifications.title.admin_stock_alert",
           "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
         };
         const currentT = tRef.current;

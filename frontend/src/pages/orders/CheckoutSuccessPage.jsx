@@ -15,6 +15,7 @@ export default function CheckoutSuccessPage() {
   const isPayosReturn = searchParams.get("status") || searchParams.get("cancel");
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [copiedStates, setCopiedStates] = useState({});
 
   // Polling logic to check payment status
   useEffect(() => {
@@ -52,9 +53,15 @@ export default function CheckoutSuccessPage() {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };
 
-  const copyToClipboard = (text, label) => {
+  const copyToClipboard = (text, label, id) => {
     navigator.clipboard.writeText(text);
     toast.success(t("checkout:copied_success", { label }));
+    if (id) {
+      setCopiedStates(prev => ({ ...prev, [id]: true }));
+      setTimeout(() => {
+        setCopiedStates(prev => ({ ...prev, [id]: false }));
+      }, 5000);
+    }
   };
 
   // VietQR generation logic
@@ -133,10 +140,11 @@ export default function CheckoutSuccessPage() {
                 <span className="text-mkhe-text opacity-60 uppercase tracking-wider text-xs">{t("success.order_code")}</span>
                 <span className="font-medium text-mkhe-text tracking-widest">{order.orderCode}</span>
                 <button 
-                  onClick={() => copyToClipboard(order.orderCode, t("success.order_code"))}
-                  className="text-mkhe-primary hover:opacity-70 transition-colors"
+                  onClick={() => copyToClipboard(order.orderCode, t("success.order_code"), "orderCode")}
+                  className="text-mkhe-primary hover:opacity-70 transition-colors p-1 cursor-pointer"
+                  title="Copy"
                 >
-                  <Copy className="w-4 h-4" />
+                  {copiedStates["orderCode"] ? <Check className="w-4 h-4 text-mkhe-primary" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
             </motion.div>
@@ -184,8 +192,12 @@ export default function CheckoutSuccessPage() {
                           <p className="text-xs text-mkhe-text opacity-60 uppercase tracking-wider mb-1">{t("success.account_no")}</p>
                           <div className="flex items-center gap-2">
                             <p className="font-medium text-mkhe-text">{ACCOUNT_NO}</p>
-                            <button onClick={() => copyToClipboard(ACCOUNT_NO, t("success.account_no"))} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors">
-                              <Copy className="w-3.5 h-3.5" />
+                            <button 
+                              onClick={() => copyToClipboard(ACCOUNT_NO, t("success.account_no"), "accountNo")} 
+                              className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors p-1 cursor-pointer"
+                              title="Copy"
+                            >
+                              {copiedStates["accountNo"] ? <Check className="w-3.5 h-3.5 text-mkhe-primary" /> : <Copy className="w-3.5 h-3.5" />}
                             </button>
                           </div>
                         </div>
@@ -204,8 +216,12 @@ export default function CheckoutSuccessPage() {
                           <p className="text-xs text-mkhe-text opacity-60 uppercase tracking-wider mb-1">{t("success.content")}</p>
                           <div className="flex items-center justify-between p-3 bg-black/5 rounded-lg transition-colors duration-300">
                             <p className="font-medium text-mkhe-primary tracking-wider text-sm break-all">{CONTENT}</p>
-                            <button onClick={() => copyToClipboard(CONTENT, t("success.content"))} className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors shrink-0 ml-2">
-                              <Copy className="w-4 h-4" />
+                            <button 
+                              onClick={() => copyToClipboard(CONTENT, t("success.content"), "content")} 
+                              className="text-mkhe-text opacity-50 hover:opacity-100 hover:text-mkhe-primary transition-colors shrink-0 ml-2 p-1 cursor-pointer"
+                              title="Copy"
+                            >
+                              {copiedStates["content"] ? <Check className="w-4 h-4 text-mkhe-primary" /> : <Copy className="w-4 h-4" />}
                             </button>
                           </div>
                         </div>

@@ -336,7 +336,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
                 <Banknote className="w-6 h-6 text-mkhe-text/40 mx-3" />
                 <span className="font-medium">{t("payment_method.cod")}</span>
               </label>
-              <div className="absolute top-full left-0 mt-1 hidden group-hover:block w-full z-10 bg-red-50 text-red-600 text-xs p-2 rounded shadow-sm border border-red-100">
+              <div className="absolute top-full left-0 mt-1 hidden group-hover:block w-full z-10 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs p-2 rounded shadow-sm border border-red-100 dark:border-red-900/50">
                 {t("payment_method.cod_banned", { rate: (orderStats.cancelRate * 100).toFixed(0) })}
               </div>
             </div>

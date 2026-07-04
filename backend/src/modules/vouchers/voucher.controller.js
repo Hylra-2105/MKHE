@@ -65,8 +65,8 @@ export const collectVoucher = async (req, res) => {
     try {
       const notif = await Notification.create({
         user: userId,
-        title: "Lưu mã giảm giá thành công",
-        message: `Bạn đã thu thập thành công mã giảm giá ${voucher.code}.`,
+        title: "VOUCHER_SAVED",
+        message: `VOUCHER_SAVED_MESSAGE::${voucher.code}`,
         type: "SYSTEM",
       });
       const io = getIO();
@@ -354,8 +354,8 @@ export const collectVoucherByCode = async (req, res) => {
     try {
       const notif = await Notification.create({
         user: userId,
-        title: "Nhập mã giảm giá thành công",
-        message: `Bạn đã đổi thành công mã giảm giá ${voucher.code}.`,
+        title: "VOUCHER_SAVED",
+        message: `VOUCHER_SAVED_MESSAGE::${voucher.code}`,
         type: "SYSTEM",
       });
       const io = getIO();
@@ -510,8 +510,8 @@ export const claimNfcGacha = async (req, res) => {
     try {
       const notif = await Notification.create({
         user: userId,
-        title: "Chúc mừng trúng thưởng!",
-        message: `Bạn vừa nhận được mã giảm giá ${selectedVoucher.code} từ Hộp quà Bí ẩn.`,
+        title: "LUCKY_WHEEL_WON",
+        message: `LUCKY_WHEEL_WON_MESSAGE::${selectedVoucher.code}`,
         type: "SYSTEM",
       });
       const io = getIO();

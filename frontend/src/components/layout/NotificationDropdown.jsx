@@ -21,25 +21,19 @@ function getRelativeTime(date, lang, t) {
 
 const translateNotificationTitle = (title, t) => {
   const map = {
-    "Đặt hàng thành công": "notifications.title.order_placed",
-    "Thanh toán thành công": "notifications.title.payment_success",
-    "Đơn hàng đã được xác nhận": "notifications.title.order_confirmed",
-    "Đơn hàng đang giao": "notifications.title.order_delivering",
-    "Giao hàng thành công": "notifications.title.order_completed",
-    "Đơn hàng đã hủy": "notifications.title.order_cancelled",
-    "Lưu mã giảm giá thành công": "notifications.title.voucher_saved",
-    "Chúc mừng trúng thưởng!": "notifications.title.lucky_wheel_won",
+    "ORDER_PLACED": "notifications.title.order_placed",
+    "ORDER_PAYMENT_SUCCESS": "notifications.title.payment_success",
+    "ORDER_CONFIRMED": "notifications.title.order_confirmed",
+    "ORDER_DELIVERING": "notifications.title.order_delivering",
+    "ORDER_COMPLETED": "notifications.title.order_completed",
+    "ORDER_CANCELLED": "notifications.title.order_cancelled",
+    "VOUCHER_SAVED": "notifications.title.voucher_saved",
+    "LUCKY_WHEEL_WON": "notifications.title.lucky_wheel_won",
     "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-    "Sản phẩm Sale Khủng!": "notifications.title.flash_sale",
     "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
-    "Bạn có mã ưu đãi mới!": "notifications.title.voucher_published",
-    "Đơn hàng mới": "notifications.title.admin_order_new",
     "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
-    "Đơn hàng đã thanh toán": "notifications.title.admin_order_paid",
     "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
-    "Đơn hàng hoàn tất": "notifications.title.admin_order_completed",
     "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
-    "Cảnh báo tồn kho": "notifications.title.admin_stock_alert",
     "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
@@ -49,14 +43,14 @@ const translateNotificationMessage = (message, title, t) => {
   const orderMatch = message.match(/((?:ORD-|MKHE-)[A-Z0-9]+)/);
   const orderCode = orderMatch ? orderMatch[1] : "";
   
-  if (title === "Lưu mã giảm giá thành công") {
-     const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
+  if (title === "VOUCHER_SAVED") {
+     const voucherMatch = message.match(/VOUCHER_SAVED_MESSAGE::([\w\d]+)/);
      const voucherCode = voucherMatch ? voucherMatch[1] : "";
      return t("notifications.message.voucher_saved", { code: voucherCode, defaultValue: message });
   }
 
-  if (title === "Chúc mừng trúng thưởng!") {
-     const voucherMatch = message.match(/mã giảm giá ([\w\d]+)/);
+  if (title === "LUCKY_WHEEL_WON") {
+     const voucherMatch = message.match(/LUCKY_WHEEL_WON_MESSAGE::([\w\d]+)/);
      const voucherCode = voucherMatch ? voucherMatch[1] : "";
      return t("notifications.message.lucky_wheel_won", { code: voucherCode, defaultValue: message });
   }
@@ -98,17 +92,14 @@ const translateNotificationMessage = (message, title, t) => {
   }
 
   const map = {
-    "Đặt hàng thành công": "notifications.message.order_placed",
-    "Thanh toán thành công": "notifications.message.payment_success",
-    "Đơn hàng đã được xác nhận": "notifications.message.order_confirmed",
-    "Đơn hàng đang giao": "notifications.message.order_delivering",
-    "Giao hàng thành công": "notifications.message.order_completed",
-    "Đơn hàng đã hủy": "notifications.message.order_cancelled",
-    "Đơn hàng mới": "notifications.message.admin_order_new",
+    "ORDER_PLACED": "notifications.message.order_placed",
+    "ORDER_PAYMENT_SUCCESS": "notifications.message.payment_success",
+    "ORDER_CONFIRMED": "notifications.message.order_confirmed",
+    "ORDER_DELIVERING": "notifications.message.order_delivering",
+    "ORDER_COMPLETED": "notifications.message.order_completed",
+    "ORDER_CANCELLED": "notifications.message.order_cancelled",
     "ADMIN_ORDER_NEW": "notifications.message.admin_order_new",
-    "Đơn hàng đã thanh toán": "notifications.message.admin_order_paid",
     "ADMIN_ORDER_PAID": "notifications.message.admin_order_paid",
-    "Đơn hàng hoàn tất": "notifications.message.admin_order_completed",
     "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed"
   };
 

@@ -41,7 +41,7 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
     const otpString = otpArray.join("");
     // Tự động gọi handleCheckout khi nhập đủ 6 số
     if (otpString.length === 6) {
-      handleCheckout();
+      handleCheckout(null, otpString);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otpArray]);
@@ -91,8 +91,8 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
   if (!showOtpModal) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md relative animate-in fade-in zoom-in-95 duration-200 text-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+      <div className="bg-mkhe-bg p-8 rounded-xl shadow-xl border border-mkhe-border/20 w-full max-w-md relative animate-in fade-in zoom-in-95 duration-200 text-center">
         <h3 className="text-2xl font-serif text-mkhe-primary mb-2">
           {t("otp.title")}
         </h3>
@@ -113,7 +113,7 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onPaste={handlePaste}
-              className="w-12 h-14 text-center text-2xl font-bold text-gray-800 bg-transparent border-2 border-gray-200 rounded-lg focus:border-mkhe-primary focus:outline-none transition-colors"
+              className="w-12 h-14 text-center text-2xl font-bold text-mkhe-text bg-mkhe-input/30 border-2 border-mkhe-border/40 rounded-lg focus:border-mkhe-primary focus:outline-none transition-colors"
             />
           ))}
         </div>
@@ -127,7 +127,7 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
             {t("otp.cancel")}
           </button>
           <button
-            onClick={handleCheckout}
+            onClick={(e) => handleCheckout(e, otpArray.join(""))}
             disabled={otpArray.join("").length !== 6 || isSubmitting}
             className="flex-1 py-3 bg-mkhe-primary text-white rounded-md hover:bg-mkhe-primary/90 transition-colors disabled:opacity-50 flex justify-center items-center cursor-pointer"
           >

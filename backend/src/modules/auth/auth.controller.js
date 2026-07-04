@@ -37,10 +37,12 @@ export const registerUser = async (req, res) => {
 
       await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
-      // Fire and forget email
-      sendVerificationEmail(user.email, otp, userLang).catch((err) => {
+      try {
+        await sendVerificationEmail(user.email, otp, userLang);
+      } catch (err) {
         console.error("[Email Error]", err.message);
-      });
+        return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+      }
 
       return successResponse(res, 201, "REGISTER_SUCCESS", { email: user.email });
     } else {
@@ -184,11 +186,13 @@ export const resendOTP = async (req, res) => {
     await OTP.deleteMany({ email: user.email, purpose: "VERIFY_EMAIL" });
     await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
-    // Fix bug: 3 params instead of 4
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendVerificationEmail(user.email, otp, userLang).catch((err) => {
-        console.error("[Email Error]", err.message);
-    });
+    try {
+      await sendVerificationEmail(user.email, otp, userLang);
+    } catch (err) {
+      console.error("[Email Error]", err.message);
+      return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+    }
 
     return successResponse(res, 200, "RESEND_SUCCESS");
   } catch (error) {
@@ -297,9 +301,12 @@ export const forgotPassword = async (req, res) => {
     await OTP.create({ email: user.email, otp, purpose: "RESET_PASSWORD" });
 
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendPasswordResetEmail(user.email, otp, userLang).catch((err) => {
-      console.error("[Email Error]", err);
-    });
+    try {
+      await sendPasswordResetEmail(user.email, otp, userLang);
+    } catch (err) {
+      console.error("[Email Error]", err.message);
+      return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+    }
 
     return successResponse(res, 200, "OTP_SENT");
   } catch (error) {

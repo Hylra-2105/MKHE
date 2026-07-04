@@ -149,8 +149,8 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleCheckout = async (e) => {
-    if (e) e.preventDefault();
+  const handleCheckout = async (e, directOtp = null) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!shippingInfo.name || !shippingInfo.phone || !shippingInfo.address) {
       toast.error(t("errors.missing_info"));
       return;
@@ -169,7 +169,9 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (paymentMethod === "COD" && !isTrustedDevice && otp.length !== 6) {
+    const finalOtp = directOtp || otp;
+
+    if (paymentMethod === "COD" && !isTrustedDevice && finalOtp.length !== 6) {
       toast.error(t("errors.invalid_otp"));
       return;
     }
@@ -195,7 +197,7 @@ export default function CheckoutPage() {
         shippingInfo,
         items: checkoutItems.map(i => ({ productId: i.product._id, quantity: i.quantity })),
         paymentMethod,
-        otp: (paymentMethod === "COD" && !isTrustedDevice) ? otp : undefined,
+        otp: (paymentMethod === "COD" && !isTrustedDevice) ? finalOtp : undefined,
         voucherId: selectedVoucher?._id,
         isTrustedDevice: paymentMethod === "COD" ? isTrustedDevice : undefined,
         note,
