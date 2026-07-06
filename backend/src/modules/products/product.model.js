@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema(
       uppercase: true,
       trim: true,
     },
-    description: {
+    story: {
       type: String,
     },
     categoryMatrix: {
@@ -28,6 +28,16 @@ const productSchema = new mongoose.Schema(
       enum: ["CHAM", "KHMER", "KINH", "OTHER"],
       default: "OTHER",
     },
+    craftVillage: {
+      type: String,
+      trim: true,
+    },
+    material: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     vendor: {
       type: String,
       required: true,
@@ -38,11 +48,37 @@ const productSchema = new mongoose.Schema(
       required: true,
       min: [0, "PRICE_CANNOT_BE_NEGATIVE"], 
     },
+    salePrice: {
+      type: Number,
+      default: 0,
+      min: [0, "SALE_PRICE_CANNOT_BE_NEGATIVE"],
+    },
+    saleStartDate: {
+      type: Date,
+    },
+    saleEndDate: {
+      type: Date,
+    },
+    b2bTiers: [
+      {
+        minQuantity: { type: Number, required: true },
+        discountPercent: { type: Number, required: true, min: 0, max: 100 },
+      }
+    ],
     stock: {
       type: Number,
       required: true,
       min: [0, "STOCK_CANNOT_BE_NEGATIVE"],
       default: 0,
+    },
+    lowStockAlerted: {
+      type: Boolean,
+      default: false,
+    },
+    sold: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     images: [
       {
@@ -55,6 +91,10 @@ const productSchema = new mongoose.Schema(
       default: "DRAFT",
     },
     hasDPP: {
+      type: Boolean,
+      default: false,
+    },
+    isPublicEvent: {
       type: Boolean,
       default: false,
     },
@@ -73,6 +113,22 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "DPP_Profile",
       default: null,
+    },
+    storyBlogId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
+      default: null,
+    },
+    ratingAverage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     isDeleted: {
       type: Boolean,
@@ -97,6 +153,19 @@ productSchema.pre("save", async function () {
     }
     if (!this.gpsLocation) {
       throw new Error("GPS_LOCATION_REQUIRED");
+    }
+  }
+
+  // Validate sale price
+  if (this.salePrice > 0) {
+    if (this.salePrice >= this.price) {
+      throw new Error("SALE_PRICE_MUST_BE_LESS_THAN_PRICE");
+    }
+    if (!this.saleStartDate || !this.saleEndDate) {
+      throw new Error("SALE_DATES_REQUIRED");
+    }
+    if (new Date(this.saleEndDate) <= new Date(this.saleStartDate)) {
+      throw new Error("INVALID_SALE_DATE_RANGE");
     }
   }
 });

@@ -1,6 +1,7 @@
 # AGENTS.md — MKHE Frontend
 
 > **AI agents MUST read and strictly follow every rule in this file before writing any code.**
+> **AI agents MUST also update this file with any new architectural decisions, feature folders, or API routes after completing a task.**
 > This file governs all code generation, architecture decisions, and tooling choices for this project.
 
 ---
@@ -68,8 +69,14 @@ frontend/
 │   ├── features/                ← ALL business logic lives here (colocated)
 │   │   ├── auth/
 │   │   │   └── components/      ← LoginForm, RegisterForm, ForgotPasswordForm, etc.
-│   │   └── users/
-│   │       └── components/      ← UserTable, UserFilter, UserDetailModal, etc.
+│   │   ├── cart/                ← Shopping Cart functionality
+│   │   ├── dpp/                 ← Digital Product Passport (DPP) functionality
+│   │   ├── home/                ← Home page components
+│   │   ├── products/            ← Product management
+│   │   ├── shop/                ← Customer-facing shop components
+│   │   ├── users/               ← User Profile and Admin User Management
+│   │   │   └── components/      ← UserTable, UserFilter, UserDetailModal, etc.
+│   │   └── vouchers/            ← Voucher & Discount functionality
 │   ├── hooks/                   ← Shared hooks only (not feature-specific)
 │   │   └── useLocations.js      ← Fetches countries/states from countriesnow API
 │   ├── i18n.js                  ← i18next configuration
@@ -269,6 +276,7 @@ import axiosClient from "../../api/axiosClient";
 
 ---
 
+
 ## 🌐 Routing & Auth
 
 - **React Router DOM v7** — use `<Routes>` / `<Route>` pattern (already set up in `App.jsx`)
@@ -312,6 +320,14 @@ import axiosClient from "../../api/axiosClient";
 - Supported languages: **Vietnamese (`vi`)** and **English (`en`)**
 - Translation files live in `src/locales/<lang>/`
 - Always use `useTranslation` hook with the correct **namespace** — never hardcode user-facing strings
+
+### ⚠️ Auto-i18n Rule for Agents
+**Whenever you create a new feature or component**, you MUST automatically:
+1. Identify all user-facing text.
+2. Create or update the corresponding `<namespace>.json` files in both `src/locales/en/` and `src/locales/vi/`.
+3. Ensure the new namespace is loaded in `src/i18n.js` if it's a completely new file.
+4. Use `useTranslation("<namespace>")` to render the text.
+**Never leave hardcoded text in JSX for the user to translate later.**
 
 ### Translation Namespaces
 

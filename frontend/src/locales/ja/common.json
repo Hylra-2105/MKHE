@@ -12,5 +12,10 @@
   "INVALID_EMAIL_FORMAT": "無効な電子メール形式です。有効な電子メールを入力してください。",
   "REGISTER_SUCCESS": "登録が成功しました！",
   "PASSWORD_MUST_BE_DIFFERENT": "新しいパスワードは古いパスワードとは異なる必要があります。",
-  "TOO_MANY_OTP_REQUESTS": "OTP を要求した回数が多すぎます。 15分後にもう一度試してください。"
+  "TOO_MANY_OTP_REQUESTS": "OTP を要求した回数が多すぎます。 15分後にもう一度試してください。",
+  "cancel": "キャンセル",
+  "back": "戻る",
+  "search": "検索",
+  "actions": "操作",
+  "view_details": "詳細を見る"
 }

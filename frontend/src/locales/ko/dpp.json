@@ -11,7 +11,10 @@
     "view3D": "3D 모델",
     "warningTitle": "경고",
     "warningSubtitle": "인증되지 않은 제품",
-    "warningDesc": "이 NFC 식별자는 존재하지 않거나 위조되었거나 MKHE에 의해 활성화되지 않았습니다. 도움이 필요하면 고객지원팀에 문의하세요."
+    "warningDesc": "이 NFC 식별자는 존재하지 않거나 위조되었거나 MKHE에 의해 활성화되지 않았습니다. 도움이 필요하면 고객지원팀에 문의하세요.",
+    "read_story": "공예 마을 이야기 읽기",
+    "read_story_desc": "이 제품 제작의 비하인드 스토리와 독특한 문화적 특징을 발견하세요.",
+    "read_story_btn": "지금 발견하기"
   },
   "certificate": {
     "title": "장인기술증명서",
@@ -33,14 +36,30 @@
     "alt": "3D 모델"
   },
   "o2o": {
-    "toast_welcome": "✨ 신규 회원 10% 할인. 탭하여 보기.",
+    "toast_welcome": "✨ 신규 회원 10% 혜택. 탭하여 확인하세요.",
+    "toast_secret": "✨ 비밀 특권이 기다리고 있습니다. 탭하여 발견하세요.",
     "new_member": "신규 회원",
-    "login_to_save_voucher": "로그인하고",
-    "login_to_save_voucher_suffix": "할인 코드를 저장하여 프리미엄 쇼핑을 즐기세요.",
-    "cta_subtitle": "헤리티지 컬렉션을 발견하고 10% 할인을 받으세요",
+    "login_to_save_voucher": "로그인하고 혜택 저장하기",
+    "voucher_code": "바우처",
+    "login_to_save_voucher_suffix": "그리고 프리미엄 쇼핑을 경험하세요.",
+    "cta_subtitle": "헤리티지 컬렉션 발견 및 10% 할인 받기",
     "voucher_saved": "✓ WELCOME_MKHE 코드 저장됨",
     "get_voucher": "WELCOME_MKHE 코드 받기",
     "msg_new_user": "신규 회원을 환영합니다! WELCOME_MKHE 코드가 활성화되었습니다.",
-    "msg_returning_user": "환영합니다! 10% 혜택(WELCOME_MKHE)이 적용되었습니다."
+    "msg_returning_user": "환영합니다! 10% 혜택(WELCOME_MKHE)이 적용되었습니다.",
+    "msg_gacha_success": "축하합니다! {{title}}를(을) 받았습니다.",
+    "err_already_claimed": "이 제품에서 이미 선물을 받았습니다!",
+    "err_no_rewards": "죄송합니다. 현재 사용 가능한 할인 코드가 없습니다.",
+    "err_all_claimed": "모든 가챠 선물을 수집했습니다!",
+    "err_bad_luck": "다음 기회에!",
+    "err_generic": "지금은 코드를 받을 수 없습니다",
+    "claimed_title": "선물 수령 완료",
+    "gacha_title": "가챠 바우처",
+    "claimed_desc": "이 제품에서 이미 선물을 받았습니다",
+    "gacha_desc": "행운의 뽑기로 즉시 혜택 받기",
+    "btn_saved_code": "✓ 코드 저장됨 [{{code}}]",
+    "btn_claimed": "✓ 선물 수령 완료",
+    "btn_login": "로그인하여 뽑기",
+    "btn_spin": "가챠 바우처 뽑기"
   }
 }

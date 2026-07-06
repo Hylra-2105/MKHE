@@ -1,19 +1,20 @@
-import nodemailer from "nodemailer";
+import { google } from "googleapis";
 
-let transporter = null;
+let oAuth2Client = null;
 
-// Lazy-load transporter khi cần dùng
-export const getTransporter = () => {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
+// Lazy-load OAuth2 Client
+export const getGmailClient = () => {
+  if (!oAuth2Client) {
+    oAuth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      "https://developers.google.com/oauthplayground"
+    );
+    oAuth2Client.setCredentials({
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
   }
-  return transporter;
+  
+  return google.gmail({ version: "v1", auth: oAuth2Client });
 };
 
-export { getTransporter as transporter };

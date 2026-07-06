@@ -238,13 +238,13 @@ export default function RegisterForm() {
         disabled={isLoading || isSubmitting || isGoogleLoading}
         className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {(isLoading || isSubmitting || isGoogleLoading) ? (
+        {isGoogleLoading ? (
           <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
         ) : (
           <GoogleIcon />
         )}
         <span className="text-sm font-semibold text-mkhe-text">
-          {(isLoading || isSubmitting || isGoogleLoading) ? t("btn_processing") : t("google", { ns: "login" })}
+          {isGoogleLoading ? t("btn_processing") : t("google", { ns: "login" })}
         </span>
       </button>
 

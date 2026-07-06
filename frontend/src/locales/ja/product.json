@@ -14,7 +14,13 @@
   "filter": {
     "search_placeholder": "製品名またはSKUで検索...",
     "search_btn": "検索",
-    "all_categories": "すべてのカテゴリ"
+    "all_categories": "すべてのカテゴリ",
+    "all_dna": "すべての遺伝コード",
+    "all_vendors": "すべてのプロバイダー",
+    "all_status": "すべてのステータス",
+    "status_published": "公開",
+    "status_draft": "ドラフト",
+    "status_out_of_stock": "在庫切れ"
   },
   "table": {
     "name": "製品名",
@@ -30,6 +36,12 @@
   },
   "modal": {
     "add_title": "新しい製品を追加",
+    "tab_general": "一般情報",
+    "tab_nfc": "デジタルパスポート（NFC）",
+    "cultural_dna": "文化 DNA",
+    "craft_village": "工芸村",
+    "craft_village_placeholder": "例：チャウポン織物村...",
+    "material": "材料",
     "name": "製品名",
     "name_placeholder": "例：ストライプブロケードトートバッグ",
     "sku": "SKU",
@@ -39,8 +51,6 @@
     "price_placeholder": "250000",
     "stock": "在庫数",
     "stock_placeholder": "100",
-    "description": "製品の簡単な説明",
-    "description_placeholder": "表示および販売のために詳細な製品情報を入力します...",
     "cancel": "キャンセル",
     "create": "作成する",
     "save": "保存",
@@ -78,7 +88,9 @@
       "location_placeholder": "例: プノンピ陶器村 (または座標を入力)",
       "location_placeholder_edit": "例: 10.823、106.629 または場所名",
       "map_title": "ロケーションマップ (ミニ Google マップ)",
-      "map_desc": "※住所または座標を入力すると地図が自動更新されます。"
+      "map_desc": "※住所または座標を入力すると地図が自動更新されます。",
+      "story_link": "リンクされた物語 (オプション)",
+      "story_link_empty": "-- リンクされた物語なし --"
     },
     "processing": "処理...",
     "images_label": "製品画像/動画",
@@ -93,12 +105,20 @@
       "current_file": "現在の 3D ファイル",
       "label": "3D モデル ファイル (.GLB、.GLTF)",
       "error_upload": "3D ファイルのアップロード中にエラーが発生しました",
-      "error_upload_both": "画像または 3D ファイルのアップロード中にエラーが発生しました"
-    }
+      "error_upload_both": "画像または 3D ファイルのアップロード中にエラーが発生しました",
+      "selected_file": "新しい3Dファイルが選択されました",
+      "optimized": "Web向けに最適化",
+      "deleted": "現在の3Dモデルは削除されます",
+      "click_upload_new": "ドラッグ＆ドロップまたはクリックして新しいファイルをアップロード",
+      "auto_compress": "システムがMeshとTextureを自動的に最適化します。最大150MBまでの巨大なファイルをサポート！",
+      "delete": "削除"
+    },
+    "story": "製品ストーリー",
+    "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）"
   },
   "statuses": {
-    "DRAFT": "ドラフト (非表示)",
-    "PUBLISHED": "出版済み（発売中）",
+    "DRAFT": "ドラフト",
+    "PUBLISHED": "公開",
     "OUT_OF_STOCK": "在庫切れ"
   },
   "pagination": {
@@ -137,7 +157,24 @@
     "copy_link_success": "NFC 検証リンクがコピーされました。",
     "update_tag_error": "タグステータスの更新中にエラーが発生しました",
     "activate_success": "タグ {{uid}} が正常にアクティブ化されました",
-    "activate_error": "アクティベーションに失敗しました"
+    "activate_error": "アクティベーションに失敗しました",
+    "processing_images": "画像を処理および最適化しています...",
+    "processing_images_success": "ファイルが正常に処理されました！",
+    "processing_images_error": "ファイルの処理中にエラーが発生しました",
+    "video_too_large": "ビデオ {{name}} は大きすぎます（100MB以上）。",
+    "missing_fields": "名前、SKU、価格、およびプロバイダーを入力してください。",
+    "missing_dpp_fields": "デジタルパスポートには職人の名前とGPS座標が必要です。",
+    "no_link_allowed": "リンクを貼り付けないでください！場所の名前または座標のみを入力してください。",
+    "file_3d_too_large": "3D ファイルが大きすぎる（150MB以上）ため、ブラウザがフリーズする可能性があります。先に 3D ソフトウェアで縮小してください。",
+    "optimizing_3d": "3D ファイル（{{size}}MB）を最適化しています... これには CPU が使用されます。ページを閉じないでください！",
+    "optimize_3d_success": "3D 最適化が成功しました！サイズが縮小されました：{{size}}MB",
+    "optimize_3d_error": "3D 最適化に失敗しました：{{error}}。元のファイルが使用されます。",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
+    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
+    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFCタグ管理",
@@ -149,12 +186,121 @@
     "url": "URLの書き込み（NFCツール）",
     "status": "状態",
     "actions": "アクション",
-    "confirm_written": "書面による確認"
+    "confirm_written": "書面による確認",
+    "pending": "保留中",
+    "active": "アクティブ"
   },
   "culturalDNA": {
-    "CHAM": "チャムの遺伝コード",
-    "KHMER": "クメールの遺伝暗号",
-    "KINH": "キンの遺伝コード",
+    "CHAM": "チャムの文化 DNA",
+    "KHMER": "クメールの文化 DNA",
+    "KINH": "キンの文化 DNA",
     "OTHER": "その他・多民族"
+  },
+  "materials": {
+    "brocade": "錦織",
+    "silk": "シルク",
+    "ceramic": "セラミック",
+    "leather": "牛革",
+    "copper": "真鍮ロック",
+    "silver": "銀",
+    "wood": "木材"
+  },
+  "shop": {
+    "fetch_error": "商品一覧を取得できませんでした。",
+    "not_found": "商品が見つかりません",
+    "digital_passport": "デジタルパスポート",
+    "video": "ビデオ",
+    "filters": {
+      "title": "フィルター",
+      "search_title": "商品検索",
+      "search_placeholder": "商品名, SKU...",
+      "offers_title": "オファー",
+      "on_sale": "セール中",
+      "craft_village_title": "工芸村 / 産地",
+      "craft_village_placeholder": "工芸村で検索...",
+      "material_title": "素材",
+      "cultural_dna_title": "文化のDNA",
+      "category_title": "カテゴリー",
+      "all": "すべて",
+      "clear_filters": "フィルターをクリア"
+    },
+    "layout": {
+      "header_title": "ヘリテージコレクション",
+      "header_subtitle": "一つ一つの作品は文化的な物語であり、職人の手と100年の歴史を持つ工芸村の魂によって織り成されています。",
+      "mobile_products": "商品",
+      "mobile_filter": "フィルター"
+    },
+    "detail": {
+      "category": "カテゴリー",
+      "material": "素材",
+      "village": "工芸村",
+      "quantity": "数量:",
+      "out_of_stock": "在庫切れ",
+      "add_to_cart": "カートに追加",
+      "buy_now": "今すぐ購入",
+      "story": "遺産の物語",
+      "show_less": "一部を表示",
+      "read_more": "続きを読む",
+      "in_stock": "在庫あり：{{count}}点",
+      "sold_out": "売り切れ",
+      "sku": "SKUコード",
+      "back": "戻る",
+      "nfc_badge": "NFCデジタルパスポート統合製品",
+      "b2b_wholesale_title": "法人向け卸売価格：",
+      "b2b_from_quantity": "{{quantity}}個から",
+      "b2b_buy_more": "あと{{count}}個購入すると、割引率が{{discount}}%にアップします。",
+      "b2b_max_discount": "最大割引率に達しました！"
+    }
+  },
+  "form": {
+    "sale": {
+      "title": "セールプログラム",
+      "subtitle": "プロモーション価格と時間を設定する",
+      "salePrice": "セール価格",
+      "salePricePlaceholder": "セール価格を入力...",
+      "startSale": "セール開始",
+      "endSale": "セール終了",
+      "sendPush": "通知を送信",
+      "sendPushDesc": "リリース時に、システムは自動的にすべてのユーザーに通知を送信します",
+      "ongoing": "セール中",
+      "upcoming": "今後のセール"
+    }
+  },
+  "products": {
+    "b2b": {
+      "tiers_title": "卸売価格 (B2B Tiers)",
+      "tiers_info": "次の階層は、前の階層よりも数量と割引率が大きくなければなりません。",
+      "add_tier": "階層を追加",
+      "no_tiers": "割引階層はありません。",
+      "min_quantity": "最小数量",
+      "min_quantity_placeholder": "例: 50",
+      "discount_percent": "割引率(%)",
+      "discount_placeholder": "例: 10",
+      "remove_tier": "階層を削除",
+      "delete_confirm_title": "割引階層を削除しますか？",
+      "delete_confirm_msg": "この割引階層を削除してもよろしいですか？この操作は元に戻せません。",
+      "delete_confirm_yes": "削除する",
+      "delete_confirm_no": "キャンセル"
+    },
+    "errors": {
+      "name_required": "商品名を入力してください",
+      "sku_required": "SKUを入力してください",
+      "vendor_required": "ベンダーを選択してください",
+      "price_required": "価格を入力してください",
+      "artisan_required": "職人名を入力してください",
+      "gps_required": "GPS位置を入力してください",
+      "sale_price_invalid": "セール価格は元の価格より小さくする必要があります",
+      "sale_start_required": "セールの開始日を選択してください",
+      "sale_end_required": "セールの終了日を選択してください",
+      "sale_end_invalid": "終了時間は開始時間より後である必要があります",
+      "sale_end_future": "終了時間は未来である必要があります",
+      "sale_start_past": "開始時間は過去にすることはできません",
+      "b2b_min_tiers": "B2B製品の割引階層を少なくとも1つ設定してください。",
+      "b2b_missing_fields": "すべての階層について、数量と割引率 (%) を入力してください。",
+      "b2b_invalid_values": "数量は0より大きく、割引率は0〜100の間でなければなりません。",
+      "b2b_quantity_order": "階層 {{current}}：数量は階層 {{prev}} ({{prevQ}}) より大きくなければなりません。",
+      "b2b_discount_order": "階層 {{current}}：割引率は階層 {{prev}} ({{prevD}}%) より大きくなければなりません。"
+    },
+    "no_linked_story": "-- リンクされたストーリーなし --"
   }
 }

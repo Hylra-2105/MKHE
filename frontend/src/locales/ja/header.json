@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "遺産",
-    "craft_villages": "工芸村",
+    "home": "ホーム",
+    "about": "概要",
     "shop": "ショップ",
-    "storytelling": "ストーリーテリング",
-    "values": "価値観"
+    "storytelling": "ストーリー",
+    "blog": "ブログ",
+    "contact": "お問い合わせ"
   },
   "user_menu": {
     "profile": "プロフィール",
@@ -14,7 +15,11 @@
     "analytics": "分析",
     "admin_area": "管理エリア",
     "staff_area": "スタッフエリア",
-    "manage_products": "製品管理"
+    "manage_products": "製品管理",
+    "manage_vouchers": "バウチャー管理",
+    "manage_orders": "注文管理",
+    "manage_blogs": "ブログ管理",
+    "manage_reviews": "レビュー管理"
   },
   "guest_menu": {
     "login": "ログイン"
@@ -35,5 +40,52 @@
     "zh": "中国語",
     "ko": "韓国語",
     "ja": "日本語"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "注文が完了しました",
+      "payment_success": "支払い成功",
+      "order_confirmed": "注文が確認されました",
+      "order_delivering": "配送中",
+      "order_completed": "配送完了",
+      "order_cancelled": "注文がキャンセルされました",
+      "voucher_saved": "クーポンが保存されました",
+      "lucky_wheel_won": "おめでとうございます！",
+      "flash_sale": "巨大な製品セール！",
+      "voucher_published": "新しいオファーコードがあります！",
+      "admin_order_new": "新規注文",
+      "admin_order_paid": "支払い済み注文",
+      "admin_order_completed": "注文完了",
+      "admin_stock_alert": "在庫不足アラート"
+    },
+    "message": {
+      "order_placed": "注文 {{orderCode}} が正常に行われました。処理を待っています。",
+      "payment_success": "注文 {{orderCode}} の支払いが記録されました。",
+      "order_confirmed": "注文 {{orderCode}} が確認され、商品を準備しています。",
+      "order_delivering": "注文 {{orderCode}} が配送業者に引き渡されました。",
+      "order_completed": "注文 {{orderCode}} の配送が完了しました。MKHEをご利用いただきありがとうございます！",
+      "order_cancelled": "注文 {{orderCode}} はキャンセルされました。",
+      "voucher_saved": "割引コード {{code}} を正常に取得しました。",
+      "lucky_wheel_won": "ミステリーボックスから割引コード {{code}} を受け取りました。",
+      "flash_sale": "製品 {{productName}} のセール開催中です。お見逃しなく！",
+      "voucher_published": "割引コード {{code}} が公開されました。なくなる前に今すぐ手に入れよう！",
+      "admin_order_new": "新しい注文 #{{orderCode}} が正常に作成されました (COD)。",
+      "admin_order_paid": "注文 #{{orderCode}} の支払いが正常に完了しました (オンライン)。",
+      "admin_order_completed": "お客様が注文 #{{orderCode}} の受取と支払いを確認しました。",
+      "admin_stock_alert": "製品 {{productName}} の在庫が少なくなっています (残り {{currentStock}} 個)。"
+    },
+    "header_title": "通知",
+    "mark_all_read": "すべて既読にする",
+    "mark_read": "既読にする",
+    "delete": "この通知を削除",
+    "empty": "通知はありません",
+    "time_just_now": "たった今",
+    "tab_all": "すべて",
+    "tab_unread": "未読",
+    "tab_system": "システム",
+    "recent": "以前",
+    "load_more": "以前の通知を見る",
+    "deleted_success": "通知を削除しました",
+    "undo": "元に戻す"
   }
 }

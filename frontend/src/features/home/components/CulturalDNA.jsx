@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
 import DnaSection from "./DnaSection";
+import { motion } from "framer-motion";
 
 const CulturalDNA = () => {
   const { t } = useTranslation("home");
@@ -18,7 +19,6 @@ const CulturalDNA = () => {
           productApi.getAllProducts(1, 10, "", "", "KINH", "", false),
         ]);
 
-        // Lấy dữ liệu từ response
         const chamData = resCham?.data?.data || resCham?.data || [];
         const khmerData = resKhmer?.data?.data || resKhmer?.data || [];
         const kinhData = resKinh?.data?.data || resKinh?.data || [];
@@ -38,43 +38,47 @@ const CulturalDNA = () => {
   }, []);
 
   return (
-    <section className="relative py-28 px-6 max-w-[1400px] mx-auto border-t border-mkhe-primary/10">
-      {/* =========================================
-          BỘ NỀN "BIẾN TẤU": DÒNG CHẢY DI SẢN (HERITAGE FLOW)
-          Sử dụng các quầng sáng to, mờ ảo đan xen vào nhau,
-          tượng trưng cho sự giao thoa của 3 nền văn hóa.
-      ========================================== */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden rounded-3xl">
-        {/* Quầng sáng 1: Vàng đồng nhẹ nhàng ở góc trên trái (Ôm lấy khu vực Chăm) */}
-        <div className="absolute top-[5%] -left-[10%] w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-[#c5a059]/15 to-transparent blur-[120px]" />
+    <section className="relative pt-32 pb-40 px-6 max-w-[1600px] mx-auto bg-mkhe-bg">
 
-        {/* Quầng sáng 2: Nâu đất trầm ấm vắt ngang giữa phải (Tạo nền sâu cho Khmer) */}
-        <div className="absolute top-[40%] -right-[15%] w-[800px] h-[600px] rounded-[100%] bg-gradient-to-bl from-[#8E5E37]/10 via-[#D4A373]/5 to-transparent blur-[150px] transform -rotate-12" />
-
-        {/* Quầng sáng 3: Cam đất hắt lên từ đáy (Ôm trọn khu vực Kinh) */}
-        <div className="absolute -bottom-[5%] left-[15%] w-[700px] h-[500px] rounded-[100%] bg-gradient-to-t from-[#C38D64]/10 to-transparent blur-[100px] transform rotate-12" />
-
-        {/* Điểm xuyết: Vệt sáng nhỏ tinh tế */}
-        <div className="absolute top-[20%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#D4A373]/5 blur-[80px]" />
-      </div>
-      {/* ========================================= */}
-
-      <div className="relative z-10 text-center mb-20 px-4">
-        <h2 className="text-4xl md:text-5xl font-bold text-mkhe-text mb-4 font-logo tracking-wider uppercase">
-          {t("dna.title")}
-        </h2>
-        <p className="text-mkhe-text/70 text-lg">{t("dna.subtitle")}</p>
+      <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 px-4 gap-12">
+        <motion.div 
+          initial={{ opacity: 0, x: -50 }} 
+          whileInView={{ opacity: 1, x: 0 }} 
+          viewport={{ once: true, amount: 0.3 }} 
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="lg:w-1/2"
+        >
+          <div className="inline-flex items-center gap-4 mb-8">
+            <span className="w-16 h-[1px] bg-mkhe-primary"></span>
+            <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("dna.subtitle", "Khám phá những tinh hoa")}</span>
+          </div>
+          <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
+            Sản phẩm <br/>
+            <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Văn hóa</span>
+          </h2>
+        </motion.div>
+        <motion.div 
+          initial={{ opacity: 0, x: 50 }} 
+          whileInView={{ opacity: 1, x: 0 }} 
+          viewport={{ once: true, amount: 0.3 }} 
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+          className="lg:w-1/2 flex lg:justify-end pb-8"
+        >
+          <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 lg:ml-0 font-light">
+            Mỗi chế tác không đơn thuần là một vật dụng nội thất, mà là hiện thân của dòng chảy văn hóa ngàn năm, mang trong mình tâm hồn của những nghệ nhân đa dân tộc.
+          </p>
+        </motion.div>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="animate-spin w-10 h-10 border-4 border-mkhe-primary border-t-transparent rounded-full" />
+          <div className="animate-spin w-10 h-10 border-[1px] border-mkhe-text/20 border-t-mkhe-primary rounded-full" />
         </div>
       ) : (
-        <div className="relative z-10 space-y-16">
-          <DnaSection title="Chăm" data={products.CHAM} />
-          <DnaSection title="Khmer" data={products.KHMER} isReverse={true} />
-          <DnaSection title="Kinh" data={products.KINH} />
+        <div className="relative z-10 space-y-40">
+          <DnaSection title="Kinh" data={products.KINH} dnaType="KINH" />
+          <DnaSection title="Khmer" data={products.KHMER} isReverse={true} dnaType="KHMER" />
+          <DnaSection title="Chăm" data={products.CHAM} dnaType="CHAM" />
         </div>
       )}
     </section>

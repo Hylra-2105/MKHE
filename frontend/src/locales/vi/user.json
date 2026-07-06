@@ -34,7 +34,11 @@
     "support_video": "Video MP4, WEBM (Tối đa 30MB)",
     "new_password": "Tạo mật khẩu mới",
     "update_password": "Đổi mật khẩu",
-    "change_password_desc": "Vui lòng nhập mật khẩu mới cho tài khoản của bạn."
+    "change_password_desc": "Vui lòng nhập mật khẩu mới cho tài khoản của bạn.",
+    "contact_shipping": "Liên hệ & Giao hàng",
+    "default_address": "Địa chỉ mặc định",
+    "address_placeholder": "Nhập địa chỉ của bạn...",
+    "no_address": "Bạn chưa thiết lập địa chỉ mặc định. Bấm Edit để cập nhật."
   },
   "buttons": {
     "verifying": "Đang xác thực...",
@@ -47,7 +51,7 @@
     "resend": "Gửi lại"
   },
   "common": {
-    "cancel": "Hủy bỏ",
+    "cancel": "Hủy",
     "edit": "Chỉnh sửa",
     "save_info": "Lưu thông tin"
   },

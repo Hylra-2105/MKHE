@@ -3,9 +3,9 @@ import { ENDPOINTS } from "@/constants/endpoints";
 
 export const userApi = {
   // Lấy danh sách users
-  getAllUsers: async (page = 1, limit = 5, search = "", role = "") => {
+  getAllUsers: async (page = 1, limit = 5, search = "", role = "", status = "") => {
     const response = await axiosClient.get(ENDPOINTS.USERS.GET_ALL, {
-      params: { page, limit, search, role },
+      params: { page, limit, search, role, status },
     });
     return response.data;
   },
@@ -15,12 +15,33 @@ export const userApi = {
     return response.data;
   },
 
+  createB2BAccount: async (userData) => {
+    const response = await axiosClient.post("/users/admin/b2b/accounts", userData);
+    return response.data;
+  },
+
+
   // Cập nhật profile của user hiện tại
   updateProfile: async (profileData) => {
     const response = await axiosClient.put(
       ENDPOINTS.USERS.UPDATE_PROFILE,
       profileData,
     );
+    return response.data;
+  },
+
+  addAddress: async (addressData) => {
+    const response = await axiosClient.post("/users/profile/addresses", addressData);
+    return response.data;
+  },
+
+  updateAddress: async (addressId, addressData) => {
+    const response = await axiosClient.put(`/users/profile/addresses/${addressId}`, addressData);
+    return response.data;
+  },
+
+  setDefaultAddress: async (addressId) => {
+    const response = await axiosClient.put(`/users/profile/addresses/${addressId}/default`);
     return response.data;
   },
 
@@ -54,6 +75,6 @@ export const userApi = {
 };
 
 // For backward compatibility
-export const getAllUsersApi = (page, limit, search, role) => {
-  return userApi.getAllUsers(page, limit, search, role);
+export const getAllUsersApi = (page, limit, search, role, status) => {
+  return userApi.getAllUsers(page, limit, search, role, status);
 };

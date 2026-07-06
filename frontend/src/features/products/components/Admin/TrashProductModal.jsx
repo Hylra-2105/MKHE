@@ -81,7 +81,7 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
         error.message ||
         t("messages.restore_error");
 
-      toast.error(`❌ Lỗi khôi phục: ${errorMsg}`);
+      toast.error(t("messages.restore_failed", { errorMsg }));
       // Keep modal open on error so user can retry
     } finally {
       setActionLoading(null);

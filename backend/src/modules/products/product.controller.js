@@ -2,6 +2,8 @@ import Product from "./product.model.js";
 import { cloudinary } from "../../config/cloudinary.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
+import { getIO } from "../../config/socket.js";
 
 // [POST] /api/products - Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
@@ -9,7 +11,7 @@ export const createProduct = async (req, res) => {
     const {
       name,
       sku,
-      description,
+      story,
       categoryMatrix,
       culturalDNA,
       price,
@@ -20,6 +22,14 @@ export const createProduct = async (req, res) => {
       artisanName,
       gpsLocation,
       file3D,
+      craftVillage,
+      material,
+      salePrice,
+      saleStartDate,
+      saleEndDate,
+      status,
+      isPublicEvent,
+      b2bTiers,
     } = req.body;
 
     // Validate cơ bản 
@@ -43,9 +53,11 @@ export const createProduct = async (req, res) => {
     const newProduct = new Product({
       name,
       sku: sku.toUpperCase(),
-      description,
+      story,
       categoryMatrix,
       culturalDNA: culturalDNA || "OTHER",
+      craftVillage: craftVillage || "",
+      material: material || [],
       vendor, 
       price: Number(price),
       stock: Number(stock) || 0,
@@ -54,10 +66,45 @@ export const createProduct = async (req, res) => {
       artisanName: hasDPP ? artisanName : undefined,
       gpsLocation: hasDPP ? gpsLocation : undefined,
       file3D: hasDPP ? file3D : undefined,
+      salePrice: salePrice ? Number(salePrice) : undefined,
+      saleStartDate: saleStartDate || undefined,
+      saleEndDate: saleEndDate || undefined,
+      status: status || "DRAFT",
+      isPublicEvent: isPublicEvent === "true" || isPublicEvent === true,
+      b2bTiers: b2bTiers || [],
     });
 
     await newProduct.save();
 
+    if (newProduct.status === "PUBLISHED") {
+      try {
+        getIO().emit("product_created", newProduct);
+      } catch (err) {
+        console.error("Socket emit product_created error:", err);
+      }
+    }
+
+    if (newProduct.status === "PUBLISHED" && newProduct.isPublicEvent) {
+      const now = new Date();
+      const saleStarts = new Date(newProduct.saleStartDate);
+      if (newProduct.salePrice > 0 && saleStarts <= now) {
+        await createBulkMarketingNotifications(
+          "FLASH_SALE_TITLE",
+          `FLASH_SALE_MESSAGE::${newProduct.name}`,
+          `/shop/${newProduct._id}`
+        );
+        newProduct.isPublicEvent = false;
+        await newProduct.save();
+
+        try {
+          getIO().emit("product_updated", newProduct);
+        } catch (err) {}
+      }
+    }
+
+    const io = getIO();
+    io.emit("admin_product_updated", newProduct);
+    io.emit("product_updated", newProduct);
     return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
     console.error("Error in createProduct:", error);
@@ -69,6 +116,8 @@ export const createProduct = async (req, res) => {
 };
 
 // [GET] /api/products - Lấy danh sách sản phẩm với phân trang
+import fs from "fs";
+
 export const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -104,16 +153,21 @@ export const getProducts = async (req, res) => {
         query.status = status;
       }
     } else {
-      query.status = { $in: ["ACTIVE", "PUBLISHED"] };
+      query.status = { $in: ["PUBLISHED", "OUT_OF_STOCK"] };
     }
 
     if (inStock !== false) {
       query.stock = { $gt: 0 };
     }
 
+    let sortQuery = { createdAt: -1, _id: -1 };
+    if (!status) {
+      sortQuery = { status: -1, createdAt: -1, _id: -1 };
+    }
+
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query)
-      .sort({ createdAt: -1 })
+      .sort(sortQuery)
       .skip(skip)
       .limit(limit);
 
@@ -161,6 +215,45 @@ export const getProductById = async (req, res) => {
   }
 };
 
+// [GET] /api/products/shop/:id - Lấy chi tiết 1 sản phẩm cho E-com (có check status và B2B)
+export const getShopProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Tìm kiếm bằng Mongoose ObjectId hoặc bằng mã SKU
+    let product;
+    if (id.match(/^[0-9a-fA-F]{24}$/)) {
+      product = await Product.findById(id);
+    } 
+    
+    if (!product) {
+      product = await Product.findOne({ sku: id.toUpperCase() });
+    }
+
+    if (!product) {
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
+    // Chỉ trả về nếu sản phẩm đang PUBLISHED, ACTIVE, hoặc OUT_OF_STOCK
+    if (!["PUBLISHED", "ACTIVE", "OUT_OF_STOCK"].includes(product.status)) {
+      return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    }
+
+    // Phân quyền hiển thị (B2B Security)
+    const isB2B = ["B2B_Luxury", "B2B_Standard"].includes(product.categoryMatrix);
+    const isGuest = !req.user || req.user.role === "Guest";
+
+    if (isB2B && isGuest) {
+      return errorResponse(res, 403, "FORBIDDEN"); // Khách vãng lai không xem được B2B
+    }
+
+    return successResponse(res, 200, "GET_PRODUCT_SUCCESS", product);
+  } catch (error) {
+    console.error("Error in getShopProductById:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
 // [PUT] /api/products/:id - Cập nhật thông tin sản phẩm
 export const updateProduct = async (req, res) => {
   try {
@@ -185,8 +278,36 @@ export const updateProduct = async (req, res) => {
 
     Object.assign(product, updates);
 
+    // Reset low stock alert if stock is replenished > 10
+    if (product.stock > 10) {
+      product.lowStockAlerted = false;
+    }
+
     const updatedProduct = await product.save();
 
+    if (updatedProduct.status === "PUBLISHED" && updatedProduct.isPublicEvent) {
+      const now = new Date();
+      const saleStarts = new Date(updatedProduct.saleStartDate);
+      if (updatedProduct.salePrice > 0 && saleStarts <= now) {
+        createBulkMarketingNotifications(
+          "FLASH_SALE_TITLE",
+          `FLASH_SALE_MESSAGE::${updatedProduct.name}`,
+          `/shop/${updatedProduct._id}`
+        );
+        updatedProduct.isPublicEvent = false;
+        await updatedProduct.save();
+      }
+    }
+
+    try {
+      getIO().emit("product_updated", updatedProduct);
+    } catch (err) {
+      console.error("[Socket] Emit product_updated error:", err);
+    }
+
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
@@ -207,6 +328,14 @@ export const deleteProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!deletedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    
+    try {
+      getIO().emit("product_updated", deletedProduct);
+    } catch (err) {}
+
+    const io = getIO();
+    io.emit("admin_product_updated", deletedProduct);
+    io.emit("product_updated", deletedProduct);
     return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -221,7 +350,7 @@ export const getDeletedProducts = async (req, res) => {
 
     const total = await Product.countDocuments({ status: "HIDDEN" });
     const trashedProducts = await Product.find({ status: "HIDDEN" })
-      .sort({ updatedAt: -1 })
+      .sort({ updatedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -243,6 +372,9 @@ export const restoreProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!restoredProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND_IN_TRASH");
+    const io = getIO();
+    io.emit("admin_product_updated", restoredProduct);
+    io.emit("product_updated", restoredProduct);
     return successResponse(res, 200, "PRODUCT_RESTORED_SUCCESS", restoredProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -265,6 +397,9 @@ export const uploadProductGallery = async (req, res) => {
     );
     
     if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload Gallery] Error:", error);
@@ -287,6 +422,9 @@ export const uploadProduct3D = async (req, res) => {
     );
     
     if (!updatedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload 3D] Error:", error);
@@ -328,8 +466,112 @@ export const deleteProductImages = async (req, res) => {
       { new: true }
     );
 
+    const io = getIO();
+    io.emit("admin_product_updated", updatedProduct);
+    io.emit("product_updated", updatedProduct);
     return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// [GET] /api/products/shop - Lấy danh sách sản phẩm cho trang Shop (bảo vệ B2B)
+export const getShopProducts = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const { search, category, culturalDNA, craftVillage, material, onSale } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    let query = {
+      status: { $in: ["PUBLISHED", "OUT_OF_STOCK"] }
+    };
+
+    // --- LOGIC BẢO MẬT B2B ---
+    // Chỉ có Enterprise mới được xem B2B
+    if (!req.user || req.user.role !== "Enterprise") {
+      query.categoryMatrix = { $in: ["B2C_Premium", "B2C_Mass_Premium"] };
+    }
+
+    let andConditions = [];
+
+    if (search) {
+      const searchRegex = createVietnameseRegex(search);
+      andConditions.push({
+        $or: [
+          { name: { $regex: searchRegex, $options: "i" } },
+          { sku: { $regex: searchRegex, $options: "i" } },
+        ]
+      });
+    }
+
+    // Các bộ lọc
+    if (category) {
+      if (!req.user || req.user.role !== "Enterprise") {
+        if (!category.startsWith("B2B_")) {
+          query.categoryMatrix = category;
+        } else {
+          // Khách muốn tìm B2B -> Ép tìm kiếm vô nghĩa
+          query.categoryMatrix = "NO_ACCESS";
+        }
+      } else {
+         query.categoryMatrix = category;
+      }
+    }
+    
+    if (culturalDNA) query.culturalDNA = culturalDNA;
+    
+    if (craftVillage) {
+      const cvRegex = createVietnameseRegex(craftVillage);
+      andConditions.push({
+        $or: [
+          { craftVillage: { $regex: cvRegex, $options: "i" } },
+          { vendor: { $regex: cvRegex, $options: "i" } }
+        ]
+      });
+    }
+
+    if (onSale === 'true') {
+      const now = new Date();
+      andConditions.push({
+        salePrice: { $gt: 0 },
+        saleStartDate: { $lte: now },
+        saleEndDate: { $gte: now }
+      });
+    }
+    
+    // Tìm material (có chứa trong mảng)
+    const materialQuery = req.query.material || req.query["material[]"];
+    if (materialQuery) {
+      const materialList = Array.isArray(materialQuery) ? materialQuery : materialQuery.split(",");
+      const materialRegexes = materialList.map(m => new RegExp(`^${m.trim()}$`, "i"));
+      query.material = { $in: materialRegexes };
+    }
+
+    if (andConditions.length > 0) {
+      query.$and = andConditions;
+    }
+
+    const totalProducts = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .sort({ status: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    return successResponse(res, 200, "GET_SHOP_PRODUCTS_SUCCESS", {
+      pagination: {
+        totalItems: totalProducts,
+        totalPages,
+        currentPage: page,
+        limit,
+      },
+      data: products,
+    });
+  } catch (error) {
+    console.error("Error in getShopProducts:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

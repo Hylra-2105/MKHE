@@ -2,7 +2,8 @@
   "dna": {
     "title": "Cultural Products",
     "subtitle": "Discover the quintessence of unique craftsmanship",
-    "view_all": "View all"
+    "view_all": "View all",
+    "buy_now": "Buy now"
   },
   "hero": {
     "tag": "Heritage & Elegance",
@@ -20,7 +21,8 @@
       "about": "About Us",
       "b2b": "B2B Collection",
       "b2c": "B2C Fashion",
-      "heritage": "Heritage Journey"
+      "heritage": "Heritage Journey",
+      "explore_details": "Khám phá chi tiết"
     },
     "support": {
       "title": "Support",
@@ -39,5 +41,8 @@
     "badge": "Coming Soon",
     "title": "Board Game: Heritage Avenue",
     "desc": "A brand new interactive entertainment experience. Stay tuned for a multi-dimensional cultural journey through every square, soon to be revealed by MKHE!"
+  },
+  "core_tech": {
+    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
   }
 }

@@ -37,5 +37,35 @@
     "codeLabel": "Mã OTP của bạn",
     "footer": "Gửi lúc: {time}\nMã này sẽ hết hạn trong 10 phút. Nếu bạn không yêu cầu đổi mật khẩu, vui lòng bảo vệ tài khoản ngay lập tức.",
     "ignored": "Nếu bạn không thực hiện yêu cầu này, vui lòng đổi mật khẩu hoặc liên hệ bộ phận hỗ trợ."
+  },
+  "checkoutOtp": {
+    "subject": "Mã OTP xác nhận đơn hàng tại MKHE",
+    "greeting": "Xác nhận đặt hàng",
+    "instruction": "Bạn đang thực hiện thanh toán cho đơn hàng tại MKHE. Vui lòng nhập mã OTP dưới đây để xác nhận (áp dụng cho đơn COD):",
+    "codeLabel": "Mã OTP của bạn",
+    "footer": "Gửi lúc: {time}\nMã này sẽ hết hạn trong 10 phút. Vui lòng không chia sẻ mã này cho bất kỳ ai.",
+    "ignored": "Nếu bạn không đặt hàng, hãy bỏ qua email này."
+  },
+  "invoice": {
+    "subject": "Xác nhận đơn hàng #{orderCode} từ MKHE",
+    "greeting": "Cám ơn bạn đã đặt hàng!",
+    "intro": "Đơn hàng của bạn đã được xác nhận. Dưới đây là thông tin chi tiết:",
+    "orderCode": "Mã đơn hàng",
+    "paymentMethod": "Phương thức thanh toán",
+    "shippingInfo": "Thông tin giao hàng",
+    "items": "Sản phẩm",
+    "price": "Giá",
+    "qty": "SL",
+    "subtotal": "Tạm tính",
+    "shippingFee": "Phí vận chuyển",
+    "discountAmount": "Giảm giá",
+    "totalAmount": "Tổng thanh toán",
+    "footer": "Gửi lúc: {time}\nCám ơn bạn đã đồng hành cùng MKHE Heritage."
+  },
+  "b2bActivation": {
+    "subject": "Kích hoạt tài khoản Doanh nghiệp - Cổng B2B MKHE",
+    "greeting": "Chào mừng Quý đối tác,",
+    "instruction": "Tài khoản Doanh nghiệp của bạn trên hệ thống MKHE đã được tạo thành công. Vui lòng click vào nút bên dưới để thiết lập mật khẩu và kích hoạt tài khoản.",
+    "buttonText": "Truy cập Cổng Doanh Nghiệp MKHE"
   }
 }

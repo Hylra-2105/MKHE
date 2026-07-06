@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
-    const userLang = ["en", "vi"].includes(language) ? language : "vi";
+    const userLang = language || "vi";
 
     const user = await User.create({
       name: name.trim(),
@@ -37,10 +37,12 @@ export const registerUser = async (req, res) => {
 
       await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
-      // Fire and forget email
-      sendVerificationEmail(user.email, otp, userLang).catch((err) => {
+      try {
+        await sendVerificationEmail(user.email, otp, userLang);
+      } catch (err) {
         console.error("[Email Error]", err.message);
-      });
+        return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+      }
 
       return successResponse(res, 201, "REGISTER_SUCCESS", { email: user.email });
     } else {
@@ -150,9 +152,7 @@ export const loginUser = async (req, res) => {
         isVerified: user.isVerified,
         provider: user.provider,
         phone: user.phone,
-        country: user.country,
-        city: user.city,
-        address: user.address,
+        addresses: user.addresses,
         bio: user.bio,
       },
     });
@@ -186,11 +186,13 @@ export const resendOTP = async (req, res) => {
     await OTP.deleteMany({ email: user.email, purpose: "VERIFY_EMAIL" });
     await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
 
-    // Fix bug: 3 params instead of 4
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendVerificationEmail(user.email, otp, userLang).catch((err) => {
-        console.error("[Email Error]", err.message);
-    });
+    try {
+      await sendVerificationEmail(user.email, otp, userLang);
+    } catch (err) {
+      console.error("[Email Error]", err.message);
+      return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+    }
 
     return successResponse(res, 200, "RESEND_SUCCESS");
   } catch (error) {
@@ -270,9 +272,7 @@ export const socialLogin = async (req, res) => {
         isVerified: user.isVerified,
         provider: user.provider,
         phone: user.phone,
-        country: user.country,
-        city: user.city,
-        address: user.address,
+        addresses: user.addresses,
         bio: user.bio,
       },
     });
@@ -301,9 +301,12 @@ export const forgotPassword = async (req, res) => {
     await OTP.create({ email: user.email, otp, purpose: "RESET_PASSWORD" });
 
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendPasswordResetEmail(user.email, otp, userLang).catch((err) => {
-      console.error("[Email Error]", err);
-    });
+    try {
+      await sendPasswordResetEmail(user.email, otp, userLang);
+    } catch (err) {
+      console.error("[Email Error]", err.message);
+      return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
+    }
 
     return successResponse(res, 200, "OTP_SENT");
   } catch (error) {
@@ -527,6 +530,42 @@ export const getMe = async (req, res) => {
     return successResponse(res, 200, "GET_ME_SUCCESS", userData);
   } catch (error) {
     console.error("Get Me Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+export const activateB2BAccount = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+    
+    if (password.length < 6) {
+      return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+      role: "Enterprise"
+    });
+
+    if (!user) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_TOKEN");
+    }
+
+    // Hash is handled by the pre("save") hook in user.model.js
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    
+    await user.save();
+
+    return successResponse(res, 200, "ACCOUNT_ACTIVATED_SUCCESS");
+  } catch (error) {
+    console.error("Activate B2B Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

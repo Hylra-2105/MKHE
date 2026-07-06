@@ -30,25 +30,34 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["Guest", "Customer", "Staff", "Admin"],
+      enum: ["Guest", "Customer", "Staff", "Admin", "Enterprise"],
       default: "Customer",
     },
     phone: {
       type: String,
       default: "",
     },
-    country: {
+    companyName: {
       type: String,
       default: "",
     },
-    city: {
+    taxCode: {
       type: String,
       default: "",
     },
-    address: {
-      type: String,
-      default: "",
-    },
+    // Đã xóa country, city, address vì dùng mảng addresses
+    addresses: [
+      {
+        receiverName: { type: String, required: true },
+        receiverPhone: { type: String, required: true },
+        addressText: { type: String, required: true },
+        coordinates: {
+          lat: { type: Number },
+          lng: { type: Number },
+        },
+        isDefault: { type: Boolean, default: false },
+      }
+    ],
     bio: {
       type: String,
       default: "",

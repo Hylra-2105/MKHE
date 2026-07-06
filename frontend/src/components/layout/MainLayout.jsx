@@ -1,20 +1,25 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+import MiniCartDrawer from "./MiniCartDrawer";
+import Chatbot from "../../features/ai/components/Chatbot";
 
 export default function MainLayout() {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith("/admin");
   const isProfilePage = location.pathname.startsWith("/profile");
   const hideFooter = isAdminPage || isProfilePage;
+  const isHomePage = location.pathname === "/home" || location.pathname === "/";
 
   return (
-    <div className="flex flex-col min-h-screen bg-mkhe-bg text-current transition-colors duration-300">
+    <div className="flex flex-col min-h-screen max-w-[100vw] overflow-x-clip bg-mkhe-bg text-current transition-colors duration-300">
       <Header />
-      <main className="flex-1">
+      <main className={`flex-1 ${isHomePage ? "" : "pt-20"}`}>
         <Outlet />
       </main>
       {!hideFooter && <Footer />}
+      <MiniCartDrawer />
+      <Chatbot />
     </div>
   );
 }

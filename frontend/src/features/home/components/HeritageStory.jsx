@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { ArrowRight, MapPin, Sparkles } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import Fireflies from "./Fireflies";
 
-// Đã import đủ 3 bức ảnh của cha
+// Tự import ảnh
 import langPhongChauImg from "@/assets/images/lang-phong-chau.png";
 import langdetkhanranImg from "@/assets/images/lang-det-khan-ran.png";
 import langnghemaytreImg from "@/assets/images/lang-nghe-may-tre.png";
@@ -13,7 +12,6 @@ const HeritageStory = () => {
   const { t } = useTranslation("home");
   const [activeTab, setActiveTab] = useState(0);
 
-  // Đã gài đúng ảnh cho từng Tỉnh
   const journeyData = [
     {
       id: "an-giang",
@@ -66,93 +64,115 @@ const HeritageStory = () => {
   ];
 
   return (
-    <section className="pt-8 mt-6 pb-24 md:pt-16 md:pb-32 bg-mkhe-bg overflow-hidden relative">
-      {/* Background glow */}
-      <div className="absolute top-0 right-0 w-full h-[500px] bg-mkhe-primary/5 blur-[150px] pointer-events-none" />
-
-      <Fireflies />
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* =======================================
-            1. TIÊU ĐỀ SECTION
-        ======================================== */}
-        <div className="text-center mb-8 relative z-20">
-          <div className="inline-flex items-center gap-3 text-mkhe-primary text-xs md:text-sm font-bold uppercase tracking-[0.2em] bg-mkhe-primary/5 px-6 py-2 rounded-full">
-            <Sparkles className="w-4 h-4" />
-            Hành trình kết nối di sản
-            <Sparkles className="w-4 h-4" />
-          </div>
+    <section className="pt-20 pb-48 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        
+        {/* EDITORIAL HEADER */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-12">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true, amount: 0.3 }} 
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="lg:w-1/2"
+          >
+            <div className="inline-flex items-center gap-4 mb-8">
+              <span className="w-16 h-[1px] bg-mkhe-primary"></span>
+              <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">The Journey</span>
+            </div>
+            <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
+              Hành trình <br/>
+              <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Di sản</span>
+            </h2>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }} 
+            whileInView={{ opacity: 1, x: 0 }} 
+            viewport={{ once: true, amount: 0.3 }} 
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+            className="lg:w-1/2 flex lg:justify-end pb-8"
+          >
+            <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 lg:ml-0 font-light">
+              Chúng tôi đi dọc dòng Mekong, từ những xóm Chăm thanh bình, những phum sóc Khmer trầm mặc, đến những làng quê Kinh trù phú, để đánh thức và kết nối những mạch nguồn văn hóa đang dần bị lãng quên.
+            </p>
+          </motion.div>
         </div>
 
-        {/* =======================================
-            2. NỬA TRÊN: MÀN HÌNH ĐIỆN ẢNH (CINEMATIC VIEW)
-        ======================================== */}
-        <div className="w-full relative rounded-3xl overflow-hidden shadow-2xl aspect-[16/9] lg:aspect-[21/10] group mb-12">
-          {/* KHU VỰC THẢ ĐOM ĐÓM */}
-          <div
-            id="fireflies-container"
-            className="absolute inset-0 z-20 pointer-events-none"
-          ></div>
-
-          {/* Chuyển cảnh ảnh mượt mà */}
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={activeTab}
-              initial={{ opacity: 0, scale: 1.05 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-              src={journeyData[activeTab].image}
-              alt={journeyData[activeTab].province}
-              className="absolute inset-0 w-full h-full object-cover"
+        {/* DESKTOP TIMELINE (Hidden on mobile) */}
+        <div className="hidden md:block relative w-full h-[400px] mb-10">
+          {/* Wavy SVG Path */}
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 1200 400"
+            preserveAspectRatio="none"
+          >
+            <path 
+              d="M 0,200 C 100,200 100,300 200,300 S 500,100 600,100 S 900,300 1000,300 S 1100,200 1200,200" 
+              className="stroke-mkhe-primary/50 stroke-[2] fill-transparent" 
             />
-          </AnimatePresence>
+          </svg>
 
-          {/* Gradient tối dần từ dưới lên để làm nổi bật hệ thống Tab bên dưới */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none"></div>
+          {/* Timeline Nodes */}
+          {journeyData.map((tab, index) => {
+            const isActive = activeTab === index;
+            // Precise positioning to match the bezier curve peaks/valleys
+            const leftPos = index === 0 ? "16.666%" : index === 1 ? "50%" : "83.333%";
+            const topPos = index === 0 ? "75%" : index === 1 ? "25%" : "75%";
+            
+            return (
+              <div 
+                key={tab.id}
+                className="absolute flex flex-col items-center"
+                style={{ left: leftPos, top: topPos, transform: 'translate(-50%, -50%)' }}
+              >
+                <button 
+                  onClick={() => setActiveTab(index)}
+                  className={`cursor-pointer relative w-40 h-40 rounded-full border-4 overflow-hidden transition-all duration-500 group ${isActive ? 'border-mkhe-primary scale-110 shadow-[0_0_20px_rgba(212,163,115,0.4)] z-10' : 'border-mkhe-border hover:border-mkhe-primary/50 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 z-0'}`}
+                >
+                  <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
+                  <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40 group-hover:bg-transparent'}`}></div>
+                  
+                  {/* Glowing dot on the timeline path */}
+                  <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full transition-all duration-500 ${isActive ? 'bg-mkhe-primary shadow-[0_0_10px_#D4A373]' : 'bg-mkhe-primary/50 opacity-0 group-hover:opacity-100'}`}></div>
+                </button>
+                
+                {/* Node Label */}
+                <div className="absolute text-center w-64 transition-all duration-500 top-[120%]">
+                  <h4 className={`text-2xl font-bold tracking-wide ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
+                  <p className="text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* =======================================
-            3. NỬA DƯỚI: HỆ THỐNG TAB & THÔNG TIN LÀNG NGHỀ
-        ======================================== */}
-        <div className="relative z-20">
-          {/* THANH ĐIỀU HƯỚNG TỈNH THÀNH (TABS) */}
-          <div className="flex flex-nowrap justify-center gap-1 sm:gap-4 md:gap-12 border-b border-mkhe-primary/20 pb-4 mb-8 md:pb-6 md:mb-12 px-1">
-            {journeyData.map((tab, index) => {
-              const isActive = activeTab === index;
-              return (
-                <button
-                  key={tab.id}
+        {/* MOBILE TIMELINE (Hidden on desktop) */}
+        <div className="md:hidden flex flex-col gap-12 mt-10 relative">
+          <div className="absolute left-[39px] top-4 bottom-4 w-[2px] bg-mkhe-primary/20"></div>
+          {journeyData.map((tab, index) => {
+            const isActive = activeTab === index;
+            return (
+              <div key={tab.id} className="relative flex items-center gap-6">
+                <button 
                   onClick={() => setActiveTab(index)}
-                  className={`relative flex items-center justify-center cursor-pointer gap-1.5 md:gap-3 px-2 sm:px-4 py-2 transition-all duration-300 ${
-                    isActive
-                      ? "text-mkhe-primary"
-                      : "text-mkhe-text/60 hover:text-mkhe-text"
-                  }`}
+                  className={`cursor-pointer relative z-10 w-20 h-20 rounded-full flex-shrink-0 border-2 overflow-hidden transition-all duration-300 ${isActive ? 'border-mkhe-primary shadow-[0_0_15px_rgba(212,163,115,0.4)] scale-110' : 'border-mkhe-border grayscale opacity-70'}`}
                 >
-                  <MapPin
-                    className={`w-3.5 h-3.5 md:w-5 md:h-5 ${isActive ? "opacity-100 hidden sm:block" : "opacity-0 hidden md:block"}`}
-                  />
-                  <div className="text-center md:text-left">
-                    <h3 className={`font-logo text-sm sm:text-lg md:text-2xl font-bold whitespace-nowrap`}>
-                      {tab.province}
-                    </h3>
-                    <p className="text-xs md:text-sm font-medium hidden md:block">
-                      {tab.dna}
-                    </p>
-                  </div>
-                  {/* Đường line chạy chạy báo hiệu đang active */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute -bottom-[25px] left-0 right-0 h-1 bg-mkhe-primary rounded-t-full shadow-[0_-2px_10px_rgba(212,163,115,0.5)]"
-                    />
-                  )}
+                  <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
+                  <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40'}`}></div>
                 </button>
-              );
-            })}
-          </div>
+                <div>
+                  <h4 className={`text-xl font-bold ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
+                  <p className="text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
 
-          {/* NỘI DUNG CHI TIẾT CÁC LÀNG NGHỀ CỦA TỈNH ĐANG CHỌN */}
+        {/* DETAILS BLOCK (Below timeline) */}
+        <div className="mt-16 md:mt-24 max-w-4xl mx-auto border-t border-mkhe-primary/20 pt-16 relative">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-mkhe-bg border border-mkhe-primary/50 rotate-45"></div>
+          
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -160,45 +180,85 @@ const HeritageStory = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12"
+              className="space-y-10"
             >
-              {journeyData[activeTab].villages.map((village, vIdx) => (
-                <div
-                  key={vIdx}
-                  className="bg-mkhe-primary/5 rounded-2xl p-6 md:p-8 border border-mkhe-primary/10 hover:border-mkhe-primary/30 transition-colors group"
-                >
-                  <div className="w-10 h-10 rounded-full bg-mkhe-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <div className="w-3 h-3 bg-mkhe-primary rounded-full shadow-[0_0_10px_rgba(212,163,115,0.8)]" />
+              <div className="text-center">
+                <h4 className="text-2xl md:text-3xl font-bold text-mkhe-text mb-2">
+                  Khám phá <span className="text-mkhe-primary font-logo italic font-normal text-4xl md:text-5xl ml-2">{journeyData[activeTab].province}</span>
+                </h4>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {journeyData[activeTab].villages.map((village, vIdx) => (
+                  <div key={vIdx} className="bg-mkhe-bg/40 p-6 border border-mkhe-border/30 hover:border-mkhe-primary/50 transition-colors rounded-sm">
+                    <h5 className="font-bold text-lg mb-3 text-mkhe-text flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-mkhe-primary shrink-0"></span>
+                      {village.name}
+                    </h5>
+                    <p className="text-mkhe-text/60 text-sm leading-relaxed font-light">
+                      {village.desc}
+                    </p>
                   </div>
-                  <h4 className="font-bold text-mkhe-text text-lg mb-3">
-                    {village.name}
-                  </h4>
-                  <p className="text-mkhe-text/70 text-base leading-relaxed">
-                    {village.desc}
-                  </p>
-                </div>
-              ))}
-
-              {/* Nút Call to Action khám phá tỉnh */}
-              <div className="flex items-center justify-center lg:justify-start lg:col-span-1 p-6 md:p-8">
-                <button
-                  id="explore-btn"
-                  className="group relative flex flex-col items-center lg:items-start text-mkhe-primary hover:text-[#C38D64] transition-colors"
-                >
-                  <span className="text-sm font-bold uppercase tracking-widest mb-2 opacity-80">
-                    {t("footer.explore.explore_details")}
-                  </span>
-                  <span className="flex items-center gap-3 text-2xl font-logo font-bold">
-                    {journeyData[activeTab].province}
-                    <div className="w-10 h-10 rounded-full bg-mkhe-primary text-white flex items-center justify-center transform group-hover:translate-x-2 transition-transform shadow-lg shadow-mkhe-primary/30">
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  </span>
+                ))}
+              </div>
+              
+              <div className="pt-4 flex justify-center">
+                <button className="cursor-pointer group flex items-center gap-4 text-sm font-bold uppercase tracking-widest text-mkhe-text hover:text-mkhe-primary transition-colors border border-mkhe-border px-8 py-4 hover:border-mkhe-primary rounded-sm">
+                  Tới trạm di sản
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </motion.div>
           </AnimatePresence>
         </div>
+      </div>
+
+      {/* Bờ cong sóng (Wave Divider) nghệ thuật */}
+      <div className="absolute bottom-0 left-0 w-full leading-[0] z-20 pointer-events-none translate-y-1/2">
+        <svg
+          className="relative block w-full h-[150px] md:h-[300px]"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1200 240"
+          preserveAspectRatio="none"
+        >
+          {/* Lớp nền chính (Base) che đường nối */}
+          <path 
+            d="M0,100 C300,120 600,60 900,110 C1050,115 1150,80 1200,100 V240 H0 Z" 
+            className="fill-mkhe-bg"
+          ></path>
+
+          {/* Dải lụa mỏng 1 */}
+          <path 
+            d="M0,180 C200,240 350,40 600,60 C850,80 1000,220 1200,160" 
+            className="fill-transparent stroke-mkhe-primary/30 stroke-[2]"
+          ></path>
+          
+          {/* Dải lụa mỏng 2 */}
+          <path 
+            d="M0,80 C250,20 400,160 700,140 C950,120 1050,40 1200,100" 
+            className="fill-transparent stroke-mkhe-primary/40 stroke-[1]"
+          ></path>
+
+          {/* Dải lụa mỏng 3 (mảng fill lơ lửng, cong đều) */}
+          <path 
+            d="M0,120 C300,60 500,200 800,160 C1000,130 1100,70 1200,140 C1000,180 800,220 500,140 C300,80 150,140 0,150 Z" 
+            className="fill-mkhe-primary/5 stroke-none"
+          ></path>
+
+          {/* Dải sáng phát quang (Đường line chính) */}
+          <path 
+            d="M0,140 C250,220 450,20 750,80 C1000,140 1100,220 1200,180" 
+            className="fill-transparent stroke-mkhe-primary stroke-[3]"
+            style={{ filter: 'drop-shadow(0px 0px 8px rgba(212,163,115,0.8))' }}
+          ></path>
+          
+          {/* Một dải sáng lướt qua */}
+          <path 
+            d="M0,60 C300,20 500,180 850,200 C1050,220 1150,100 1200,60" 
+            className="fill-transparent stroke-mkhe-primary/80 stroke-[1]"
+            style={{ filter: 'drop-shadow(0px 0px 4px rgba(212,163,115,0.5))' }}
+          ></path>
+        </svg>
       </div>
     </section>
   );

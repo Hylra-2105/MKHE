@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X, Package, UploadCloud, ImageIcon, Fingerprint, Box } from "lucide-react";
+import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Dropdown from "@/components/ui/Dropdown";
 import { productApi } from "@/api/productApi";
@@ -9,6 +9,29 @@ import { formatNumber, parseNumber } from "@/utils/formatters";
 import { draftDB } from "@/utils/db";
 import { compressGLB } from "@/utils/glbCompressor";
 import { compressImage } from "@/utils/imageCompressor";
+import RichTextEditor from "@/components/ui/RichTextEditor";
+import ImageGalleryUploader from "./ImageGalleryUploader";
+import Model3DUploader from "./Model3DUploader";
+import B2BTiersInput from "./B2BTiersInput";
+import { getBlogsApi } from "@/api/blogApi";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/flatpickr.css";
+import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
+
+const flatpickrOptions = {
+  locale: Vietnamese,
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  time_24hr: true,
+};
+
+const formatFlatpickrDate = (dateObj) => {
+  if (!dateObj) return "";
+  const d = new Date(dateObj);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n) => n.toString().padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
 const MAX_IMAGES = 10;
 const LOCAL_STORAGE_KEY = "mkhe_add_product_draft";
@@ -19,20 +42,80 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const autoSaveTimeoutRef = useRef(null);
 
+  const [formErrors, setFormErrors] = useState({});
+  const [isMaterialDropdownOpen, setIsMaterialDropdownOpen] = useState(false);
+  const materialDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (materialDropdownRef.current && !materialDropdownRef.current.contains(event.target)) {
+        setIsMaterialDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // --- STATE CƠ BẢN + MVP ---
   const [formData, setFormData] = useState({
     name: "",
     sku: "",
     vendor: "", // Sử dụng Dropdown có sẵn
-    description: "",
-    categoryMatrix: "B2C_Mass_Premium",
+    craftVillage: "",
+    material: [],
+    story: "",
+    categoryMatrix: "B2B_Luxury",
     culturalDNA: "OTHER",
     price: "",
+    salePrice: "",
+    saleStartDate: "",
+    saleEndDate: "",
     stock: "",
+    status: "DRAFT",
     hasDPP: false,
     artisanName: "",
     gpsLocation: "",
+    storyBlogId: "",
+    isPublicEvent: false,
+    hasSale: false,
+    b2bTiers: [],
   });
+
+  const saleStartDateOptions = React.useMemo(() => {
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 5);
+
+    return {
+      ...flatpickrOptions,
+      minDate: d,
+      defaultHour: now.getHours(),
+      defaultMinute: now.getMinutes(),
+    };
+  }, []);
+
+  const saleEndDateOptions = React.useMemo(() => {
+    let minD;
+    if (formData.saleStartDate) {
+      minD = new Date(formData.saleStartDate);
+      minD.setHours(0,0,0,0);
+    } else {
+      minD = new Date();
+      minD.setHours(0,0,0,0);
+    }
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 65); // Default end date to 1 hour after start
+
+    return {
+      ...flatpickrOptions,
+      minDate: minD,
+      defaultHour: formData.saleStartDate ? new Date(formData.saleStartDate).getHours() : now.getHours(),
+      defaultMinute: formData.saleStartDate ? new Date(formData.saleStartDate).getMinutes() : now.getMinutes(),
+    };
+  }, [formData.saleStartDate]);
 
   // --- STATE CHO ẢNH & FILE 3D ---
   const fileInputRef = useRef(null);
@@ -59,6 +142,22 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     return () => clearTimeout(timer);
   }, [formData.gpsLocation]);
 
+  // --- BLOGS CHO KÝ SỰ ---
+  const [storyBlogs, setStoryBlogs] = useState([]);
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await getBlogsApi({ category: "Ký sự", status: "PUBLISHED", limit: 100 });
+        if (res.blogs) {
+          setStoryBlogs(res.blogs);
+        }
+      } catch (error) {
+        console.error("Fetch blogs error", error);
+      }
+    };
+    if (isOpen) fetchBlogs();
+  }, [isOpen]);
+
   // --- CÁC MẢNG DỮ LIỆU DROPDOWN ---
   const categories = [
     { value: "B2B_Luxury", label: t("categories.B2B_Luxury") },
@@ -83,6 +182,27 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     { value: "Hanhsilk", label: "Hanhsilk" },
   ];
 
+  const predefinedMaterials = [
+    { value: "Thổ cẩm", label: t("materials.brocade", "Thổ cẩm") },
+    { value: "Lụa", label: t("materials.silk", "Lụa") },
+    { value: "Gốm", label: t("materials.ceramic", "Gốm") },
+    { value: "Da bò", label: t("materials.leather", "Da bò") },
+    { value: "Khóa đồng", label: t("materials.copper", "Khóa đồng") },
+    { value: "Bạc", label: t("materials.silver", "Bạc") },
+    { value: "Gỗ", label: t("materials.wood", "Gỗ") }
+  ];
+
+  // Xử lý thay đổi material (checkbox)
+  const toggleMaterial = (mat) => {
+    setFormData((prev) => {
+      const current = prev.material || [];
+      if (current.includes(mat)) {
+        return { ...prev, material: current.filter((m) => m !== mat) };
+      }
+      return { ...prev, material: [...current, mat] };
+    });
+  };
+
   // ================= LOAD DRAFT TỪ INDEXEDDB =================
   useEffect(() => {
     if (!isOpen) return;
@@ -100,6 +220,22 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
               type: file.type
             }));
             setPreviewUrls(urls);
+          }
+          
+          const isDraftEmpty = 
+            (!saved.formData.name) &&
+            (!saved.formData.sku) &&
+            (!saved.formData.vendor) &&
+            (!saved.formData.craftVillage) &&
+            (!saved.formData.material || saved.formData.material.length === 0) &&
+            (!saved.formData.story) &&
+            (!saved.formData.price) &&
+            (!saved.formData.stock) &&
+            (!saved.imageFiles || saved.imageFiles.length === 0) &&
+            (!saved.file3D);
+
+          if (!isDraftEmpty) {
+            toast.success(t("messages.draft_restore_success"), { id: "draft-restore", duration: 3000 });
           }
         }
       } catch (e) {
@@ -132,6 +268,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   if (!isOpen) return null;
 
   const updateField = (name, value) => {
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -160,7 +297,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       for (const file of fileArray) {
         if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
-          toast.error(t("errors.invalid_file_type", "Định dạng file không hợp lệ! Chỉ chấp nhận ảnh và video."));
+          toast.error(t("errors.invalid_file_type"));
           continue;
         }
 
@@ -170,7 +307,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
           processedFile = await compressImage(file);
         } else if (file.size > 100 * 1024 * 1024) {
           // Video giới hạn 100MB
-          toast.error(`Video ${file.name} quá lớn (>100MB).`);
+          toast.error(t("messages.video_too_large", { name: file.name }));
           continue;
         }
 
@@ -181,11 +318,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       setImageFiles((prev) => [...prev, ...validFiles]);
       setPreviewUrls((prev) => [...prev, ...newPreviews]);
       
-      if (validFiles.length > 0) toast.success("Xử lý file thành công!", { id: toastId });
+      if (validFiles.length > 0) toast.success(t("messages.processing_images_success"), { id: toastId, duration: 3000 });
       else toast.dismiss(toastId);
     } catch (error) {
-      console.error(error);
-      toast.error("Có lỗi xảy ra khi xử lý file", { id: toastId });
+      toast.error(t("messages.processing_images_error"), { id: toastId, duration: 3000 });
     } finally {
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
@@ -197,7 +333,6 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     setPreviewUrls((prev) => prev.filter((_, i) => i !== indexToRemove));
   };
 
-  // ================= KÉO THẢ & XỬ LÝ FILE 3D (.GLB) =================
   const handleDragOver3D = (e) => { e.preventDefault(); setIsDragging3D(true); };
   const handleDragLeave3D = (e) => { e.preventDefault(); setIsDragging3D(false); };
   const handleDrop3D = (e) => {
@@ -218,22 +353,20 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       return toast.error(t("errors.error_3d_format", { ns: "admin" }));
     }
     
-    // Cảnh báo nếu file quá khủng khiếp (>150MB) có thể crash trình duyệt
     if (file.size > 150 * 1024 * 1024) {
-      return toast.error("File 3D quá lớn (>150MB), có thể làm đứng trình duyệt. Vui lòng giảm bớt từ phần mềm 3D trước.");
+      return toast.error(t("messages.file_3d_too_large"));
     }
 
     setIsCompressing3D(true);
-    const toastId = toast.loading(`Đang tối ưu file 3D (${(file.size / (1024 * 1024)).toFixed(1)}MB)... Quá trình này dùng CPU máy bạn, vui lòng không tắt trang!`, { duration: 30000 });
+    const toastId = toast.loading(t("messages.optimizing_3d", { size: (file.size / (1024 * 1024)).toFixed(1) }), { duration: 30000 });
 
     try {
-      // Chạy thuật toán nén Draco + WebP trực tiếp trên web
       const compressedFile = await compressGLB(file);
       setFile3D(compressedFile);
-      toast.success(`Tối ưu 3D thành công! Dung lượng giảm còn: ${(compressedFile.size / (1024 * 1024)).toFixed(2)}MB`, { id: toastId });
+      toast.success(t("messages.optimize_3d_success", { size: (compressedFile.size / (1024 * 1024)).toFixed(2) }), { id: toastId, duration: 3000 });
     } catch (error) {
       console.error(error);
-      toast.error(`Tối ưu 3D thất bại: ${error.message || "Lỗi cấu trúc file"}. Sẽ sử dụng file gốc.`, { id: toastId });
+      toast.error(t("messages.optimize_3d_error", { error: error.message || t("errors.file_structure") }), { id: toastId, duration: 3000 });
       setFile3D(file);
     } finally {
       setIsCompressing3D(false);
@@ -250,22 +383,104 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.sku || !formData.price || !formData.vendor) {
-      return toast.error("Vui lòng điền đủ Tên, SKU, Giá và Nhà cung cấp.");
-    }
+    let errors = {};
+    if (!formData.name) errors.name = t("products.errors.name_required", "Vui lòng điền tên sản phẩm");
+    if (!formData.sku) errors.sku = t("products.errors.sku_required", "Vui lòng điền mã SKU");
+    if (!formData.price) errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    if (!formData.vendor) errors.vendor = t("products.errors.vendor_required", "Vui lòng chọn nhà cung cấp");
+
     if (formData.hasDPP) {
-      if (!formData.artisanName || !formData.gpsLocation) {
-        return toast.error("Hộ chiếu số yêu cầu Tên nghệ nhân và Vị trí / Địa chỉ Làng nghề.");
+      if (!formData.artisanName) errors.artisanName = t("products.errors.artisan_required", "Vui lòng điền tên nghệ nhân");
+      if (!formData.gpsLocation) errors.gpsLocation = t("products.errors.gps_required", "Vui lòng điền vị trí GPS");
+    }
+
+    if (formData.hasSale && formData.salePrice && Number(formData.salePrice) > 0) {
+      if (Number(formData.salePrice) >= Number(formData.price)) {
+        errors.salePrice = t("products.errors.sale_price_invalid", "Giá Sale phải nhỏ hơn giá gốc");
       }
+      if (!formData.saleStartDate) {
+        errors.saleStartDate = t("products.errors.sale_start_required", "Vui lòng chọn ngày bắt đầu Sale");
+      }
+      if (!formData.saleEndDate) {
+        errors.saleEndDate = t("products.errors.sale_end_required", "Vui lòng chọn ngày kết thúc Sale");
+      }
+      if (formData.saleStartDate && formData.saleEndDate) {
+        if (new Date(formData.saleEndDate) <= new Date(formData.saleStartDate)) {
+          errors.saleEndDate = t("products.errors.sale_end_invalid", "Kết thúc phải sau thời gian bắt đầu");
+        }
+        if (new Date(formData.saleEndDate) <= new Date()) {
+          errors.saleEndDate = t("products.errors.sale_end_future", "Kết thúc phải ở tương lai");
+        }
+        
+        const start = new Date(formData.saleStartDate);
+        start.setSeconds(0, 0);
+        const now = new Date();
+        now.setSeconds(0, 0);
+
+        if (start < now) {
+          errors.saleStartDate = t("products.errors.sale_start_past", "Thời gian bắt đầu không được trong quá khứ");
+        }
+      }
+    }
+
+    if (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") {
+      if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
+        errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
+      } else {
+        for (let i = 0; i < formData.b2bTiers.length; i++) {
+          const q = parseInt(formData.b2bTiers[i].minQuantity);
+          const d = parseInt(formData.b2bTiers[i].discountPercent);
+
+          if (!formData.b2bTiers[i].minQuantity || !formData.b2bTiers[i].discountPercent) {
+            errors.b2bTiers = t("products.errors.b2b_missing_fields", "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.");
+            break;
+          }
+          if (q <= 0 || d < 0 || d > 100) {
+            errors.b2bTiers = t("products.errors.b2b_invalid_values", "Số lượng phải > 0 và % giảm giá từ 0 - 100.");
+            break;
+          }
+          
+          if (i > 0) {
+            const prevQ = parseInt(formData.b2bTiers[i - 1].minQuantity);
+            const prevD = parseInt(formData.b2bTiers[i - 1].discountPercent);
+            if (q <= prevQ) {
+              errors.b2bTiers = t("products.errors.b2b_quantity_order", { current: i + 1, prev: i, prevQ });
+              break;
+            }
+            if (d <= prevD) {
+              errors.b2bTiers = t("products.errors.b2b_discount_order", { current: i + 1, prev: i, prevD });
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    if (formData.status === "PUBLISHED" && (!formData.stock || Number(formData.stock) <= 0)) {
+      return toast.error(t("messages.public_stock_error"));
     }
 
     setLoading(true);
     try {
-      const response = await productApi.createProduct({
+      const createPayload = {
         ...formData,
         price: Number(formData.price),
+        salePrice: formData.hasSale && formData.salePrice ? Number(formData.salePrice) : 0,
         stock: Number(formData.stock) || 0,
-      });
+      };
+
+      if (!createPayload.hasSale) {
+        createPayload.saleStartDate = null;
+        createPayload.saleEndDate = null;
+        createPayload.isPublicEvent = false;
+      }
+
+      const response = await productApi.createProduct(createPayload);
 
       if (!response.success || !response.data?._id) throw new Error("No product ID returned");
       const newProductId = response.data._id;
@@ -295,7 +510,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
       toast.success(t("messages.add_success"));
 
-      try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {}
+      try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {
+        // Ignore DB error
+      }
       resetForm();
       if (onSuccess) onSuccess();
       onClose();
@@ -310,17 +527,20 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
   const resetForm = () => {
     setFormData({
-      name: "", sku: "", vendor: "", description: "", categoryMatrix: "B2C_Mass_Premium",
-      culturalDNA: "OTHER", price: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "",
+      name: "", sku: "", vendor: "", craftVillage: "", material: [], description: "", categoryMatrix: "B2C_Mass_Premium",
+      culturalDNA: "OTHER", price: "", salePrice: "", saleStartDate: "", saleEndDate: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "", storyBlogId: "", b2bTiers: [],
     });
     setImageFiles([]); setFile3D(null);
     previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
     setPreviewUrls([]);
+    setFormErrors({});
   };
 
   const handleCancel = async () => {
     resetForm();
-    try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {}
+    try { await draftDB.removeItem(LOCAL_STORAGE_KEY); } catch (e) {
+      // Ignore
+    }
     onClose();
   };
 
@@ -334,7 +554,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
             <Package className="w-5 h-5 mb-1 text-mkhe-primary" />
             <h2 className="text-lg font-bold text-gradient-gold">{t("modal.add_title")}</h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-mkhe-primary/10 cursor-pointer rounded-full transition-colors">
+          <button onClick={handleCancel} className="p-2 hover:bg-mkhe-primary/10 cursor-pointer rounded-full transition-colors">
             <X className="w-5 h-5 text-mkhe-text/70" />
           </button>
         </div>
@@ -343,31 +563,23 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* CỘT TRÁI: UPLOAD ẢNH */}
           <div className="md:w-[35%] bg-mkhe-primary/5 p-6 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 overflow-y-auto custom-scrollbar">
-            <div className="flex items-center gap-2 mb-4">
-              <ImageIcon className="w-4 h-4 text-mkhe-primary" />
-              <label className="text-xs font-bold text-mkhe-text/70 uppercase">{t("modal.images_label")} ({previewUrls.length}/{MAX_IMAGES})</label>
-            </div>
-            <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className={`border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${isDragging ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg" : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"}`}>
-              <div className="pointer-events-none flex flex-col items-center">
-                <UploadCloud className={`w-10 h-10 mb-3 ${isDragging ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                <p className="text-sm text-center font-semibold text-mkhe-text/80">{t("modal.drag_drop_text")}</p>
-              </div>
-              <input type="file" ref={fileInputRef} onChange={handleFileInput} accept="image/*,video/*" multiple className="hidden" />
-            </div>
-            {previewUrls.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mt-6">
-                {previewUrls.map((preview, index) => (
-                  <div key={index} className="relative group rounded-lg overflow-hidden border border-mkhe-border/30 aspect-square cursor-pointer hover:border-mkhe-primary transition-colors" onClick={() => setActiveLightboxUrl(preview)}>
-                    {preview.type.startsWith("video/") ? (
-                      <video src={preview.url} className="w-full h-full object-cover" muted />
-                    ) : (
-                      <img src={preview.url} alt={`preview-${index}`} className="w-full h-full object-cover" />
-                    )}
-                    <button type="button" onClick={(e) => { e.stopPropagation(); removeImage(index); }} className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 shadow-md"><X className="w-3 h-3" /></button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <ImageGalleryUploader
+              maxImages={MAX_IMAGES}
+              keptImages={[]}
+              newImagePreviews={previewUrls}
+              deletedImages={[]}
+              isDragging={isDragging}
+              fileInputRef={fileInputRef}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onFileInputClick={() => fileInputRef.current?.click()}
+              onFileInputChange={handleFileInput}
+              onSetActiveLightboxUrl={setActiveLightboxUrl}
+              onMarkImageForDeletion={() => {}}
+              onUndoDeleteImage={() => {}}
+              onRemoveNewImage={removeImage}
+            />
           </div>
 
           {/* CỘT PHẢI: FORM THÔNG TIN */}
@@ -381,11 +593,23 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-8">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.name_placeholder")} />
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.name_placeholder")} />
+                    {formErrors.name && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.name}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-4">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" required value={formData.sku} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase" placeholder={t("modal.sku_placeholder")} />
+                    <input type="text" name="sku" value={formData.sku} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm uppercase ${formErrors.sku ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.sku_placeholder")} />
+                    {formErrors.sku && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.sku}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -401,15 +625,80 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   </div>
                 </div>
 
-                {/* DÒNG 3: NHÀ CUNG CẤP, GIÁ BÁN, TỒN KHO */}
+                {/* DÒNG 3: NHÀ CUNG CẤP & LÀNG NGHỀ */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => updateField("vendor", val)} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    {formErrors.vendor && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.vendor}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-1 col-span-6">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
+                    <input type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
+                  </div>
+                </div>
+
+                {/* DÒNG 4: GIÁ BÁN, TỒN KHO & CHẤT LIỆU */}
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="space-y-1 col-span-6">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.material", "Chất liệu")}</label>
+                    <div className="relative" ref={materialDropdownRef}>
+                      <button
+                        type="button"
+                        onClick={() => setIsMaterialDropdownOpen(!isMaterialDropdownOpen)}
+                        className="w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border p-3.5 rounded-xl text-sm cursor-pointer"
+                      >
+                        <span className="truncate">
+                          {formData.material?.length > 0
+                            ? formData.material.join(", ")
+                            : "Chọn chất liệu"}
+                        </span>
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 shrink-0 ${isMaterialDropdownOpen ? "rotate-180" : ""}`} />
+                      </button>
+
+                      {isMaterialDropdownOpen && (
+                        <div className="absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 overflow-hidden max-h-60 overflow-y-auto custom-scrollbar">
+                          {predefinedMaterials.map((mat) => {
+                            const isSelected = formData.material?.includes(mat.value);
+                            return (
+                              <div
+                                key={mat.value}
+                                onClick={() => toggleMaterial(mat.value)}
+                                className={`flex items-center gap-3 p-2.5 mx-2 mb-1.5 last:mb-0 rounded-lg cursor-pointer transition-colors ${isSelected ? "bg-mkhe-primary/10" : "hover:bg-mkhe-border/10"}`}
+                              >
+                                <div className="flex-shrink-0 pointer-events-none">
+                                  <input 
+                                    type="checkbox" 
+                                    className="magic-cb-input"
+                                    checked={isSelected}
+                                    readOnly
+                                  />
+                                  <label className="magic-cb-label m-0">
+                                    <span></span>
+                                  </label>
+                                </div>
+                                <span className="text-sm font-medium text-mkhe-text">{mat.label}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.price_placeholder")} />
+                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.price_placeholder")} />
+                    {formErrors.price && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{formErrors.price}</p>
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1 col-span-3">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
@@ -417,9 +706,120 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   </div>
                 </div>
 
+                {/* KHỐI MỚI: CHƯƠNG TRÌNH SALE (VỚI TOGGLE) */}
+                <div className="p-5 border border-yellow-500/30 bg-yellow-500/5 rounded-2xl relative overflow-hidden">
+                  <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-yellow-500/20 rounded-md">
+                        <Tag className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-yellow-700">{t("form.sale.title", "Chương trình Sale")}</h3>
+                        <p className="text-[11px] text-yellow-600/70">{t("form.sale.subtitle", "Thiết lập giá khuyến mãi và thời gian")}</p>
+                      </div>
+                    </div>
+                    {/* NÚT GẠT TOGGLE CHO HAS SALE */}
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        name="hasSale" 
+                        checked={formData.hasSale} 
+                        onChange={(e) => {
+                          handleChange(e);
+                          if (e.target.checked) {
+                            setFormData(prev => ({ ...prev, hasSale: true, isPublicEvent: true }));
+                          }
+                        }} 
+                        className="sr-only peer" 
+                      />
+                      <div className="w-11 h-6 bg-yellow-500/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                    </label>
+                  </div>
+
+                  <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasSale ? "max-h-[700px] mt-5 opacity-100" : "max-h-0 opacity-0"}`}>
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.salePrice", "Giá Sale")}</label>
+                        <input type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.salePrice ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm`} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} />
+                        {formErrors.salePrice && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.salePrice}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.startSale", "Bắt đầu Sale")}</label>
+                        <Flatpickr
+                          value={formatFlatpickrDate(formData.saleStartDate)}
+                          onChange={([date]) => updateField("saleStartDate", date)}
+                          options={saleStartDateOptions}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          placeholder="dd/mm/yyyy --:--"
+                        />
+                        {formErrors.saleStartDate && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.saleStartDate}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1 col-span-4">
+                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.endSale", "Kết thúc Sale")}</label>
+                        <Flatpickr
+                          value={formatFlatpickrDate(formData.saleEndDate)}
+                          onChange={([date]) => updateField("saleEndDate", date)}
+                          options={saleEndDateOptions}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          placeholder="dd/mm/yyyy --:--"
+                        />
+                        {formErrors.saleEndDate && (
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                            <p className="text-xs font-medium">{formErrors.saleEndDate}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* TOGGLE GỬI THÔNG BÁO PUSH */}
+                    <div className="flex items-center justify-between mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-yellow-700">{t("form.sale.sendPush", "Gửi thông báo")}</span>
+                        <span className="text-[11px] text-yellow-700/70">{t("form.sale.sendPushDesc", "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành")}</span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          name="isPublicEvent" 
+                          checked={formData.isPublicEvent} 
+                          onChange={handleChange} 
+                          className="sr-only peer" 
+                        />
+                        <div className="w-11 h-6 bg-yellow-500/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* BẢNG GIÁ SỈ (CHỈ HIỂN THỊ NẾU LÀ SẢN PHẨM B2B) */}
+                {(formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") && (
+                  <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                    <B2BTiersInput
+                      tiers={formData.b2bTiers}
+                      onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
+                      error={formErrors.b2bTiers}
+                    />
+                  </div>
+                )}
+
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.description")}</label>
-                  <textarea name="description" value={formData.description} onChange={handleChange} rows="3" className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm resize-none" placeholder={t("modal.description_placeholder")} />
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">{t("modal.story")}</label>
+                  <RichTextEditor 
+                    value={formData.story} 
+                    onChange={(content) => setFormData(prev => ({ ...prev, story: content }))}
+                    placeholder={t("modal.story_placeholder")}
+                  />
                 </div>
               </div>
 
@@ -445,7 +845,13 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} required={formData.hasDPP} className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" placeholder={t("modal.dpp.artisan_placeholder_add")} />
+                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_add")} />
+                      {formErrors.artisanName && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="space-y-1">
@@ -457,14 +863,35 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                         onChange={(e) => {
                           const val = e.target.value;
                           if (val.includes("http://") || val.includes("https://") || val.includes("maps.")) {
-                            toast.error("Không được dán link! Vui lòng chỉ nhập tên địa điểm hoặc địa chỉ bằng chữ.");
+                            toast.error(t("messages.no_link_allowed"));
                             return;
                           }
                           updateField("gpsLocation", val);
                         }} 
-                        required={formData.hasDPP} 
-                        className="w-full p-3 bg-white/50 dark:bg-black/20 border border-mkhe-border/50 rounded-xl text-sm focus:border-mkhe-primary" 
+                        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder")} 
+                      />
+                      {formErrors.gpsLocation && (
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                          <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-1 col-span-2">
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.story_link")}</label>
+                      <Dropdown
+                        value={formData.storyBlogId}
+                        onChange={(val) => updateField("storyBlogId", val)}
+                        options={[
+                          { value: "", label: t("products.no_linked_story", "-- Không liên kết Ký sự --") },
+                          ...storyBlogs.map(blog => ({ value: blog._id, label: blog.title }))
+                        ]}
+                        placeholder={t("products.no_linked_story", "-- Không liên kết Ký sự --")}
+                        className="w-full"
+                        triggerClassName="p-3.5 rounded-xl text-sm cursor-pointer"
+                        optionClassName="text-sm truncate"
                       />
                     </div>
                   </div>
@@ -492,52 +919,19 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     </div>
                   )}
                   
-                  {/* KÉO THẢ FILE 3D XỊN XÒ */}
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1 flex items-center gap-1">
-                      <Box className="w-3 h-3" /> {t("modal.3d_file.label")}
-                    </label>
-                    <div
-                      onDragOver={handleDragOver3D}
-                      onDragLeave={handleDragLeave3D}
-                      onDrop={handleDrop3D}
-                      onClick={() => fileInput3DRef.current?.click()}
-                      className={`border-2 border-dashed rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 origin-center ${
-                        isDragging3D
-                          ? "border-mkhe-primary bg-mkhe-primary/10 scale-100 shadow-lg"
-                          : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5 scale-[0.98]"
-                      }`}
-                    >
-                      <input type="file" ref={fileInput3DRef} onChange={handleFileInput3D} accept=".glb,.gltf" className="hidden" />
-                      
-                      {isCompressing3D ? (
-                        <div className="flex flex-col items-center gap-3 py-4 pointer-events-none">
-                          <div className="w-8 h-8 border-4 border-mkhe-primary border-t-transparent rounded-full animate-spin"></div>
-                          <span className="text-xs font-bold text-mkhe-primary animate-pulse text-center">
-                            {t("modal.3d_file.compressing").split(' (')[0]}<br/>({t("modal.3d_file.compressing").split(' (')[1]}
-                          </span>
-                        </div>
-                      ) : file3D ? (
-                        <div className="flex items-center gap-3 w-full justify-between bg-mkhe-primary/10 p-2.5 rounded-lg border border-mkhe-primary/30">
-                          <div className="flex items-center gap-2 overflow-hidden pointer-events-none">
-                            <Box className="w-5 h-5 text-mkhe-primary shrink-0" />
-                            <span className="text-sm text-mkhe-text font-medium truncate">{file3D.name}</span>
-                            <span className="text-xs font-bold text-green-500 shrink-0">({(file3D.size / (1024 * 1024)).toFixed(2)} MB)</span>
-                          </div>
-                          <button type="button" onClick={remove3DFile} className="p-1.5 cursor-pointer hover:bg-red-500/20 text-red-500 rounded-md transition-colors z-10 relative">
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center gap-2 py-3 pointer-events-none">
-                          <UploadCloud className={`w-8 h-8 mb-1 ${isDragging3D ? "text-mkhe-primary" : "text-mkhe-text/40"}`} />
-                          <span className="text-xs font-medium text-mkhe-text/70 text-center px-4">
-                            {isDragging3D ? "Thả file 3D vào đây" : t("modal.3d_file.drag_drop")}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  <Model3DUploader
+                    hasDPP={formData.hasDPP}
+                    file3D={file3D}
+                    isDragging3D={isDragging3D}
+                    isCompressing3D={isCompressing3D}
+                    isDeleted3D={false}
+                    onDragOver={handleDragOver3D}
+                    onDragLeave={handleDragLeave3D}
+                    onDrop={handleDrop3D}
+                    onFileInputChange={handleFileInput3D}
+                    onRemove3DFile={remove3DFile}
+                    fileInput3DRef={fileInput3DRef}
+                  />
                 </div>
               </div>
 

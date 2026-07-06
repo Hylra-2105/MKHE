@@ -11,7 +11,10 @@
     "view3D": "3D模型",
     "warningTitle": "警告",
     "warningSubtitle": "未经认证的产品",
-    "warningDesc": "该 NFC 标识符不存在、已被伪造或未被 MKHE 激活。请联系客户支持寻求帮助。"
+    "warningDesc": "该 NFC 标识符不存在、已被伪造或未被 MKHE 激活。请联系客户支持寻求帮助。",
+    "read_story": "阅读工艺村故事",
+    "read_story_desc": "探索该产品创作背后的详细故事及其独特的文化特色。",
+    "read_story_btn": "立即探索"
   },
   "certificate": {
     "title": "工艺证书",
@@ -33,14 +36,30 @@
     "alt": "3D模型"
   },
   "o2o": {
-    "toast_welcome": "✨ 新会员享 10% 优惠。点击查看。",
+    "toast_welcome": "✨ 新会员专属 10% 优惠。点击查看。",
+    "toast_secret": "✨ 一个秘密特权正在等待。点击发现。",
     "new_member": "新会员",
-    "login_to_save_voucher": "登录以保存",
-    "login_to_save_voucher_suffix": "优惠码，享受尊贵购物体验。",
-    "cta_subtitle": "探索传统系列，享 10% 优惠",
+    "login_to_save_voucher": "登录以保存优惠",
+    "voucher_code": "代金券",
+    "login_to_save_voucher_suffix": "体验尊贵购物。",
+    "cta_subtitle": "探索遗产系列并获得 10% 优惠",
     "voucher_saved": "✓ 已保存 WELCOME_MKHE 优惠码",
     "get_voucher": "获取 WELCOME_MKHE 优惠码",
     "msg_new_user": "欢迎新会员！WELCOME_MKHE 优惠码已激活。",
-    "msg_returning_user": "欢迎回来！您的 10% 优惠（WELCOME_MKHE）已应用。"
+    "msg_returning_user": "欢迎回来！您的 10% 优惠（WELCOME_MKHE）已应用。",
+    "msg_gacha_success": "恭喜！您获得了：{{title}}",
+    "err_already_claimed": "您已领取过该商品的礼物！",
+    "err_no_rewards": "抱歉，目前没有可用的折扣码。",
+    "err_all_claimed": "您已收集了所有的扭蛋礼物！",
+    "err_bad_luck": "祝您下次好运！",
+    "err_generic": "此时无法获取代码",
+    "claimed_title": "礼物已领取",
+    "gacha_title": "扭蛋代金券",
+    "claimed_desc": "您已领取过该商品的礼物",
+    "gacha_desc": "幸运抽奖，立即获得优惠",
+    "btn_saved_code": "✓ 优惠码已保存 [{{code}}]",
+    "btn_claimed": "✓ 礼物已领取",
+    "btn_login": "登录后抽奖",
+    "btn_spin": "抽取扭蛋代金券"
   }
 }

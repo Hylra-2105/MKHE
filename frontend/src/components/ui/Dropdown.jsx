@@ -10,9 +10,11 @@ const Dropdown = ({
   triggerClassName = "",
   dropdownClassName = "",
   optionClassName = "",
+  disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -36,8 +38,18 @@ const Dropdown = ({
     >
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-transparent border border-mkhe-border/50 text-mkhe-text cursor-pointer focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border ${triggerClassName}`}
+        disabled={disabled}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen(!isOpen);
+            if (!isOpen) {
+              setTimeout(() => {
+                menuRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+              }, 100);
+            }
+          }
+        }}
+        className={`w-full bg-transparent border border-mkhe-border/50 text-mkhe-text focus:outline-none focus:border-mkhe-primary transition-colors flex justify-between items-center hover:border-mkhe-border ${disabled ? "opacity-60 bg-gray-100 cursor-not-allowed" : "cursor-pointer"} ${triggerClassName}`}
       >
         <span className={`truncate ${selectedColor}`}>{selectedLabel}</span>
         <ChevronDown
@@ -49,24 +61,30 @@ const Dropdown = ({
 
       {isOpen && (
         <div
-          className={`absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 overflow-hidden ${dropdownClassName}`}
+          ref={menuRef}
+          className={`absolute left-0 top-full mt-1 w-full bg-mkhe-input border border-mkhe-border rounded-lg shadow-xl py-2 z-50 max-h-60 overflow-y-auto custom-scrollbar ${dropdownClassName}`}
         >
           {options.map((opt) => (
             <button
               key={opt.value}
               type="button"
+              disabled={opt.disabled}
               onClick={() => {
-                onChange(opt.value);
-                setIsOpen(false);
+                if (!opt.disabled) {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }
               }}
-              className={`w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left flex justify-between items-center cursor-pointer transition-colors ${
-                value === opt.value
-                  ? "text-mkhe-primary hover:bg-mkhe-primary/10 font-semibold"
-                  : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+              className={`w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-left flex justify-between items-center transition-colors ${
+                opt.disabled
+                  ? "opacity-40 cursor-not-allowed bg-mkhe-border/5 text-mkhe-text/50"
+                  : value === opt.value
+                  ? "text-mkhe-primary hover:bg-mkhe-primary/10 font-semibold cursor-pointer"
+                  : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10 cursor-pointer"
               } ${optionClassName}`}
             >
               <span className={`truncate ${opt.color || ""}`}>{opt.label}</span>
-              {value === opt.value && <Check className="w-4 h-4 shrink-0" />}
+              {value === opt.value && !opt.disabled && <Check className="w-4 h-4 shrink-0" />}
             </button>
           ))}
         </div>

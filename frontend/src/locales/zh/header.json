@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "遗产",
-    "craft_villages": "手工艺村",
+    "home": "首页",
+    "about": "关于我们",
     "shop": "商店",
-    "storytelling": "品牌故事",
-    "values": "价值观"
+    "storytelling": "故事",
+    "blog": "博客",
+    "contact": "联系我们"
   },
   "user_menu": {
     "profile": "个人资料",
@@ -14,7 +15,11 @@
     "analytics": "数据分析",
     "admin_area": "管理区",
     "staff_area": "员工区",
-    "manage_products": "管理产品"
+    "manage_products": "管理产品",
+    "manage_vouchers": "优惠券管理",
+    "manage_orders": "订单管理",
+    "manage_blogs": "博客管理",
+    "manage_reviews": "评论管理"
   },
   "guest_menu": {
     "login": "登录"
@@ -35,5 +40,52 @@
     "zh": "中文",
     "ko": "韩语",
     "ja": "日语"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "订单已成功提交",
+      "payment_success": "支付成功",
+      "order_confirmed": "订单已确认",
+      "order_delivering": "订单派送中",
+      "order_completed": "订单已完成",
+      "order_cancelled": "订单已取消",
+      "voucher_saved": "优惠券保存成功",
+      "lucky_wheel_won": "恭喜中奖！",
+      "flash_sale": "巨大产品促销！",
+      "voucher_published": "您有一个新的优惠码！",
+      "admin_order_new": "新订单",
+      "admin_order_paid": "已付款订单",
+      "admin_order_completed": "订单完成",
+      "admin_stock_alert": "库存预警"
+    },
+    "message": {
+      "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
+      "payment_success": "订单 {{orderCode}} 的付款已记录。",
+      "order_confirmed": "您的订单 {{orderCode}} 已确认，正在准备发货。",
+      "order_delivering": "您的订单 {{orderCode}} 已交由物流公司派送。",
+      "order_completed": "订单 {{orderCode}} 已成功送达。感谢您在 MKHE 购物！",
+      "order_cancelled": "订单 {{orderCode}} 已取消。",
+      "voucher_saved": "您已成功领取优惠券代码 {{code}}。",
+      "lucky_wheel_won": "您刚刚从神秘礼盒中获得了优惠券代码 {{code}}。",
+      "flash_sale": "产品 {{productName}} 正在举行促销活动。不要错过！",
+      "voucher_published": "折扣码 {{code}} 刚刚发布。快点来领取吧！",
+      "admin_order_new": "新订单 #{{orderCode}} 已成功创建 (COD)。",
+      "admin_order_paid": "订单 #{{orderCode}} 已成功付款 (在线)。",
+      "admin_order_completed": "客户已确认订单 #{{orderCode}} 的收货和付款。",
+      "admin_stock_alert": "产品 {{productName}} 库存不足 (剩余 {{currentStock}} 个)。"
+    },
+    "header_title": "通知",
+    "mark_all_read": "全部标为已读",
+    "mark_read": "标为已读",
+    "delete": "删除此通知",
+    "empty": "您没有新通知",
+    "time_just_now": "刚刚",
+    "tab_all": "全部",
+    "tab_unread": "未读",
+    "tab_system": "系统",
+    "recent": "较早",
+    "load_more": "查看较早的通知",
+    "deleted_success": "通知已删除",
+    "undo": "撤销"
   }
 }

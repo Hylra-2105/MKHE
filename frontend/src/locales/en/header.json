@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "Heritage",
-    "craft_villages": "Craft Villages",
+    "home": "Home",
+    "about": "About",
     "shop": "Shop",
     "storytelling": "Storytelling",
-    "values": "Values"
+    "blog": "Blog & News",
+    "contact": "Contact"
   },
   "user_menu": {
     "profile": "Profile",
@@ -14,7 +15,11 @@
     "analytics": "Analytics",
     "admin_area": "Admin Area",
     "staff_area": "Staff Area",
-    "manage_products": "Manage Products"
+    "manage_products": "Manage Products",
+    "manage_vouchers": "Manage Vouchers",
+    "manage_orders": "Manage Orders",
+    "manage_blogs": "Blog Management",
+    "manage_reviews": "Manage Reviews"
   },
   "guest_menu": {
     "login": "Login"
@@ -35,5 +40,52 @@
     "zh": "Chinese",
     "ko": "Korean",
     "ja": "Japanese"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "Order Placed Successfully",
+      "payment_success": "Payment Successful",
+      "order_confirmed": "Order Confirmed",
+      "order_delivering": "Order Delivering",
+      "order_completed": "Delivery Completed",
+      "order_cancelled": "Order Cancelled",
+      "voucher_saved": "Voucher Saved Successfully",
+      "lucky_wheel_won": "Congratulations! You Won!",
+      "flash_sale": "Huge Product Sale!",
+      "voucher_published": "You have a new offer code!",
+      "admin_order_new": "New Order",
+      "admin_order_paid": "Order Paid",
+      "admin_order_completed": "Order Completed",
+      "admin_stock_alert": "Low Stock Alert"
+    },
+    "message": {
+      "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
+      "payment_success": "Payment for order {{orderCode}} has been recorded.",
+      "order_confirmed": "Your order {{orderCode}} has been confirmed and is being prepared.",
+      "order_delivering": "Your order {{orderCode}} has been handed over to the shipping carrier.",
+      "order_completed": "Order {{orderCode}} has been delivered successfully. Thank you for shopping with MKHE!",
+      "order_cancelled": "Order {{orderCode}} has been cancelled.",
+      "voucher_saved": "You have successfully collected the discount code {{code}}.",
+      "lucky_wheel_won": "You just received a discount code {{code}} from the Mystery Box.",
+      "flash_sale": "Product {{productName}} has an attractive sale program. Don't miss out!",
+      "voucher_published": "Discount code {{code}} has just been published. Collect it now before it's gone!",
+      "admin_order_new": "A new order #{{orderCode}} has been successfully placed (COD).",
+      "admin_order_paid": "Order #{{orderCode}} has been successfully paid (Online).",
+      "admin_order_completed": "Customer has confirmed receipt and payment for order #{{orderCode}}.",
+      "admin_stock_alert": "Product {{productName}} is running low on stock ({{currentStock}} left)."
+    },
+    "header_title": "Notifications",
+    "mark_all_read": "Mark all as read",
+    "mark_read": "Mark as read",
+    "delete": "Remove this notification",
+    "empty": "You have no notifications",
+    "time_just_now": "just now",
+    "tab_all": "All",
+    "tab_unread": "Unread",
+    "tab_system": "System",
+    "recent": "Earlier",
+    "load_more": "See previous notifications",
+    "deleted_success": "Notification deleted",
+    "undo": "Undo"
   }
 }

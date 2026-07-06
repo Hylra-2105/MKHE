@@ -14,7 +14,13 @@
   "filter": {
     "search_placeholder": "제품 이름 또는 SKU로 검색...",
     "search_btn": "찾다",
-    "all_categories": "모든 카테고리"
+    "all_categories": "모든 카테고리",
+    "all_dna": "모든 유전자 코드",
+    "all_vendors": "모든 제공업체",
+    "all_status": "모든 상태",
+    "status_published": "게시됨",
+    "status_draft": "초안",
+    "status_out_of_stock": "품절"
   },
   "table": {
     "name": "제품명",
@@ -23,13 +29,19 @@
     "price": "가격",
     "stock": "재고",
     "status": "상태",
-    "actions": "행위",
+    "actions": "행동",
     "empty": "재고에 등록된 상품이 없습니다.",
     "edit": "편집하다",
     "delete": "삭제(소프트 삭제)"
   },
   "modal": {
     "add_title": "새 제품 추가",
+    "tab_general": "일반 정보",
+    "tab_nfc": "디지털 여권(NFC)",
+    "cultural_dna": "문화 DNA",
+    "craft_village": "공예 마을",
+    "craft_village_placeholder": "예: 차우퐁 직조 마을...",
+    "material": "재료",
     "name": "제품명",
     "name_placeholder": "예: 줄무늬 브로케이드 토트백",
     "sku": "SKU",
@@ -39,8 +51,6 @@
     "price_placeholder": "250000",
     "stock": "재고 수량",
     "stock_placeholder": "100",
-    "description": "간단한 제품 설명",
-    "description_placeholder": "전시 및 판매를 위한 자세한 상품정보를 입력하세요.",
     "cancel": "취소",
     "create": "만들다",
     "save": "구하다",
@@ -78,7 +88,9 @@
       "location_placeholder": "예: 프놈피 도자기 마을(또는 좌표 입력)",
       "location_placeholder_edit": "예: 10.823, 106.629 또는 위치 이름",
       "map_title": "위치 지도(미니 구글 지도)",
-      "map_desc": "* 주소나 좌표를 입력하면 지도가 자동으로 업데이트됩니다."
+      "map_desc": "* 주소나 좌표를 입력하면 지도가 자동으로 업데이트됩니다.",
+      "story_link": "연결된 이야기 (선택 사항)",
+      "story_link_empty": "-- 연결된 이야기 없음 --"
     },
     "processing": "처리 중...",
     "images_label": "제품 이미지/비디오",
@@ -93,12 +105,20 @@
       "current_file": "현재 3D 파일",
       "label": "3D 모델 파일(.GLB, .GLTF)",
       "error_upload": "3D 파일 업로드 오류",
-      "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다."
-    }
+      "error_upload_both": "이미지 또는 3D 파일 업로드 중 오류가 발생했습니다.",
+      "selected_file": "새 3D 파일이 선택되었습니다",
+      "optimized": "웹에 최적화됨",
+      "deleted": "현재 3D 모델이 삭제됩니다",
+      "click_upload_new": "새 파일을 업로드하려면 드래그 앤 드롭하거나 클릭하세요",
+      "auto_compress": "시스템이 자동으로 메쉬 및 텍스처를 최적화합니다. 최대 150MB의 대용량 파일을 지원합니다!",
+      "delete": "삭제"
+    },
+    "story": "제품 스토리",
+    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
   },
   "statuses": {
-    "DRAFT": "초안(숨김)",
-    "PUBLISHED": "게시됨(판매 중)",
+    "DRAFT": "초안",
+    "PUBLISHED": "게시됨",
     "OUT_OF_STOCK": "품절"
   },
   "pagination": {
@@ -135,9 +155,26 @@
     "generate_nfc_success": "{{count}} 새 NFC 태그가 성공적으로 생성되었습니다!",
     "copy_link_error": "NFC 링크를 복사하는 중에 오류가 발생했습니다.",
     "copy_link_success": "NFC 인증 링크가 복사되었습니다!",
-    "update_tag_error": "태그 상태를 업데이트하는 중에 오류가 발생했습니다.",
-    "activate_success": "{{uid}} 태그가 성공적으로 활성화되었습니다.",
-    "activate_error": "활성화 실패"
+    "update_tag_error": "태그 상태를 업데이트하는 중 오류가 발생했습니다.",
+    "activate_success": "태그 {{uid}}가 성공적으로 활성화되었습니다.",
+    "activate_error": "활성화 실패",
+    "processing_images": "이미지 처리 및 최적화 중...",
+    "processing_images_success": "파일이 성공적으로 처리되었습니다!",
+    "processing_images_error": "파일 처리 중 오류가 발생했습니다",
+    "video_too_large": "비디오 {{name}} 크기가 너무 큽니다 (>100MB).",
+    "missing_fields": "이름, SKU, 가격, 공급업체를 모두 입력해 주세요.",
+    "missing_dpp_fields": "DPP는 장인 이름과 GPS 위치가 필요합니다.",
+    "no_link_allowed": "링크를 붙여넣지 마세요! 위치 이름이나 좌표만 입력하세요.",
+    "file_3d_too_large": "3D 파일이 너무 큽니다(>150MB). 브라우저가 정지될 수 있습니다. 3D 소프트웨어를 사용하여 먼저 줄이세요.",
+    "optimizing_3d": "3D 파일({{size}}MB)을 최적화하는 중... CPU를 사용합니다. 페이지를 닫지 마세요!",
+    "optimize_3d_success": "3D 최적화 성공! 크기가 축소되었습니다: {{size}}MB",
+    "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다.",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "재고가 0일 때 공개로 설정할 수 없습니다.",
+    "invalid_quantity": "수량은 1에서 100 사이여야 합니다",
+    "restore_failed": "❌ 복구 실패: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC 태그 관리",
@@ -148,13 +185,122 @@
     "uid": "UID",
     "url": "URL 쓰기(NFC 도구)",
     "status": "상태",
-    "actions": "행위",
-    "confirm_written": "서면 확인"
+    "actions": "행동",
+    "confirm_written": "서면 확인",
+    "pending": "대기 중",
+    "active": "활성"
   },
   "culturalDNA": {
-    "CHAM": "참 유전자 코드",
-    "KHMER": "크메르 유전자 코드",
-    "KINH": "킨 유전자 코드",
+    "CHAM": "참 문화 DNA",
+    "KHMER": "크메르 문화 DNA",
+    "KINH": "킨 문화 DNA",
     "OTHER": "기타 / 다민족"
+  },
+  "materials": {
+    "brocade": "브로케이드",
+    "silk": "실크",
+    "ceramic": "세라믹",
+    "leather": "소가죽",
+    "copper": "황동 자물쇠",
+    "silver": "은",
+    "wood": "목재"
+  },
+  "shop": {
+    "fetch_error": "상품 목록을 불러올 수 없습니다.",
+    "not_found": "상품을 찾을 수 없습니다",
+    "digital_passport": "디지털 여권",
+    "video": "비디오",
+    "filters": {
+      "title": "필터",
+      "search_title": "상품 검색",
+      "search_placeholder": "상품명, SKU...",
+      "offers_title": "혜택",
+      "on_sale": "할인 중",
+      "craft_village_title": "공예 마을 / 원산지",
+      "craft_village_placeholder": "공예 마을로 검색...",
+      "material_title": "재질",
+      "cultural_dna_title": "문화 DNA",
+      "category_title": "카테고리",
+      "all": "전체",
+      "clear_filters": "필터 지우기"
+    },
+    "layout": {
+      "header_title": "헤리티지 컬렉션",
+      "header_subtitle": "각 작품은 장인의 손길과 백년 된 공예 마을의 영혼으로 짜여진 문화적 이야기입니다.",
+      "mobile_products": "상품",
+      "mobile_filter": "필터"
+    },
+    "detail": {
+      "category": "범주",
+      "material": "재료",
+      "village": "공예 마을",
+      "quantity": "수량:",
+      "out_of_stock": "품절",
+      "add_to_cart": "장바구니에 담기",
+      "buy_now": "지금 구매",
+      "story": "유산 이야기",
+      "show_less": "간략히 보기",
+      "read_more": "더 읽기",
+      "in_stock": "{{count}}개의 상품이 준비되어 있습니다",
+      "sold_out": "품절되었습니다",
+      "sku": "SKU 코드",
+      "back": "돌아가기",
+      "nfc_badge": "NFC 디지털 여권 통합 상품",
+      "b2b_wholesale_title": "기업용 도매 가격표:",
+      "b2b_from_quantity": "{{quantity}}개 이상",
+      "b2b_buy_more": "{{count}}개를 더 구매하시면 할인율이 {{discount}}%로 향상됩니다.",
+      "b2b_max_discount": "최대 할인율에 도달했습니다!"
+    }
+  },
+  "form": {
+    "sale": {
+      "title": "세일 프로그램",
+      "subtitle": "프로모션 가격 및 시간 설정",
+      "salePrice": "세일 가격",
+      "salePricePlaceholder": "세일 가격 입력...",
+      "startSale": "세일 시작",
+      "endSale": "세일 종료",
+      "sendPush": "알림 보내기",
+      "sendPushDesc": "릴리스 시 시스템이 모든 사용자에게 알림을 자동으로 보냅니다",
+      "ongoing": "세일 중",
+      "upcoming": "다가오는 세일"
+    }
+  },
+  "products": {
+    "b2b": {
+      "tiers_title": "도매 가격표 (B2B 등급)",
+      "tiers_info": "다음 등급은 이전 등급보다 수량과 할인율이 커야 합니다.",
+      "add_tier": "등급 추가",
+      "no_tiers": "아직 할인 등급이 없습니다.",
+      "min_quantity": "최소 수량",
+      "min_quantity_placeholder": "예: 50",
+      "discount_percent": "할인율 (%)",
+      "discount_placeholder": "예: 10",
+      "remove_tier": "등급 삭제",
+      "delete_confirm_title": "할인 등급을 삭제하시겠습니까?",
+      "delete_confirm_msg": "이 할인 등급을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      "delete_confirm_yes": "등급 삭제",
+      "delete_confirm_no": "취소"
+    },
+    "errors": {
+      "name_required": "제품명을 입력해주세요",
+      "sku_required": "SKU 코드를 입력해주세요",
+      "vendor_required": "공급업체를 선택해주세요",
+      "price_required": "가격을 입력해주세요",
+      "artisan_required": "장인 이름을 입력해주세요",
+      "gps_required": "GPS 위치를 입력해주세요",
+      "sale_price_invalid": "할인 가격은 원래 가격보다 작아야 합니다",
+      "sale_start_required": "할인 시작일을 선택해주세요",
+      "sale_end_required": "할인 종료일을 선택해주세요",
+      "sale_end_invalid": "종료 시간은 시작 시간 이후여야 합니다",
+      "sale_end_future": "종료 시간은 미래여야 합니다",
+      "sale_start_past": "시작 시간은 과거일 수 없습니다",
+      "b2b_min_tiers": "B2B 제품의 할인 등급을 최소 1개 이상 구성해 주세요.",
+      "b2b_missing_fields": "모든 등급의 수량 및 할인율(%)을 입력해 주세요.",
+      "b2b_invalid_values": "수량은 0보다 커야 하며, 할인율은 0~100 사이여야 합니다.",
+      "b2b_quantity_order": "등급 {{current}}: 수량은 등급 {{prev}} ({{prevQ}}) 보다 커야 합니다.",
+      "b2b_discount_order": "등급 {{current}}: 할인율(%)은 등급 {{prev}} ({{prevD}}%) 보다 커야 합니다."
+    },
+    "no_linked_story": "-- 연결된 스토리 없음 --"
   }
 }

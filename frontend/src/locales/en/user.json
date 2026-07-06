@@ -16,7 +16,8 @@
     "update_success": "Update successful!",
     "change_pass_success": "Password updated successfully!",
     "otp_sent_success": "OTP sent successfully!",
-    "otp_send_error": "Error sending OTP"
+    "otp_send_error": "Error sending OTP",
+    "delete_success": "Đã xóa tài khoản thành công!"
   },
   "auth": {
     "new_password": "New Password",
@@ -33,7 +34,11 @@
     "support_video": "Video MP4, WEBM (Max 30MB)",
     "new_password": "Create New Password",
     "update_password": "Change Password",
-    "change_password_desc": "Please enter a new password for your account."
+    "change_password_desc": "Please enter a new password for your account.",
+    "contact_shipping": "Contact & Shipping",
+    "default_address": "Default Address",
+    "address_placeholder": "Enter your address...",
+    "no_address": "You have not set a default address. Click Edit to update."
   },
   "buttons": {
     "verifying": "Verifying...",
@@ -50,7 +55,6 @@
     "edit": "Edit",
     "save_info": "Save Information"
   },
-
   "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP code.",
   "PASSWORD_MUST_BE_DIFFERENT": "New password must be different from the current password.",
   "USER_NOT_FOUND": "User account not found.",

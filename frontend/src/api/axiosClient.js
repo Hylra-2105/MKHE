@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 const axiosClient = axios.create({
   // Thay thế bằng Base URL của bạn
-  baseURL: "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -67,7 +67,10 @@ axiosClient.interceptors.response.use(
       // Ngăn chặn Vòng Lặp Vô Hạn: Nếu lỗi đến từ chính API refresh-token -> Kick ngay!
       if (url.includes("/auth/refresh-token")) {
         useAuthStore.getState().logoutAction();
-        if (window.location.pathname !== "/login") window.location.href = "/login";
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/login" && currentPath !== "/login/") {
+          window.location.href = "/login";
+        }
         return Promise.reject(error);
       }
 
@@ -102,13 +105,16 @@ axiosClient.interceptors.response.use(
 
         if (!refreshToken) {
           useAuthStore.getState().logoutAction();
-          if (window.location.pathname !== "/login") window.location.href = "/login";
+          const currentPath = window.location.pathname;
+        if (currentPath !== "/login" && currentPath !== "/login/") {
+          window.location.href = "/login";
+        }
           return Promise.reject(error);
         }
 
         try {
           // Xin token mới bằng axios gốc (không dùng axiosClient để tránh dính interceptor)
-          const response = await axios.post("http://localhost:5000/api/auth/refresh-token", {
+          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api"}/auth/refresh-token`, {
             refreshToken,
           });
 
@@ -137,7 +143,10 @@ axiosClient.interceptors.response.use(
           // Xin token thất bại (refresh token cũng hết hạn) -> Xóa hàng đợi và kick user
           processQueue(refreshError, null);
           useAuthStore.getState().logoutAction();
-          if (window.location.pathname !== "/login") window.location.href = "/login";
+          const currentPath = window.location.pathname;
+        if (currentPath !== "/login" && currentPath !== "/login/") {
+          window.location.href = "/login";
+        }
           return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
@@ -145,7 +154,8 @@ axiosClient.interceptors.response.use(
       } else {
         // Lỗi 403 (Bị khóa) -> Kick ngay
         useAuthStore.getState().logoutAction();
-        if (window.location.pathname !== "/login") {
+        const currentPath = window.location.pathname;
+        if (currentPath !== "/login" && currentPath !== "/login/") {
           window.location.href = "/login";
         }
       }

@@ -10,6 +10,7 @@ export const getAllUsers = async (req, res) => {
     const limit = parseInt(req.query.limit) || 5;
     const search = req.query.search || "";
     const roleFilter = req.query.role || "";
+    const statusFilter = req.query.status || "";
 
     const skip = (page - 1) * limit;
 
@@ -17,12 +18,17 @@ export const getAllUsers = async (req, res) => {
     if (search) {
       const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { name: { $regex: searchRegex, $options: "i" } },
-        { email: { $regex: searchRegex, $options: "i" } },
-        { phone: { $regex: searchRegex, $options: "i" } },
+        { name: { $regex: searchRegex } },
+        { email: { $regex: searchRegex } },
+        { phone: { $regex: searchRegex } },
       ];
     }
     if (roleFilter) query.role = roleFilter;
+    if (statusFilter === "active") {
+      query.isBlocked = { $ne: true };
+    } else if (statusFilter === "blocked") {
+      query.isBlocked = true;
+    }
 
     const totalUsers = await User.countDocuments(query);
     const users = await User.find(query)
@@ -63,6 +69,11 @@ export const updateUser = async (req, res) => {
       updateData.isBlocked = isBlocked;
       // Chỉ lưu lý do nếu đang thực hiện KHÓA (isBlocked = true)
       updateData.blockReason = isBlocked ? blockReason : "";
+      
+      // Nếu khóa user, lập tức xóa hết refresh token để ép đăng xuất
+      if (isBlocked === true) {
+        updateData.refreshTokens = [];
+      }
     }
 
     // các trường không được update
@@ -81,7 +92,7 @@ export const updateUser = async (req, res) => {
     if (isBlocked === true && blockReason) {
       // Gọi async nhưng không await để không làm chậm response API
       // Lấy language từ user hoặc default vi
-      const userLang = updatedUser.language || "vi";
+      const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || updatedUser.language || "vi";
       sendBlockAccountEmail(updatedUser.email, blockReason, userLang).catch(
         (err) => {
           console.error("[⚠️ Email Error] Gửi mail thất bại:", {
@@ -128,7 +139,7 @@ export const updateMyProfile = async (req, res) => {
   try {
     // req.user được lấy từ verifyToken
     const userId = req.user.id;
-    const { name, phone, country, city, address, bio, avatar } = req.body;
+    const { name, phone, bio, avatar, addressText, coordinates } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -138,10 +149,29 @@ export const updateMyProfile = async (req, res) => {
     // Cập nhật thông tin (Chỉ cập nhật field nào được gửi lên)
     if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
-    if (country !== undefined) user.country = country;
-    if (city !== undefined) user.city = city;
-    if (address !== undefined) user.address = address;
     if (bio !== undefined) user.bio = bio;
+
+    // Cập nhật địa chỉ mặc định nếu có truyền lên
+    if (addressText && coordinates) {
+      const defaultAddressIndex = user.addresses.findIndex((a) => a.isDefault);
+      
+      if (defaultAddressIndex !== -1) {
+        // Có sẵn địa chỉ mặc định -> Ghi đè
+        user.addresses[defaultAddressIndex].addressText = addressText;
+        user.addresses[defaultAddressIndex].coordinates = coordinates;
+        user.addresses[defaultAddressIndex].receiverName = user.name;
+        user.addresses[defaultAddressIndex].receiverPhone = user.phone;
+      } else {
+        // Chưa có -> Tạo mới và push vào
+        user.addresses.push({
+          receiverName: user.name,
+          receiverPhone: user.phone,
+          addressText: addressText,
+          coordinates: coordinates,
+          isDefault: true
+        });
+      }
+    }
 
     // Nếu có gửi avatar mới lên -> Kích hoạt khiên bảo vệ
     if (avatar) {
@@ -258,5 +288,201 @@ export const createUser = async (req, res) => {
   } catch (error) {
     console.error("Error in [ADMIN] createUser:", error);
     return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+  }
+};
+
+// User thêm địa chỉ mới
+export const addAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { receiverName, receiverPhone, addressText, coordinates, isDefault } = req.body;
+
+    if (!receiverName || !receiverPhone || !addressText) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    const newAddress = {
+      receiverName,
+      receiverPhone,
+      addressText,
+      coordinates,
+      isDefault: false
+    };
+
+    // Nếu mảng rỗng hoặc user chọn isDefault = true
+    if (user.addresses.length === 0 || isDefault) {
+      newAddress.isDefault = true;
+      // Nếu là default, cập nhật tất cả địa chỉ cũ thành false
+      user.addresses.forEach(addr => addr.isDefault = false);
+      
+      // Đồng bộ thông tin ra profile
+      user.phone = receiverPhone;
+      if (!user.name) user.name = receiverName;
+    }
+
+    user.addresses.push(newAddress);
+    await user.save();
+
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 201, "ADDRESS_ADDED_SUCCESS", userData);
+  } catch (error) {
+    console.error("Add Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Cập nhật địa chỉ mặc định
+export const setDefaultAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { addressId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    let addressFound = false;
+    user.addresses.forEach(addr => {
+      if (addr._id.toString() === addressId) {
+        addr.isDefault = true;
+        addressFound = true;
+        user.phone = addr.receiverPhone;
+        if (!user.name) user.name = addr.receiverName;
+      } else {
+        addr.isDefault = false;
+      }
+    });
+
+    if (!addressFound) {
+      return errorResponse(res, 404, "ADDRESS_NOT_FOUND");
+    }
+
+    await user.save();
+    
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "SET_DEFAULT_ADDRESS_SUCCESS", userData);
+  } catch (error) {
+    console.error("Set Default Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// Cập nhật địa chỉ cụ thể
+export const updateAddress = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { addressId } = req.params;
+    const { receiverName, receiverPhone, addressText, coordinates } = req.body;
+
+    if (!receiverName || !receiverPhone || !addressText) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    const address = user.addresses.id(addressId);
+    if (!address) {
+      return errorResponse(res, 404, "ADDRESS_NOT_FOUND");
+    }
+
+    address.receiverName = receiverName;
+    address.receiverPhone = receiverPhone;
+    address.addressText = addressText;
+    if (coordinates) {
+      address.coordinates = coordinates;
+    }
+
+    // Nếu đây là địa chỉ mặc định, đồng bộ sđt và tên ra profile ngoài cùng
+    if (address.isDefault) {
+      user.phone = receiverPhone;
+      if (!user.name) user.name = receiverName;
+    }
+
+    await user.save();
+    
+    const userData = user.toObject();
+    delete userData.password;
+    delete userData.refreshToken;
+
+    return successResponse(res, 200, "ADDRESS_UPDATED_SUCCESS", userData);
+  } catch (error) {
+    console.error("Update Address Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+import crypto from "crypto";
+import { sendB2BActivationEmail } from "../../utils/email.js";
+
+// Admin tạo tài khoản B2B Enterprise
+export const createB2BAccount = async (req, res) => {
+  try {
+    const { name, email, companyName, taxCode } = req.body;
+
+    if (!name || !email || !companyName || !taxCode) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    if (!isValidEmail(email)) {
+      return errorResponse(res, 400, "INVALID_EMAIL_FORMAT");
+    }
+
+    if (!/^\d{10}(-\d{3})?$/.test(taxCode)) {
+      return errorResponse(res, 400, "INVALID_TAX_CODE");
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
+    }
+
+    // Generate activation token
+    const activationToken = crypto.randomBytes(20).toString("hex");
+    const activationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+
+    // Generate random dummy password, user will reset it anyway
+    const dummyPassword = crypto.randomBytes(8).toString("hex");
+
+    const newUser = new User({
+      name,
+      email,
+      password: dummyPassword,
+      role: "Enterprise",
+      companyName,
+      taxCode,
+      isVerified: true,
+      provider: "local",
+      resetPasswordToken: activationToken,
+      resetPasswordExpires: activationExpires
+    });
+
+    await newUser.save();
+
+    // Send email
+    const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
+    await sendB2BActivationEmail(email, activationToken, userLang);
+
+    const userData = newUser.toObject();
+    delete userData.password;
+    delete userData.resetPasswordToken;
+    delete userData.resetPasswordExpires;
+
+    return res.status(201).json({
+      success: true,
+      message: "B2B_ACCOUNT_CREATED",
+      user: userData,
+    });
+  } catch (error) {
+    console.error("Error in createB2BAccount:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };

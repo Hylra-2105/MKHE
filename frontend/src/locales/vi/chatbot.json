@@ -1,0 +1,10 @@
+{
+  "title": "Mekong AI",
+  "subtitle": "Luôn sẵn sàng hỗ trợ",
+  "initial_greeting": "Chào bạn! Mình là Trợ lý ảo của Mekong Culture. Mình có thể giúp gì cho bạn về thông tin dự án, các thành viên hoặc các làng nghề truyền thống?",
+  "placeholder": "Hỏi Mekong AI bất cứ điều gì...",
+  "thinking": "Đang suy nghĩ...",
+  "error": "Xin lỗi, hiện tại mình đang gặp sự cố kết nối. Bạn vui lòng thử lại sau nhé!",
+  "balloon_unread": "Mình đã có câu trả lời cho bạn rồi nè!",
+  "balloon_default": "Bạn có thắc mắc gì hay cần thông tin gì không? Hãy hỏi mình nhé!"
+}

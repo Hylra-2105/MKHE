@@ -21,7 +21,11 @@ const verifyDPP = async (req, res) => {
     // Kiểm tra NFC tag trong cơ sở dữ liệu
     const tag = await NfcTag.findOne({ uid }).populate({
       path: "product",
-      select: "name description images file3D artisanName culturalDNA categoryMatrix gpsLocation sku"
+      select: "name story images file3D artisanName culturalDNA categoryMatrix gpsLocation sku storyBlogId",
+      populate: {
+        path: "storyBlogId",
+        select: "slug title",
+      }
     });
 
     if (!tag) {

@@ -1,10 +1,11 @@
 {
   "nav": {
-    "heritage": "Di Sản",
-    "craft_villages": "Làng Nghề",
-    "shop": "Cửa Hàng",
-    "storytelling": "Câu Chuyện",
-    "values": "Giá Trị"
+    "home": "Trang chủ",
+    "about": "Giới thiệu",
+    "shop": "Cửa hàng",
+    "storytelling": "Ký sự",
+    "blog": "Blog",
+    "contact": "Liên hệ"
   },
   "user_menu": {
     "profile": "Hồ sơ cá nhân",
@@ -13,7 +14,11 @@
     "logout": "Đăng xuất",
     "admin_area": "Khu vực quản trị",
     "staff_area": "Khu vực nhân viên",
-    "manage_products": "Quản lý Sản phẩm"
+    "manage_products": "Quản lý Sản phẩm",
+    "manage_vouchers": "Quản lý Voucher",
+    "manage_orders": "Quản lý Đơn hàng",
+    "manage_blogs": "Quản lý Bài viết",
+    "manage_reviews": "Quản lý Đánh giá"
   },
   "guest_menu": {
     "login": "Đăng nhập"
@@ -34,5 +39,52 @@
     "zh": "Tiếng Trung",
     "ko": "Tiếng Hàn",
     "ja": "Tiếng Nhật"
+  },
+  "notifications": {
+    "title": {
+      "order_placed": "Đặt hàng thành công",
+      "payment_success": "Thanh toán thành công",
+      "order_confirmed": "Đơn hàng đã được xác nhận",
+      "order_delivering": "Đơn hàng đang giao",
+      "order_completed": "Giao hàng thành công",
+      "order_cancelled": "Đơn hàng đã hủy",
+      "voucher_saved": "Lưu mã giảm giá thành công",
+      "lucky_wheel_won": "Chúc mừng trúng thưởng!",
+      "flash_sale": "Sản phẩm Sale Khủng!",
+      "voucher_published": "Bạn có mã ưu đãi mới!",
+      "admin_order_new": "Đơn hàng mới",
+      "admin_order_paid": "Đơn hàng đã thanh toán",
+      "admin_order_completed": "Đơn hàng hoàn tất",
+      "admin_stock_alert": "Cảnh báo tồn kho"
+    },
+    "message": {
+      "order_placed": "Đơn hàng {{orderCode}} đã được đặt thành công. Đang chờ xử lý.",
+      "payment_success": "Thanh toán cho đơn hàng {{orderCode}} đã được ghi nhận.",
+      "order_confirmed": "Đơn hàng {{orderCode}} của bạn đã được xác nhận và đang chuẩn bị hàng.",
+      "order_delivering": "Đơn hàng {{orderCode}} của bạn đã được bàn giao cho đơn vị vận chuyển.",
+      "order_completed": "Đơn hàng {{orderCode}} đã giao thành công. Cảm ơn bạn đã mua sắm tại MKHE!",
+      "order_cancelled": "Đơn hàng {{orderCode}} đã bị hủy.",
+      "voucher_saved": "Bạn đã thu thập thành công mã giảm giá {{code}}.",
+      "lucky_wheel_won": "Bạn vừa nhận được mã giảm giá {{code}} từ Hộp quà Bí ẩn.",
+      "flash_sale": "Sản phẩm {{productName}} đang có chương trình Sale hấp dẫn. Đừng bỏ lỡ!",
+      "voucher_published": "Mã giảm giá {{code}} mới được phát hành. Hãy sưu tầm ngay kẻo lỡ!",
+      "admin_order_new": "Có đơn hàng mới #{{orderCode}} vừa được đặt thành công (COD).",
+      "admin_order_paid": "Đơn hàng #{{orderCode}} vừa được thanh toán thành công (Online).",
+      "admin_order_completed": "Khách hàng đã xác nhận nhận hàng và thanh toán cho đơn #{{orderCode}}.",
+      "admin_stock_alert": "Sản phẩm {{productName}} sắp hết hàng (còn {{currentStock}} cái)."
+    },
+    "header_title": "Thông báo",
+    "mark_all_read": "Đánh dấu tất cả là đã đọc",
+    "mark_read": "Đánh dấu là đã đọc",
+    "delete": "Xóa thông báo này",
+    "empty": "Bạn chưa có thông báo nào",
+    "time_just_now": "vừa xong",
+    "tab_all": "Tất cả",
+    "tab_unread": "Chưa đọc",
+    "tab_system": "Hệ thống",
+    "recent": "Trước đó",
+    "load_more": "Xem thông báo trước đó",
+    "deleted_success": "Đã xóa thông báo",
+    "undo": "Hoàn tác"
   }
 }

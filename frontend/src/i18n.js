@@ -16,6 +16,12 @@ import productVI from "./locales/vi/product.json";
 import homeVI from "./locales/vi/home.json";
 import commonVI from "./locales/vi/common.json";
 import dppVI from "./locales/vi/dpp.json";
+import cartVI from "./locales/vi/cart.json";
+import checkoutVI from "./locales/vi/checkout.json";
+import historyVI from "./locales/vi/history.json";
+import blogVI from "./locales/vi/blog.json";
+import reviewsVI from "./locales/vi/reviews.json";
+import chatbotVI from "./locales/vi/chatbot.json";
 
 // EN
 
@@ -31,6 +37,12 @@ import productEN from "./locales/en/product.json";
 import homeEN from "./locales/en/home.json";
 import commonEN from "./locales/en/common.json";
 import dppEN from "./locales/en/dpp.json";
+import cartEN from "./locales/en/cart.json";
+import checkoutEN from "./locales/en/checkout.json";
+import historyEN from "./locales/en/history.json";
+import blogEN from "./locales/en/blog.json";
+import reviewsEN from "./locales/en/reviews.json";
+import chatbotEN from "./locales/en/chatbot.json";
 
 // ZH
 
@@ -46,6 +58,12 @@ import productZH from "./locales/zh/product.json";
 import homeZH from "./locales/zh/home.json";
 import commonZH from "./locales/zh/common.json";
 import dppZH from "./locales/zh/dpp.json";
+import cartZH from "./locales/zh/cart.json";
+import checkoutZH from "./locales/zh/checkout.json";
+import historyZH from "./locales/zh/history.json";
+import blogZH from "./locales/zh/blog.json";
+import reviewsZH from "./locales/zh/reviews.json";
+import chatbotZH from "./locales/zh/chatbot.json";
 
 // KO
 
@@ -61,6 +79,12 @@ import productKO from "./locales/ko/product.json";
 import homeKO from "./locales/ko/home.json";
 import commonKO from "./locales/ko/common.json";
 import dppKO from "./locales/ko/dpp.json";
+import cartKO from "./locales/ko/cart.json";
+import checkoutKO from "./locales/ko/checkout.json";
+import historyKO from "./locales/ko/history.json";
+import blogKO from "./locales/ko/blog.json";
+import reviewsKO from "./locales/ko/reviews.json";
+import chatbotKO from "./locales/ko/chatbot.json";
 
 // JA
 
@@ -76,6 +100,12 @@ import productJA from "./locales/ja/product.json";
 import homeJA from "./locales/ja/home.json";
 import commonJA from "./locales/ja/common.json";
 import dppJA from "./locales/ja/dpp.json";
+import cartJA from "./locales/ja/cart.json";
+import checkoutJA from "./locales/ja/checkout.json";
+import historyJA from "./locales/ja/history.json";
+import blogJA from "./locales/ja/blog.json";
+import reviewsJA from "./locales/ja/reviews.json";
+import chatbotJA from "./locales/ja/chatbot.json";
 
 
 const resources = {
@@ -92,6 +122,12 @@ const resources = {
     home: homeVI,
     common: commonVI,
     dpp: dppVI,
+    cart: cartVI,
+    checkout: checkoutVI,
+    history: historyVI,
+    blog: blogVI,
+    reviews: reviewsVI,
+    chatbot: chatbotVI,
   },
   en: {
     login: loginEN,
@@ -106,6 +142,12 @@ const resources = {
     home: homeEN,
     common: commonEN,
     dpp: dppEN,
+    cart: cartEN,
+    checkout: checkoutEN,
+    history: historyEN,
+    blog: blogEN,
+    reviews: reviewsEN,
+    chatbot: chatbotEN,
   },
   zh: {
     login: loginZH,
@@ -120,6 +162,12 @@ const resources = {
     home: homeZH,
     common: commonZH,
     dpp: dppZH,
+    cart: cartZH,
+    checkout: checkoutZH,
+    history: historyZH,
+    blog: blogZH,
+    reviews: reviewsZH,
+    chatbot: chatbotZH,
   },
   ko: {
     login: loginKO,
@@ -134,6 +182,12 @@ const resources = {
     home: homeKO,
     common: commonKO,
     dpp: dppKO,
+    cart: cartKO,
+    checkout: checkoutKO,
+    history: historyKO,
+    blog: blogKO,
+    reviews: reviewsKO,
+    chatbot: chatbotKO,
   },
   ja: {
     login: loginJA,
@@ -148,6 +202,12 @@ const resources = {
     home: homeJA,
     common: commonJA,
     dpp: dppJA,
+    cart: cartJA,
+    checkout: checkoutJA,
+    history: historyJA,
+    blog: blogJA,
+    reviews: reviewsJA,
+    chatbot: chatbotJA,
   },
 };
 
@@ -170,6 +230,11 @@ i18n
       "home",
       "common",
       "dpp",
+      "cart",
+      "checkout",
+      "history",
+      "blog",
+      "reviews"
     ],
     defaultNS: "user",
     interpolation: {

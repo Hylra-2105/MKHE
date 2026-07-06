@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import path from "path";
 import { fileURLToPath } from "url";
+import http from "http";
+import { initSocket } from "./src/config/socket.js";
 
 // Lấy __dirname cho ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -19,17 +21,33 @@ import userRoutes from "./src/modules/users/user.routes.js";
 import productRoutes from "./src/modules/products/product.routes.js";
 import nfcRoutes from "./src/modules/nfc/nfc.routes.js";
 import dppRoutes from "./src/modules/dpp/dpp.routes.js";
+import cartRoutes from "./src/modules/cart/cart.routes.js";
+import voucherRoutes from "./src/modules/vouchers/voucher.routes.js";
+import orderRoutes from "./src/modules/orders/order.routes.js";
+import blogRoutes from "./src/modules/blogs/blog.routes.js";
+import reviewRoutes from "./src/modules/reviews/review.routes.js";
+import uploadRoutes from "./src/modules/upload/upload.routes.js";
+import analyticsRoutes from "./src/modules/analytics/analytics.route.js";
+import notificationRoutes from "./src/modules/notifications/notification.routes.js";
+import aiRoutes from "./src/modules/ai/ai.routes.js";
+import b2bRoutes from "./src/modules/b2b/b2b.routes.js";
+import { startOrderCron } from "./src/cron/orderCron.js";
+import { startSaleCron } from "./src/cron/saleCron.js";
+import { startVoucherCron } from "./src/cron/voucherCron.js";
 
 connectDB();
+startOrderCron();
+startSaleCron();
+startVoucherCron();
 
 const app = express();
 
 // Middleware CORS with proper headers for OAuth
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://mkhe.netlify.app"],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
@@ -60,11 +78,46 @@ app.use("/api/products", productRoutes);
 // API liên quan đến NFC Tags
 app.use("/api/nfc-tags", nfcRoutes);
 
+// API Analytics
+app.use("/api/analytics", analyticsRoutes);
+
 // API liên quan đến DPP
 app.use("/api/dpp", dppRoutes);
 
+// API liên quan đến Cart
+app.use("/api/cart", cartRoutes);
+
+// API liên quan đến Vouchers
+app.use("/api/vouchers", voucherRoutes);
+
+// API liên quan đến Orders
+app.use("/api/orders", orderRoutes);
+
+// API liên quan đến Blogs
+app.use("/api/blogs", blogRoutes);
+
+// API liên quan đến Reviews
+app.use("/api/reviews", reviewRoutes);
+
+// API liên quan đến Upload
+app.use("/api/upload", uploadRoutes);
+
+// API liên quan đến Notifications
+app.use("/api/notifications", notificationRoutes);
+
+// API liên quan đến AI Chatbot
+app.use("/api/ai", aiRoutes);
+
+// API liên quan đến B2B
+app.use("/api/b2b", b2bRoutes);
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+const server = http.createServer(app);
+initSocket(server);
+
+server.listen(PORT, () => {
+  console.info(`Server đang chạy tại http://localhost:${PORT}`);
 });
+
+

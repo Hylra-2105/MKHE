@@ -16,3 +16,18 @@ export const parseNumber = (val) => {
   if (!val) return 0;
   return parseInt(val.toString().replace(/\./g, ""), 10) || 0;
 };
+
+/**
+ * Lấy URL đầy đủ của ảnh/video từ đường dẫn tương đối
+ * 
+ * Update fallback image
+ */
+export const DEFAULT_FALLBACK_IMAGE = `data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%25%22%20height%3D%22100%25%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23f9fafb%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20fill%3D%22%239ca3af%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E`;
+
+export const getImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("blob:")) return url;
+  const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api").replace("/api", "");
+  if (url.startsWith("/")) return `${BASE_URL}${url}`;
+  return `${BASE_URL}/${url}`;
+};

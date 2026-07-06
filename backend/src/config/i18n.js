@@ -15,7 +15,8 @@ const translationCache = {};
  * @returns {object} Translation object
  */
 export const loadTranslation = (lang = "vi", namespace = "email") => {
-  const key = `${lang}.${namespace}`;
+  const resolvedLang = lang === "vi" ? "vi" : "en";
+  const key = `${resolvedLang}.${namespace}`;
 
   // Return from cache if available
   if (translationCache[key]) {
@@ -25,7 +26,7 @@ export const loadTranslation = (lang = "vi", namespace = "email") => {
   try {
     const filePath = path.join(
       __dirname,
-      `../locales/${lang}/${namespace}.json`,
+      `../locales/${resolvedLang}/${namespace}.json`,
     );
     const content = fs.readFileSync(filePath, "utf-8");
     const translation = JSON.parse(content);
@@ -36,12 +37,12 @@ export const loadTranslation = (lang = "vi", namespace = "email") => {
     return translation;
   } catch (error) {
     console.error(
-      `[i18n Error] Failed to load translation: ${lang}/${namespace}`,
+      `[i18n Error] Failed to load translation: ${resolvedLang}/${namespace}`,
       error.message,
     );
-    // Fallback to Vietnamese
-    if (lang !== "vi") {
-      return loadTranslation("vi", namespace);
+    // Fallback to English if Vietnamese is also missing, though unlikely
+    if (resolvedLang !== "en") {
+      return loadTranslation("en", namespace);
     }
     return {};
   }

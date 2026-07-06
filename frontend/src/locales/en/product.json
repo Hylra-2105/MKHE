@@ -3,18 +3,19 @@
     "title": "Product Management",
     "subtitle": "Build commercial catalogs and manage the B2B/B2C matrix",
     "add_btn": "+ Add Product",
-    "tab_general": "General Info",
-    "tab_nfc": "Digital Passport (NFC)",
-    "gallery_label": "Product Images/Videos",
-    "drag_drop_text": "Drag and drop images/videos here",
-    "click_to_select": "or click to select files",
     "page_text": "Page",
     "trash_btn": "Trash"
   },
   "filter": {
     "search_placeholder": "Search by product name or SKU...",
     "search_btn": "Search",
-    "all_categories": "All Categories"
+    "all_categories": "All Categories",
+    "all_dna": "All DNA Codes",
+    "all_vendors": "All Vendors",
+    "all_status": "All Statuses",
+    "status_published": "Published",
+    "status_draft": "Draft",
+    "status_out_of_stock": "Out of Stock"
   },
   "table": {
     "name": "Product Name",
@@ -30,6 +31,14 @@
   },
   "modal": {
     "add_title": "Add New Product",
+    "tab_general": "General Info",
+    "tab_nfc": "Digital Passport (NFC)",
+    "cultural_dna": "Cultural DNA",
+    "craft_village": "Craft Village",
+    "craft_village_placeholder": "e.g., Chau Phong weaving village...",
+    "material": "Material",
+    "story": "Product Story",
+    "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)",
     "name": "Product Name",
     "name_placeholder": "Example: Striped Brocade Tote Bag",
     "sku": "SKU",
@@ -39,8 +48,6 @@
     "price_placeholder": "250000",
     "stock": "Stock Quantity",
     "stock_placeholder": "100",
-    "description": "Short Product Description",
-    "description_placeholder": "Enter detailed product information for display and sales purposes...",
     "cancel": "Cancel",
     "create": "Create",
     "save": "Save",
@@ -55,7 +62,6 @@
     "confirm_restore_title": "Restore Product?",
     "confirm_restore_desc": "Are you sure you want to restore \"{{name}}\" to the product list?",
     "confirm_restore_btn": "Restore",
-
     "gallery_label": "Product Images/Videos",
     "drag_drop_text": "Drag and drop images/videos here",
     "click_to_select": "or click to select files",
@@ -79,7 +85,9 @@
       "location_placeholder": "Ex: Phnom Pi Pottery Village (Or enter coordinates)",
       "location_placeholder_edit": "Ex: 10.823, 106.629 or Location Name",
       "map_title": "Location Map (Mini Google Maps)",
-      "map_desc": "* Map will automatically update after you enter the address or coordinates."
+      "map_desc": "* Map will automatically update after you enter the address or coordinates.",
+      "story_link": "Linked Story (Optional)",
+      "story_link_empty": "-- No linked story --"
     },
     "processing": "Processing...",
     "images_label": "Product Images/videos",
@@ -94,12 +102,18 @@
       "current_file": "Current 3D file",
       "label": "3D MODEL FILE (.GLB, .GLTF)",
       "error_upload": "Error uploading 3D file",
-      "error_upload_both": "Error uploading image or 3D file"
+      "error_upload_both": "Error uploading image or 3D file",
+      "selected_file": "New 3D file selected",
+      "optimized": "Web-optimized",
+      "deleted": "Current 3D Model will be deleted",
+      "click_upload_new": "Drag & drop or click to upload new file",
+      "auto_compress": "System automatically optimizes Mesh & Texture. Supports huge files up to 150MB!",
+      "delete": "Delete"
     }
   },
   "statuses": {
-    "DRAFT": "Draft (Hidden)",
-    "PUBLISHED": "Published (On Sale)",
+    "DRAFT": "Draft",
+    "PUBLISHED": "Published",
     "OUT_OF_STOCK": "Out of Stock"
   },
   "pagination": {
@@ -138,7 +152,24 @@
     "copy_link_success": "NFC verification link copied!",
     "update_tag_error": "Error updating tag status",
     "activate_success": "Successfully activated tag {{uid}}",
-    "activate_error": "Activation failed"
+    "activate_error": "Activation failed",
+    "processing_images": "Processing and optimizing images...",
+    "processing_images_success": "Files processed successfully!",
+    "processing_images_error": "Error processing files",
+    "video_too_large": "Video {{name}} is too large (>100MB).",
+    "missing_fields": "Please fill in Name, SKU, Price, and Vendor.",
+    "missing_dpp_fields": "DPP requires Artisan Name and GPS Location.",
+    "no_link_allowed": "Do not paste links! Please enter location name or coordinates only.",
+    "file_3d_too_large": "3D file is too large (>150MB), which may freeze the browser. Please reduce it using 3D software first.",
+    "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
+    "optimize_3d_success": "3D optimization successful! Size reduced to: {{size}}MB",
+    "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used.",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "Cannot publish when stock is 0.",
+    "invalid_quantity": "Valid quantity is 1 to 100",
+    "restore_failed": "❌ Failed to restore: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC Tag Management",
@@ -150,12 +181,121 @@
     "url": "Write URL (NFC Tools)",
     "status": "Status",
     "actions": "Actions",
-    "confirm_written": "Confirm Written"
+    "confirm_written": "Confirm Written",
+    "pending": "PENDING",
+    "active": "ACTIVE"
   },
   "culturalDNA": {
-    "CHAM": "Cham Genetic Code",
-    "KHMER": "Khmer Genetic Code",
-    "KINH": "Kinh Genetic Code",
+    "CHAM": "Cham Heritage",
+    "KHMER": "Khmer Heritage",
+    "KINH": "Kinh Heritage",
     "OTHER": "Other / Multi-ethnic"
+  },
+  "materials": {
+    "brocade": "Brocade",
+    "silk": "Silk",
+    "ceramic": "Ceramic",
+    "leather": "Cow Leather",
+    "copper": "Brass Lock",
+    "silver": "Silver",
+    "wood": "Wood"
+  },
+  "shop": {
+    "fetch_error": "Failed to fetch products.",
+    "not_found": "NO PRODUCTS FOUND",
+    "digital_passport": "Digital Passport",
+    "video": "Video",
+    "filters": {
+      "title": "Filters",
+      "search_title": "Search Products",
+      "search_placeholder": "Product name, SKU...",
+      "offers_title": "Offers",
+      "on_sale": "On Sale",
+      "craft_village_title": "Craft Village / Origin",
+      "craft_village_placeholder": "Search by craft village...",
+      "material_title": "Material",
+      "cultural_dna_title": "Cultural DNA",
+      "category_title": "Category",
+      "all": "All",
+      "clear_filters": "CLEAR FILTERS"
+    },
+    "layout": {
+      "header_title": "Heritage Collection",
+      "header_subtitle": "Each piece is a cultural story, woven by the hands of artisans and the soul of century-old craft villages.",
+      "mobile_products": "Products",
+      "mobile_filter": "Filter"
+    },
+    "detail": {
+      "category": "Category",
+      "material": "Material",
+      "village": "Craft Village",
+      "quantity": "Quantity:",
+      "out_of_stock": "Out of Stock",
+      "add_to_cart": "Add to Cart",
+      "buy_now": "Buy Now",
+      "story": "Heritage Story",
+      "show_less": "Show Less",
+      "read_more": "Read More",
+      "in_stock": "{{count}} items in stock",
+      "sold_out": "Sold Out",
+      "sku": "SKU",
+      "back": "Go Back",
+      "nfc_badge": "Integrated with NFC Digital Passport",
+      "b2b_wholesale_title": "Wholesale Prices for Enterprise:",
+      "b2b_from_quantity": "From {{quantity}} items",
+      "b2b_buy_more": "Buy {{count}} more items to reach the {{discount}}% discount tier.",
+      "b2b_max_discount": "You have reached the maximum discount tier!"
+    }
+  },
+  "form": {
+    "sale": {
+      "title": "Sale Program",
+      "subtitle": "Set promotional price and time",
+      "salePrice": "Sale Price",
+      "salePricePlaceholder": "Enter Sale price...",
+      "startSale": "Start Sale",
+      "endSale": "End Sale",
+      "sendPush": "Send notification",
+      "sendPushDesc": "The system will automatically send notifications to ALL users upon release",
+      "ongoing": "On Sale",
+      "upcoming": "Upcoming Sale"
+    }
+  },
+  "products": {
+    "b2b": {
+      "tiers_title": "Wholesale Price (B2B Tiers)",
+      "tiers_info": "The next tier must have a greater quantity and discount percentage than the previous one.",
+      "add_tier": "Add tier",
+      "no_tiers": "No discount tiers available.",
+      "min_quantity": "Min quantity",
+      "min_quantity_placeholder": "Ex: 50",
+      "discount_percent": "Discount %",
+      "discount_placeholder": "Ex: 10",
+      "remove_tier": "Remove tier",
+      "delete_confirm_title": "Delete discount tier?",
+      "delete_confirm_msg": "Are you sure you want to delete this discount tier? This action cannot be undone.",
+      "delete_confirm_yes": "Delete tier",
+      "delete_confirm_no": "Cancel"
+    },
+    "errors": {
+      "name_required": "Please enter product name",
+      "sku_required": "Please enter SKU",
+      "vendor_required": "Please select vendor",
+      "price_required": "Please enter price",
+      "artisan_required": "Please enter artisan name",
+      "gps_required": "Please enter GPS location",
+      "sale_price_invalid": "Sale price must be less than original price",
+      "sale_start_required": "Please select Sale start date",
+      "sale_end_required": "Please select Sale end date",
+      "sale_end_invalid": "End time must be after start time",
+      "sale_end_future": "End time must be in the future",
+      "sale_start_past": "Start time cannot be in the past",
+      "b2b_min_tiers": "Please configure at least 1 discount tier for B2B product.",
+      "b2b_missing_fields": "Please enter both Quantity and Discount % for all tiers.",
+      "b2b_invalid_values": "Quantity must be > 0 and discount % between 0 - 100.",
+      "b2b_quantity_order": "Tier {{current}}: Quantity must be greater than tier {{prev}} ({{prevQ}}).",
+      "b2b_discount_order": "Tier {{current}}: Discount % must be greater than tier {{prev}} ({{prevD}}%)."
+    },
+    "no_linked_story": "-- No linked story --"
   }
 }

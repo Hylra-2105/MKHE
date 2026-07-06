@@ -2,6 +2,7 @@ import React from "react";
 import { Star, ShoppingCart } from "lucide-react";
 import { isVideoMedia } from "@/utils/validators";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const DnaCard = ({ 
   item, 
@@ -13,7 +14,24 @@ const DnaCard = ({
   onHover, 
   onLeave 
 }) => {
-  const { t } = useTranslation("home");
+  const { t, i18n } = useTranslation("home");
+  const navigate = useNavigate();
+  const dragStartPos = React.useRef({ x: 0, y: 0 });
+
+  const handlePointerDown = (e) => {
+    dragStartPos.current = { x: e.clientX, y: e.clientY };
+  };
+
+  const handleClick = (e) => {
+    const dx = Math.abs(e.clientX - dragStartPos.current.x);
+    const dy = Math.abs(e.clientY - dragStartPos.current.y);
+    // Threshold of 5px to distinguish between click and drag
+    if (dx > 5 || dy > 5) {
+      e.preventDefault();
+      return;
+    }
+    navigate(`/shop/${item._id}`);
+  };
 
   // === TÍNH TOÁN HIỆU ỨNG 2D/3D ===
   // Vẫn giữ hiệu ứng cong/nghiêng 3D trên mobile để đẹp mắt
@@ -36,9 +54,8 @@ const DnaCard = ({
       }}
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
-      onClick={() => {
-        // CHỖ NÀY ĐỂ CHUYỂN SANG TRANG DETAIL
-      }}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
     >
       <div
         className="max-w-[500px] mx-auto"
@@ -82,6 +99,11 @@ const DnaCard = ({
                   alt={item.name}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700"
+                  onError={(e) => {
+                    e.target.onerror = null; // Prevent infinite loop if fallback also fails
+                    const fallbackName = item.name ? encodeURIComponent(item.name.substring(0, 15)) : "No+Image";
+                    e.target.src = `https://placehold.co/800x800/D4A373/FFFFFF.png?text=${fallbackName}`;
+                  }}
                 />
               );
             })()}
@@ -95,10 +117,16 @@ const DnaCard = ({
               <div className="flex flex-col gap-2 transform transition-all duration-500 delay-100">
                 {/* Rating */}
                 <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 text-mkhe-primary fill-mkhe-primary" />
-                  ))}
-                  <span className="text-[10px] text-white/70 ml-1">(12)</span>
+                  {[...Array(5)].map((_, i) => {
+                    const rating = item.ratingAverage || 0;
+                    return (
+                      <Star 
+                        key={i} 
+                        className={`w-3.5 h-3.5 text-mkhe-primary ${i < Math.round(rating) ? "fill-mkhe-primary" : "fill-transparent"}`} 
+                      />
+                    );
+                  })}
+                  <span className="text-[10px] text-white/70 ml-1">({item.ratingCount || 0})</span>
                 </div>
 
                 {/* Tên & Giá bên trong Popup */}
@@ -106,7 +134,7 @@ const DnaCard = ({
                   {item.name}
                 </h4>
                 <p className="text-mkhe-primary font-bold text-base drop-shadow-md">
-                  {item.price?.toLocaleString("vi-VN")} đ
+                  {item.price?.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {i18n.language === 'vi' ? 'đ' : 'VND'}
                 </p>
 
                 {/* Nút Mua Ngay */}

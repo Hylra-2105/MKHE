@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { dppApi } from "@/api/dppApi";
-import { Loader2, AlertCircle, Hexagon, Sparkles, Box, Image as ImageIcon, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, Hexagon, Sparkles, Box, Image as ImageIcon, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import ModelViewer3D from "./ModelViewer3D";
@@ -10,6 +10,7 @@ import LocationMap from "./LocationMap";
 import { isVideoMedia } from "@/utils/validators";
 import { useAuthStore } from "@/stores/useAuthStore";
 import toast from "react-hot-toast";
+import { checkNfcClaimApi, claimNfcGachaApi } from "@/api/voucherApi";
 import AuthBottomSheet from "./AuthBottomSheet";
 import WelcomeToast from "./WelcomeToast";
 
@@ -27,9 +28,8 @@ const DPPContainer = () => {
   // Thêm state xử lý Auth & Voucher
   const user = useAuthStore((state) => state.user);
   const [isBottomSheetOpen, setBottomSheetOpen] = useState(false);
-  const [isClaimed, setIsClaimed] = useState(() => {
-    return localStorage.getItem("claimed_welcome_mkhe") === "true";
-  });
+  const [isClaimed, setIsClaimed] = useState(false);
+  const [wonVoucher, setWonVoucher] = useState(null);
   
   const ctaRef = React.useRef(null);
   const scrollToCTA = () => {
@@ -84,30 +84,63 @@ const DPPContainer = () => {
     setDragOffset(0);
   };
 
-  const handleClaimVoucher = () => {
+  useEffect(() => {
+    if (user && uid) {
+      checkNfcClaimApi(uid)
+        .then((res) => {
+          if (res.data?.success && res.data?.data?.claimed) {
+            setIsClaimed(true);
+            setWonVoucher(res.data.data.voucher);
+          } else {
+            setIsClaimed(false);
+            setWonVoucher(null);
+          }
+        })
+        .catch(console.error);
+    } else {
+      setIsClaimed(false);
+      setWonVoucher(null);
+    }
+  }, [user, uid]);
+
+  const claimVoucherApiCall = async () => {
+    try {
+      const res = await claimNfcGachaApi(uid);
+      setIsClaimed(true);
+      setWonVoucher(res.data.data.voucher);
+      toast.success(t("o2o.msg_gacha_success", { title: res.data.data.voucher.title }), { duration: 5000, icon: '🎉' });
+    } catch (error) {
+      const msg = error.response?.data?.message;
+      if (msg === "NFC_ALREADY_CLAIMED") {
+        toast.error(t("o2o.err_already_claimed"));
+      } else if (msg === "NO_REWARDS_AVAILABLE") {
+        toast.error(t("o2o.err_no_rewards"));
+      } else if (msg === "ALL_REWARDS_CLAIMED") {
+        toast.error(t("o2o.err_all_claimed"));
+      } else if (msg === "BAD_LUCK") {
+        setIsClaimed(true); // Mark as claimed so they can't scan again
+        toast.error(t("o2o.err_bad_luck"), { icon: '😢' });
+      } else {
+        toast.error(msg || t("o2o.err_generic"));
+      }
+    }
+  };
+
+  const handleClaimVoucher = async () => {
     if (isClaimed) return;
     
     if (user) {
       // User is already logged in
-      setIsClaimed(true);
-      localStorage.setItem("claimed_welcome_mkhe", "true");
-      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
+      await claimVoucherApiCall();
     } else {
       // User is not logged in, open bottom sheet
       setBottomSheetOpen(true);
     }
   };
 
-  const handleAuthSuccess = (isNewUser) => {
+  const handleAuthSuccess = async (isNewUser) => {
     setBottomSheetOpen(false);
-    setIsClaimed(true);
-    localStorage.setItem("claimed_welcome_mkhe", "true");
-    
-    if (isNewUser) {
-      toast.success(t("o2o.msg_new_user"), { duration: 4000 });
-    } else {
-      toast.success(t("o2o.msg_returning_user"), { duration: 4000 });
-    }
+    await claimVoucherApiCall();
   };
 
   useEffect(() => {
@@ -227,7 +260,7 @@ const DPPContainer = () => {
           onClick={() => navigate("/")} 
           className="p-3 bg-mkhe-bg/50 backdrop-blur-md cursor-pointer rounded-full border border-mkhe-border hover:bg-mkhe-bg hover:scale-105 transition-all duration-300 shadow-xl group"
         >
-          <ArrowLeft className="w-5 h-5 text-mkhe-text/70 group-hover:text-mkhe-primary transition-colors" />
+          <ChevronLeft className="w-5 h-5 text-mkhe-text/70 group-hover:text-mkhe-primary group-hover:-translate-x-1 transition-all duration-300" />
         </button>
         
         <div className="flex items-center gap-2 px-5 py-2.5 bg-mkhe-bg/50 backdrop-blur-md border border-mkhe-border rounded-full shadow-xl">
@@ -374,10 +407,11 @@ const DPPContainer = () => {
             {product.name?.normalize("NFC")}
           </h1>
           
-          {product.description && (
-            <p className="text-sm text-mkhe-text/60 leading-relaxed font-light">
-              {product.description.normalize("NFC")}
-            </p>
+          {product.story && (
+            <div 
+              className="text-sm text-mkhe-text/60 leading-relaxed font-light [&>p]:mb-3 last:[&>p]:mb-0 [&>strong]:text-mkhe-text [&>strong]:font-bold [&>em]:italic"
+              dangerouslySetInnerHTML={{ __html: product.story }}
+            />
           )}
         </div>
 
@@ -401,10 +435,10 @@ const DPPContainer = () => {
               </div>
               <div>
                 <h3 className={`text-xl font-bold uppercase tracking-widest font-logo mb-1 ${isClaimed ? 'text-mkhe-text/60' : 'text-mkhe-text'}`}>
-                  {t("o2o.new_member")}
+                  {isClaimed ? t("o2o.claimed_title") : t("o2o.gacha_title")}
                 </h3>
                 <p className="text-sm text-mkhe-text/70">
-                  {t("o2o.cta_subtitle")}
+                  {isClaimed ? t("o2o.claimed_desc") : t("o2o.gacha_desc")}
                 </p>
               </div>
               <button
@@ -416,11 +450,38 @@ const DPPContainer = () => {
                     : "bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
                 }`}
               >
-                {isClaimed ? t("o2o.voucher_saved") : t("o2o.get_voucher")}
+                {isClaimed && wonVoucher ? t("o2o.btn_saved_code", { code: wonVoucher.code }) : isClaimed ? t("o2o.btn_claimed") : !user ? t("o2o.btn_login") : t("o2o.btn_spin")}
               </button>
             </div>
           </div>
         </div>
+
+        {/* Call to Action: Đọc Ký sự */}
+        {product.storyBlogId && product.storyBlogId.slug && (
+          <div className="mb-4">
+            <div className="relative bg-mkhe-primary/10 backdrop-blur-md p-6 rounded-3xl shadow-xl border border-mkhe-primary/30 overflow-hidden text-center transition-all duration-500 hover:border-mkhe-primary/60">
+              <div className="relative z-10 space-y-4">
+                <div className="flex justify-center">
+                  <ImageIcon className="w-8 h-8 text-mkhe-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold uppercase tracking-widest font-logo mb-1 text-gradient-gold">
+                    Đọc Ký Sự Làng Nghề
+                  </h3>
+                  <p className="text-sm text-mkhe-text/70">
+                    Khám phá câu chuyện chi tiết về quá trình tạo ra sản phẩm này và những nét văn hóa đặc sắc.
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate(`/blogs/${product.storyBlogId.slug}`)}
+                  className="w-full py-4 px-6 rounded-full cursor-pointer font-bold uppercase tracking-widest text-xs transition-all duration-500 flex items-center justify-center gap-2 bg-mkhe-primary text-[#1a110a] hover:shadow-[0_0_20px_rgba(217,197,178,0.3)] hover:scale-[1.02]"
+                >
+                  Khám phá ngay
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Auth Bottom Sheet */}

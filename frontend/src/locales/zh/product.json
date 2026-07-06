@@ -14,7 +14,13 @@
   "filter": {
     "search_placeholder": "按产品名称或 SKU 搜索...",
     "search_btn": "搜索",
-    "all_categories": "所有类别"
+    "all_categories": "所有分类",
+    "all_dna": "所有基因代码",
+    "all_vendors": "所有合作伙伴",
+    "all_status": "所有状态",
+    "status_published": "公开",
+    "status_draft": "草稿",
+    "status_out_of_stock": "缺货"
   },
   "table": {
     "name": "产品名称",
@@ -30,6 +36,12 @@
   },
   "modal": {
     "add_title": "添加新产品",
+    "tab_general": "一般信息",
+    "tab_nfc": "数字护照（NFC）",
+    "cultural_dna": "文化基因",
+    "craft_village": "工艺村",
+    "craft_village_placeholder": "例如：Chau Phong 编织村...",
+    "material": "材料",
     "name": "产品名称",
     "name_placeholder": "示例：条纹锦缎手提袋",
     "sku": "存货单位",
@@ -39,8 +51,6 @@
     "price_placeholder": "250000",
     "stock": "库存数量",
     "stock_placeholder": "100",
-    "description": "产品简短描述",
-    "description_placeholder": "输入详细的产品信息用于展示和销售目的...",
     "cancel": "取消",
     "create": "创造",
     "save": "节省",
@@ -78,7 +88,9 @@
       "location_placeholder": "例如：Phnom Pi Pottery Village（或输入坐标）",
       "location_placeholder_edit": "例如：10.823、106.629 或位置名称",
       "map_title": "位置图（迷你谷歌地图）",
-      "map_desc": "* 输入地址或坐标后，地图将自动更新。"
+      "map_desc": "* 输入地址或坐标后，地图将自动更新。",
+      "story_link": "关联故事 (可选)",
+      "story_link_empty": "-- 无关联故事 --"
     },
     "processing": "加工...",
     "images_label": "产品图片/视频",
@@ -93,12 +105,20 @@
       "current_file": "当前 3D 文件",
       "label": "3D 模型文件（.GLB、.GLTF）",
       "error_upload": "上传 3D 文件时出错",
-      "error_upload_both": "上传图像或 3D 文件时出错"
-    }
+      "error_upload_both": "上传图像或 3D 文件时出错",
+      "selected_file": "已选择新的3D文件",
+      "optimized": "网络优化",
+      "deleted": "当前的3D模型将被删除",
+      "click_upload_new": "拖放或单击以上传新文件",
+      "auto_compress": "系统自动优化网格和纹理。支持高达150MB的巨型文件！",
+      "delete": "删除"
+    },
+    "story": "产品故事",
+    "story_placeholder": "输入详细的产品故事（支持粗体、斜体、格式化...）"
   },
   "statuses": {
-    "DRAFT": "草稿（隐藏）",
-    "PUBLISHED": "已发布（发售）",
+    "DRAFT": "草稿",
+    "PUBLISHED": "公开",
     "OUT_OF_STOCK": "缺货"
   },
   "pagination": {
@@ -136,8 +156,25 @@
     "copy_link_error": "复制 NFC 链接时出错",
     "copy_link_success": "NFC 验证链接已复制！",
     "update_tag_error": "更新标签状态时出错",
-    "activate_success": "成功激活标签{{uid}}",
-    "activate_error": "激活失败"
+    "activate_success": "成功激活标签 {{uid}}",
+    "activate_error": "激活失败",
+    "processing_images": "正在处理和优化图像...",
+    "processing_images_success": "文件处理成功！",
+    "processing_images_error": "处理文件时发生错误",
+    "video_too_large": "视频 {{name}} 太大（>100MB）。",
+    "missing_fields": "请填写名称、SKU、价格和供应商。",
+    "missing_dpp_fields": "数字护照需要工匠名称和 GPS 坐标。",
+    "no_link_allowed": "不要粘贴链接！请仅输入位置名称或坐标。",
+    "file_3d_too_large": "3D 文件太大（>150MB），可能会导致浏览器无响应。请先使用 3D 软件减小文件大小。",
+    "optimizing_3d": "正在优化 3D 文件 ({{size}}MB)... 这将使用您的 CPU，请不要关闭页面！",
+    "optimize_3d_success": "3D 优化成功！大小减小到：{{size}}MB",
+    "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。",
+    "gallery_upload_success": "Đã thêm media mới thành công",
+    "gallery_delete_success": "Đã xoá ảnh thành công",
+    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
+    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
+    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC标签管理",
@@ -149,12 +186,121 @@
     "url": "写入 URL（NFC 工具）",
     "status": "地位",
     "actions": "行动",
-    "confirm_written": "确认已写"
+    "confirm_written": "确认已写",
+    "pending": "待处理",
+    "active": "活跃"
   },
   "culturalDNA": {
-    "CHAM": "占族遗传密码",
-    "KHMER": "高棉遗传密码",
-    "KINH": "金遗传密码",
+    "CHAM": "占族文化基因",
+    "KHMER": "高棉文化基因",
+    "KINH": "京族文化基因",
     "OTHER": "其他/多民族"
+  },
+  "materials": {
+    "brocade": "锦缎",
+    "silk": "丝绸",
+    "ceramic": "陶瓷",
+    "leather": "牛皮",
+    "copper": "黄铜锁",
+    "silver": "银",
+    "wood": "木材"
+  },
+  "shop": {
+    "fetch_error": "无法获取产品列表。",
+    "not_found": "未找到产品",
+    "digital_passport": "数字护照",
+    "video": "视频",
+    "filters": {
+      "title": "筛选",
+      "search_title": "搜索产品",
+      "search_placeholder": "产品名称, SKU...",
+      "offers_title": "优惠",
+      "on_sale": "促销中",
+      "craft_village_title": "工艺村 / 产地",
+      "craft_village_placeholder": "按工艺村搜索...",
+      "material_title": "材质",
+      "cultural_dna_title": "文化基因",
+      "category_title": "类别",
+      "all": "全部",
+      "clear_filters": "清除筛选"
+    },
+    "layout": {
+      "header_title": "遗产系列",
+      "header_subtitle": "每一件作品都是一个文化故事，由工匠的双手和百年手工艺村的灵魂编织而成。",
+      "mobile_products": "产品",
+      "mobile_filter": "筛选"
+    },
+    "detail": {
+      "category": "类别",
+      "material": "材料",
+      "village": "手工艺村",
+      "quantity": "数量：",
+      "out_of_stock": "缺货",
+      "add_to_cart": "加入购物车",
+      "buy_now": "立即购买",
+      "story": "遗产故事",
+      "show_less": "收起",
+      "read_more": "阅读更多",
+      "in_stock": "有 {{count}} 件商品",
+      "sold_out": "已售罄",
+      "sku": "SKU代码",
+      "back": "返回",
+      "nfc_badge": "集成NFC数字护照的产品",
+      "b2b_wholesale_title": "企业批发价格：",
+      "b2b_from_quantity": "起步 {{quantity}} 件",
+      "b2b_buy_more": "再购买 {{count}} 件即可获得 {{discount}}% 折扣。",
+      "b2b_max_discount": "您已达到最高折扣！"
+    }
+  },
+  "form": {
+    "sale": {
+      "title": "促销计划",
+      "subtitle": "设置促销价格和时间",
+      "salePrice": "促销价格",
+      "salePricePlaceholder": "输入促销价格...",
+      "startSale": "开始促销",
+      "endSale": "结束促销",
+      "sendPush": "发送通知",
+      "sendPushDesc": "发布时，系统将自动向所有用户发送通知",
+      "ongoing": "促销中",
+      "upcoming": "即将促销"
+    }
+  },
+  "products": {
+    "b2b": {
+      "tiers_title": "批发价格 (B2B Tiers)",
+      "tiers_info": "下一个级别的数量和折扣必须大于上一个级别。",
+      "add_tier": "添加级别",
+      "no_tiers": "尚无折扣级别。",
+      "min_quantity": "起订数量",
+      "min_quantity_placeholder": "例如: 50",
+      "discount_percent": "折扣 %",
+      "discount_placeholder": "例如: 10",
+      "remove_tier": "删除级别",
+      "delete_confirm_title": "删除折扣级别？",
+      "delete_confirm_msg": "您确定要删除此折扣级别吗？此操作无法撤销。",
+      "delete_confirm_yes": "删除级别",
+      "delete_confirm_no": "取消"
+    },
+    "errors": {
+      "name_required": "请输入产品名称",
+      "sku_required": "请输入SKU代码",
+      "vendor_required": "请选择供应商",
+      "price_required": "请输入价格",
+      "artisan_required": "请输入工匠名称",
+      "gps_required": "请输入GPS位置",
+      "sale_price_invalid": "促销价格必须低于原价",
+      "sale_start_required": "请选择促销开始日期",
+      "sale_end_required": "请选择促销结束日期",
+      "sale_end_invalid": "结束时间必须晚于开始时间",
+      "sale_end_future": "结束时间必须在将来",
+      "sale_start_past": "开始时间不能在过去",
+      "b2b_min_tiers": "请为B2B产品配置至少一个折扣级别。",
+      "b2b_missing_fields": "请为所有级别输入起订数量和折扣 (%)。",
+      "b2b_invalid_values": "数量必须 > 0，且折扣 (%) 介于 0 - 100 之间。",
+      "b2b_quantity_order": "级别 {{current}}：数量必须大于级别 {{prev}} ({{prevQ}})。",
+      "b2b_discount_order": "级别 {{current}}：折扣 (%) 必须大于级别 {{prev}} ({{prevD}}%)。"
+    },
+    "no_linked_story": "-- 无链接故事 --"
   }
 }

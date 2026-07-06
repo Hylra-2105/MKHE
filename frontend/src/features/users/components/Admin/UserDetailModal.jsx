@@ -6,6 +6,7 @@ import {
   MapPin,
   Info,
   Lock,
+  Unlock,
   Trash2,
   ShieldCheck,
   Edit2,
@@ -14,6 +15,7 @@ import {
   AlertTriangle,
   ChevronDown,
 } from "lucide-react";
+import Button from '@/components/ui/Button';
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -22,10 +24,9 @@ import {
   isValidPhoneInput,
   isVideoMedia,
 } from "@/utils/validators";
-import useLocations from "@/hooks/useLocations";
 import EditableField from "@/features/users/components/Admin/EditableField";
 
-const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
+const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, viewOnly = false }) => {
   const { t } = useTranslation("admin");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
@@ -41,20 +42,17 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
   // Lý do khóa mặc định (sẽ lấy từ key i18n đầu tiên)
   const [blockReason, setBlockReason] = useState("spam_comments");
 
-  const { countries, availableStates, dialCode } = useLocations(
-    isOpen ? editForm?.country || user?.country || "" : "",
-  );
-
   useEffect(() => {
     if (user && isOpen) {
+      const defaultAddr = user.addresses?.find((a) => a.isDefault);
       const initialForm = {
         name: user.name || "",
         phone: user.phone || "",
-        country: user.country || "",
-        city: user.city || "",
-        address: user.address || "",
         bio: user.bio || "",
         isBlocked: user.isBlocked ?? false,
+        defaultAddressText: defaultAddr?.addressText || "",
+        defaultAddressName: defaultAddr?.receiverName || "",
+        defaultAddressPhone: defaultAddr?.receiverPhone || "",
       };
       setEditForm(initialForm);
       setOriginalEditForm(initialForm);
@@ -87,16 +85,8 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     if (e.target === e.currentTarget) onClose();
   };
 
-  // XỬ LÝ SĐT: Tính toán số SẠCH ngay trước khi render
+  // Không format prefix nữa
   let displayPhone = editForm.phone || "";
-  if (dialCode) {
-    while (displayPhone.startsWith(dialCode)) {
-      displayPhone = displayPhone.substring(dialCode.length).trim();
-    }
-  }
-  if (displayPhone.startsWith("0")) {
-    displayPhone = displayPhone.substring(1).trim();
-  }
   // ==========================================
 
   const handleInputChange = (e) => {
@@ -104,32 +94,20 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
     let finalValue = value;
 
     if (name === "phone") {
-      if (dialCode) {
-        while (finalValue.startsWith(dialCode)) {
-          finalValue = finalValue.substring(dialCode.length).trim();
-        }
-      }
-      if (finalValue.startsWith("0")) {
-        finalValue = finalValue.substring(1).trim();
-      }
       if (!isValidPhoneInput(finalValue)) return;
     }
 
-    setEditForm((prev) => {
-      const newForm = { ...prev, [name]: finalValue };
-      if (name === "country") newForm.city = "";
-      return newForm;
-    });
+    setEditForm((prev) => ({ ...prev, [name]: finalValue }));
   };
 
   const handleSave = async () => {
-    let dataToSave = { ...editForm };
-
-    if (displayPhone && dialCode) {
-      dataToSave.phone = `${dialCode}${displayPhone}`;
-    } else {
-      dataToSave.phone = displayPhone;
-    }
+    let dataToSave = {
+      name: editForm.name,
+      phone: editForm.phone,
+      bio: editForm.bio,
+      isBlocked: editForm.isBlocked,
+      blockReason: editForm.blockReason,
+    };
 
     setIsSaving(true);
     try {
@@ -248,9 +226,9 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-full transition-all cursor-pointer"
+            className="p-2 hover:bg-[var(--color-mkhe-border)]/20 rounded-full transition-all cursor-pointer text-[var(--color-mkhe-text)]/60"
           >
-            <X className="w-6 h-6 text-[var(--color-mkhe-text)]" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -345,64 +323,39 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
 
               <div>
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 flex items-center gap-2 transition-colors">
-                  <MapPin className="w-4 h-4" /> {t("users.shipping_contact")}
+                  <MapPin className="w-4 h-4" /> {t("users.contact", { defaultValue: "LIÊN HỆ" })}
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-                  <EditableField
-                    label={t("users.country")}
-                    name="country"
-                    value={editForm.country}
-                    isEditing={isEditing}
-                    onChange={handleInputChange}
-                    placeholder={t("users.country_placeholder")}
-                    options={countries}
-                    t={t}
-                  />
-                  <EditableField
-                    label={t("users.city")}
-                    name="city"
-                    value={editForm.city}
-                    isEditing={isEditing}
-                    onChange={handleInputChange}
-                    placeholder={
-                      editForm.country
-                        ? t("users.city_placeholder")
-                        : t("users.city_disabled")
-                    }
-                    options={availableStates}
-                    disabled={
-                      isEditing &&
-                      (!editForm.country || availableStates.length === 0)
-                    }
-                    t={t}
-                  />
-                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-5">
                   <EditableField
                     label={t("users.phone")}
                     name="phone"
-                    value={displayPhone}
+                    value={editForm.phone}
                     isEditing={isEditing}
                     onChange={handleInputChange}
-                    placeholder={
-                      editForm.country
-                        ? t("users.phone_placeholder")
-                        : t("users.city_disabled")
-                    }
-                    prefix={dialCode}
-                    disabled={isEditing && !editForm.country}
+                    placeholder={t("users.phone_placeholder")}
                   />
                 </div>
-                <EditableField
-                  label={t("users.address")}
-                  name="address"
-                  value={editForm.address}
-                  isEditing={isEditing}
-                  onChange={handleInputChange}
-                  placeholder={t("users.address_placeholder")}
-                  isTextArea
-                  t={t}
-                />
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-4 flex items-center gap-2 transition-colors">
+                  <MapPin className="w-4 h-4" /> 
+                  {t("users.default_address", { defaultValue: "ĐỊA CHỈ MẶC ĐỊNH" })}
+                  {user?.addresses && Math.max(0, user.addresses.length - (user.addresses.find(a => a.isDefault) ? 1 : 0)) > 0 && (
+                    <span className="text-[var(--color-mkhe-text)]/50 font-medium normal-case text-xs lowercase ml-1">
+                      {t("users.other_addresses", { count: Math.max(0, user.addresses.length - (user.addresses.find(a => a.isDefault) ? 1 : 0)), defaultValue: "(+{{count}} địa chỉ khác)" })}
+                    </span>
+                  )}
+                </h4>
+                <div className="mb-5">
+                  <div className={`p-4 bg-[var(--color-mkhe-bg)] rounded-xl border border-[var(--color-mkhe-border)]/20 text-sm text-[var(--color-mkhe-text)]/80 leading-relaxed transition-colors ${isEditing ? 'opacity-70' : ''}`}>
+                    {user?.addresses?.find(a => a.isDefault) ? (
+                      user.addresses.find(a => a.isDefault).addressText
+                    ) : (
+                      <span className="italic opacity-50">{t("users.address_empty", { defaultValue: "Chưa cập nhật" })}</span>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -429,57 +382,69 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh }) => {
         </div>
 
         {/* FOOTER BUTTONS */}
-        <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
+        {!viewOnly && (
+          <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
           <div className="flex gap-3">
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
-            >
-              <Trash2 className="w-4 h-4 transition-colors" />{" "}
-              {t("common.delete_account")}
-            </button>
-            <button
-              onClick={handleBlockButtonClick}
-              disabled={isSaving}
-              className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
-            >
-              <Lock className="w-4 h-4 transition-colors" />{" "}
-              {editForm.isBlocked
-                ? t("common.unlock_account")
-                : t("common.lock_account")}
-            </button>
-          </div>
-          <div className="flex gap-3">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <XCircle className="w-4 h-4 transition-colors" />{" "}
-                  {t("common.cancel")}
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
-                >
-                  <Check className="w-4 h-4 transition-colors" />{" "}
-                  {isSaving ? t("common.saving") : t("common.save_info")}
-                </button>
-              </>
+            {!lockOnly && (
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4 transition-colors" />{" "}
+                {t("common.delete_account")}
+              </button>
+            )}
+            {editForm.isBlocked ? (
+              <button
+                onClick={handleBlockButtonClick}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 border border-green-200 text-green-600 rounded-lg font-bold text-sm hover:bg-green-100 hover:border-green-300 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Unlock className="w-4 h-4 transition-colors" />{" "}
+                {t("common.unlock_account")}
+              </button>
             ) : (
               <button
-                onClick={() => setIsEditing(true)}
-                className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/20 transition-all cursor-pointer"
+                onClick={handleBlockButtonClick}
+                disabled={isSaving}
+                className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
               >
-                <Edit2 className="w-4 h-4 transition-colors" />{" "}
-                {t("common.edit")}
+                <Lock className="w-4 h-4 transition-colors" />{" "}
+                {t("common.lock_account")}
               </button>
             )}
           </div>
+          {!lockOnly && (
+            <div className="flex gap-3">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                    className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+                  >
+                    {t("common.cancel", { defaultValue: "Hủy" })}
+                  </button>
+                  <Button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="!w-auto px-8 py-2.5 rounded-xl text-sm"
+                  >
+                    {isSaving ? t("common.saving") : t("common.save_info")}
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  className="!w-auto px-8 py-2.5 rounded-xl text-sm"
+                >
+                  {t("common.edit")}
+                </Button>
+              )}
+            </div>
+          )}
         </div>
+        )}
 
         {/* XÁC NHẬN XÓA TÀI KHOẢN */}
         <ConfirmModal

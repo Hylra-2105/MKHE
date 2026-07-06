@@ -12,5 +12,10 @@
   "INVALID_EMAIL_FORMAT": "Invalid email format. Please enter a valid email.",
   "REGISTER_SUCCESS": "Registration successful!",
   "PASSWORD_MUST_BE_DIFFERENT": "The new password must be different from the old password.",
-  "TOO_MANY_OTP_REQUESTS": "You have requested OTP too many times. Please try again after 15 minutes."
+  "TOO_MANY_OTP_REQUESTS": "You have requested OTP too many times. Please try again after 15 minutes.",
+  "cancel": "Cancel",
+  "back": "Back",
+  "search": "Search",
+  "actions": "Actions",
+  "view_details": "View details"
 }

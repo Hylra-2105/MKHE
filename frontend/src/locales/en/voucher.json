@@ -1,0 +1,9 @@
+{
+  "publish_time_passed": "Start time has passed. Please select a future time.",
+  "update_success": "Updated successfully",
+  "update_error": "Failed to update",
+  "delete_draft_success": "Draft deleted successfully",
+  "end_early_success": "Ended voucher early successfully",
+  "delete_error": "Failed to delete voucher",
+  "end_early_error": "Failed to end voucher early"
+}

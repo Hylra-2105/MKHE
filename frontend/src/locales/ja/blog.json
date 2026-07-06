@@ -1,0 +1,107 @@
+{
+  "admin": {
+    "title": "ブログ管理",
+    "subtitle": "遺産の物語、イベント、ガイドを共有する",
+    "add_new": "新規記事追加",
+    "search_placeholder": "タイトルで検索...",
+    "btn_search": "検索",
+    "filter_category": "すべてのカテゴリー",
+    "filter_status": "すべてのステータス",
+    "empty_title": "記事はまだありません",
+    "empty_desc": "MKHEの誇り高き遺産の物語を伝える最初の記事を作成してください。",
+    "table": {
+      "article": "記事",
+      "category": "カテゴリー",
+      "status": "ステータス",
+      "created_at": "作成日",
+      "actions": "アクション"
+    },
+    "status": {
+      "PUBLISHED": "公開済み",
+      "DRAFT": "下書き"
+    },
+    "actions": {
+      "edit": "編集",
+      "view": "ウェブで見る",
+      "delete": "削除"
+    },
+    "delete_modal": {
+      "title": "記事の削除",
+      "message": "この記事を削除してもよろしいですか？この操作は元に戻せません。",
+      "btn_delete": "削除",
+      "btn_cancel": "キャンセル"
+    },
+    "editor": {
+      "create_title": "新規記事作成",
+      "edit_title": "記事の編集",
+      "btn_back": "戻る",
+      "btn_save_draft": "下書き保存",
+      "btn_publish": "公開する",
+      "form": {
+        "title": "記事のタイトル",
+        "title_placeholder": "タイトルを入力...",
+        "category": "カテゴリー",
+        "thumbnail": "サムネイル",
+        "thumbnail_drag": "画像またはビデオをここにドラッグ＆ドロップ",
+        "thumbnail_click": "またはクリックしてファイルを選択",
+        "content": "コンテンツ",
+        "linked_products": "リンクされた製品",
+        "linked_products_desc": "記事の最後に表示する製品を選択",
+        "search_product": "製品を検索...",
+        "max_products": "最適な表示のため、リンクできる製品は最大4つまでです！"
+      },
+      "categories": {
+        "Ký sự": "物語",
+        "Sự kiện": "イベント",
+        "Cẩm nang": "ガイド"
+      },
+      "edit_subtitle": "現在の記事のコンテンツを更新する",
+      "create_subtitle": "新しい記事のコンテンツを作成する",
+      "publish_title": "記事を公開する",
+      "update_publish_title": "記事を更新する",
+      "publish_desc": "システムは自動的に下書きを保存します。手動で保存するか、すぐに公開できます。",
+      "btn_publish_now": "今すぐ公開",
+      "btn_update_publish": "更新して公開",
+      "thumbnail_title": "サムネイル",
+      "thumbnail_ratio": "推奨比率: 16:9（例: 1200x675）",
+      "thumbnail_drop": "ここに画像をドロップ",
+      "thumbnail_change": "画像を変更する",
+      "thumbnail_drag": "クリックするか、画像をここにドラッグアンドドロップします",
+      "category_placeholder": "カテゴリを選択"
+    },
+    "categories": {
+      "Ký sự": "ストーリー",
+      "Sự kiện": "イベント",
+      "Cẩm nang": "ハンドブック"
+    }
+  },
+  "public": {
+    "page_title_story": "遺産の物語",
+    "page_desc_story": "絶妙な手作り製品の背後にある物語と、国民の文化的な魂を静かに守る人々を発見してください。",
+    "page_title_blog": "ブログ＆ニュース",
+    "page_desc_blog": "最新の情報、イベント、トレンドを更新します。",
+    "empty": "公開された記事はまだありません。",
+    "btn_read_more": "続きを読む",
+    "detail": {
+      "back": "戻る",
+      "related_products": "関連記事",
+      "view_detail": "詳細を見る",
+      "add_to_cart": "カートに追加"
+    }
+  },
+  "fetch_list_error": "Không thể tải danh sách bài viết",
+  "fetch_detail_error": "Không thể tải bài viết",
+  "editor": {
+    "draft_restored": "Đã khôi phục bản nháp tự động lưu",
+    "not_found": "Không tìm thấy bài viết",
+    "upload_success": "Tải ảnh lên thành công",
+    "upload_error": "Lỗi khi tải ảnh",
+    "invalid_image": "Vui lòng chọn file hình ảnh hợp lệ",
+    "upload_to_content_error": "Lỗi khi tải ảnh vào bài viết",
+    "title_required": "Vui lòng nhập tiêu đề bài viết",
+    "content_required": "Vui lòng nhập nội dung bài viết",
+    "update_success": "Cập nhật bài viết thành công",
+    "create_success": "Tạo bài viết thành công",
+    "save_error": "Lỗi khi lưu bài viết"
+  }
+}

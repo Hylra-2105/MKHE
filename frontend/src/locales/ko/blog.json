@@ -1,0 +1,107 @@
+{
+  "admin": {
+    "title": "블로그 관리",
+    "subtitle": "유산 이야기, 이벤트 및 가이드 공유",
+    "add_new": "새 기사 추가",
+    "search_placeholder": "제목으로 검색...",
+    "btn_search": "검색",
+    "filter_category": "모든 카테고리",
+    "filter_status": "모든 상태",
+    "empty_title": "아직 기사가 없습니다",
+    "empty_desc": "MKHE의 자랑스러운 유산 이야기를 전하는 첫 기사를 작성하세요.",
+    "table": {
+      "article": "기사",
+      "category": "카테고리",
+      "status": "상태",
+      "created_at": "생성일",
+      "actions": "작업"
+    },
+    "status": {
+      "PUBLISHED": "게시됨",
+      "DRAFT": "초안"
+    },
+    "actions": {
+      "edit": "편집",
+      "view": "웹에서 보기",
+      "delete": "삭제"
+    },
+    "delete_modal": {
+      "title": "기사 삭제",
+      "message": "이 기사를 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.",
+      "btn_delete": "삭제",
+      "btn_cancel": "취소"
+    },
+    "editor": {
+      "create_title": "새 기사 작성",
+      "edit_title": "기사 편집",
+      "btn_back": "뒤로",
+      "btn_save_draft": "초안 저장",
+      "btn_publish": "게시",
+      "form": {
+        "title": "기사 제목",
+        "title_placeholder": "제목 입력...",
+        "category": "카테고리",
+        "thumbnail": "썸네일",
+        "thumbnail_drag": "여기에 이미지 또는 동영상을 끌어다 놓으세요",
+        "thumbnail_click": "또는 클릭하여 파일 선택",
+        "content": "내용",
+        "linked_products": "연결된 제품",
+        "linked_products_desc": "기사 끝에 표시할 제품 선택",
+        "search_product": "제품 검색...",
+        "max_products": "최적의 표시를 위해 최대 4개의 제품만 연결할 수 있습니다!"
+      },
+      "categories": {
+        "Ký sự": "이야기",
+        "Sự kiện": "이벤트",
+        "Cẩm nang": "가이드"
+      },
+      "edit_subtitle": "현재 게시물 콘텐츠 업데이트",
+      "create_subtitle": "새 게시물 콘텐츠 만들기",
+      "publish_title": "게시물 게시",
+      "update_publish_title": "게시물 업데이트",
+      "publish_desc": "시스템에서 초안을 자동 저장합니다. 수동으로 저장하거나 즉시 게시할 수 있습니다.",
+      "btn_publish_now": "지금 게시",
+      "btn_update_publish": "업데이트 및 게시",
+      "thumbnail_title": "썸네일 (Thumbnail)",
+      "thumbnail_ratio": "권장 비율: 16:9 (예: 1200x675)",
+      "thumbnail_drop": "여기에 이미지 놓기",
+      "thumbnail_change": "이미지 변경",
+      "thumbnail_drag": "클릭하거나 여기에 이미지를 끌어다 놓으세요",
+      "category_placeholder": "카테고리 선택"
+    },
+    "categories": {
+      "Ký sự": "스토리",
+      "Sự kiện": "이벤트",
+      "Cẩm nang": "핸드북"
+    }
+  },
+  "public": {
+    "page_title_story": "유산 이야기",
+    "page_desc_story": "정교한 수제 제품과 민족 문화의 영혼을 조용히 지키는 사람들의 이야기를 발견하세요.",
+    "page_title_blog": "블로그 및 뉴스",
+    "page_desc_blog": "최신 정보, 이벤트 및 트렌드를 업데이트합니다.",
+    "empty": "아직 게시된 기사가 없습니다.",
+    "btn_read_more": "더 읽기",
+    "detail": {
+      "back": "돌아가기",
+      "related_products": "관련 제품",
+      "view_detail": "세부 정보 보기",
+      "add_to_cart": "장바구니에 추가"
+    }
+  },
+  "fetch_list_error": "블로그 목록을 불러오지 못했습니다",
+  "fetch_detail_error": "블로그를 불러오지 못했습니다",
+  "editor": {
+    "draft_restored": "자동 저장된 초안이 복구되었습니다",
+    "not_found": "블로그를 찾을 수 없습니다",
+    "upload_success": "이미지가 성공적으로 업로드되었습니다",
+    "upload_error": "이미지 업로드에 실패했습니다",
+    "invalid_image": "유효한 이미지 파일을 선택해 주세요",
+    "upload_to_content_error": "콘텐츠에 이미지 업로드 실패",
+    "title_required": "제목을 입력해 주세요",
+    "content_required": "내용을 입력해 주세요",
+    "update_success": "블로그가 성공적으로 업데이트되었습니다",
+    "create_success": "블로그가 성공적으로 생성되었습니다",
+    "save_error": "블로그 저장에 실패했습니다"
+  }
+}

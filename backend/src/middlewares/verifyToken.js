@@ -23,7 +23,7 @@ export const verifyToken = async (req, res, next) => {
       return errorResponse(res, 403, "ACCOUNT_BLOCKED");
     }
 
-    req.user = decoded;
+    req.user = user;
 
     next();
   } catch (error) {
