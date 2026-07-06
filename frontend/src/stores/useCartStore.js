@@ -176,7 +176,6 @@ export const useCartStore = create(
         });
 
         if (token) {
-          get().setLoadingItem(productId, true);
           
           if (updateQuantityTimeout) {
             clearTimeout(updateQuantityTimeout);
@@ -187,12 +186,9 @@ export const useCartStore = create(
               const item = get().items.find((i) => i.product._id === productId);
               if (item) {
                 await updateCartItemApi(productId, item.quantity);
-                toast.success(i18n.t("cart:toast.update_success"));
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);
-            } finally {
-              get().setLoadingItem(productId, false);
             }
           }, 500);
         }

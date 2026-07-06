@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   if (!token) {
     const currentPath = location.pathname + location.search;
-    return <Navigate to={`/login?redirect=${encodeURIComponent(currentPath)}`} replace />;
+    return <Navigate to={`/login?redirect=${encodeURIComponent(currentPath)}`} state={location.state} replace />;
   }
 
   if (

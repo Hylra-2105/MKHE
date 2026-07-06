@@ -56,7 +56,7 @@ export default function LoginForm() {
       if (res && res.success) {
         toast.success(t("msg_login_success"), { duration: 3000 });
         if (redirectPath) {
-          navigate(redirectPath);
+          navigate(redirectPath, { state: location.state });
         } else {
           const userRole = useAuthStore.getState().user?.role;
           if (userRole === "Admin") {
@@ -123,7 +123,7 @@ export default function LoginForm() {
       });
       
       if (redirectPath) {
-        navigate(redirectPath);
+        navigate(redirectPath, { state: location.state });
       } else {
         const userRole = useAuthStore.getState().user?.role;
         if (userRole === "Admin") {

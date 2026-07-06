@@ -15,7 +15,8 @@ export const createVietnameseRegex = (keyword) => {
   str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
   str = str.replace(/đ/g, "d");
 
-  str = str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  str = str.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&"); // Removed \s from escaping
+  str = str.replace(/\s+/g, "\\s+"); // Allow flexible spacing
 
   str = str.replace(/a/g, "[aàáạảãâầấậẩẫăằắặẳẵ]");
   str = str.replace(/e/g, "[eèéẹẻẽêềếệểễ]");

@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
 import { useVoucherStore } from "@/stores/useVoucherStore";
+import { checkVoucherEligibility } from "@/utils/voucherHelpers";
 
 const MiniCartDrawer = () => {
   const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, getDiscountedTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart, selectedVoucher, setSelectedVoucher } = useCartStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(["cart"]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -23,34 +25,19 @@ const MiniCartDrawer = () => {
   }, [isCartOpen, fetchWalletVouchers]);
 
   useEffect(() => {
-    if (selectedVoucher && !isLoadingWallet) {
-      const isValid = walletVouchers.some(uv => uv.voucher._id === selectedVoucher._id && uv.status === "AVAILABLE");
-      if (!isValid) {
+    if (selectedVoucher) {
+      const eligibility = checkVoucherEligibility(selectedVoucher, items.filter((item) => selectedItems.includes(item.product._id)), getCartTotal());
+      if (!eligibility.isEligible) {
         setSelectedVoucher(null);
       }
     }
-  }, [walletVouchers, selectedVoucher, isLoadingWallet, setSelectedVoucher]);
+  }, [selectedVoucher, items, selectedItems, getCartTotal, setSelectedVoucher]);
 
   useEffect(() => {
-    if (selectedItems.length === 0 && selectedVoucher) {
-      setSelectedVoucher(null);
-    }
-  }, [selectedItems, selectedVoucher, setSelectedVoucher]);
-
-  useEffect(() => {
-    if (isCartOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (!isCartOpen) {
       setIsEditMode(false);
       setItemToDelete(null);
-      if (selectedItems.length === 0) {
-        setSelectedVoucher(null);
-      }
     }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
   }, [isCartOpen]);
 
   if (!isCartOpen) return null;
@@ -60,22 +47,16 @@ const MiniCartDrawer = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex justify-end font-sans">
-      {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={() => setCartOpen(false)}
-      ></div>
-
-      {/* Drawer */}
-      <div className="relative w-full max-w-md bg-mkhe-bg h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+    <>
+      {/* Dropdown */}
+      <div className="absolute top-full right-0 mt-4 w-[400px] sm:w-[460px] z-[100] bg-mkhe-bg max-h-[calc(100vh-100px)] border border-mkhe-border rounded-xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-mkhe-border/10">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-mkhe-border/10">
           <div className="flex items-center gap-3">
             <ShoppingCart className="w-6 h-6 text-mkhe-primary" />
-            <h2 className="font-serif text-2xl text-mkhe-text">{t("title", "Giỏ hàng")}</h2>
-            <span className="bg-mkhe-primary text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+            <h3 className="font-bold text-2xl text-mkhe-text">{t("title", "Giỏ hàng")}</h3>
+            <span className="bg-mkhe-primary text-[#1a110a] text-xs font-bold px-2.5 py-0.5 rounded-full">
               {items.length}
             </span>
           </div>
@@ -196,7 +177,7 @@ const MiniCartDrawer = () => {
                     
                     <div className="flex items-end justify-between mt-2">
                       <div className="flex flex-col">
-                        <p className="text-mkhe-primary font-medium">
+                        <p className="text-mkhe-primary font-medium whitespace-nowrap">
                           {formatNumber(
                             item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date()
                             ? item.product.salePrice 
@@ -204,7 +185,7 @@ const MiniCartDrawer = () => {
                           )} đ
                         </p>
                         {item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date() && (
-                          <p className="text-xs text-mkhe-text/50 line-through">
+                          <p className="text-xs text-mkhe-text/50 line-through whitespace-nowrap">
                             {formatNumber(item.product.price)} đ
                           </p>
                         )}
@@ -242,7 +223,7 @@ const MiniCartDrawer = () => {
 
         {/* Custom Confirm Modal */}
         {itemToDelete && (
-          <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-6 animate-in fade-in duration-200">
             <div className="bg-mkhe-bg w-full max-w-sm rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-mkhe-border/10">
               <h3 className="text-xl font-serif text-mkhe-text mb-2 text-center">
                 {t("delete", "Xóa")}
@@ -352,9 +333,13 @@ const MiniCartDrawer = () => {
         cartItems={items.filter(i => selectedItems.includes(i.product._id))}
         cartTotal={getCartTotal()}
         selectedVoucherId={selectedVoucher?._id}
-        onSelectVoucher={setSelectedVoucher}
+        onSelectVoucher={(voucher) => {
+          setSelectedVoucher(voucher);
+          setIsVoucherSelectorOpen(false); // Đóng ngăn chọn mã sau khi chọn
+        }}
+        displayMode="dropdown"
       />
-    </div>
+    </>
   );
 };
 
