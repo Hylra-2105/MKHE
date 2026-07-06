@@ -78,9 +78,9 @@ const VoucherCard = ({
               onClick={() => isEligible && onSelect()}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 isSelected 
-                  ? "bg-mkhe-primary text-white" 
+                  ? "bg-mkhe-primary text-white cursor-pointer" 
                   : isEligible 
-                    ? "bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary hover:text-white"
+                    ? "bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary hover:text-white cursor-pointer"
                     : "bg-mkhe-border/10 text-mkhe-text/40 cursor-not-allowed"
               }`}
             >
@@ -100,7 +100,7 @@ const VoucherCard = ({
                     </button>
                   )}
                   <button
-                    className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors"
+                    className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors cursor-pointer"
                   >
                     {t("voucher.use_online")}
                   </button>
@@ -110,7 +110,7 @@ const VoucherCard = ({
                 <button
                   disabled={isCollecting}
                   onClick={() => onCollect && onCollect(voucher._id)}
-                  className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-1.5 rounded-full text-xs font-semibold bg-mkhe-primary text-white hover:bg-mkhe-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCollecting ? t("voucher.collecting", { defaultValue: "Đang lưu..." }) : t("voucher.collect", { defaultValue: "Lưu mã" })}
                 </button>

@@ -13,6 +13,7 @@ import CheckoutForm from "@/features/orders/components/Checkout/CheckoutForm";
 import OrderSummary from "@/features/orders/components/Checkout/OrderSummary";
 import OtpModal from "@/features/orders/components/Checkout/OtpModal";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
+import { checkVoucherEligibility } from "@/utils/voucherHelpers";
 
 export default function CheckoutPage() {
   const { t } = useTranslation("checkout");
@@ -74,6 +75,16 @@ export default function CheckoutPage() {
     return total + effectivePrice * item.quantity;
   }, 0);
   
+  // Clear voucher if it becomes ineligible
+  useEffect(() => {
+    if (selectedVoucher) {
+      const eligibility = checkVoucherEligibility(selectedVoucher, checkoutItems, subtotal);
+      if (!eligibility.isEligible) {
+        useCartStore.getState().setSelectedVoucher(null);
+      }
+    }
+  }, [selectedVoucher, checkoutItems, subtotal]);
+  
   // Calculate discount logic again to display
   let discountAmount = 0;
   if (selectedVoucher) {
@@ -115,7 +126,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!localBuyNowItem && checkoutItems.length === 0 && !isSuccess) {
       toast.error(t("errors.no_items"));
-      navigate("/cart"); // Or shop
+      navigate("/shop");
     }
   }, [checkoutItems.length, navigate, isSuccess, localBuyNowItem, t]);
 
@@ -284,7 +295,10 @@ export default function CheckoutPage() {
         cartItems={checkoutItems}
         cartTotal={subtotal}
         selectedVoucherId={selectedVoucher?._id}
-        onSelectVoucher={useCartStore.getState().setSelectedVoucher}
+        onSelectVoucher={(voucher) => {
+          useCartStore.getState().setSelectedVoucher(voucher);
+          setIsVoucherDrawerOpen(false);
+        }}
       />
 
       <OtpModal 

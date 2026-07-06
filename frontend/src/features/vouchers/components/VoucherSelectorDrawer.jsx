@@ -5,8 +5,9 @@ import { useVoucherStore } from "@/stores/useVoucherStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import VoucherCard from "./VoucherCard";
 import { formatNumber } from "@/utils/formatters";
+import { checkVoucherEligibility } from "@/utils/voucherHelpers";
 
-const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selectedVoucherId, onSelectVoucher }) => {
+const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selectedVoucherId, onSelectVoucher, displayMode = "drawer" }) => {
   const { t } = useTranslation(["cart"]);
   const { walletVouchers, fetchWalletVouchers, isLoadingWallet } = useVoucherStore();
   const socket = useSocketStore((state) => state.socket);
@@ -34,49 +35,12 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
     };
   }, [socket, isOpen, fetchWalletVouchers]);
 
-  const checkEligibility = (voucher) => {
-    if (cartTotal < voucher.minOrderValue) {
-      const amountNeeded = formatNumber(voucher.minOrderValue - cartTotal);
-      return {
-        isEligible: false,
-        reason: t("voucher.buy_more_to_apply", { amount: amountNeeded }),
-      };
-    }
-
-    // Check categories/villages if any
-    const hasCategoryRestriction = voucher.applicableCategories && voucher.applicableCategories.length > 0;
-    const hasVillageRestriction = voucher.applicableVillages && voucher.applicableVillages.length > 0;
-
-    if (hasCategoryRestriction || hasVillageRestriction) {
-      const isItemValid = cartItems.some((item) => {
-        let validCat = true;
-        let validVill = true;
-        if (hasCategoryRestriction) {
-          validCat = voucher.applicableCategories.some((c) => c === item.product.categoryMatrix || c === item.product.category);
-        }
-        if (hasVillageRestriction) {
-          validVill = voucher.applicableVillages.some((v) => v === item.product.craftVillage);
-        }
-        return validCat && validVill;
-      });
-
-      if (!isItemValid) {
-        return {
-          isEligible: false,
-          reason: t("voucher.invalid_category_village"),
-        };
-      }
-    }
-
-    return { isEligible: true, reason: null };
-  };
 
   const availableVouchers = walletVouchers.filter((uv) => uv.status === "AVAILABLE");
 
   const sortedVouchers = [...availableVouchers].sort((a, b) => {
-    const aEligible = checkEligibility(a.voucher).isEligible;
-    const bEligible = checkEligibility(b.voucher).isEligible;
-
+    const aEligible = checkVoucherEligibility(a.voucher, cartItems, cartTotal).isEligible;
+    const bEligible = checkVoucherEligibility(b.voucher, cartItems, cartTotal).isEligible;
     if (aEligible && !bEligible) return -1;
     if (!aEligible && bEligible) return 1;
 
@@ -103,16 +67,30 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
   return (
     <>
       <div 
-        className="fixed inset-0 z-[60] transition-opacity" 
+        className={`fixed inset-0 transition-opacity voucher-selector-drawer ${
+          displayMode === "dropdown" ? "z-[105] bg-black/20" : "z-[100] bg-black/40"
+        }`}
         onClick={onClose}
       />
-      <div className="fixed right-0 top-0 bottom-0 w-full md:w-[450px] bg-mkhe-bg z-[70] shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-0 border-l border-mkhe-border/10">
+      <div 
+        className={`voucher-selector-drawer flex flex-col bg-mkhe-bg shadow-2xl overflow-hidden ${
+          displayMode === "dropdown" 
+            ? "absolute top-full right-0 mt-4 w-[400px] sm:w-[460px] max-h-[calc(100vh-100px)] z-[110] border border-mkhe-border rounded-xl animate-in fade-in zoom-in-95 duration-200 font-sans text-left" 
+            : "fixed right-0 top-0 bottom-0 w-full md:w-[450px] z-[110] transform transition-transform duration-300 translate-x-0 border-l border-mkhe-border/10"
+        }`}
+      >
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-mkhe-border/10 bg-mkhe-bg">
+        <div className={`flex items-center justify-between border-b border-mkhe-border/10 bg-mkhe-bg ${
+          displayMode === "dropdown" ? "px-4 py-3" : "p-6"
+        }`}>
           <div className="flex items-center gap-3">
             <Ticket className="w-6 h-6 text-mkhe-primary" />
-            <h2 className="font-serif text-xl text-mkhe-text">{t("voucher.select_voucher")}</h2>
+            {displayMode === "dropdown" ? (
+              <h3 className="font-bold text-2xl text-mkhe-text">{t("voucher.select_voucher")}</h3>
+            ) : (
+              <h2 className="font-serif text-xl text-mkhe-text">{t("voucher.select_voucher")}</h2>
+            )}
           </div>
           <button 
             onClick={onClose}
@@ -136,7 +114,14 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
           ) : (
             <div className="space-y-4">
               {sortedVouchers.map((uv) => {
-                const { isEligible, reason } = checkEligibility(uv.voucher);
+                const eligibility = checkVoucherEligibility(uv.voucher, cartItems, cartTotal);
+                const isEligible = eligibility.isEligible;
+                let reason = eligibility.reason;
+                if (reason === "amount_needed") {
+                  reason = t("voucher.buy_more_to_apply", { amount: formatNumber(eligibility.amountNeeded) });
+                } else if (reason === "invalid_category_village") {
+                  reason = t("voucher.invalid_category_village");
+                }
                 const isSelected = selectedVoucherId === uv.voucher._id;
                 return (
                   <VoucherCard

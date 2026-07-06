@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-import MiniCartDrawer from "./MiniCartDrawer";
 import Chatbot from "../../features/ai/components/Chatbot";
 
 export default function MainLayout() {
@@ -18,7 +17,6 @@ export default function MainLayout() {
         <Outlet />
       </main>
       {!hideFooter && <Footer />}
-      <MiniCartDrawer />
       <Chatbot />
     </div>
   );

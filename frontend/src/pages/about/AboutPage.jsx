@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import aboutUs1 from '@/assets/images/about-us-1.png';
+import aboutUs2 from '@/assets/images/about-us-2.png';
 
 const AboutPage = () => {
   return (
@@ -38,14 +40,13 @@ const AboutPage = () => {
             initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
             className="md:w-1/2 relative flex justify-center md:justify-end"
           >
-            <div className="relative w-full max-w-[320px] lg:max-w-[400px] aspect-[3/4] rounded-t-[200px] rounded-b-[20px] overflow-hidden p-3 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-md border border-white/10 dark:border-white/5">
-              <div className="w-full h-full rounded-t-[200px] rounded-b-[10px] overflow-hidden bg-mkhe-bg relative group">
+            <div className="relative w-full max-w-[350px] lg:max-w-[450px] aspect-square rounded-t-full rounded-b-[20px] overflow-hidden p-4 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-md border border-black/10 dark:border-white/10">
+              <div className="w-full h-full rounded-t-full rounded-b-[12px] overflow-hidden bg-mkhe-bg relative group flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=1972&auto=format&fit=crop" 
+                  src={aboutUs1}
                   alt="Mekong Heritage" 
-                  className="w-full h-full object-cover transition-all duration-[1.5s] ease-in-out group-hover:scale-110 grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100"
+                  className="w-full h-full object-contain p-6"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent mix-blend-multiply"></div>
               </div>
             </div>
             
@@ -86,9 +87,9 @@ const AboutPage = () => {
             >
               <div className="relative w-full aspect-[4/5] bg-mkhe-input overflow-hidden rounded-sm">
                 <img 
-                  src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=2070&auto=format&fit=crop" 
+                  src={aboutUs2}
                   alt="Mekong Artisan" 
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[2s]"
+                  className="w-full h-full object-cover transition-all duration-[2s]"
                 />
                 <div className="absolute top-6 left-6 w-16 h-[1px] bg-white/70"></div>
                 <div className="absolute top-6 left-6 w-[1px] h-16 bg-white/70"></div>

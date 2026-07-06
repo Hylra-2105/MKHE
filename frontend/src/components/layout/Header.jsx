@@ -7,6 +7,7 @@ import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
 import NotificationDropdown from "./NotificationDropdown";
+import MiniCartDrawer from "./MiniCartDrawer";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -75,6 +76,7 @@ export default function Header() {
   const guestLangRef = useRef(null);
   const searchRef = useRef(null);
   const searchToggleRef = useRef(null);
+  const cartRef = useRef(null);
 
   const [isDark, setIsDark] = useState(() => {
     // Init từ localStorage
@@ -119,6 +121,14 @@ export default function Header() {
         !searchToggleRef.current.contains(event.target)
       ) {
         setIsSearchOpen(false);
+      }
+      if (
+        cartRef.current &&
+        !cartRef.current.contains(event.target) &&
+        !event.target.closest('.voucher-selector-drawer') &&
+        useCartStore.getState().isCartOpen
+      ) {
+        useCartStore.getState().setCartOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -241,17 +251,20 @@ export default function Header() {
             >
               <Search className="w-5 h-5" />
             </button>
-            <button 
-              onClick={toggleCart}
-              className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {items.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-[3px] bg-mkhe-primary text-[#1a110a] text-[10px] leading-none font-bold rounded-full flex items-center justify-center pt-[1px]">
-                  {items.length}
-                </span>
-              )}
-            </button>
+            <div className="relative flex items-center justify-center" ref={cartRef}>
+              <button 
+                onClick={toggleCart}
+                className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {items.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-[3px] bg-mkhe-primary text-[#1a110a] text-[10px] leading-none font-bold rounded-full flex items-center justify-center pt-[1px]">
+                    {items.length}
+                  </span>
+                )}
+              </button>
+              <MiniCartDrawer />
+            </div>
           </>
         )}
 
