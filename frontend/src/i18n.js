@@ -22,6 +22,7 @@ import historyVI from "./locales/vi/history.json";
 import blogVI from "./locales/vi/blog.json";
 import reviewsVI from "./locales/vi/reviews.json";
 import chatbotVI from "./locales/vi/chatbot.json";
+import contactVI from "./locales/vi/contact.json";
 
 // EN
 
@@ -43,6 +44,7 @@ import historyEN from "./locales/en/history.json";
 import blogEN from "./locales/en/blog.json";
 import reviewsEN from "./locales/en/reviews.json";
 import chatbotEN from "./locales/en/chatbot.json";
+import contactEN from "./locales/en/contact.json";
 
 // ZH
 
@@ -64,6 +66,7 @@ import historyZH from "./locales/zh/history.json";
 import blogZH from "./locales/zh/blog.json";
 import reviewsZH from "./locales/zh/reviews.json";
 import chatbotZH from "./locales/zh/chatbot.json";
+import contactZH from "./locales/zh/contact.json";
 
 // KO
 
@@ -85,6 +88,7 @@ import historyKO from "./locales/ko/history.json";
 import blogKO from "./locales/ko/blog.json";
 import reviewsKO from "./locales/ko/reviews.json";
 import chatbotKO from "./locales/ko/chatbot.json";
+import contactKO from "./locales/ko/contact.json";
 
 // JA
 
@@ -106,6 +110,7 @@ import historyJA from "./locales/ja/history.json";
 import blogJA from "./locales/ja/blog.json";
 import reviewsJA from "./locales/ja/reviews.json";
 import chatbotJA from "./locales/ja/chatbot.json";
+import contactJA from "./locales/ja/contact.json";
 
 
 const resources = {
@@ -128,6 +133,7 @@ const resources = {
     blog: blogVI,
     reviews: reviewsVI,
     chatbot: chatbotVI,
+    contact: contactVI,
   },
   en: {
     login: loginEN,
@@ -148,6 +154,7 @@ const resources = {
     blog: blogEN,
     reviews: reviewsEN,
     chatbot: chatbotEN,
+    contact: contactEN,
   },
   zh: {
     login: loginZH,
@@ -168,6 +175,7 @@ const resources = {
     blog: blogZH,
     reviews: reviewsZH,
     chatbot: chatbotZH,
+    contact: contactZH,
   },
   ko: {
     login: loginKO,
@@ -188,6 +196,7 @@ const resources = {
     blog: blogKO,
     reviews: reviewsKO,
     chatbot: chatbotKO,
+    contact: contactKO,
   },
   ja: {
     login: loginJA,
@@ -208,6 +217,7 @@ const resources = {
     blog: blogJA,
     reviews: reviewsJA,
     chatbot: chatbotJA,
+    contact: contactJA,
   },
 };
 
@@ -234,7 +244,8 @@ i18n
       "checkout",
       "history",
       "blog",
-      "reviews"
+      "reviews",
+      "contact"
     ],
     defaultNS: "user",
     interpolation: {

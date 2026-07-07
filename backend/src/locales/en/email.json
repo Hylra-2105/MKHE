@@ -67,5 +67,24 @@
     "greeting": "Welcome to MKHE B2B,",
     "instruction": "Your Enterprise account has been successfully created. Please click the button below to set up your password and activate your account.",
     "buttonText": "Access MKHE B2B Portal"
+  },
+  "contactConfirmation": {
+    "subject": "Confirmation of your contact request to MKHE",
+    "greeting": "Hello {name},",
+    "instruction": "We have received your contact request. Our team will review it and get back to you as soon as possible.",
+    "footer": "Sent at: {time}\nThank you for your interest in MKHE Heritage."
+  },
+  "adminContactNotification": {
+    "subject": "New contact request from {name}",
+    "greeting": "New Contact Notification",
+    "instruction": "There is a new contact request in the system:",
+    "details": "Contact Details",
+    "name": "Name:",
+    "email": "Email:",
+    "phone": "Phone:",
+    "company": "Company / Tax ID:",
+    "interest": "Interest:",
+    "message": "Message:",
+    "footer": "Sent at: {time}\nPlease contact the customer as soon as possible."
   }
 }

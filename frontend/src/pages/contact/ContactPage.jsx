@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Phone, MapPin, Send, ChevronDown } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, ChevronDown, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import InputField from '@/components/ui/InputField';
+import TextAreaField from '@/components/ui/TextAreaField';
+import { contactService } from '@/features/contact/contact.service';
 
 const ContactPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["contact", "common"]);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,6 +23,7 @@ const ContactPage = () => {
     message: ''
   });
 
+  const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -37,33 +41,62 @@ const ContactPage = () => {
   }, []);
 
   const interests = [
-    "Hỗ trợ đơn hàng / CSKH (Khách cá nhân)",
-    "Tìm hiểu thông tin sản phẩm",
-    "Quà tặng doanh nghiệp VIP (Sổ tay, hộp namecard thổ cẩm)",
-    "Tư vấn kiến trúc nội thất bản địa cho Resort/Hotel",
-    "Thiết kế đồng phục lụa Khmer/Thổ cẩm",
-    "Mua sỉ phụ kiện thời trang",
-    "Khác"
+    t("contact:interests.support"),
+    t("contact:interests.b2b"),
+    t("contact:interests.vip"),
+    t("contact:interests.design"),
+    t("contact:interests.boardgame"),
+    t("contact:interests.other")
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     
     if (name === 'phone') {
-      // Chỉ cho phép nhập số (và dấu + ở đầu nếu cần)
       const numericValue = value.replace(/[^0-9+]/g, '');
       setFormData(prev => ({ ...prev, [name]: numericValue }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+    // Clear error for the field being typed in
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name.trim()) errors.name = "contact:errors.emptyName";
+    if (!formData.phone.trim()) errors.phone = "contact:errors.emptyPhone";
+    
+    if (!formData.email.trim()) {
+      errors.email = "contact:errors.emptyEmail";
+    } else if (!emailRegex.test(formData.email)) {
+      errors.email = "contact:errors.invalidEmail";
+    }
+
+    // Validation AC1
+    if (formData.interest === t("contact:interests.b2b") && !formData.company.trim()) {
+      errors.company = "contact:companyRequired";
+    }
+
+    if (!formData.interest) {
+      errors.interest = "contact:errors.emptyInterest";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     setIsSubmitting(true);
-    setTimeout(() => {
-      toast.success("Cảm ơn bạn! Yêu cầu đã được gửi đến chúng tôi.");
-      setIsSubmitting(false);
+    try {
+      await contactService.createContact(formData);
+      toast.success(t("contact:successMessage"));
       setFormData({
         name: '',
         email: '',
@@ -72,7 +105,12 @@ const ContactPage = () => {
         interest: '',
         message: ''
       });
-    }, 1500);
+      setFormErrors({});
+    } catch (error) {
+      toast.error(t("contact:errorMessage"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -82,7 +120,6 @@ const ContactPage = () => {
       <div className="absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/10 rounded-full blur-[100px] animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
       
-
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
@@ -99,10 +136,10 @@ const ContactPage = () => {
             <span className="w-12 h-[1px] bg-mkhe-primary"></span>
           </div>
           <h1 className="text-5xl md:text-7xl font-logo italic tracking-wide text-mkhe-primary mb-6 drop-shadow-md">
-            Kết nối & Hợp tác
+            {t("contact:title")}
           </h1>
           <p className="text-mkhe-text/80 text-lg max-w-2xl font-light leading-relaxed">
-            Nơi những ý tưởng thăng hoa và những giá trị di sản được tiếp nối. Hãy cùng MKHE kiến tạo nên những không gian và tác phẩm mang đậm dấu ấn bản địa.
+            {t("contact:subtitle")}
           </p>
         </motion.div>
 
@@ -117,13 +154,12 @@ const ContactPage = () => {
             className="lg:col-span-5 flex flex-col space-y-16"
           >
 
-
             {/* Contact Details (From Footer) */}
             <div className="bg-mkhe-bg/80 backdrop-blur-sm p-8 border border-mkhe-border/30 relative">
               <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-mkhe-primary/50"></div>
               
               <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-8 font-bold">
-                {t("footer.contact.title", "Thông tin Liên hệ")}
+                {t("contact:infoTitle")}
               </h3>
               
               <ul className="space-y-8 text-mkhe-text/80">
@@ -132,14 +168,14 @@ const ContactPage = () => {
                     <MapPin className="w-4 h-4 text-mkhe-primary" />
                   </div>
                   <div className="pt-0.5">
-                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">Địa chỉ</p>
+                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">{t("contact:address")}</p>
                     <a
                       href="https://www.google.com/maps/place/Cần+Thơ,+Việt+Nam"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group-hover:text-mkhe-primary transition-colors text-base leading-relaxed block"
                     >
-                      {t("footer.contact.address", "Cần Thơ, Việt Nam, 94100")}
+                      Cần Thơ, Việt Nam, 94100
                     </a>
                   </div>
                 </li>
@@ -149,7 +185,7 @@ const ContactPage = () => {
                     <Phone className="w-4 h-4 text-mkhe-primary" />
                   </div>
                   <div className="pt-0.5">
-                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">Điện thoại</p>
+                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">{t("contact:phoneTitle")}</p>
                     <p className="group-hover:text-mkhe-primary transition-colors text-base block">
                       039 424 8611
                     </p>
@@ -161,7 +197,7 @@ const ContactPage = () => {
                     <Mail className="w-4 h-4 text-mkhe-primary" />
                   </div>
                   <div className="pt-0.5">
-                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">Email</p>
+                    <p className="text-xs text-mkhe-text/50 uppercase tracking-widest mb-1 font-semibold">{t("contact:emailTitle")}</p>
                     <p className="group-hover:text-mkhe-primary transition-colors text-base block">
                       mkheagency@gmail.com
                     </p>
@@ -186,97 +222,90 @@ const ContactPage = () => {
             <div className="bg-gradient-to-br from-white/5 to-transparent backdrop-blur-xl border border-white/10 dark:border-white/5 rounded-sm p-8 lg:p-14 shadow-2xl relative z-10">
               
               <div className="mb-12">
-                <h3 className="text-3xl lg:text-4xl font-logo italic text-mkhe-primary mb-4 drop-shadow-sm">Gửi Yêu Cầu Cho Chúng Tôi</h3>
+                <h3 className="text-3xl lg:text-4xl font-logo italic text-mkhe-primary mb-4 drop-shadow-sm">{t("contact:formTitle")}</h3>
                 <div className="w-16 h-[2px] bg-mkhe-primary mb-6"></div>
                 <p className="text-mkhe-text/60 text-sm font-light leading-relaxed">
-                  Bất kể bạn là khách hàng cá nhân hay doanh nghiệp đang tìm kiếm cơ hội hợp tác, đội ngũ chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và đồng hành cùng bạn.
+                  {t("contact:formSubtitle")}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="relative group">
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder=""
-                      className="peer w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all font-light"
-                    />
-                    {!formData.name && (
-                      <div className="absolute left-0 top-3 pointer-events-none text-mkhe-text/30 font-light transition-all peer-focus:opacity-0">
-                        Họ và Tên <span className="text-red-500">*</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative group">
-                    <input
-                      type="tel"
-                      name="phone"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder=""
-                      className="peer w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all font-light"
-                    />
-                    {!formData.phone && (
-                      <div className="absolute left-0 top-3 pointer-events-none text-mkhe-text/30 font-light transition-all peer-focus:opacity-0">
-                        Số điện thoại <span className="text-red-500">*</span>
-                      </div>
-                    )}
-                  </div>
+              <form onSubmit={handleSubmit} noValidate className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <InputField
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    label={t("contact:fields.name")}
+                    placeholder={t("contact:fields.name")}
+                    error={formErrors.name ? t(formErrors.name) : null}
+                  />
+                  <InputField
+                    type="tel"
+                    name="phone"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    label={t("contact:fields.phone")}
+                    placeholder={t("contact:fields.phone")}
+                    error={formErrors.phone ? t(formErrors.phone) : null}
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                  <div className="relative group">
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder=""
-                      className="peer w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all font-light"
-                    />
-                    {!formData.email && (
-                      <div className="absolute left-0 top-3 pointer-events-none text-mkhe-text/30 font-light transition-all peer-focus:opacity-0">
-                        Email <span className="text-red-500">*</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="relative group">
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      placeholder="Công ty / Tổ chức (Nếu có)"
-                      className="w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text placeholder-mkhe-text/30 focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all font-light"
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <InputField
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    label={t("contact:fields.email")}
+                    placeholder={t("contact:fields.email")}
+                    error={formErrors.email ? t(formErrors.email) : null}
+                  />
+                  <InputField
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleChange}
+                    label={t("contact:fields.company")}
+                    placeholder={t("contact:fields.company")}
+                    error={formErrors.company ? t(formErrors.company) : null}
+                  />
                 </div>
 
-                {/* Custom Dropdown */}
-                <div ref={dropdownRef} className="relative group z-20">
+                {/* Custom Dropdown using InputField base style */}
+                <div ref={dropdownRef} className="relative group z-20 mb-4 w-full">
+                  <label className="block text-sm mb-1.5 text-mkhe-text/80 font-medium">
+                    Nhu cầu quan tâm <span className="text-red-500">*</span>
+                  </label>
                   <div 
-                    className="w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all cursor-pointer relative font-light"
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className={`w-full p-3 bg-mkhe-input text-mkhe-text border ${formErrors.interest ? 'border-red-500' : 'border-mkhe-border'} rounded outline-none focus:border-mkhe-primary transition-colors cursor-pointer relative`}
+                    onClick={() => {
+                      setIsDropdownOpen(!isDropdownOpen);
+                      if (formErrors.interest) setFormErrors(prev => ({ ...prev, interest: '' }));
+                    }}
                   >
-                    <span className={formData.interest ? "text-mkhe-text" : "text-mkhe-text/40"}>
-                      {formData.interest || "-- Chọn Nhu cầu quan tâm --"}
+                    <span className={formData.interest ? "text-mkhe-text" : "text-mkhe-text/50"}>
+                      {formData.interest || t("contact:fields.interest")}
                     </span>
-                    <ChevronDown className={`absolute right-0 top-3 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </div>
+                  {formErrors.interest && (
+                    <div className="text-red-500 text-xs mt-1.5 flex items-start gap-1">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      <span>{t(formErrors.interest)}</span>
+                    </div>
+                  )}
                   
                   {/* Dropdown Options */}
-                  <div className={`absolute top-full left-0 w-full mt-2 bg-mkhe-bg/95 backdrop-blur-xl border border-mkhe-border/30 shadow-2xl overflow-hidden transition-all duration-300 origin-top ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
-                    <ul className="max-h-60 overflow-y-auto custom-scrollbar py-2">
+                  <div className={`absolute top-full left-0 w-full mt-1 bg-mkhe-input border border-mkhe-border shadow-2xl overflow-hidden transition-all duration-300 origin-top rounded z-50 ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
+                    <ul className="max-h-60 overflow-y-auto custom-scrollbar py-1">
                       {interests.map((item, idx) => (
                         <li 
                           key={idx}
-                          className="px-6 py-4 hover:bg-mkhe-primary/10 cursor-pointer text-mkhe-text text-sm transition-colors font-light border-b border-mkhe-border/10 last:border-0"
+                          className="px-4 py-3 hover:bg-mkhe-primary/20 cursor-pointer text-mkhe-text text-sm transition-colors"
                           onClick={() => {
                             setFormData(prev => ({ ...prev, interest: item }));
                             setIsDropdownOpen(false);
@@ -289,32 +318,25 @@ const ContactPage = () => {
                   </div>
                 </div>
 
-                <div className="relative group">
-                  <textarea
-                    name="message"
-                    required
-                    rows="4"
-                    value={formData.message}
-                    onChange={handleChange}
-                    placeholder=""
-                    className="peer w-full bg-transparent border-b border-mkhe-border/80 py-3 text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:shadow-[0_2px_10px_rgba(212,163,115,0.1)] transition-all resize-none font-light"
-                  ></textarea>
-                  {!formData.message && (
-                    <div className="absolute left-0 top-3 pointer-events-none text-mkhe-text/30 font-light transition-all peer-focus:opacity-0">
-                      Nội dung chi tiết <span className="text-red-500">*</span>
-                    </div>
-                  )}
-                </div>
+                <TextAreaField
+                  name="message"
+                  rows="4"
+                  value={formData.message}
+                  onChange={handleChange}
+                  label={t("contact:fields.message")}
+                  placeholder={t("contact:fields.message")}
+                  error={formErrors.message ? t(formErrors.message) : null}
+                />
 
-                <div className="pt-6">
+                <div className="pt-2">
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center gap-4 px-12 py-5 bg-transparent overflow-hidden w-full md:w-auto cursor-pointer active:scale-[0.98] transition-transform"
+                    className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent overflow-hidden w-full md:w-auto cursor-pointer active:scale-[0.98] transition-transform"
                   >
                     <div className="absolute inset-0 w-full h-full border border-mkhe-primary transition-all duration-500 group-hover:bg-mkhe-primary"></div>
                     <span className="relative z-10 text-mkhe-primary group-hover:text-mkhe-bg font-bold tracking-[0.2em] uppercase text-xs transition-colors duration-500">
-                      {isSubmitting ? "Đang gửi..." : "Gửi yêu cầu"}
+                      {isSubmitting ? t("contact:submitting") : t("contact:submit")}
                     </span>
                     {!isSubmitting && (
                       <Send className="w-4 h-4 relative z-10 text-mkhe-primary group-hover:text-mkhe-bg transform group-hover:translate-x-2 transition-all duration-500" />

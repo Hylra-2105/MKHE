@@ -27,7 +27,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["ORDER_STATUS_UPDATE", "SYSTEM", "MARKETING"],
+      enum: ["ORDER_STATUS_UPDATE", "SYSTEM", "MARKETING", "CONTACT"],
       default: "ORDER_STATUS_UPDATE",
     },
     orderId: {

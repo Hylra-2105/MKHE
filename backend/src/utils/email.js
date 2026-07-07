@@ -437,3 +437,65 @@ export const sendB2BActivationEmail = async (toEmail, activationToken, lang = "v
   };
   await sendEmail(mailOptions);
 };
+
+/**
+ * Gửi email xác nhận đã nhận yêu cầu liên hệ cho khách hàng
+ */
+export const sendContactConfirmationEmail = async (toEmail, name, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const greeting = getTranslation(trans, "contactConfirmation.greeting", { name }) || `Xin chào ${name},`;
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "contactConfirmation.subject"),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${greeting}</h2>
+        <p style="text-align: center; color: #333; line-height: 1.6;">${getTranslation(trans, "contactConfirmation.instruction")}</p>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px; margin-top: 30px;">
+          ${getTranslation(trans, "contactConfirmation.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email thông báo cho Admin về yêu cầu liên hệ mới
+ */
+export const sendAdminContactNotificationEmail = async (adminEmail, contactData, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const subject = getTranslation(trans, "adminContactNotification.subject", { name: contactData.name }) || `Yêu cầu liên hệ mới từ ${contactData.name}`;
+
+  const mailOptions = {
+    from: `"MKHE System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: subject,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #d97706; text-align: center;">${getTranslation(trans, "adminContactNotification.greeting")}</h2>
+        <p style="font-size: 16px; line-height: 1.6;">${getTranslation(trans, "adminContactNotification.instruction")}</p>
+        
+        <div style="background-color: #fff; border: 1px solid #eee; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">${getTranslation(trans, "adminContactNotification.details")}</h3>
+          <p><strong>${getTranslation(trans, "adminContactNotification.name")}</strong> ${contactData.name}</p>
+          <p><strong>${getTranslation(trans, "adminContactNotification.email")}</strong> ${contactData.email}</p>
+          <p><strong>${getTranslation(trans, "adminContactNotification.phone")}</strong> ${contactData.phone}</p>
+          ${contactData.company ? `<p><strong>${getTranslation(trans, "adminContactNotification.company")}</strong> ${contactData.company}</p>` : ''}
+          <p><strong>${getTranslation(trans, "adminContactNotification.interest")}</strong> ${contactData.interest}</p>
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
+            <strong>${getTranslation(trans, "adminContactNotification.message")}</strong>
+            <p style="white-space: pre-wrap; background-color: #fafafa; padding: 10px; border-radius: 4px; margin-top: 5px;">${contactData.message}</p>
+          </div>
+        </div>
+
+        <p style="color: #999; font-size: 12px; border-top: 1px solid #e5dcd3; padding-top: 20px; margin-top: 30px; text-align: center;">
+          ${getTranslation(trans, "adminContactNotification.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
