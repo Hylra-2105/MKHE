@@ -41,6 +41,10 @@ const notificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
     },
+    contactId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contact",
+    },
     status: {
       type: String, // e.g. "CONFIRMED", "DELIVERING"
     },

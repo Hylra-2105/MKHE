@@ -18,7 +18,11 @@ const contactSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    company: {
+    companyName: {
+      type: String,
+      trim: true,
+    },
+    taxCode: {
       type: String,
       trim: true,
     },

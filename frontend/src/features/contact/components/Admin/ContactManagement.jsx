@@ -1,46 +1,117 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus, FileDown } from "lucide-react";
+import { FileDown, Eye, Trash2, Building2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { contactApi } from "@/api/contactApi";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Dropdown from "@/components/ui/Dropdown";
+import { useSocketStore } from "@/stores/useSocketStore";
+import ContactDetailModal from "./ContactDetailModal";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function ContactManagementFeature() {
   const { t } = useTranslation("admin");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("");
   const [interestFilter, setInterestFilter] = useState("");
-  const limit = 10;
+  const [searchInput, setSearchInput] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const limit = 6;
 
   const fetchContacts = React.useCallback(async () => {
     try {
       setLoading(true);
-      const params = { page: currentPage, limit };
-      if (statusFilter) params.status = statusFilter;
-      if (interestFilter) params.interest = interestFilter;
+      const params = {
+        page: currentPage,
+        limit,
+        status: statusFilter,
+        interest: interestFilter,
+        search: appliedSearch
+      };
 
       const res = await contactApi.getAllContacts(params);
-      setContacts(res.data?.contacts || []);
-      setTotal(res.data?.total || 0);
-      setTotalPages(res.data?.totalPages || 1);
+      setContacts(res.data?.data?.contacts || []);
+      setTotalPages(res.data?.data?.totalPages || 1);
     } catch (err) {
       console.error(err);
       toast.error(t("admin:errors.fetch_failed", "Lỗi khi tải dữ liệu liên hệ"));
     } finally {
       setLoading(false);
     }
-  }, [currentPage, statusFilter, interestFilter, limit, t]);
+  }, [currentPage, statusFilter, interestFilter, appliedSearch, limit, t]);
+
+  const handleSearch = () => {
+    setCurrentPage(1);
+    setAppliedSearch(searchInput);
+  };
 
   useEffect(() => {
     fetchContacts();
   }, [fetchContacts]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const openContactId = location.state?.openContactId || params.get("openContactId");
+    
+    if (openContactId) {
+      const fetchAndOpen = async () => {
+        try {
+          const res = await contactApi.getContactById(openContactId);
+          if (res.data?.data) {
+            setSelectedContact(res.data.data);
+            setIsModalOpen(true);
+          }
+          if (location.state?.openContactId) {
+            navigate(location.pathname, { replace: true, state: {} });
+          } else {
+            navigate(location.pathname, { replace: true });
+          }
+        } catch (error) {
+          console.error("Failed to fetch contact by ID:", error);
+          if (location.state?.openContactId) {
+            navigate(location.pathname, { replace: true, state: {} });
+          } else {
+            navigate(location.pathname, { replace: true });
+          }
+        }
+      };
+      fetchAndOpen();
+    }
+  }, [location.search, location.state, location.pathname, navigate]);
+
+  const { socket } = useSocketStore();
+
+  useEffect(() => {
+    if (socket) {
+      const handleUpdate = () => {
+        fetchContacts();
+      };
+      
+      socket.on("admin_contact_updated", handleUpdate);
+      
+      const handleAdminNotif = (notif) => {
+        if (notif?.type === "CONTACT") {
+          fetchContacts();
+        }
+      };
+      socket.on("new_admin_notification", handleAdminNotif);
+
+      return () => {
+        socket.off("admin_contact_updated", handleUpdate);
+        socket.off("new_admin_notification", handleAdminNotif);
+      };
+    }
+  }, [socket, fetchContacts]);
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -53,29 +124,69 @@ export default function ContactManagementFeature() {
     }
   };
 
-  const handleCreateB2B = (contact) => {
-    navigate("/admin/users?action=create-b2b", {
-      state: {
-        name: contact.name,
-        email: contact.email,
-        company: contact.company,
-      },
-    });
+  const handleDeleteContact = async () => {
+    if (!contactToDelete) return;
+    setIsDeleting(true);
+    try {
+      await contactApi.deleteContact(contactToDelete);
+      toast.success(t("contacts.delete_success_msg", "Xóa thành công"));
+      setIsModalOpen(false);
+      setContactToDelete(null);
+      fetchContacts();
+    } catch (error) {
+      console.error("Failed to delete contact:", error);
+      toast.error(t("admin:messages.delete_error", "Xóa thất bại"));
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
+  const handleOpenModal = (contact) => {
+    setSelectedContact(contact);
+    setIsModalOpen(true);
+  };
+
+
   const statusOptions = [
-    { value: "", label: "Tất cả trạng thái" },
-    { value: "PENDING", label: "Chờ xử lý" },
-    { value: "CONTACTED", label: "Đã liên hệ" },
-    { value: "RESOLVED", label: "Đã giải quyết" },
+    { value: "", label: t("contacts.status_all") },
+    { value: "PENDING", label: t("contacts.status_pending") },
+    { value: "CONTACTED", label: t("contacts.status_contacted") },
+    { value: "RESOLVED", label: t("contacts.status_resolved") },
   ];
 
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case "PENDING":
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-600 border border-yellow-500/30">{t("contacts.status_pending")}</span>;
+      case "CONTACTED":
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 border border-blue-500/30">{t("contacts.status_contacted")}</span>;
+      case "RESOLVED":
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-600 border border-green-500/30">{t("contacts.status_resolved")}</span>;
+      default:
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-500/10 text-gray-600 border border-gray-500/30">{status}</span>;
+    }
+  };
+
+  const getInterestDisplay = (interestKey) => {
+    const interestMap = {
+      "support": t("contacts.interest_support"),
+      "b2b": t("contacts.interest_b2b"),
+      "vip": t("contacts.interest_gifts"),
+      "design": t("contacts.interest_design"),
+      "boardgame": t("contacts.interest_boardgame"),
+      "other": t("contacts.interest_other")
+    };
+    return interestMap[interestKey] || interestKey;
+  };
+
   const interestOptions = [
-    { value: "", label: "Tất cả nhu cầu" },
-    { value: "Yêu cầu mở Tài khoản Doanh nghiệp (B2B Portal)", label: "Doanh nghiệp (B2B Portal)" },
-    { value: "Tư vấn Dịch vụ quà tặng Doanh nghiệp (B2B Gifts)", label: "Quà tặng Doanh nghiệp" },
-    { value: "Tìm hiểu về Nhượng quyền & Đại lý", label: "Nhượng quyền & Đại lý" },
-    { value: "Dịch vụ khác", label: "Khác" },
+    { value: "", label: t("contacts.interest_all") },
+    { value: "support", label: t("contacts.interest_support") },
+    { value: "b2b", label: t("contacts.interest_b2b") },
+    { value: "vip", label: t("contacts.interest_gifts") },
+    { value: "design", label: t("contacts.interest_design") },
+    { value: "boardgame", label: t("contacts.interest_boardgame") },
+    { value: "other", label: t("contacts.interest_other") },
   ];
 
   const pageNumbers = [currentPage - 1, currentPage, currentPage + 1];
@@ -86,17 +197,33 @@ export default function ContactManagementFeature() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">
-            Quản lý Liên hệ
+            {t("contacts.title")}
           </h1>
           <p className="text-sm text-mkhe-text/60 italic">
-            Danh sách các yêu cầu liên hệ từ khách hàng
+            {t("contacts.subtitle")}
           </p>
         </div>
       </div>
 
       {/* FILTERS */}
       <div className="bg-mkhe-bg p-3 md:p-4 rounded shadow mb-6 flex flex-col md:flex-row md:items-center gap-4 border border-mkhe-border/30">
-        <div className="w-full md:w-48">
+        <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="flex-1 flex gap-2">
+          <input
+            type="text"
+            placeholder={t("contacts.search_placeholder")}
+            className="w-full h-10 px-3 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="h-10 w-32 bg-mkhe-primary text-white px-4 cursor-pointer rounded hover:opacity-90 transition-opacity font-semibold shrink-0 text-sm"
+          >
+            {t("search", { ns: "common" })}
+          </button>
+        </form>
+
+        <div className="w-full md:w-48 shrink-0">
           <Dropdown
             value={statusFilter}
             options={statusOptions}
@@ -104,13 +231,13 @@ export default function ContactManagementFeature() {
               setStatusFilter(val);
               setCurrentPage(1);
             }}
-            placeholder="Tất cả trạng thái"
+            placeholder={t("contacts.status_all")}
             className="w-full"
             triggerClassName="h-10 px-3 rounded"
             optionClassName="text-sm"
           />
         </div>
-        <div className="w-full md:w-64">
+        <div className="w-full md:w-64 shrink-0">
           <Dropdown
             value={interestFilter}
             options={interestOptions}
@@ -118,7 +245,7 @@ export default function ContactManagementFeature() {
               setInterestFilter(val);
               setCurrentPage(1);
             }}
-            placeholder="Tất cả nhu cầu"
+            placeholder={t("contacts.interest_all")}
             className="w-full"
             triggerClassName="h-10 px-3 rounded"
             optionClassName="text-sm"
@@ -131,11 +258,11 @@ export default function ContactManagementFeature() {
         <table className="w-full text-left border-collapse min-w-[1000px] whitespace-nowrap">
           <thead>
             <tr className="border-b border-mkhe-border/50 text-mkhe-text/70 uppercase text-sm bg-mkhe-primary/5">
-              <th className="px-4 py-3 font-semibold w-1/4">Khách hàng</th>
-              <th className="px-4 py-3 font-semibold w-1/4">Liên hệ</th>
-              <th className="px-4 py-3 font-semibold w-1/4">Nhu cầu</th>
-              <th className="px-4 py-3 font-semibold text-center w-1/6">Trạng thái</th>
-              <th className="px-4 py-3 font-semibold text-center">Hành động</th>
+              <th className="px-4 py-3 font-semibold w-[20%]">{t("contacts.customer")}</th>
+              <th className="px-4 py-3 font-semibold w-[25%]">{t("contacts.contact")}</th>
+              <th className="px-4 py-3 font-semibold w-[30%]">{t("contacts.interest")}</th>
+              <th className="px-4 py-3 font-semibold text-center w-[15%]">{t("contacts.status")}</th>
+              <th className="px-4 py-3 font-semibold text-right w-[10%]">{t("contacts.actions")}</th>
             </tr>
           </thead>
           <tbody className="text-mkhe-text relative">
@@ -153,7 +280,7 @@ export default function ContactManagementFeature() {
                 <td colSpan="5" className="p-8 text-center text-mkhe-text/60">
                   <div className="flex flex-col items-center gap-3">
                     <FileDown className="w-10 h-10 text-mkhe-text/20" />
-                    <p>Không có yêu cầu liên hệ nào</p>
+                    <p>{t("contacts.no_requests")}</p>
                   </div>
                 </td>
               </tr>
@@ -165,10 +292,10 @@ export default function ContactManagementFeature() {
                 >
                   <td className="px-4 py-2.5">
                     <div className="font-medium">{contact.name}</div>
-                    {contact.company && (
-                      <div className="text-xs text-mkhe-text/60 mt-1 flex items-center gap-1">
-                        <span className="inline-block w-2 h-2 rounded-full bg-mkhe-primary/50"></span>
-                        {contact.company}
+                    {contact.companyName && (
+                      <div className="flex items-center gap-1.5 text-[11px] text-mkhe-text/60 font-medium">
+                        <Building2 className="w-3 h-3 text-mkhe-primary shrink-0" />
+                        {contact.companyName}
                       </div>
                     )}
                   </td>
@@ -177,38 +304,33 @@ export default function ContactManagementFeature() {
                     <div className="text-xs text-mkhe-text/60 mt-1">{contact.phone}</div>
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="text-sm text-mkhe-text/80 max-w-[250px] truncate" title={contact.interest}>
-                      {contact.interest}
+                    <div className="text-sm text-mkhe-text/90 max-w-[300px] truncate font-medium" title={getInterestDisplay(contact.interest)}>
+                      {getInterestDisplay(contact.interest)}
                     </div>
-                    <div className="text-xs text-mkhe-text/50 mt-1 truncate max-w-[250px]" title={contact.message}>
-                      {contact.message}
+                    <div className="text-xs text-mkhe-text/50 mt-1 truncate max-w-[300px]" title={contact.message}>
+                      {contact.message || <span className="italic">{t("contacts.no_content")}</span>}
                     </div>
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <Dropdown
-                      value={contact.status}
-                      options={[
-                        { value: "PENDING", label: "Chờ xử lý" },
-                        { value: "CONTACTED", label: "Đã liên hệ" },
-                        { value: "RESOLVED", label: "Đã giải quyết" }
-                      ]}
-                      onChange={(val) => handleUpdateStatus(contact._id, val)}
-                      className="w-full text-xs font-medium"
-                      triggerClassName="h-8 px-2 rounded bg-transparent border-mkhe-border/50 text-xs"
-                      optionClassName="text-xs"
-                    />
+                    {getStatusBadge(contact.status)}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    {contact.company && (
+                    <div className="flex items-center justify-center gap-2">
                       <button
-                        onClick={() => handleCreateB2B(contact)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-mkhe-primary text-white text-xs font-medium rounded hover:opacity-90 transition-opacity shadow-sm"
-                        title="Tạo tài khoản B2B cho khách hàng này"
+                        onClick={() => handleOpenModal(contact)}
+                        className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
+                        title={t("contacts.view_detail")}
                       >
-                        <UserPlus className="w-3.5 h-3.5" />
-                        <span>Cấp TK B2B</span>
+                        <Eye className="w-4 h-4" />
                       </button>
-                    )}
+                      <button
+                        onClick={() => setContactToDelete(contact._id)}
+                        className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
+                        title={t("contacts.delete_request")}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -277,6 +399,31 @@ export default function ContactManagementFeature() {
           </div>
         </div>
       )}
+      
+      {/* Contact Detail Modal */}
+      <ContactDetailModal
+        contact={selectedContact}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUpdateStatus={(id, status) => {
+          handleUpdateStatus(id, status);
+          setSelectedContact(prev => ({ ...prev, status }));
+        }}
+        onDelete={() => setContactToDelete(selectedContact._id)}
+      />
+
+      <ConfirmModal
+        isOpen={!!contactToDelete}
+        onCancel={() => setContactToDelete(null)}
+        onConfirm={handleDeleteContact}
+        title={t("contacts.confirm_delete_title")}
+        message={t("contacts.confirm_delete_desc")}
+        confirmText={t("contacts.delete")}
+        cancelText={t("contacts.cancel")}
+        isDanger={true}
+        loading={isDeleting}
+        icon="trash"
+      />
     </div>
   );
 }

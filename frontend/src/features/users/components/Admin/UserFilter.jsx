@@ -28,6 +28,7 @@ const UserFilter = ({
   const statusOptions = [
     { value: "", label: t("filter.all_status", { defaultValue: "Tất cả trạng thái" }) },
     { value: "active", label: t("filter.active", { defaultValue: "Hoạt động" }) },
+    { value: "pending", label: t("filter.pending", { defaultValue: "Chờ kích hoạt" }) },
     { value: "blocked", label: t("filter.blocked", { defaultValue: "Bị khóa" }) },
   ];
 

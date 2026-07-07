@@ -18,7 +18,8 @@ const ContactPage = () => {
     name: '',
     email: '',
     phone: '',
-    company: '',
+    companyName: '',
+    taxCode: '',
     interest: '',
     message: ''
   });
@@ -41,12 +42,12 @@ const ContactPage = () => {
   }, []);
 
   const interests = [
-    t("contact:interests.support"),
-    t("contact:interests.b2b"),
-    t("contact:interests.vip"),
-    t("contact:interests.design"),
-    t("contact:interests.boardgame"),
-    t("contact:interests.other")
+    { value: "support", label: t("contact:interests.support") },
+    { value: "b2b", label: t("contact:interests.b2b") },
+    { value: "vip", label: t("contact:interests.vip") },
+    { value: "design", label: t("contact:interests.design") },
+    { value: "boardgame", label: t("contact:interests.boardgame") },
+    { value: "other", label: t("contact:interests.other") }
   ];
 
   const handleChange = (e) => {
@@ -55,6 +56,9 @@ const ContactPage = () => {
     if (name === 'phone') {
       const numericValue = value.replace(/[^0-9+]/g, '');
       setFormData(prev => ({ ...prev, [name]: numericValue }));
+    } else if (name === 'taxCode') {
+      const taxCodeValue = value.replace(/[^0-9-]/g, '');
+      setFormData(prev => ({ ...prev, [name]: taxCodeValue }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -71,7 +75,12 @@ const ContactPage = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.name.trim()) errors.name = "contact:errors.emptyName";
-    if (!formData.phone.trim()) errors.phone = "contact:errors.emptyPhone";
+    
+    if (!formData.phone.trim()) {
+      errors.phone = "contact:errors.emptyPhone";
+    } else if (formData.phone.length < 10) {
+      errors.phone = "contact:errors.invalidPhone";
+    }
     
     if (!formData.email.trim()) {
       errors.email = "contact:errors.emptyEmail";
@@ -80,8 +89,15 @@ const ContactPage = () => {
     }
 
     // Validation AC1
-    if (formData.interest === t("contact:interests.b2b") && !formData.company.trim()) {
-      errors.company = "contact:companyRequired";
+    if (formData.interest === "b2b") {
+      if (!formData.companyName.trim()) {
+        errors.companyName = "contact:errors.emptyCompanyName";
+      }
+      if (!formData.taxCode.trim()) {
+        errors.taxCode = "contact:errors.emptyTaxCode";
+      } else if (!/^\d{10}(-\d{3})?$/.test(formData.taxCode.trim())) {
+        errors.taxCode = "contact:errors.invalidTaxCode";
+      }
     }
 
     if (!formData.interest) {
@@ -101,7 +117,8 @@ const ContactPage = () => {
         name: '',
         email: '',
         phone: '',
-        company: '',
+        companyName: '',
+        taxCode: '',
         interest: '',
         message: ''
       });
@@ -299,23 +316,46 @@ const ContactPage = () => {
                     )}
                   </div>
 
-                  {/* Company Input */}
+                  {/* Company Name Input */}
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                      {t("contact:fields.company")}
+                      {t("contact:fields.companyName")}
                     </label>
                     <input
                       type="text"
-                      name="company"
-                      value={formData.company}
+                      name="companyName"
+                      value={formData.companyName}
                       onChange={handleChange}
-                      placeholder={t("contact:fields.company")}
-                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.company ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                      placeholder={t("contact:fields.companyName")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.companyName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
-                    {formErrors.company && (
+                    {formErrors.companyName && (
                       <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{t(formErrors.company)}</p>
+                        <p className="text-xs font-medium">{t(formErrors.companyName)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Tax Code Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.taxCode")}
+                    </label>
+                    <input
+                      type="text"
+                      name="taxCode"
+                      value={formData.taxCode}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.taxCode")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.taxCode ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.taxCode && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.taxCode)}</p>
                       </div>
                     )}
                   </div>
@@ -324,7 +364,7 @@ const ContactPage = () => {
                 {/* Custom Dropdown using Modal style */}
                 <div ref={dropdownRef} className="relative group z-20 space-y-1 w-full">
                   <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    Nhu cầu quan tâm <span className="ml-1 text-red-500">*</span>
+                    {t("contact:fields.interest")} <span className="ml-1 text-red-500">*</span>
                   </label>
                   <div 
                     className={`w-full p-3.5 bg-transparent text-mkhe-text border ${formErrors.interest ? 'border-red-500' : 'border-mkhe-border/50'} rounded-xl outline-none focus:border-mkhe-primary transition-colors cursor-pointer relative text-sm`}
@@ -334,7 +374,7 @@ const ContactPage = () => {
                     }}
                   >
                     <span className={formData.interest ? "text-mkhe-text" : "text-mkhe-text/50"}>
-                      {formData.interest || t("contact:fields.interest")}
+                      {interests.find(i => i.value === formData.interest)?.label || t("contact:fields.interest")}
                     </span>
                     <ChevronDown className={`absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </div>
@@ -348,16 +388,16 @@ const ContactPage = () => {
                   {/* Dropdown Options */}
                   <div className={`absolute top-full left-0 w-full mt-1 bg-[var(--color-mkhe-bg)] border border-mkhe-border/50 shadow-2xl overflow-hidden transition-all duration-300 origin-top rounded-xl z-50 ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
                     <ul className="max-h-60 overflow-y-auto custom-scrollbar py-1">
-                      {interests.map((item, idx) => (
+                      {interests.map((item) => (
                         <li 
-                          key={idx}
+                          key={item.value}
                           className="px-4 py-3 hover:bg-mkhe-primary/20 cursor-pointer text-mkhe-text text-sm transition-colors"
                           onClick={() => {
-                            setFormData(prev => ({ ...prev, interest: item }));
+                            setFormData(prev => ({ ...prev, interest: item.value }));
                             setIsDropdownOpen(false);
                           }}
                         >
-                          {item}
+                          {item.label}
                         </li>
                       ))}
                     </ul>

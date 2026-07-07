@@ -13,7 +13,9 @@
     "email": "Email",
     "company": "Company Name / Tax ID",
     "interest": "-- Select Interest --",
-    "message": "Detailed Message"
+    "message": "Detailed Message",
+    "companyName": "Company Name",
+    "taxCode": "Tax Code"
   },
   "interests": {
     "support": "Order & Product Support (For Individual Customers)",
@@ -34,6 +36,10 @@
     "emptyEmail": "Please enter your email address.",
     "invalidEmail": "Invalid email format.",
     "emptyMessage": "Please enter a detailed message.",
-    "emptyInterest": "Please select an interest."
+    "emptyInterest": "Please select an interest.",
+    "invalidPhone": "Invalid phone number (at least 10 digits).",
+    "emptyCompanyName": "Please enter your Company Name.",
+    "emptyTaxCode": "Please enter your Tax Code.",
+    "invalidTaxCode": "Invalid Tax Code (10 or 13 digits)."
   }
 }

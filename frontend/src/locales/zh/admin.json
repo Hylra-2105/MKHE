@@ -83,14 +83,16 @@
     "loading": "正在加载数据...",
     "no_user": "未找到匹配的用户。",
     "view": "看法",
-    "block": "堵塞"
+    "block": "堵塞",
+    "status_pending": "Chờ kích hoạt"
   },
   "filter": {
     "placeholder": "按姓名或电子邮件搜索...",
     "search": "搜索",
     "all_status": "所有状态",
     "active": "活跃",
-    "blocked": "已封锁"
+    "blocked": "已封锁",
+    "pending": "等待激活"
   },
   "roles": {
     "all": "所有角色",
@@ -122,7 +124,8 @@
     "unlock_success": "用户帐户已成功解锁并重新激活！",
     "confirm_unlock_title": "解锁帐户？",
     "confirm_unlock_desc": "您确定要重新激活此帐户吗？用户将能够再次正常登录。",
-    "delete_success": "帐号删除成功！"
+    "delete_success": "帐号删除成功！",
+    "no_requests": "Không có yêu cầu liên hệ nào"
   },
   "reasons": {
     "spam_comments": "垃圾评论/虚假产品评论",
@@ -389,5 +392,51 @@
       "sale_start_past": "开始时间不能在过去"
     },
     "no_linked_story": "-- 无链接故事 --"
+  },
+  "contacts": {
+    "title": "联系人和B2B管理",
+    "subtitle": "支持请求和B2B账户注册列表",
+    "status_all": "所有状态",
+    "status_pending": "待处理",
+    "status_contacted": "已联系",
+    "status_resolved": "已解决",
+    "interest_all": "所有兴趣",
+    "search_placeholder": "按姓名或电子邮件搜索...",
+    "customer": "客户",
+    "contact": "联系方式",
+    "interest": "兴趣",
+    "date": "提交日期",
+    "status": "状态",
+    "actions": "操作",
+    "delete": "删除",
+    "detail_title": "联系详情",
+    "name": "客户姓名",
+    "email": "电子邮件",
+    "phone": "电话号码",
+    "company": "公司名称",
+    "tax_code": "税号",
+    "none": "无",
+    "update_status": "更新状态",
+    "content": "留言内容",
+    "no_content": "没有内容",
+    "delete_request": "删除请求",
+    "create_account": "创建账户",
+    "cancel": "取消",
+    "saving": "保存中...",
+    "save": "保存更改",
+    "loading": "数据加载中...",
+    "confirm_delete_title": "删除联系人？",
+    "confirm_delete_desc": "您确定要删除此联系人吗？此操作无法撤销。",
+    "delete_success": "联系人删除成功！",
+    "no_requests": "没有联系请求",
+    "view_detail": "查看详情",
+    "interest_b2b": "企业（B2B门户）",
+    "interest_gifts": "企业礼品",
+    "interest_franchise": "特许经营及代理",
+    "interest_other": "其他",
+    "delete_success_msg": "联系请求删除成功",
+    "interest_support": "订单和产品支持",
+    "interest_design": "空间设计咨询",
+    "interest_boardgame": "桌游咨询"
   }
 }

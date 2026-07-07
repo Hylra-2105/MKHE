@@ -4,6 +4,7 @@ import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 import UserFilter from "./Admin/UserFilter";
 import UserTable from "@/features/users/components/Admin/UserTable";
@@ -15,6 +16,7 @@ import ForbiddenPage from "@/pages/errors/ForbiddenPage";
 export default function UserManagementFeature() {
   const { t } = useTranslation(["admin", "common"]);
   const { user: currentUser } = useAuthStore();
+  const { socket } = useSocketStore();
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +48,8 @@ export default function UserManagementFeature() {
         name: location.state.name,
         email: location.state.email,
         role: "Enterprise", // Pre-select Enterprise role
-        company: location.state.company,
+        companyName: location.state.company,
+        taxCode: location.state.taxCode,
       });
       setIsAddModalOpen(true);
       // Clean up the URL to avoid reopening on refresh
@@ -94,6 +97,13 @@ export default function UserManagementFeature() {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("user_updated", fetchUsers);
+      return () => socket.off("user_updated", fetchUsers);
+    }
+  }, [socket, fetchUsers]);
 
   const handleSearch = (e) => {
     e.preventDefault();

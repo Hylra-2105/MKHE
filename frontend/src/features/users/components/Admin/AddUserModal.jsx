@@ -28,7 +28,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
         email: initialData.email || "",
         password: "",
         role: initialData.role || "Customer",
-        companyName: initialData.company || "",
+        companyName: initialData.companyName || initialData.company || "",
         taxCode: initialData.taxCode || "",
       });
     } else if (isOpen) {
@@ -93,9 +93,13 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(
-        t(`messages.${errorMsg}`, "Có lỗi xảy ra, vui lòng thử lại!"),
-      );
+      if (errorMsg === "EMAIL_ALREADY_EXISTS") {
+        setFormErrors({ email: t("messages.EMAIL_ALREADY_EXISTS", "Email này đã được đăng ký trên hệ thống!") });
+      } else {
+        toast.error(
+          t(`messages.${errorMsg}`, "Có lỗi xảy ra, vui lòng thử lại!"),
+        );
+      }
     } finally {
       setLoading(false);
     }

@@ -16,4 +16,8 @@ export const contactApi = {
   updateContactStatus(id, status) {
     return axiosClient.put(`/contacts/${id}/status`, { status });
   },
+
+  deleteContact(id) {
+    return axiosClient.delete(`/contacts/${id}`);
+  },
 };

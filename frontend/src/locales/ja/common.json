@@ -17,5 +17,25 @@
   "back": "戻る",
   "search": "検索",
   "actions": "操作",
-  "view_details": "詳細を見る"
+  "view_details": "詳細を見る",
+  "B2B_ACCOUNT_CREATED": "Tài khoản Doanh nghiệp đã được tạo và email kích hoạt đã được gửi thành công.",
+  "ACCOUNT_ACTIVATED_SUCCESS": "Kích hoạt tài khoản và thiết lập mật khẩu thành công.",
+  "COMPANY_REQUIRED_FOR_B2B": "Vui lòng nhập Tên Doanh nghiệp và Mã số thuế đối với yêu cầu mở Tài khoản Doanh nghiệp.",
+  "CONTACT_CREATED_SUCCESSFULLY": "Gửi yêu cầu liên hệ thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
+  "INVALID_OR_EXPIRED_TOKEN": "Link kích hoạt không hợp lệ hoặc đã hết hạn.",
+  "MISSING_REQUIRED_FIELDS": "Vui lòng điền đầy đủ các thông tin bắt buộc.",
+  "user_menu": {
+    "staff_area": "スタッフエリア",
+    "admin_area": "管理者エリア",
+    "profile": "マイプロフィール",
+    "manage_users": "ユーザー管理",
+    "manage_contacts": "連絡先管理",
+    "manage_orders": "注文管理",
+    "manage_products": "製品管理",
+    "manage_vouchers": "バウチャー管理",
+    "manage_blogs": "ブログ管理",
+    "manage_reviews": "レビュー管理",
+    "analytics": "分析とレポート",
+    "logout": "ログアウト"
+  }
 }
