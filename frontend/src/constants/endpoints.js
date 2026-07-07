@@ -22,6 +22,9 @@ export const ENDPOINTS = {
     UPDATE: `${API_BASE_URL}/users`,
     DELETE: `${API_BASE_URL}/users`,
   },
+  CONTACTS: {
+    CREATE: `${API_BASE_URL}/contacts`,
+  },
   SHOP: {
     GET_PRODUCTS: `${API_BASE_URL}/products/shop`,
     GET_B2B_PRODUCTS: `${API_BASE_URL}/b2b/products`,
