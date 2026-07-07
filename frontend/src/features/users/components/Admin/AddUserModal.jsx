@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import Dropdown from "@/components/ui/Dropdown";
 import { userApi } from "@/api/userApi";
 
-const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
+const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
   const { t } = useTranslation("admin");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -20,6 +20,28 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
     taxCode: "",
   });
   const [formErrors, setFormErrors] = useState({});
+
+  React.useEffect(() => {
+    if (isOpen && initialData) {
+      setFormData({
+        name: initialData.name || "",
+        email: initialData.email || "",
+        password: "",
+        role: initialData.role || "Customer",
+        companyName: initialData.company || "",
+        taxCode: initialData.taxCode || "",
+      });
+    } else if (isOpen) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "Customer",
+        companyName: "",
+        taxCode: "",
+      });
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { getAllUsersApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -32,6 +33,26 @@ export default function UserManagementFeature() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addModalInitialData, setAddModalInitialData] = useState(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Handle auto open modal for B2B creation
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("action") === "create-b2b" && location.state) {
+      setAddModalInitialData({
+        name: location.state.name,
+        email: location.state.email,
+        role: "Enterprise", // Pre-select Enterprise role
+        company: location.state.company,
+      });
+      setIsAddModalOpen(true);
+      // Clean up the URL to avoid reopening on refresh
+      navigate("/admin/users", { replace: true, state: {} });
+    }
+  }, [location, navigate]);
 
   const handleViewUser = (user) => {
     setSelectedUser(user);
@@ -221,8 +242,12 @@ export default function UserManagementFeature() {
       />
       <AddUserModal
         isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setAddModalInitialData(null);
+        }}
         onRefresh={fetchUsers}
+        initialData={addModalInitialData}
       />
     </div>
   );

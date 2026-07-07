@@ -9,8 +9,7 @@ export const createContact = async (req, res) => {
   try {
     const { name, email, phone, company, interest, message } = req.body;
 
-    // Validate required fields
-    if (!name || !email || !phone || !interest || !message) {
+    if (!name || !email || !phone || !interest) {
       return errorResponse(res, 400, "MISSING_REQUIRED_FIELDS");
     }
 
@@ -65,6 +64,77 @@ export const createContact = async (req, res) => {
     return successResponse(res, 201, "CONTACT_CREATED_SUCCESSFULLY", newContact);
   } catch (error) {
     console.error("createContact Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/contacts (Admin only)
+export const getAllContacts = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status, interest } = req.query;
+    const filter = {};
+
+    if (status) {
+      filter.status = status;
+    }
+    if (interest) {
+      filter.interest = interest;
+    }
+
+    const total = await Contact.countDocuments(filter);
+    const contacts = await Contact.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    return successResponse(res, 200, "CONTACTS_FETCHED_SUCCESSFULLY", {
+      contacts,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    console.error("getAllContacts Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/contacts/:id (Admin only)
+export const getContactById = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+      return errorResponse(res, 404, "CONTACT_NOT_FOUND");
+    }
+    return successResponse(res, 200, "CONTACT_FETCHED_SUCCESSFULLY", contact);
+  } catch (error) {
+    console.error("getContactById Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// PUT /api/contacts/:id/status (Admin only)
+export const updateContactStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!["PENDING", "CONTACTED", "RESOLVED"].includes(status)) {
+      return errorResponse(res, 400, "INVALID_STATUS");
+    }
+
+    const contact = await Contact.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!contact) {
+      return errorResponse(res, 404, "CONTACT_NOT_FOUND");
+    }
+
+    return successResponse(res, 200, "CONTACT_STATUS_UPDATED", contact);
+  } catch (error) {
+    console.error("updateContactStatus Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
