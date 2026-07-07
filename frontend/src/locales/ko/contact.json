@@ -13,7 +13,9 @@
     "email": "이메일",
     "company": "회사명 / 사업자등록번호",
     "interest": "-- 관심 분야 선택 --",
-    "message": "상세 메시지"
+    "message": "상세 메시지",
+    "companyName": "회사명",
+    "taxCode": "사업자 등록번호"
   },
   "interests": {
     "support": "주문 및 제품 지원 (개인 고객용)",
@@ -34,6 +36,10 @@
     "emptyEmail": "이메일 주소를 입력해 주세요.",
     "invalidEmail": "유효하지 않은 이메일 형식입니다.",
     "emptyMessage": "상세 메시지를 입력해 주세요.",
-    "emptyInterest": "관심 분야를 선택해 주세요."
+    "emptyInterest": "관심 분야를 선택해 주세요.",
+    "invalidPhone": "잘못된 전화번호입니다 (10자리 이상).",
+    "emptyCompanyName": "회사명을 입력해주세요.",
+    "emptyTaxCode": "사업자 등록번호를 입력해주세요.",
+    "invalidTaxCode": "잘못된 사업자 등록번호입니다 (10자리 또는 13자리)."
   }
 }

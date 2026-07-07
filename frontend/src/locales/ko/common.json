@@ -17,5 +17,25 @@
   "back": "뒤로",
   "search": "검색",
   "actions": "작업",
-  "view_details": "세부정보 보기"
+  "view_details": "세부정보 보기",
+  "B2B_ACCOUNT_CREATED": "Tài khoản Doanh nghiệp đã được tạo và email kích hoạt đã được gửi thành công.",
+  "ACCOUNT_ACTIVATED_SUCCESS": "Kích hoạt tài khoản và thiết lập mật khẩu thành công.",
+  "COMPANY_REQUIRED_FOR_B2B": "Vui lòng nhập Tên Doanh nghiệp và Mã số thuế đối với yêu cầu mở Tài khoản Doanh nghiệp.",
+  "CONTACT_CREATED_SUCCESSFULLY": "Gửi yêu cầu liên hệ thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.",
+  "INVALID_OR_EXPIRED_TOKEN": "Link kích hoạt không hợp lệ hoặc đã hết hạn.",
+  "MISSING_REQUIRED_FIELDS": "Vui lòng điền đầy đủ các thông tin bắt buộc.",
+  "user_menu": {
+    "staff_area": "직원 영역",
+    "admin_area": "관리자 영역",
+    "profile": "내 프로필",
+    "manage_users": "사용자 관리",
+    "manage_contacts": "연락처 관리",
+    "manage_orders": "주문 관리",
+    "manage_products": "제품 관리",
+    "manage_vouchers": "바우처 관리",
+    "manage_blogs": "블로그 관리",
+    "manage_reviews": "리뷰 관리",
+    "analytics": "분석 및 보고서",
+    "logout": "로그아웃"
+  }
 }

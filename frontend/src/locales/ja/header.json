@@ -19,7 +19,8 @@
     "manage_vouchers": "バウチャー管理",
     "manage_orders": "注文管理",
     "manage_blogs": "ブログ管理",
-    "manage_reviews": "レビュー管理"
+    "manage_reviews": "レビュー管理",
+    "manage_contacts": "連絡先管理"
   },
   "guest_menu": {
     "login": "ログイン"
@@ -56,7 +57,8 @@
       "admin_order_new": "新規注文",
       "admin_order_paid": "支払い済み注文",
       "admin_order_completed": "注文完了",
-      "admin_stock_alert": "在庫不足アラート"
+      "admin_stock_alert": "在庫不足アラート",
+      "admin_contact_new": "新しい連絡先リクエスト"
     },
     "message": {
       "order_placed": "注文 {{orderCode}} が正常に行われました。処理を待っています。",
@@ -72,7 +74,8 @@
       "admin_order_new": "新しい注文 #{{orderCode}} が正常に作成されました (COD)。",
       "admin_order_paid": "注文 #{{orderCode}} の支払いが正常に完了しました (オンライン)。",
       "admin_order_completed": "お客様が注文 #{{orderCode}} の受取と支払いを確認しました。",
-      "admin_stock_alert": "製品 {{productName}} の在庫が少なくなっています (残り {{currentStock}} 個)。"
+      "admin_stock_alert": "製品 {{productName}} の在庫が少なくなっています (残り {{currentStock}} 個)。",
+      "admin_contact_new": "お客様 {{name}} からリクエストがありました: {{interest}}"
     },
     "header_title": "通知",
     "mark_all_read": "すべて既読にする",
@@ -86,6 +89,7 @@
     "recent": "以前",
     "load_more": "以前の通知を見る",
     "deleted_success": "通知を削除しました",
-    "undo": "元に戻す"
+    "undo": "元に戻す",
+    "tab_system_unread": "システム (未読)"
   }
 }

@@ -1,7 +1,23 @@
-import axiosClient from "@/api/axiosClient";
-import { ENDPOINTS } from "@/constants/endpoints";
+import axiosClient from "./axiosClient";
 
-export const createContactApi = async (data) => {
-  const response = await axiosClient.post(ENDPOINTS.CONTACTS.CREATE, data);
-  return response.data;
+export const contactApi = {
+  createContact(data) {
+    return axiosClient.post("/contacts", data);
+  },
+  
+  getAllContacts(params) {
+    return axiosClient.get("/contacts", { params });
+  },
+
+  getContactById(id) {
+    return axiosClient.get(`/contacts/${id}`);
+  },
+
+  updateContactStatus(id, status) {
+    return axiosClient.put(`/contacts/${id}/status`, { status });
+  },
+
+  deleteContact(id) {
+    return axiosClient.delete(`/contacts/${id}`);
+  },
 };

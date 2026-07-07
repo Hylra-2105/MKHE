@@ -26,7 +26,8 @@ const titleMap = {
   "Đơn hàng mới": "ADMIN_ORDER_NEW",
   "Đơn hàng đã thanh toán": "ADMIN_ORDER_PAID",
   "Đơn hàng hoàn tất": "ADMIN_ORDER_COMPLETED",
-  "Cảnh báo tồn kho": "ADMIN_STOCK_ALERT"
+  "Cảnh báo tồn kho": "ADMIN_STOCK_ALERT",
+  "Yêu cầu liên hệ mới": "ADMIN_CONTACT_NEW"
 };
 
 const runMigration = async () => {
@@ -91,6 +92,32 @@ const runMigration = async () => {
       const match = notif.message.match(/mã giảm giá ([\w\d]+)/);
       if (match) {
         notif.message = `LUCKY_WHEEL_WON_MESSAGE::${match[1]}`;
+        needsUpdate = true;
+      }
+    } else if (notif.title === "ADMIN_CONTACT_NEW" && notif.message.includes("đã gửi một yêu cầu")) {
+      const nameMatch = notif.message.match(/Khách hàng (.*?) đã gửi một yêu cầu/);
+      const interestMatch = notif.message.match(/yêu cầu: (.*)/);
+      if (nameMatch && interestMatch) {
+        const name = nameMatch[1];
+        let interestStr = interestMatch[1].trim();
+        let interestKey = 'other';
+        const lowerInterest = interestStr.toLowerCase();
+        
+        if (lowerInterest.includes('b2b') || lowerInterest.includes('doanh nghiệp') || lowerInterest.includes('企業アカウント')) {
+          if (lowerInterest.includes('quà tặng') || lowerInterest.includes('gifts') || lowerInterest.includes('ギフト')) {
+            interestKey = 'vip';
+          } else {
+            interestKey = 'b2b';
+          }
+        } else if (lowerInterest.includes('hỗ trợ') || lowerInterest.includes('sản phẩm') || lowerInterest.includes('support') || lowerInterest.includes('サポート')) {
+          interestKey = 'support';
+        } else if (lowerInterest.includes('thiết kế') || lowerInterest.includes('design') || lowerInterest.includes('デザイン')) {
+          interestKey = 'design';
+        } else if (lowerInterest.includes('board game') || lowerInterest.includes('boardgame') || lowerInterest.includes('ボードゲーム')) {
+          interestKey = 'boardgame';
+        }
+        
+        notif.message = `ADMIN_CONTACT_NEW_MESSAGE::${name}::${interestKey}`;
         needsUpdate = true;
       }
     }

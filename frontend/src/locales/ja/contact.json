@@ -13,7 +13,9 @@
     "email": "メール",
     "company": "会社名 / 納税者番号",
     "interest": "-- 興味のある分野を選択 --",
-    "message": "詳細なメッセージ"
+    "message": "詳細なメッセージ",
+    "companyName": "会社名",
+    "taxCode": "納税者番号"
   },
   "interests": {
     "support": "注文および製品サポート（個人のお客様向け）",
@@ -34,6 +36,10 @@
     "emptyEmail": "メールアドレスを入力してください。",
     "invalidEmail": "無効なメール形式です。",
     "emptyMessage": "詳細なメッセージを入力してください。",
-    "emptyInterest": "興味のある分野を選択してください。"
+    "emptyInterest": "興味のある分野を選択してください。",
+    "invalidPhone": "無効な電話番号（10桁以上）です。",
+    "emptyCompanyName": "会社名を入力してください。",
+    "emptyTaxCode": "納税者番号を入力してください。",
+    "invalidTaxCode": "無効な納税者番号（10桁または13桁）です。"
   }
 }

@@ -41,6 +41,8 @@ import ShopDetailPage from "./pages/shop/ShopDetailPage";
 import UserManagement from "./pages/users/UserManagementPage";
 import ProductManagementPage from "./pages/products/ProductManagementPage";
 import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
+import ContactManagementPage from "./pages/contact/ContactManagementPage";
+
 import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
@@ -298,6 +300,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <VoucherManagementPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/contacts"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ContactManagementPage />
               </ProtectedRoute>
             }
           />

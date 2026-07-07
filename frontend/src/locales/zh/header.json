@@ -19,7 +19,8 @@
     "manage_vouchers": "优惠券管理",
     "manage_orders": "订单管理",
     "manage_blogs": "博客管理",
-    "manage_reviews": "评论管理"
+    "manage_reviews": "评论管理",
+    "manage_contacts": "联系人管理"
   },
   "guest_menu": {
     "login": "登录"
@@ -56,7 +57,8 @@
       "admin_order_new": "新订单",
       "admin_order_paid": "已付款订单",
       "admin_order_completed": "订单完成",
-      "admin_stock_alert": "库存预警"
+      "admin_stock_alert": "库存预警",
+      "admin_contact_new": "新联系请求"
     },
     "message": {
       "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
@@ -72,7 +74,8 @@
       "admin_order_new": "新订单 #{{orderCode}} 已成功创建 (COD)。",
       "admin_order_paid": "订单 #{{orderCode}} 已成功付款 (在线)。",
       "admin_order_completed": "客户已确认订单 #{{orderCode}} 的收货和付款。",
-      "admin_stock_alert": "产品 {{productName}} 库存不足 (剩余 {{currentStock}} 个)。"
+      "admin_stock_alert": "产品 {{productName}} 库存不足 (剩余 {{currentStock}} 个)。",
+      "admin_contact_new": "客户 {{name}} 发送了一个请求: {{interest}}"
     },
     "header_title": "通知",
     "mark_all_read": "全部标为已读",
@@ -86,6 +89,7 @@
     "recent": "较早",
     "load_more": "查看较早的通知",
     "deleted_success": "通知已删除",
-    "undo": "撤销"
+    "undo": "撤销",
+    "tab_system_unread": "系统 (未读)"
   }
 }

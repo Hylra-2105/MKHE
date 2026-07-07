@@ -11,7 +11,8 @@
     "name": "Họ và Tên",
     "phone": "Số điện thoại",
     "email": "Email",
-    "company": "Tên Công ty / Mã số thuế",
+    "companyName": "Tên Doanh nghiệp",
+    "taxCode": "Mã số thuế",
     "interest": "-- Chọn Nhu cầu quan tâm --",
     "message": "Nội dung chi tiết"
   },
@@ -27,13 +28,17 @@
   "submitting": "Đang gửi...",
   "successMessage": "Cảm ơn bạn! Yêu cầu đã được gửi đến chúng tôi.",
   "errorMessage": "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
-  "companyRequired": "Vui lòng nhập Tên Công ty / Mã số thuế cho yêu cầu mở Tài khoản Doanh nghiệp",
+  "companyRequired": "Vui lòng nhập Tên Doanh nghiệp và Mã số thuế cho yêu cầu mở Tài khoản Doanh nghiệp",
   "errors": {
     "emptyName": "Vui lòng nhập họ và tên.",
     "emptyPhone": "Vui lòng nhập số điện thoại.",
     "emptyEmail": "Vui lòng nhập địa chỉ email.",
     "invalidEmail": "Định dạng email không hợp lệ.",
+    "invalidPhone": "Số điện thoại không hợp lệ (từ 10 số).",
     "emptyMessage": "Vui lòng nhập nội dung chi tiết.",
-    "emptyInterest": "Vui lòng chọn nhu cầu quan tâm."
+    "emptyInterest": "Vui lòng chọn nhu cầu quan tâm.",
+    "emptyCompanyName": "Vui lòng nhập Tên Doanh nghiệp.",
+    "emptyTaxCode": "Vui lòng nhập Mã số thuế.",
+    "invalidTaxCode": "Mã số thuế không hợp lệ (10 hoặc 13 số)."
   }
 }

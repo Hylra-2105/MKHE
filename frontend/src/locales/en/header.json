@@ -19,7 +19,8 @@
     "manage_vouchers": "Manage Vouchers",
     "manage_orders": "Manage Orders",
     "manage_blogs": "Blog Management",
-    "manage_reviews": "Manage Reviews"
+    "manage_reviews": "Manage Reviews",
+    "manage_contacts": "Manage Contacts"
   },
   "guest_menu": {
     "login": "Login"
@@ -56,7 +57,8 @@
       "admin_order_new": "New Order",
       "admin_order_paid": "Order Paid",
       "admin_order_completed": "Order Completed",
-      "admin_stock_alert": "Low Stock Alert"
+      "admin_stock_alert": "Low Stock Alert",
+      "admin_contact_new": "New Contact Request"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
@@ -72,7 +74,8 @@
       "admin_order_new": "A new order #{{orderCode}} has been successfully placed (COD).",
       "admin_order_paid": "Order #{{orderCode}} has been successfully paid (Online).",
       "admin_order_completed": "Customer has confirmed receipt and payment for order #{{orderCode}}.",
-      "admin_stock_alert": "Product {{productName}} is running low on stock ({{currentStock}} left)."
+      "admin_stock_alert": "Product {{productName}} is running low on stock ({{currentStock}} left).",
+      "admin_contact_new": "Customer {{name}} has sent a request: {{interest}}"
     },
     "header_title": "Notifications",
     "mark_all_read": "Mark all as read",
@@ -86,6 +89,7 @@
     "recent": "Earlier",
     "load_more": "See previous notifications",
     "deleted_success": "Notification deleted",
-    "undo": "Undo"
+    "undo": "Undo",
+    "tab_system_unread": "System (Unread)"
   }
 }

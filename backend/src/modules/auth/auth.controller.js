@@ -537,6 +537,8 @@ export const getMe = async (req, res) => {
 export const activateB2BAccount = async (req, res) => {
   try {
     const { token, password } = req.body;
+    // Dynamic import to avoid circular dependencies if any
+    const { getIO } = await import("../../config/socket.js");
 
     if (!token || !password) {
       return errorResponse(res, 400, "MISSING_FIELDS");
@@ -562,6 +564,15 @@ export const activateB2BAccount = async (req, res) => {
     user.resetPasswordExpires = undefined;
     
     await user.save();
+
+    try {
+      const io = getIO();
+      if (io) {
+        io.emit("user_updated");
+      }
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
 
     return successResponse(res, 200, "ACCOUNT_ACTIVATED_SUCCESS");
   } catch (error) {

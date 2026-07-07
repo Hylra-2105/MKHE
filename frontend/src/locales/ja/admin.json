@@ -83,14 +83,16 @@
     "loading": "データをロード中...",
     "no_user": "一致するユーザーが見つかりませんでした。",
     "view": "ビュー",
-    "block": "ブロック"
+    "block": "ブロック",
+    "status_pending": "Chờ kích hoạt"
   },
   "filter": {
     "placeholder": "名前またはメールアドレスで検索...",
     "search": "検索",
     "all_status": "すべてのステータス",
     "active": "アクティブ",
-    "blocked": "ブロックされました"
+    "blocked": "ブロックされました",
+    "pending": "アクティベーション待ち"
   },
   "roles": {
     "all": "すべての役割",
@@ -122,7 +124,8 @@
     "unlock_success": "ユーザー アカウントのロックが解除され、正常に再アクティブ化されました。",
     "confirm_unlock_title": "アカウントのロックを解除しますか?",
     "confirm_unlock_desc": "このアカウントを再度アクティブ化してもよろしいですか?ユーザーは再び通常どおりにサインインできるようになります。",
-    "delete_success": "アカウントが正常に削除されました!"
+    "delete_success": "アカウントが正常に削除されました!",
+    "no_requests": "Không có yêu cầu liên hệ nào"
   },
   "reasons": {
     "spam_comments": "スパムコメント / 偽の商品レビュー",
@@ -389,5 +392,51 @@
       "sale_start_past": "開始時間は過去に設定できません"
     },
     "no_linked_story": "-- リンクされたストーリーなし --"
+  },
+  "contacts": {
+    "title": "連絡先およびB2B管理",
+    "subtitle": "サポートリクエストとB2Bアカウント登録のリスト",
+    "status_all": "すべてのステータス",
+    "status_pending": "保留中",
+    "status_contacted": "連絡済み",
+    "status_resolved": "解決済み",
+    "interest_all": "すべての関心事",
+    "search_placeholder": "名前またはメールで検索...",
+    "customer": "顧客",
+    "contact": "連絡先",
+    "interest": "関心事",
+    "date": "送信日",
+    "status": "ステータス",
+    "actions": "アクション",
+    "delete": "削除",
+    "detail_title": "連絡先の詳細",
+    "name": "顧客名",
+    "email": "メール",
+    "phone": "電話番号",
+    "company": "会社名",
+    "tax_code": "納税者番号",
+    "none": "なし",
+    "update_status": "ステータスの更新",
+    "content": "メッセージ内容",
+    "no_content": "内容がありません",
+    "delete_request": "リクエストの削除",
+    "create_account": "アカウントの作成",
+    "cancel": "キャンセル",
+    "saving": "保存中...",
+    "save": "変更を保存",
+    "loading": "データを読み込み中...",
+    "confirm_delete_title": "連絡先を削除しますか？",
+    "confirm_delete_desc": "この連絡先を削除してもよろしいですか？この操作は元に戻せません。",
+    "delete_success": "連絡先が正常に削除されました！",
+    "no_requests": "連絡先リクエストはありません",
+    "view_detail": "詳細を見る",
+    "interest_b2b": "法人（B2Bポータル）",
+    "interest_gifts": "法人向けギフト",
+    "interest_franchise": "フランチャイズ＆代理店",
+    "interest_other": "その他",
+    "delete_success_msg": "連絡先リクエストが正常に削除されました",
+    "interest_support": "注文および製品サポート",
+    "interest_design": "空間デザインコンサルティング",
+    "interest_boardgame": "ボードゲームに関するお問い合わせ"
   }
 }

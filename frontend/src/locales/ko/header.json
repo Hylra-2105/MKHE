@@ -19,7 +19,8 @@
     "manage_vouchers": "바우처 관리",
     "manage_orders": "주문 관리",
     "manage_blogs": "블로그 관리",
-    "manage_reviews": "리뷰 관리"
+    "manage_reviews": "리뷰 관리",
+    "manage_contacts": "연락처 관리"
   },
   "guest_menu": {
     "login": "로그인"
@@ -56,7 +57,8 @@
       "admin_order_new": "새로운 주문",
       "admin_order_paid": "결제 완료 주문",
       "admin_order_completed": "주문 완료",
-      "admin_stock_alert": "재고 부족 경고"
+      "admin_stock_alert": "재고 부족 경고",
+      "admin_contact_new": "새로운 연락처 요청"
     },
     "message": {
       "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
@@ -72,7 +74,8 @@
       "admin_order_new": "새로운 주문 #{{orderCode}} 이(가) 성공적으로 생성되었습니다 (COD).",
       "admin_order_paid": "주문 #{{orderCode}} 이(가) 성공적으로 결제되었습니다 (온라인).",
       "admin_order_completed": "고객이 주문 #{{orderCode}} 의 수령 및 결제를 확인했습니다.",
-      "admin_stock_alert": "제품 {{productName}} 의 재고가 부족합니다 ({{currentStock}} 개 남음)."
+      "admin_stock_alert": "제품 {{productName}} 의 재고가 부족합니다 ({{currentStock}} 개 남음).",
+      "admin_contact_new": "고객 {{name}}님이 요청을 보냈습니다: {{interest}}"
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",
@@ -86,6 +89,7 @@
     "recent": "이전",
     "load_more": "이전 알림 보기",
     "deleted_success": "알림이 삭제되었습니다",
-    "undo": "실행 취소"
+    "undo": "실행 취소",
+    "tab_system_unread": "시스템 (읽지 않음)"
   }
 }

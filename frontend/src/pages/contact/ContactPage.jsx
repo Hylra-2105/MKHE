@@ -18,7 +18,8 @@ const ContactPage = () => {
     name: '',
     email: '',
     phone: '',
-    company: '',
+    companyName: '',
+    taxCode: '',
     interest: '',
     message: ''
   });
@@ -41,12 +42,12 @@ const ContactPage = () => {
   }, []);
 
   const interests = [
-    t("contact:interests.support"),
-    t("contact:interests.b2b"),
-    t("contact:interests.vip"),
-    t("contact:interests.design"),
-    t("contact:interests.boardgame"),
-    t("contact:interests.other")
+    { value: "support", label: t("contact:interests.support") },
+    { value: "b2b", label: t("contact:interests.b2b") },
+    { value: "vip", label: t("contact:interests.vip") },
+    { value: "design", label: t("contact:interests.design") },
+    { value: "boardgame", label: t("contact:interests.boardgame") },
+    { value: "other", label: t("contact:interests.other") }
   ];
 
   const handleChange = (e) => {
@@ -55,6 +56,9 @@ const ContactPage = () => {
     if (name === 'phone') {
       const numericValue = value.replace(/[^0-9+]/g, '');
       setFormData(prev => ({ ...prev, [name]: numericValue }));
+    } else if (name === 'taxCode') {
+      const taxCodeValue = value.replace(/[^0-9-]/g, '');
+      setFormData(prev => ({ ...prev, [name]: taxCodeValue }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -71,7 +75,12 @@ const ContactPage = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.name.trim()) errors.name = "contact:errors.emptyName";
-    if (!formData.phone.trim()) errors.phone = "contact:errors.emptyPhone";
+    
+    if (!formData.phone.trim()) {
+      errors.phone = "contact:errors.emptyPhone";
+    } else if (formData.phone.length < 10) {
+      errors.phone = "contact:errors.invalidPhone";
+    }
     
     if (!formData.email.trim()) {
       errors.email = "contact:errors.emptyEmail";
@@ -80,8 +89,15 @@ const ContactPage = () => {
     }
 
     // Validation AC1
-    if (formData.interest === t("contact:interests.b2b") && !formData.company.trim()) {
-      errors.company = "contact:companyRequired";
+    if (formData.interest === "b2b") {
+      if (!formData.companyName.trim()) {
+        errors.companyName = "contact:errors.emptyCompanyName";
+      }
+      if (!formData.taxCode.trim()) {
+        errors.taxCode = "contact:errors.emptyTaxCode";
+      } else if (!/^\d{10}(-\d{3})?$/.test(formData.taxCode.trim())) {
+        errors.taxCode = "contact:errors.invalidTaxCode";
+      }
     }
 
     if (!formData.interest) {
@@ -101,7 +117,8 @@ const ContactPage = () => {
         name: '',
         email: '',
         phone: '',
-        company: '',
+        companyName: '',
+        taxCode: '',
         interest: '',
         message: ''
       });
@@ -231,102 +248,181 @@ const ContactPage = () => {
 
               <form onSubmit={handleSubmit} noValidate className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField
-                    type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    label={t("contact:fields.name")}
-                    placeholder={t("contact:fields.name")}
-                    error={formErrors.name ? t(formErrors.name) : null}
-                  />
-                  <InputField
-                    type="tel"
-                    name="phone"
-                    required
-                    value={formData.phone}
-                    onChange={handleChange}
-                    label={t("contact:fields.phone")}
-                    placeholder={t("contact:fields.phone")}
-                    error={formErrors.phone ? t(formErrors.phone) : null}
-                  />
+                  {/* Name Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.name")} <span className="ml-1 text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.name")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.name && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.name)}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Phone Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.phone")} <span className="ml-1 text-red-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      required
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.phone")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.phone ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.phone && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.phone)}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <InputField
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    label={t("contact:fields.email")}
-                    placeholder={t("contact:fields.email")}
-                    error={formErrors.email ? t(formErrors.email) : null}
-                  />
-                  <InputField
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    label={t("contact:fields.company")}
-                    placeholder={t("contact:fields.company")}
-                    error={formErrors.company ? t(formErrors.company) : null}
-                  />
+                  {/* Email Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.email")} <span className="ml-1 text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.email")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.email ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.email && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.email)}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Company Name Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.companyName")}
+                    </label>
+                    <input
+                      type="text"
+                      name="companyName"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.companyName")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.companyName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.companyName && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.companyName)}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                {/* Custom Dropdown using InputField base style */}
-                <div ref={dropdownRef} className="relative group z-20 mb-4 w-full">
-                  <label className="block text-sm mb-1.5 text-mkhe-text/80 font-medium">
-                    Nhu cầu quan tâm <span className="text-red-500">*</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Tax Code Input */}
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                      {t("contact:fields.taxCode")}
+                    </label>
+                    <input
+                      type="text"
+                      name="taxCode"
+                      value={formData.taxCode}
+                      onChange={handleChange}
+                      placeholder={t("contact:fields.taxCode")}
+                      className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.taxCode ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                    />
+                    {formErrors.taxCode && (
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                        <p className="text-xs font-medium">{t(formErrors.taxCode)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Custom Dropdown using Modal style */}
+                <div ref={dropdownRef} className="relative group z-20 space-y-1 w-full">
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                    {t("contact:fields.interest")} <span className="ml-1 text-red-500">*</span>
                   </label>
                   <div 
-                    className={`w-full p-3 bg-mkhe-input text-mkhe-text border ${formErrors.interest ? 'border-red-500' : 'border-mkhe-border'} rounded outline-none focus:border-mkhe-primary transition-colors cursor-pointer relative`}
+                    className={`w-full p-3.5 bg-transparent text-mkhe-text border ${formErrors.interest ? 'border-red-500' : 'border-mkhe-border/50'} rounded-xl outline-none focus:border-mkhe-primary transition-colors cursor-pointer relative text-sm`}
                     onClick={() => {
                       setIsDropdownOpen(!isDropdownOpen);
                       if (formErrors.interest) setFormErrors(prev => ({ ...prev, interest: '' }));
                     }}
                   >
                     <span className={formData.interest ? "text-mkhe-text" : "text-mkhe-text/50"}>
-                      {formData.interest || t("contact:fields.interest")}
+                      {interests.find(i => i.value === formData.interest)?.label || t("contact:fields.interest")}
                     </span>
-                    <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </div>
                   {formErrors.interest && (
-                    <div className="text-red-500 text-xs mt-1.5 flex items-start gap-1">
-                      <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                      <span>{t(formErrors.interest)}</span>
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <p className="text-xs font-medium">{t(formErrors.interest)}</p>
                     </div>
                   )}
                   
                   {/* Dropdown Options */}
-                  <div className={`absolute top-full left-0 w-full mt-1 bg-mkhe-input border border-mkhe-border shadow-2xl overflow-hidden transition-all duration-300 origin-top rounded z-50 ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
+                  <div className={`absolute top-full left-0 w-full mt-1 bg-[var(--color-mkhe-bg)] border border-mkhe-border/50 shadow-2xl overflow-hidden transition-all duration-300 origin-top rounded-xl z-50 ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
                     <ul className="max-h-60 overflow-y-auto custom-scrollbar py-1">
-                      {interests.map((item, idx) => (
+                      {interests.map((item) => (
                         <li 
-                          key={idx}
+                          key={item.value}
                           className="px-4 py-3 hover:bg-mkhe-primary/20 cursor-pointer text-mkhe-text text-sm transition-colors"
                           onClick={() => {
-                            setFormData(prev => ({ ...prev, interest: item }));
+                            setFormData(prev => ({ ...prev, interest: item.value }));
                             setIsDropdownOpen(false);
                           }}
                         >
-                          {item}
+                          {item.label}
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
 
-                <TextAreaField
-                  name="message"
-                  rows="4"
-                  value={formData.message}
-                  onChange={handleChange}
-                  label={t("contact:fields.message")}
-                  placeholder={t("contact:fields.message")}
-                  error={formErrors.message ? t(formErrors.message) : null}
-                />
+                <div className="space-y-1 pt-2">
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+                    {t("contact:fields.message")}
+                  </label>
+                  <textarea
+                    name="message"
+                    rows="4"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder={t("contact:fields.message")}
+                    className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm custom-scrollbar resize-none ${formErrors.message ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
+                  />
+                  {formErrors.message && (
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <p className="text-xs font-medium">{t(formErrors.message)}</p>
+                    </div>
+                  )}
+                </div>
 
                 <div className="pt-2">
                   <button

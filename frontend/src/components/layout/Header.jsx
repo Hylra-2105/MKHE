@@ -29,6 +29,7 @@ import {
   Menu,
   Star,
   X,
+  Mail,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -354,6 +355,20 @@ export default function Header() {
                           </Link>
                         )}
 
+                        {/* Cả Admin và Staff đều thấy Quản lý Liên hệ */}
+                        <Link
+                          to="/admin/contacts"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/contacts")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <Mail className="w-4 h-4" />
+                          {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
+                        </Link>
+
                         {/* Cả Admin và Staff đều thấy Quản lý Đơn hàng */}
                         <Link
                           to="/admin/orders"
@@ -410,19 +425,21 @@ export default function Header() {
                           {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
                         </Link>
 
-                        {/* Cả Admin và Staff đều thấy Quản lý Đánh giá */}
-                        <Link
-                          to="/admin/reviews"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/reviews")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Star className="w-4 h-4" />
-                          {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
-                        </Link>
+                        {/* Chỉ Admin mới thấy Quản lý Đánh giá */}
+                        {user.role === "Admin" && (
+                          <Link
+                            to="/admin/reviews"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                              location.pathname.startsWith("/admin/reviews")
+                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                            }`}
+                          >
+                            <Star className="w-4 h-4" />
+                            {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
+                          </Link>
+                        )}
 
                         {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
                         {user.role === "Admin" && (

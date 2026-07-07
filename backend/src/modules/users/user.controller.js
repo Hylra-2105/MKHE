@@ -1,5 +1,6 @@
 import User from "./user.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { getIO } from "../../config/socket.js";
 import { createVietnameseRegex, isValidEmail } from "../../utils/helpers.js";
 import { sendBlockAccountEmail } from "../../utils/email.js";
 
@@ -26,8 +27,15 @@ export const getAllUsers = async (req, res) => {
     if (roleFilter) query.role = roleFilter;
     if (statusFilter === "active") {
       query.isBlocked = { $ne: true };
+      query.$or = [
+        { role: { $ne: "Enterprise" } },
+        { resetPasswordToken: null }
+      ];
     } else if (statusFilter === "blocked") {
       query.isBlocked = true;
+    } else if (statusFilter === "pending") {
+      query.role = "Enterprise";
+      query.resetPasswordToken = { $ne: null };
     }
 
     const totalUsers = await User.countDocuments(query);
@@ -105,6 +113,13 @@ export const updateUser = async (req, res) => {
       );
     }
 
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
+
     return res.status(200).json({
       success: true,
       message: "USER_UPDATE_SUCCESS",
@@ -123,6 +138,13 @@ export const deleteUser = async (req, res) => {
     const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
+
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
 
     return res.status(200).json({
       success: true,
@@ -475,6 +497,13 @@ export const createB2BAccount = async (req, res) => {
     delete userData.password;
     delete userData.resetPasswordToken;
     delete userData.resetPasswordExpires;
+
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
 
     return res.status(201).json({
       success: true,

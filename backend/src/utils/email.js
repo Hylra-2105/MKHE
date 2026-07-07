@@ -499,3 +499,48 @@ export const sendAdminContactNotificationEmail = async (adminEmail, contactData,
   };
   await sendEmail(mailOptions);
 };
+
+/**
+ * Gửi email thông báo tài khoản B2B đã được cấp kèm mật khẩu
+ * @param {string} toEmail - Email khách hàng
+ * @param {string} name - Tên khách hàng
+ * @param {string} password - Mật khẩu ngẫu nhiên
+ * @param {string} lang - Ngôn ngữ
+ */
+export const sendB2BAccountCreatedEmail = async (toEmail, name, password, lang = "vi") => {
+  const loginUrl = `${process.env.FRONTEND_URL}/login`;
+  
+  const mailOptions = {
+    from: `"MKHE Heritage B2B" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: lang === "vi" ? "Tài khoản Đối tác B2B MKHE của bạn đã được kích hoạt" : "Your MKHE B2B Partner Account has been activated",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center;">${lang === "vi" ? "Chào mừng đối tác B2B" : "Welcome B2B Partner"}</h2>
+        <p>Chào ${name},</p>
+        <p>${lang === "vi" ? "Tài khoản đối tác B2B của bạn tại Mekong Culture đã được kích hoạt thành công." : "Your B2B partner account at Mekong Culture has been successfully activated."}</p>
+        <p>${lang === "vi" ? "Dưới đây là thông tin đăng nhập của bạn:" : "Here is your login information:"}</p>
+        
+        <div style="background-color: #e5dcd3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <p><strong>Email:</strong> ${toEmail}</p>
+          <p><strong>Password:</strong> <span style="font-size: 18px; font-weight: bold; color: #d97706;">${password}</span></p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginUrl}" style="background-color: #bc9c6a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            ${lang === "vi" ? "Đăng nhập ngay" : "Login Now"}
+          </a>
+        </div>
+        
+        <p style="color: #d97706; font-size: 14px; text-align: center;">
+          <em>* ${lang === "vi" ? "Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu để đảm bảo an toàn." : "Please change your password after your first login for security."}</em>
+        </p>
+
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${lang === "vi" ? "Trân trọng," : "Best regards,"}<br>Mekong Culture
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};

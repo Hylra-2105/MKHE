@@ -3,19 +3,20 @@ import Notification from "../notifications/notification.model.js";
 import { getIO } from "../../config/socket.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import { sendContactConfirmationEmail, sendAdminContactNotificationEmail } from "../../utils/email.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // POST /api/contacts
 export const createContact = async (req, res) => {
   try {
-    const { name, email, phone, company, interest, message } = req.body;
+    const { name, email, phone, companyName, taxCode, interest, message } = req.body;
 
-    // Validate required fields
-    if (!name || !email || !phone || !interest || !message) {
+    // Basic validation
+    if (!name || !email || !phone || !interest) {
       return errorResponse(res, 400, "MISSING_REQUIRED_FIELDS");
     }
 
     // AC1: Bắt buộc có trường "Tên Công ty/Mã số thuế" nếu khách muốn đăng ký B2B
-    if (interest === "Yêu cầu mở Tài khoản Doanh nghiệp (B2B Portal)" && !company) {
+    if (interest === "b2b" && (!companyName || !taxCode)) {
       return errorResponse(res, 400, "COMPANY_REQUIRED_FOR_B2B");
     }
 
@@ -24,7 +25,8 @@ export const createContact = async (req, res) => {
       name,
       email,
       phone,
-      company,
+      companyName,
+      taxCode,
       interest,
       message,
     });
@@ -45,18 +47,30 @@ export const createContact = async (req, res) => {
 
     // Create in-app notification for Admin
     try {
+      const interestViMap = {
+        "support": "Hỗ trợ đơn hàng & Sản phẩm (Dành cho Khách cá nhân)",
+        "b2b": "Yêu cầu mở Tài khoản Doanh nghiệp (B2B Portal)",
+        "vip": "Tư vấn giải pháp Quà tặng Doanh nghiệp VIP",
+        "design": "Tư vấn thiết kế Không gian & Đồng phục (Resort/Khách sạn)",
+        "boardgame": "Tìm hiểu / Hợp tác mảng Board Game \"Giao lộ Di sản\"",
+        "other": "Yêu cầu khác / Góp ý"
+      };
+      const interestDisplay = interestViMap[interest] || interest;
+
       const adminNotification = await Notification.create({
         isAdmin: true,
-        title: "Yêu cầu liên hệ mới",
-        message: `Khách hàng ${name} đã gửi một yêu cầu: ${interest}`,
+        title: "ADMIN_CONTACT_NEW",
+        message: `ADMIN_CONTACT_NEW_MESSAGE::${name}::${interest}`,
         type: "CONTACT",
-        link: "/admin/contacts", // Assuming there will be an admin page for contacts
+        contactId: newContact._id,
+        link: "/admin/contacts", 
       });
 
       // Socket.io emit to admin room
       const io = getIO();
       if (io) {
         io.to("admin_room").emit("new_admin_notification", adminNotification);
+        io.to("admin_room").emit("admin_contact_updated");
       }
     } catch (notifErr) {
       console.error("[Notification Error] Failed to create admin notification:", notifErr.message);
@@ -65,6 +79,109 @@ export const createContact = async (req, res) => {
     return successResponse(res, 201, "CONTACT_CREATED_SUCCESSFULLY", newContact);
   } catch (error) {
     console.error("createContact Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/contacts (Admin only)
+export const getAllContacts = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status, interest, search } = req.query;
+    const filter = {};
+
+    if (status) {
+      filter.status = status;
+    }
+    if (interest) {
+      filter.interest = interest;
+    }
+    if (search) {
+      const searchRegex = createVietnameseRegex(search);
+      filter.$or = [
+        { name: { $regex: searchRegex, $options: "i" } },
+        { email: { $regex: searchRegex, $options: "i" } },
+      ];
+    }
+
+    const total = await Contact.countDocuments(filter);
+    const contacts = await Contact.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    return successResponse(res, 200, "CONTACTS_FETCHED_SUCCESSFULLY", {
+      contacts,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    console.error("getAllContacts Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// GET /api/contacts/:id (Admin only)
+export const getContactById = async (req, res) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+      return errorResponse(res, 404, "CONTACT_NOT_FOUND");
+    }
+    return successResponse(res, 200, "CONTACT_FETCHED_SUCCESSFULLY", contact);
+  } catch (error) {
+    console.error("getContactById Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// PUT /api/contacts/:id/status (Admin only)
+export const updateContactStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    
+    if (!["PENDING", "CONTACTED", "RESOLVED"].includes(status)) {
+      return errorResponse(res, 400, "INVALID_STATUS");
+    }
+
+    const contact = await Contact.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
+    if (!contact) {
+      return errorResponse(res, 404, "CONTACT_NOT_FOUND");
+    }
+
+    const io = getIO();
+    if (io) {
+      io.to("admin_room").emit("admin_contact_updated");
+    }
+
+    return successResponse(res, 200, "CONTACT_STATUS_UPDATED", contact);
+  } catch (error) {
+    console.error("updateContactStatus Error:", error);
+    return errorResponse(res, 500, "SERVER_ERROR");
+  }
+};
+
+// DELETE /api/contacts/:id (Admin only)
+export const deleteContact = async (req, res) => {
+  try {
+    const contact = await Contact.findByIdAndDelete(req.params.id);
+    if (!contact) {
+      return errorResponse(res, 404, "CONTACT_NOT_FOUND");
+    }
+
+    const io = getIO();
+    if (io) {
+      io.to("admin_room").emit("admin_contact_updated");
+    }
+
+    return successResponse(res, 200, "CONTACT_DELETED_SUCCESSFULLY");
+  } catch (error) {
+    console.error("deleteContact Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
