@@ -102,6 +102,10 @@
     "content_required": "Please enter content",
     "update_success": "Blog updated successfully",
     "create_success": "Blog created successfully",
-    "save_error": "Failed to save blog"
+    "save_error": "Failed to save blog",
+    "uploading_image": "Processing and uploading image...",
+    "youtube_modal_title": "Add YouTube Video",
+    "youtube_modal_desc": "Paste the YouTube video link in the box below to insert it into the article.",
+    "btn_add": "Insert Video"
   }
 }

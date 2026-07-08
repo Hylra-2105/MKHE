@@ -90,16 +90,7 @@ const BlogDetail = () => {
           </div>
         </header>
 
-        {/* Thumbnail chính */}
-        {blog.thumbnail && (
-          <div className="mb-12 rounded-3xl overflow-hidden border border-mkhe-border/30 shadow-2xl">
-            <img 
-              src={blog.thumbnail} 
-              alt={blog.title} 
-              className="w-full h-auto max-h-[60vh] object-cover"
-            />
-          </div>
-        )}
+
 
         {/* Nội dung bài viết */}
         <div 

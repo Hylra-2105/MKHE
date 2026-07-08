@@ -102,6 +102,10 @@
     "content_required": "Vui lòng nhập nội dung bài viết",
     "update_success": "Cập nhật bài viết thành công",
     "create_success": "Tạo bài viết thành công",
-    "save_error": "Lỗi khi lưu bài viết"
+    "save_error": "Lỗi khi lưu bài viết",
+    "uploading_image": "画像を処理してアップロード中...",
+    "youtube_modal_title": "YouTubeビデオを追加",
+    "youtube_modal_desc": "YouTubeの動画リンクを下のボックスに貼り付けて、記事に挿入します。",
+    "btn_add": "ビデオを挿入"
   }
 }

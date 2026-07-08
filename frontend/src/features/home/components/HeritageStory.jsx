@@ -93,7 +93,7 @@ const HeritageStory = () => {
             className="lg:w-1/2 flex lg:justify-end pb-8"
           >
             <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 lg:ml-0 font-light">
-              Chúng tôi đi dọc dòng Mekong, từ những xóm Chăm thanh bình, những phum sóc Khmer trầm mặc, đến những làng quê Kinh trù phú, để đánh thức và kết nối những mạch nguồn văn hóa đang dần bị lãng quên.
+              Mekong không chỉ là dòng sông, mà là dòng chảy của những di sản đa văn hóa. Chúng tôi đi dọc dòng Mekong để đánh thức và kết nối những giá trị đang dần lãng quên.
             </p>
           </motion.div>
         </div>

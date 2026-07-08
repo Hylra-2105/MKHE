@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Search, Plus, Edit2, Trash2, Eye, LayoutGrid, List as ListIcon, Calendar } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getBlogsApi, deleteBlogApi } from "@/api/blogApi";
 import Button from "@/components/ui/Button";
@@ -8,9 +8,11 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
 import Pagination from "@/components/ui/Pagination";
 import { useTranslation } from "react-i18next";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const BlogList = () => {
   const { t } = useTranslation("blog");
+  const { socket } = useSocketStore();
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +22,15 @@ const BlogList = () => {
     category: "",
     status: "",
   });
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
+  const setPage = (newPage) => {
+    setSearchParams(prev => {
+      if (newPage === 1) prev.delete("page");
+      else prev.set("page", newPage);
+      return prev;
+    }, { replace: true });
+  };
   const [totalPages, setTotalPages] = useState(1);
   
   // Xóa blog
@@ -45,7 +55,14 @@ const BlogList = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [filter.category, filter.status, page]);
+    
+    if (socket) {
+      socket.on("blogs_updated", fetchBlogs);
+      return () => {
+        socket.off("blogs_updated", fetchBlogs);
+      };
+    }
+  }, [filter.category, filter.status, page, socket]);
 
   const handleSearch = (e) => {
     e.preventDefault();

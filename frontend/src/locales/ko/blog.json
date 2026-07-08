@@ -102,6 +102,10 @@
     "content_required": "내용을 입력해 주세요",
     "update_success": "블로그가 성공적으로 업데이트되었습니다",
     "create_success": "블로그가 성공적으로 생성되었습니다",
-    "save_error": "블로그 저장에 실패했습니다"
+    "save_error": "블로그 저장에 실패했습니다",
+    "uploading_image": "이미지 처리 및 업로드 중...",
+    "youtube_modal_title": "YouTube 동영상 추가",
+    "youtube_modal_desc": "YouTube 동영상 링크를 아래 상자에 붙여넣어 기사에 삽입하세요.",
+    "btn_add": "동영상 삽입"
   }
 }

@@ -31,3 +31,21 @@ export const getImageUrl = (url) => {
   if (url.startsWith("/")) return `${BASE_URL}${url}`;
   return `${BASE_URL}/${url}`;
 };
+
+/**
+ * Chuẩn hóa URL YouTube thành định dạng embed chuẩn
+ */
+export const normalizeYoutubeUrl = (url) => {
+  if (!url) return null;
+  const cleanUrl = url.trim();
+  let finalUrl = cleanUrl;
+  const ytRegex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([a-zA-Z0-9_-]{11})/i;
+  const match = cleanUrl.match(ytRegex) || cleanUrl.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
+  
+  if (match && match[1]) {
+      finalUrl = `https://www.youtube.com/watch?v=${match[1]}`;
+  } else if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      finalUrl = `https://www.youtube.com/watch?v=${cleanUrl}`;
+  }
+  return finalUrl;
+};

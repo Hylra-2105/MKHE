@@ -102,6 +102,10 @@
     "content_required": "Vui lòng nhập nội dung bài viết",
     "update_success": "Cập nhật bài viết thành công",
     "create_success": "Tạo bài viết thành công",
-    "save_error": "Lỗi khi lưu bài viết"
+    "save_error": "Lỗi khi lưu bài viết",
+    "uploading_image": "正在处理并上传图片...",
+    "youtube_modal_title": "添加 YouTube 视频",
+    "youtube_modal_desc": "将 YouTube 视频链接粘贴到下方的框中，即可插入到文章中。",
+    "btn_add": "插入视频"
   }
 }

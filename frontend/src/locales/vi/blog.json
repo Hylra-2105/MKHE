@@ -102,6 +102,10 @@
     "content_required": "Vui lòng nhập nội dung bài viết",
     "update_success": "Cập nhật bài viết thành công",
     "create_success": "Tạo bài viết thành công",
-    "save_error": "Lỗi khi lưu bài viết"
+    "save_error": "Lỗi khi lưu bài viết",
+    "uploading_image": "Đang xử lý và tải ảnh lên...",
+    "youtube_modal_title": "Thêm Video YouTube",
+    "youtube_modal_desc": "Dán đường dẫn (link) của video YouTube vào ô bên dưới để chèn vào bài viết.",
+    "btn_add": "Chèn Video"
   }
 }
