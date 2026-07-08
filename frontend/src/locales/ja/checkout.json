@@ -100,5 +100,5 @@
     "back": "アドレス帳に戻る",
     "default": "デフォルト"
   },
-  "copied_success": "Đã sao chép {{label}}"
+  "copied_success": "{{ラベル}}をコピーしました"
 }

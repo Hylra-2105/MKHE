@@ -3,7 +3,7 @@
     "title": "文化产品",
     "subtitle": "探索独特工艺的精髓",
     "view_all": "查看全部",
-    "buy_now": "Mua ngay"
+    "buy_now": "立即购买"
   },
   "hero": {
     "tag": "传承与优雅",
@@ -22,7 +22,7 @@
       "b2b": "B2B系列",
       "b2c": "B2C时尚",
       "heritage": "遗产之旅",
-      "explore_details": "Khám phá chi tiết"
+      "explore_details": "探索细节"
     },
     "support": {
       "title": "支持",
@@ -43,6 +43,6 @@
     "desc": "全新的互动娱乐体验。敬请期待MKHE即将为您揭晓的穿越各个广场的多维文化之旅！"
   },
   "core_tech": {
-    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
+    "desc": "我们不只是销售产品，我们还为您提供打开数字遗产空间之门的通用钥匙。"
   }
 }

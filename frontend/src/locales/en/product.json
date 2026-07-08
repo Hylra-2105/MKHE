@@ -37,6 +37,7 @@
     "craft_village": "Craft Village",
     "craft_village_placeholder": "e.g., Chau Phong weaving village...",
     "material": "Material",
+    "select_material": "Select material",
     "story": "Product Story",
     "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)",
     "name": "Product Name",
@@ -109,6 +110,11 @@
       "click_upload_new": "Drag & drop or click to upload new file",
       "auto_compress": "System automatically optimizes Mesh & Texture. Supports huge files up to 150MB!",
       "delete": "Delete"
+    },
+    "isService": {
+      "title": "B2B Service Package",
+      "desc": "Enable this feature if this is a Service Package (Consulting, outsourcing...).",
+      "note": "Note: The service package will be completely hidden from the Store page."
     }
   },
   "statuses": {

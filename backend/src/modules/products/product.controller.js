@@ -247,6 +247,11 @@ export const getShopProductById = async (req, res) => {
       return errorResponse(res, 403, "FORBIDDEN"); // Khách vãng lai không xem được B2B
     }
 
+    // Chặn hiển thị các Gói Dịch Vụ trên giao diện Cửa Hàng
+    if (product.isService) {
+      return errorResponse(res, 403, "FORBIDDEN_SERVICE");
+    }
+
     return successResponse(res, 200, "GET_PRODUCT_SUCCESS", product);
   } catch (error) {
     console.error("Error in getShopProductById:", error);
@@ -485,7 +490,8 @@ export const getShopProducts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     let query = {
-      status: { $in: ["PUBLISHED", "OUT_OF_STOCK"] }
+      status: { $in: ["PUBLISHED", "OUT_OF_STOCK"] },
+      isService: { $ne: true } // Luôn luôn ẩn các Gói Dịch Vụ khỏi danh sách Shop
     };
 
     // --- LOGIC BẢO MẬT B2B ---

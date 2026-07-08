@@ -1,9 +1,9 @@
 {
-  "publish_time_passed": "Thời gian bắt đầu đã qua. Vui lòng chọn lại thời gian từ hiện tại trở đi để phát hành.",
-  "update_success": "Cập nhật thành công",
-  "update_error": "Lỗi cập nhật",
-  "delete_draft_success": "Đã xóa bản nháp thành công",
-  "end_early_success": "Đã kết thúc sớm voucher thành công",
-  "delete_error": "Lỗi xóa voucher",
-  "end_early_error": "Không thể kết thúc voucher"
+  "publish_time_passed": "开始时间已过。从现在开始，请重新选择发布日期。",
+  "update_success": "更新成功",
+  "update_error": "更新错误",
+  "delete_draft_success": "草稿删除成功",
+  "end_early_success": "优惠券成功提前结束",
+  "delete_error": "删除优惠券时出错",
+  "end_early_error": "优惠券无法终止"
 }

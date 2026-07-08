@@ -69,7 +69,7 @@
   "errors": {
     "FORBIDDEN_ACCESS": "이 기능에 액세스할 수 있는 권한이 없습니다!",
     "fetch_failed": "사용자 목록을 가져오는 중 오류가 발생했습니다!",
-    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
+    "error_3d_format": "3D 모델 형식(.glb, .gltf)만 허용됩니다."
   },
   "table": {
     "avatar": "화신",
@@ -84,7 +84,7 @@
     "no_user": "일치하는 사용자가 없습니다.",
     "view": "보다",
     "block": "차단하다",
-    "status_pending": "Chờ kích hoạt"
+    "status_pending": "활성화를 기다리세요"
   },
   "filter": {
     "placeholder": "이름이나 이메일로 검색하세요...",
@@ -244,9 +244,9 @@
     "scan_at_counter": "카운터에서 스캔",
     "use_online": "온라인 사용",
     "min_order_card": "최소 주문 {{value}} VND",
-    "percentage": "Phần trăm (%)",
-    "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển",
+    "percentage": "퍼센트(%)",
+    "fixed_amount": "금액(VND)",
+    "free_ship": "무료 배송",
     "errors": {
       "MISSING_REQUIRED_FIELDS": "필수 항목을 모두 입력해주세요",
       "INVALID_PERCENTAGE": "유효하지 않은 비율",

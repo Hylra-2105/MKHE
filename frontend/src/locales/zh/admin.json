@@ -69,7 +69,7 @@
   "errors": {
     "FORBIDDEN_ACCESS": "您没有权限访问此功能！",
     "fetch_failed": "获取用户列表时发生错误！",
-    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
+    "error_3d_format": "仅接受 3D 模型格式（.glb、.gltf）"
   },
   "table": {
     "avatar": "阿凡达",
@@ -84,7 +84,7 @@
     "no_user": "未找到匹配的用户。",
     "view": "看法",
     "block": "堵塞",
-    "status_pending": "Chờ kích hoạt"
+    "status_pending": "等待激活"
   },
   "filter": {
     "placeholder": "按姓名或电子邮件搜索...",
@@ -244,9 +244,9 @@
     "scan_at_counter": "柜台扫描",
     "use_online": "在线使用",
     "min_order_card": "最低订单 {{value}} VND",
-    "percentage": "Phần trăm (%)",
-    "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển",
+    "percentage": "百分比(%)",
+    "fixed_amount": "金额（越南盾）",
+    "free_ship": "免运费",
     "errors": {
       "MISSING_REQUIRED_FIELDS": "请填写所有必填字段",
       "INVALID_PERCENTAGE": "无效的百分比",
@@ -329,9 +329,9 @@
       "unpaid": "未付款"
     }
   },
-  "fetch_error": "Lỗi khi tải danh sách bài viết",
-  "delete_success": "Xóa bài viết thành công",
-  "delete_error": "Lỗi khi xóa bài viết",
+  "fetch_error": "加载文章列表时出错",
+  "delete_success": "帖子删除成功",
+  "delete_error": "删除帖子时出错",
   "dashboard": {
     "title": "仪表板概览",
     "subtitle": "监控收入和供应链风险",

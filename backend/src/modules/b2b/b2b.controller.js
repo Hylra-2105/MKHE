@@ -17,6 +17,7 @@ export const getB2BProducts = async (req, res) => {
     let query = {
       status: { $in: ["PUBLISHED", "OUT_OF_STOCK"] },
       categoryMatrix: { $in: ["B2B_Luxury", "B2B_Standard"] },
+      isService: true, // CHỈ lấy các Gói Dịch Vụ
     };
 
     if (search) {

@@ -3,7 +3,7 @@
     "title": "文化財",
     "subtitle": "ユニークな職人技の真髄を発見する",
     "view_all": "すべて見る",
-    "buy_now": "Mua ngay"
+    "buy_now": "今すぐ購入"
   },
   "hero": {
     "tag": "伝統とエレガンス",
@@ -22,7 +22,7 @@
       "b2b": "B2B コレクション",
       "b2c": "B2Cファッション",
       "heritage": "遺産の旅",
-      "explore_details": "Khám phá chi tiết"
+      "explore_details": "詳細を調べる"
     },
     "support": {
       "title": "サポート",
@@ -43,6 +43,6 @@
     "desc": "まったく新しいインタラクティブなエンターテイメント体験。 MKHE によってまもなく公開される、あらゆる広場を巡る多次元の文化の旅にご期待ください。"
   },
   "core_tech": {
-    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
+    "desc": "私たちは単に製品を販売するだけではなく、デジタル遺産空間への扉を開けるための普遍的な鍵を提供します。"
   }
 }

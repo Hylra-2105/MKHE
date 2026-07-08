@@ -263,8 +263,8 @@ const ContactPage = () => {
                       className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
                     {formErrors.name && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <p className="text-xs font-medium">{t(formErrors.name)}</p>
                       </div>
                     )}
@@ -285,8 +285,8 @@ const ContactPage = () => {
                       className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.phone ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
                     {formErrors.phone && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <p className="text-xs font-medium">{t(formErrors.phone)}</p>
                       </div>
                     )}
@@ -309,8 +309,8 @@ const ContactPage = () => {
                       className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.email ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
                     {formErrors.email && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <p className="text-xs font-medium">{t(formErrors.email)}</p>
                       </div>
                     )}
@@ -330,8 +330,8 @@ const ContactPage = () => {
                       className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.companyName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
                     {formErrors.companyName && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <p className="text-xs font-medium">{t(formErrors.companyName)}</p>
                       </div>
                     )}
@@ -353,8 +353,8 @@ const ContactPage = () => {
                       className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.taxCode ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     />
                     {formErrors.taxCode && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                      <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
                         <p className="text-xs font-medium">{t(formErrors.taxCode)}</p>
                       </div>
                     )}
@@ -379,8 +379,8 @@ const ContactPage = () => {
                     <ChevronDown className={`absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                   </div>
                   {formErrors.interest && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                    <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
                       <p className="text-xs font-medium">{t(formErrors.interest)}</p>
                     </div>
                   )}
@@ -417,8 +417,8 @@ const ContactPage = () => {
                     className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm custom-scrollbar resize-none ${formErrors.message ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                   />
                   {formErrors.message && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
+                    <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
                       <p className="text-xs font-medium">{t(formErrors.message)}</p>
                     </div>
                   )}
