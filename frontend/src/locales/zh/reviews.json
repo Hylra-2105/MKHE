@@ -1,5 +1,5 @@
 {
-  "max_images_error": "Chỉ được tải lên tối đa 5 ảnh",
+  "max_images_error": "最多只能上传 5 张照片",
   "upload_error": "上传照片时出错",
   "rating_required": "请选择星星数",
   "create_success": "产品审核成功！",

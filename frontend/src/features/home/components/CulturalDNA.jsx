@@ -53,8 +53,8 @@ const CulturalDNA = () => {
             <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("dna.subtitle", "Khám phá những tinh hoa")}</span>
           </div>
           <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
-            Sản phẩm <br/>
-            <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Văn hóa</span>
+            {t("dna.header_title_1", "Sản phẩm ")} <br/>
+            <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("dna.header_title_2", "Văn hóa")}</span>
           </h2>
         </motion.div>
         <motion.div 
@@ -65,7 +65,7 @@ const CulturalDNA = () => {
           className="lg:w-1/2 flex lg:justify-end pb-8"
         >
           <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 lg:ml-0 font-light">
-            Mỗi chế tác không đơn thuần là một vật dụng nội thất, mà là hiện thân của dòng chảy văn hóa ngàn năm, mang trong mình tâm hồn của những nghệ nhân đa dân tộc.
+            {t("dna.header_desc")}
           </p>
         </motion.div>
       </div>

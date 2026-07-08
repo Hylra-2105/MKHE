@@ -3,7 +3,11 @@
     "title": "Cultural Products",
     "subtitle": "Discover the quintessence of unique craftsmanship",
     "view_all": "View all",
-    "buy_now": "Buy now"
+    "buy_now": "Buy now",
+    "header_title_1": "Product",
+    "header_title_2": "Culture",
+    "header_desc": "Each craft is not just a product, but a piece of heritage. Created by the hands of multi-ethnic artisans, each work preserves cultural quintessence and continues the story of the Mekong flow through each line.",
+    "heritage_mark": "Heritage imprint"
   },
   "hero": {
     "tag": "Heritage & Elegance",
@@ -44,5 +48,61 @@
   },
   "core_tech": {
     "desc": "We don't just sell products, we give you the universal key to open the door to the Digital Heritage Space."
+  },
+  "heritage": {
+    "journey_tag": "The Journey",
+    "title_1": "Trip",
+    "title_2": "Heritage",
+    "desc": "The Mekong is not just a river, but a flow of multicultural heritage. We travel along the Mekong River to awaken and connect with values ​​that are gradually being forgotten.",
+    "nodes": {
+      "ag1": {
+        "province": "An Giang",
+        "dna": "Representative of Cham & Khmer Gene Code",
+        "title": "The land of stories",
+        "text": "There are lands that are remembered for their beautiful scenery. And An Giang is remembered by stories."
+      },
+      "ag2": {
+        "province": "An Giang",
+        "dna": "Representative of Cham & Khmer Gene Code",
+        "title": "Cultural intersection point",
+        "text": "Located where the Mekong River divides into tributaries embracing the Southwest region, An Giang is the intersection of many ethnic communities: Kinh, Khmer, Cham and Chinese. Each community brings its own language, beliefs, crafts and lifestyle, weaving together a colorful but harmonious cultural picture."
+      },
+      "ag3": {
+        "province": "An Giang",
+        "dna": "Representative of Cham & Khmer Gene Code",
+        "title": "Responsibility to preserve heritage",
+        "text": "An Giang is therefore not only a destination, but also a reminder of the responsibility to preserve heritage. Each journey to explore this place is not simply about admiring the scenery, but about listening to the stories written by the river, by the hands of artisans and by the identities of the communities that have lived together for generations."
+      },
+      "ag4": {
+        "province": "An Giang",
+        "dna": "Representative of Cham & Khmer Gene Code",
+        "title": "Live forever in memories",
+        "text": "Because as long as those stories are told, An Giang will not only exist on the map, but will always live in the memories of those who have ever set foot in the Mekong watershed."
+      },
+      "dt1": {
+        "province": "Dong Thap",
+        "dna": "Representative of Kinh gene code",
+        "title": "Land of memories",
+        "text": "Có những vùng đất không khiến người ta choáng ngợp ngay từ lần đầu đặt chân đến, nhưng lại âm thầm ở lại trong ký ức. Dong Thap is such a place."
+      },
+      "dt2": {
+        "province": "Dong Thap",
+        "dna": "Representative of Kinh gene code",
+        "title": "Floating water season",
+        "text": "Every flood season, the Mekong River carries alluvium to build up the fields, growing melaleuca forests, lotus fields and countless villages along the river."
+      },
+      "dt3": {
+        "province": "Dong Thap",
+        "dna": "Representative of Kinh gene code",
+        "title": "Harmony with nature",
+        "text": "From the rhythm of rowing canoes among the pink lotus ponds, the call of birds in the cajuput forest, to the rustic countryside markets, Dong Thap tells the story of a land of living in harmony with nature."
+      },
+      "dt4": {
+        "province": "Dong Thap",
+        "dna": "Representative of Kinh gene code",
+        "title": "Preserving cultural sources",
+        "text": "But Dong Thap is not only about lotus. It is also a place that preserves the cultural values ​​of the Mekong River Delta, where traditional craft villages still persist, melodies and songs still resonate on the river, and stories about love are always passed down from generation to generation."
+      }
+    }
   }
 }
