@@ -43,9 +43,9 @@ export const normalizeYoutubeUrl = (url) => {
   const match = cleanUrl.match(ytRegex) || cleanUrl.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
   
   if (match && match[1]) {
-      finalUrl = `https://www.youtube.com/watch?v=${match[1]}`;
+      finalUrl = `https://www.youtube.com/embed/${match[1]}`;
   } else if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
-      finalUrl = `https://www.youtube.com/watch?v=${cleanUrl}`;
+      finalUrl = `https://www.youtube.com/embed/${cleanUrl}`;
   }
   return finalUrl;
 };

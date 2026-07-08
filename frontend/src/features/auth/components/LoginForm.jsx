@@ -64,7 +64,7 @@ export default function LoginForm() {
           } else if (userRole === "Staff") {
             navigate("/admin/products");
           } else if (userRole === "Enterprise") {
-            navigate("/b2b/dashboard");
+            navigate("/home");
           } else {
             navigate("/home");
           }
@@ -131,7 +131,7 @@ export default function LoginForm() {
         } else if (userRole === "Staff") {
           navigate("/admin/products");
         } else if (userRole === "Enterprise") {
-          navigate("/b2b/dashboard");
+          navigate("/home");
         } else {
           navigate("/home");
         }

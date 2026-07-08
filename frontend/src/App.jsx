@@ -46,6 +46,7 @@ import ContactManagementPage from "./pages/contact/ContactManagementPage";
 import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
+import B2BOrderRequest from "./pages/b2b/B2BOrderRequest";
 
 import ForbiddenPage from "./pages/errors/ForbiddenPage";
 import NotFoundPage from "./pages/errors/NotFoundPage";
@@ -344,6 +345,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Enterprise"]}>
                 <B2BDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/b2b/order-request"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BOrderRequest />
               </ProtectedRoute>
             }
           />

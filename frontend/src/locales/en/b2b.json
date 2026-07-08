@@ -1,0 +1,50 @@
+{
+  "title": "Create B2B Order Request",
+  "subtitle": "Exclusive area for Business Partners",
+  "consultingPackage": "Custom Product Consulting & Design Package",
+  "companyInfo": {
+    "title": "Company / Partner Information",
+    "desc1": "The system automatically uses the default information and Logo from your Profile",
+    "company": "Company",
+    "taxCode": "Tax Code",
+    "notUpdated": "Not updated",
+    "note": "* Note: If the company information is incorrect, please update it in your Profile before ordering."
+  },
+  "fields": {
+    "product": "Service Package / Product",
+    "productPlaceholder": "-- Select Service Package / Product --",
+    "quantity": "Expected Quantity",
+    "budget": "Expected Budget (VND)",
+    "budgetPlaceholder": "Ex: 50000000",
+    "deliveryDate": "Expected Delivery Date",
+    "deliveryDatePlaceholder": "Select delivery date...",
+    "packaging": "Packaging Requirements (Optional)",
+    "packagingPlaceholder": "-- Select packaging requirement --",
+    "packagingOptions": {
+      "STANDARD_BOX": "Standard Box",
+      "NO_PACKAGING": "No Packaging"
+    },
+    "note": "Additional Notes (Optional)",
+    "notePlaceholder": "Ex: Need VAT invoice, request to attach cards with each guest's name, or describe custom design idea...",
+    "designFiles": "Upload Design File / Idea Image (Optional)",
+    "dragDrop": "Drag and drop file here, or click to select file",
+    "fileHint": "Supported: PDF, AI, PNG, JPG (Max 10MB/file, max 5 files)",
+    "fileNote": "* Note: Leave blank if using standard Logo in your Profile"
+  },
+  "buttons": {
+    "back": "Back to Dashboard",
+    "submit": "Create Order Request",
+    "submitting": "Submitting..."
+  },
+  "validation": {
+    "productRequired": "Please select Service Package / Product.",
+    "quantityRequired": "Please enter Expected Quantity.",
+    "deliveryDateRequired": "Please select Expected Delivery Date."
+  },
+  "messages": {
+    "success": "Order request sent successfully!",
+    "error": "An error occurred while sending the request.",
+    "fetchProductsError": "Unable to load product list.",
+    "maxFiles": "You can upload a maximum of 5 files."
+  }
+}

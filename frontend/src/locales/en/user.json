@@ -17,7 +17,7 @@
     "change_pass_success": "Password updated successfully!",
     "otp_sent_success": "OTP sent successfully!",
     "otp_send_error": "Error sending OTP",
-    "delete_success": "Đã xóa tài khoản thành công!"
+    "delete_success": "Account deleted successfully!"
   },
   "auth": {
     "new_password": "New Password",

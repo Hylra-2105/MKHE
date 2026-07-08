@@ -1,0 +1,50 @@
+{
+  "title": "B2B 주문 요청 생성",
+  "subtitle": "비즈니스 파트너 전용 공간",
+  "consultingPackage": "맞춤형 제품 컨설팅 및 디자인 패키지",
+  "companyInfo": {
+    "title": "회사 / 파트너 정보",
+    "desc1": "시스템은 프로필의 기본 정보와 로고를 자동으로 사용합니다.",
+    "company": "회사",
+    "taxCode": "사업자 등록번호",
+    "notUpdated": "업데이트되지 않음",
+    "note": "* 참고: 회사 정보가 정확하지 않은 경우 주문하기 전에 프로필에서 업데이트하십시오."
+  },
+  "fields": {
+    "product": "서비스 패키지 / 제품",
+    "productPlaceholder": "-- 서비스 패키지 / 제품 선택 --",
+    "quantity": "예상 수량",
+    "budget": "예상 예산 (VND)",
+    "budgetPlaceholder": "예: 50000000",
+    "deliveryDate": "예상 배송일",
+    "deliveryDatePlaceholder": "배송일 선택...",
+    "packaging": "포장 요구 사항 (선택 사항)",
+    "packagingPlaceholder": "-- 포장 요구 사항 선택 --",
+    "packagingOptions": {
+      "STANDARD_BOX": "표준 상자",
+      "NO_PACKAGING": "포장 불필요"
+    },
+    "note": "추가 참고 사항 (선택 사항)",
+    "notePlaceholder": "예: VAT 청구서 필요, 각 고객 이름이 적힌 카드 첨부...",
+    "designFiles": "디자인 파일 / 아이디어 이미지 업로드 (선택 사항)",
+    "dragDrop": "여기로 파일을 드래그 앤 드롭하거나 클릭하여 파일을 선택하세요",
+    "fileHint": "지원: PDF, AI, PNG, JPG (최대 10MB/파일, 최대 5개 파일)",
+    "fileNote": "* 참고: 프로필의 기본 로고를 사용하는 경우 비워 두세요"
+  },
+  "buttons": {
+    "back": "대시보드로 돌아가기",
+    "submit": "주문 요청 보내기",
+    "submitting": "처리 중..."
+  },
+  "validation": {
+    "productRequired": "서비스 패키지 / 제품을 선택해주세요.",
+    "quantityRequired": "예상 수량을 입력해주세요.",
+    "deliveryDateRequired": "예상 배송일을 선택해주세요."
+  },
+  "messages": {
+    "success": "주문 요청을 성공적으로 보냈습니다!",
+    "error": "요청을 보내는 중 오류가 발생했습니다.",
+    "fetchProductsError": "제품 목록을 로드할 수 없습니다.",
+    "maxFiles": "최대 5개의 파일만 업로드할 수 있습니다."
+  }
+}

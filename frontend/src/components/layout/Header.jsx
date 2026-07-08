@@ -30,6 +30,7 @@ import {
   Star,
   X,
   Mail,
+  LayoutGrid,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -333,6 +334,22 @@ export default function Header() {
                       <ShoppingBag className="w-4 h-4" />
                       {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
                     </Link>
+
+                    {/* VÙNG DÀNH CHO KHÁCH HÀNG DOANH NGHIỆP (B2B) */}
+                    {user.role === "Enterprise" && (
+                      <Link
+                        to="/b2b/dashboard"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                          location.pathname.startsWith("/b2b/dashboard")
+                            ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                            : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                        }`}
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                        Dashboard B2B
+                      </Link>
+                    )}
 
                     {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}
                     {(user.role === "Admin" || user.role === "Staff") && (

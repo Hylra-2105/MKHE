@@ -1,0 +1,50 @@
+{
+  "title": "创建 B2B 订单请求",
+  "subtitle": "商业合作伙伴专属区域",
+  "consultingPackage": "定制产品咨询与设计套餐",
+  "companyInfo": {
+    "title": "公司/合作伙伴信息",
+    "desc1": "系统自动使用您个人资料中的默认信息和标志",
+    "company": "公司",
+    "taxCode": "税号",
+    "notUpdated": "未更新",
+    "note": "* 注意：如果公司信息不正确，请在订购前在您的个人资料中更新。"
+  },
+  "fields": {
+    "product": "服务套餐 / 产品",
+    "productPlaceholder": "-- 选择服务套餐 / 产品 --",
+    "quantity": "预期数量",
+    "budget": "预期预算 (VND)",
+    "budgetPlaceholder": "例: 50000000",
+    "deliveryDate": "预期交货日期",
+    "deliveryDatePlaceholder": "选择交货日期...",
+    "packaging": "包装要求 (可选)",
+    "packagingPlaceholder": "-- 选择包装要求 --",
+    "packagingOptions": {
+      "STANDARD_BOX": "标准盒",
+      "NO_PACKAGING": "无需包装"
+    },
+    "note": "附加说明 (可选)",
+    "notePlaceholder": "例：需要增值税发票，要求附上写有每位客人名字的卡片，或描述定制设计理念...",
+    "designFiles": "上传设计文件 / 创意图片 (可选)",
+    "dragDrop": "将文件拖放到此处，或单击以选择文件",
+    "fileHint": "支持：PDF、AI、PNG、JPG（最大10MB/文件，最多5个文件）",
+    "fileNote": "* 注意：如果使用您个人资料中的标准标志，请留空"
+  },
+  "buttons": {
+    "back": "返回仪表板",
+    "submit": "创建订单请求",
+    "submitting": "提交中..."
+  },
+  "validation": {
+    "productRequired": "请选择服务套餐 / 产品。",
+    "quantityRequired": "请输入预期数量。",
+    "deliveryDateRequired": "请选择预期交货日期。"
+  },
+  "messages": {
+    "success": "订单请求发送成功！",
+    "error": "发送请求时发生错误。",
+    "fetchProductsError": "无法加载产品列表。",
+    "maxFiles": "最多只能上传5个文件。"
+  }
+}
