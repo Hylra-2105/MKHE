@@ -41,5 +41,6 @@
     "emptyCompanyName": "会社名を入力してください。",
     "emptyTaxCode": "納税者番号を入力してください。",
     "invalidTaxCode": "無効な納税者番号（10桁または13桁）です。"
-  }
+  },
+  "tag": "メコン文化"
 }

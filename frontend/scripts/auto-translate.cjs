@@ -47,19 +47,46 @@ async function syncAndTranslateObject(base, target, lang) {
   let hasChanges = false;
   
   for (const key in base) {
-    if (typeof base[key] === 'object' && base[key] !== null && !Array.isArray(base[key])) {
-      if (!target[key] || typeof target[key] !== 'object') {
+    const val = base[key];
+    
+    if (Array.isArray(val)) {
+      if (!Array.isArray(target[key])) {
+        target[key] = [...val]; // initialize with base
+        hasChanges = true;
+      }
+      for (let i = 0; i < val.length; i++) {
+        if (typeof val[i] === 'object' && val[i] !== null) {
+          if (!target[key][i] || typeof target[key][i] !== 'object') {
+            target[key][i] = {};
+            hasChanges = true;
+          }
+          const childChanged = await syncAndTranslateObject(val[i], target[key][i], lang);
+          if (childChanged) hasChanges = true;
+        } else if (typeof val[i] === 'string') {
+          if (target[key][i] === undefined || target[key][i] === val[i]) {
+            console.log(`Translating [${lang}] array item "${key}[${i}]"...`);
+            const translated = await translateText(val[i], lang);
+            await delay(300);
+            if (translated && translated !== target[key][i]) {
+               target[key][i] = translated;
+               hasChanges = true;
+            }
+          }
+        }
+      }
+    } else if (typeof val === 'object' && val !== null) {
+      if (!target[key] || typeof target[key] !== 'object' || Array.isArray(target[key])) {
         target[key] = {};
         hasChanges = true;
       }
-      const childChanged = await syncAndTranslateObject(base[key], target[key], lang);
+      const childChanged = await syncAndTranslateObject(val, target[key], lang);
       if (childChanged) hasChanges = true;
     } else {
       // If the target key is missing, OR if it is identical to the base language (Vietnamese) 
       // (meaning it was probably just copied but not translated)
-      if (target[key] === undefined || target[key] === base[key]) {
+      if (target[key] === undefined || target[key] === val) {
         console.log(`Translating [${lang}] key "${key}"...`);
-        const translated = await translateText(base[key], lang);
+        const translated = await translateText(val, lang);
         
         // Wait a bit to prevent rate limit (429 Too Many Requests)
         await delay(300);

@@ -41,5 +41,6 @@
     "emptyCompanyName": "회사명을 입력해주세요.",
     "emptyTaxCode": "사업자 등록번호를 입력해주세요.",
     "invalidTaxCode": "잘못된 사업자 등록번호입니다 (10자리 또는 13자리)."
-  }
+  },
+  "tag": "메콩강 문화"
 }

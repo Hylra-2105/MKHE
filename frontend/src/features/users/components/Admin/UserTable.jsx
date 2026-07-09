@@ -92,7 +92,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-600 border border-orange-500/30">
                       {t("table.status_blocked")}
                     </span>
-                  ) : user.role === "Enterprise" && user.resetPasswordToken ? (
+                  ) : (user.role === "Enterprise" && user.resetPasswordToken) || user.isVerified === false ? (
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-500/10 text-yellow-600 border border-yellow-500/30">
                       {t("table.status_pending")}
                     </span>

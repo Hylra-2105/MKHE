@@ -47,7 +47,26 @@
     "desc": "A brand new interactive entertainment experience. Stay tuned for a multi-dimensional cultural journey through every square, soon to be revealed by MKHE!"
   },
   "core_tech": {
-    "desc": "We don't just sell products, we give you the universal key to open the door to the Digital Heritage Space."
+    "desc": "We don't just sell products, we give you the universal key to open the door to the Digital Heritage Space.",
+    "tag": "Core Technology",
+    "title_1": "Awakening Heritage with",
+    "title_2": "Contemporary Technology",
+    "card_title": "DIGITAL CULTURAL PASSPORT",
+    "card_subtitle": "TAP TO AUTHENTICATE",
+    "features": [
+      {
+        "title": "Digital Product Passport (DPP)",
+        "desc": "Tap NFC to trace transparent origins, crafting techniques, and the artisan's story behind each masterpiece."
+      },
+      {
+        "title": "Unique & Anti-Counterfeiting",
+        "desc": "Each design is unique, identified by a unique UID code, granting permanent authenticity certification to customers."
+      },
+      {
+        "title": "Sustainable Livelihoods",
+        "desc": "Committed to sharing revenue, creating fair livelihoods, and sustaining the lifeblood for artisan communities in traditional craft villages."
+      }
+    ]
   },
   "heritage": {
     "journey_tag": "The Journey",

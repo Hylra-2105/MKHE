@@ -6,7 +6,6 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 
 export default function ForgotPasswordForm() {
   const { t } = useTranslation(["forgot_password", "common"]);
@@ -160,14 +159,16 @@ export default function ForgotPasswordForm() {
             <div>
               <InputField
                 type="email"
+                label={t("email_placeholder")}
                 placeholder={t("email_placeholder")}
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setError(null);
                 }}
+                required
+                error={error ? t(error) : null}
               />
-              <ErrorText error={error} t={t} />
             </div>
             <Button type="submit" disabled={isLoading || isProcessing}>
               {isLoading || isProcessing ? t("btn_sending") : t("btn_send_otp")}

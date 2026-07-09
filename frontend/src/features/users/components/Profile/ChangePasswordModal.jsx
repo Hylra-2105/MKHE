@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { X, Eye, EyeOff, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
+import InputField from "@/components/ui/InputField";
 import { maskEmail } from "@/utils/validators";
 import { authApi } from "@/api/authApi";
 
@@ -379,70 +379,62 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
               </div>
 
               <div className="space-y-4">
-                <div className="relative">
-                  <label className="text-[10px] font-bold text-[var(--color-mkhe-text)]/50 uppercase ml-1 block mb-1">
-                    {t("auth.new_password")}
-                  </label>
-                  <input
+                <div>
+                  <InputField
                     type={showPass ? "text" : "password"}
+                    label={t("auth.new_password")}
                     value={newPass.password}
                     onChange={(e) => {
                       setErrorMsg("");
                       setErrors((prev) => ({ ...prev, password: null }));
                       setNewPass({ ...newPass, password: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
+                    required
+                    error={errors.password ? errors.password : null}
+                    rightElement={
+                      <button
+                        type="button"
+                        onClick={() => setShowPass(!showPass)}
+                        className="cursor-pointer p-1"
+                      >
+                        {showPass ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    }
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-9 text-[var(--color-mkhe-text)]/50 hover:text-[var(--color-mkhe-primary)] cursor-pointer transition-colors"
-                  >
-                    {showPass ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                  {errors.password && (
-                    <div className="mt-3">
-                      <ErrorText error={errors.password} />
-                    </div>
-                  )}
                 </div>
 
-                <div className="relative">
-                  <label className="text-[10px] font-bold text-[var(--color-mkhe-text)]/50 uppercase ml-1 block mb-1">
-                    {t("auth.confirm_new_password")}
-                  </label>
-                  <input
+                <div>
+                  <InputField
                     type={showConfirmPass ? "text" : "password"}
+                    label={t("auth.confirm_new_password")}
                     value={newPass.confirm}
                     onChange={(e) => {
                       setErrorMsg("");
                       setErrors((prev) => ({ ...prev, confirm: null }));
                       setNewPass({ ...newPass, confirm: e.target.value });
                     }}
-                    className="w-full p-4 bg-transparent border border-[var(--color-mkhe-border)]/50 text-[var(--color-mkhe-text)] rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)] transition-colors mb-1"
                     placeholder="••••••••"
+                    required
+                    error={errors.confirm ? errors.confirm : null}
+                    rightElement={
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPass(!showConfirmPass)}
+                        className="cursor-pointer p-1"
+                      >
+                        {showConfirmPass ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    }
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPass(!showConfirmPass)}
-                    className="absolute right-4 top-9 text-[var(--color-mkhe-text)]/50 hover:text-[var(--color-mkhe-primary)] cursor-pointer transition-colors"
-                  >
-                    {showConfirmPass ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                  {errors.confirm && (
-                    <div className="mt-3">
-                      <ErrorText error={errors.confirm} />
-                    </div>
-                  )}
                 </div>
               </div>
 

@@ -41,5 +41,6 @@
     "emptyCompanyName": "Please enter your Company Name.",
     "emptyTaxCode": "Please enter your Tax Code.",
     "invalidTaxCode": "Invalid Tax Code (10 or 13 digits)."
-  }
+  },
+  "tag": "Mekong Culture"
 }
