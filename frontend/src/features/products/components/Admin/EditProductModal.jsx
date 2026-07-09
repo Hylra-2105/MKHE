@@ -16,6 +16,7 @@ import {
   Briefcase
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import InputField from "@/components/ui/InputField";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
 import NFCManagement from "./NFCManagement";
@@ -171,6 +172,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const fileInputRef = useRef(null);
   const fileInput3DRef = useRef(null);
 
+  const [initialFormData, setInitialFormData] = useState(null);
+
   const [keptImages, setKeptImages] = useState([]); // Ảnh cũ giữ lại
   const [deletedImages, setDeletedImages] = useState([]); // Ảnh cũ đánh dấu xóa
   const [newImageFiles, setNewImageFiles] = useState([]); // Ảnh mới từ máy (File)
@@ -244,7 +247,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   useEffect(() => {
     if (product && isOpen) {
-      setFormData({
+      const initData = {
         name: product.name || "",
         sku: product.sku || "",
         vendor: product.vendor || "",
@@ -267,7 +270,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         isService: product?.isService || false,
         hasSale: !!product.salePrice || !!product.saleStartDate,
         b2bTiers: product.b2bTiers || [],
-      });
+      };
+      setFormData(initData);
+      setInitialFormData(initData);
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
       setDeletedImages([]);
@@ -280,6 +285,18 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       setFormErrors({});
     }
   }, [product, isOpen]);
+
+  const hasChanges = React.useMemo(() => {
+    if (!initialFormData) return false;
+    
+    const isFormChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData);
+    const hasNewImages = newImageFiles.length > 0;
+    const hasDeletedImgs = deletedImages.length > 0;
+    const hasNew3D = file3D !== null;
+    const hasDel3D = isDeleted3D;
+
+    return isFormChanged || hasNewImages || hasDeletedImgs || hasNew3D || hasDel3D;
+  }, [formData, initialFormData, newImageFiles, deletedImages, file3D, isDeleted3D]);
 
   if (!isOpen || !product) return null;
 
@@ -735,25 +752,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 
                 {/* DÒNG 1: TÊN SẢN PHẨM & SKU */}
                 <div className="grid grid-cols-12 gap-4">
-                  <div className="space-y-1 col-span-8">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
-                    {formErrors.name && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.name}</p>
-                      </div>
-                    )}
+                  <div className="col-span-8">
+                    <InputField type="text" name="name" value={formData.name} onChange={handleChange} label={t("modal.name")} required error={formErrors.name ? formErrors.name : null} />
                   </div>
-                  <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" value={formData.sku} disabled className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed" />
-                    {formErrors.sku && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.sku}</p>
-                      </div>
-                    )}
+                  <div className="col-span-4">
+                    <InputField type="text" name="sku" value={formData.sku} disabled label={t("modal.sku")} required error={formErrors.sku ? formErrors.sku : null} className="uppercase cursor-not-allowed opacity-50 bg-mkhe-text/5" />
                   </div>
                 </div>
 
@@ -785,9 +788,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       </div>
                     )}
                   </div>
-                  <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
-                    <input type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
+                  <div className="col-span-6">
+                    <InputField type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} label={t("modal.craft_village", "Làng nghề")} placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
                   </div>
                 </div>
 
@@ -838,19 +840,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       )}
                     </div>
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
-                    {formErrors.price && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.price}</p>
-                      </div>
-                    )}
+                  <div className="col-span-3">
+                    <InputField type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} label={t("modal.price")} required error={formErrors.price ? formErrors.price : null} />
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
-                    <input type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  <div className="col-span-3">
+                    <InputField type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} label={t("modal.stock")} />
                   </div>
                 </div>
 
@@ -886,15 +880,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
                   <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasSale ? "max-h-[700px] mt-5 opacity-100" : "max-h-0 opacity-0"}`}>
                     <div className="grid grid-cols-12 gap-4">
-                      <div className="space-y-1 col-span-4">
-                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.salePrice", "Giá Sale")}</label>
-                        <input type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.salePrice ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm`} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} />
-                        {formErrors.salePrice && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                            <p className="text-xs font-medium">{formErrors.salePrice}</p>
-                          </div>
-                        )}
+                      <div className="col-span-4">
+                        <InputField type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} label={t("form.sale.salePrice", "Giá Sale")} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} error={formErrors.salePrice ? formErrors.salePrice : null} />
                       </div>
                       <div className="space-y-1 col-span-4">
                         <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.startSale", "Bắt đầu Sale")}</label>
@@ -1016,15 +1003,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
                 <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[700px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_edit")} />
-                      {formErrors.artisanName && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
-                        </div>
-                      )}
+                    <div>
+                      <InputField type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} label={t("modal.dpp.artisan_name")} placeholder={t("modal.dpp.artisan_placeholder_edit")} required error={formErrors.artisanName ? formErrors.artisanName : null} />
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
@@ -1177,8 +1157,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
             <Button
               type="submit"
               form="edit-product-form"
-              disabled={loading}
-              className="!w-auto px-8 py-2.5 rounded-xl text-sm whitespace-nowrap"
+              disabled={loading || !hasChanges}
+              className={`!w-auto px-8 py-2.5 rounded-xl text-sm whitespace-nowrap ${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {loading ? t("modal.processing") : t("modal.save")}
             </Button>

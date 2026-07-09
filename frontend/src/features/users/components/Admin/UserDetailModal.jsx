@@ -87,6 +87,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
 
   // Không format prefix nữa
   let displayPhone = editForm.phone || "";
+  const hasChanges = JSON.stringify(editForm) !== JSON.stringify(originalEditForm);
   // ==========================================
 
   const handleInputChange = (e) => {
@@ -431,7 +432,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                   </button>
                   <Button
                     onClick={handleSave}
-                    disabled={isSaving}
+                    disabled={isSaving || !hasChanges}
                     className="!w-auto px-8 py-2.5 rounded-xl text-sm"
                   >
                     {isSaving ? t("common.saving") : t("common.save_info")}

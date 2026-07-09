@@ -22,7 +22,7 @@ const VoucherManagementFeature = () => {
 
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("PUBLISHED");
   const [typeFilter, setTypeFilter] = useState("ALL");
 
   const handleSearch = (e) => {

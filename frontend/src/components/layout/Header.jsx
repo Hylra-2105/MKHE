@@ -356,7 +356,55 @@ export default function Header() {
                       <div className="py-1">
                         <div className="h-px bg-mkhe-border/50 my-1 mx-4"></div>
 
-                        {/* Chỉ Admin mới thấy Quản lý Người dùng */}
+                        {/* ================= CỤM 1: CỐT LÕI ================= */}
+                        {/* Thống kê - Phân tích (Admin only) */}
+                        {user.role === "Admin" && (
+                          <Link
+                            to="/admin/analysis"
+                            onClick={() => setIsDropdownOpen(false)}
+                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                              location.pathname.startsWith("/admin/analysis")
+                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                            }`}
+                          >
+                            <BarChart className="w-4 h-4" />
+                            {t("user_menu.analytics")}
+                          </Link>
+                        )}
+
+                        {/* Quản lý Đơn hàng (Admin/Staff) */}
+                        <Link
+                          to="/admin/orders"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/orders")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <ShoppingBag className="w-4 h-4" />
+                          {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
+                        </Link>
+
+                        {/* Quản lý Sản phẩm (Admin/Staff) */}
+                        <Link
+                          to="/admin/products"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/products")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <Package className="w-4 h-4" />
+                          {t("user_menu.manage_products")}
+                        </Link>
+
+                        <div className="h-px bg-mkhe-border/30 my-1.5 mx-4"></div>
+
+                        {/* ================= CỤM 2: KHÁCH HÀNG & MARKETING ================= */}
+                        {/* Quản lý Người dùng (Admin only) */}
                         {user.role === "Admin" && (
                           <Link
                             to="/admin/users"
@@ -372,49 +420,7 @@ export default function Header() {
                           </Link>
                         )}
 
-                        {/* Cả Admin và Staff đều thấy Quản lý Liên hệ */}
-                        <Link
-                          to="/admin/contacts"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/contacts")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Mail className="w-4 h-4" />
-                          {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Đơn hàng */}
-                        <Link
-                          to="/admin/orders"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/orders")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <ShoppingBag className="w-4 h-4" />
-                          {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Sản phẩm */}
-                        <Link
-                          to="/admin/products"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/products")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Package className="w-4 h-4" />
-                          {t("user_menu.manage_products")}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Voucher */}
+                        {/* Quản lý Voucher (Admin/Staff) */}
                         <Link
                           to="/admin/vouchers"
                           onClick={() => setIsDropdownOpen(false)}
@@ -428,21 +434,7 @@ export default function Header() {
                           {t("user_menu.manage_vouchers")}
                         </Link>
 
-                        {/* Cả Admin và Staff đều thấy Quản lý Bài viết */}
-                        <Link
-                          to="/admin/blogs"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/blogs")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <FileText className="w-4 h-4" />
-                          {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
-                        </Link>
-
-                        {/* Chỉ Admin mới thấy Quản lý Đánh giá */}
+                        {/* Quản lý Đánh giá (Admin only) */}
                         {user.role === "Admin" && (
                           <Link
                             to="/admin/reviews"
@@ -458,21 +450,36 @@ export default function Header() {
                           </Link>
                         )}
 
-                        {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
-                        {user.role === "Admin" && (
-                          <Link
-                            to="/admin/analysis"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/analysis")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
-                          >
-                            <BarChart className="w-4 h-4" />
-                            {t("user_menu.analytics")}
-                          </Link>
-                        )}
+                        <div className="h-px bg-mkhe-border/30 my-1.5 mx-4"></div>
+
+                        {/* ================= CỤM 3: NỘI DUNG & HỖ TRỢ ================= */}
+                        {/* Quản lý Bài viết (Admin/Staff) */}
+                        <Link
+                          to="/admin/blogs"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/blogs")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <FileText className="w-4 h-4" />
+                          {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
+                        </Link>
+
+                        {/* Quản lý Liên hệ (Admin/Staff) */}
+                        <Link
+                          to="/admin/contacts"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/admin/contacts")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <Mail className="w-4 h-4" />
+                          {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
+                        </Link>
                       </div>
                     )}
 
