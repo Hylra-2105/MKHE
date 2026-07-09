@@ -139,6 +139,24 @@ export default function NotificationDropdown() {
   useEffect(() => {
     if (user) {
       fetchUnreadCounts();
+    }
+  }, [user, fetchUnreadCounts]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = '';
+    } else {
+      if (window.innerWidth < 640) {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (user) {
       if ((user.role === "Admin" || user.role === "Staff") && tab === "all") {
         useNotificationStore.setState({ tab: "system" });
       }
@@ -270,34 +288,42 @@ export default function NotificationDropdown() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-4 w-[360px] sm:w-[400px] bg-mkhe-bg border border-mkhe-border rounded-xl shadow-2xl z-50 overflow-visible origin-top-right animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] bg-mkhe-bg sm:border sm:border-mkhe-border sm:rounded-xl shadow-2xl z-[70] flex flex-col overflow-hidden origin-top-right animate-in fade-in sm:zoom-in-95 duration-200">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center justify-between px-4 py-3 shrink-0">
             <h3 className="font-bold text-2xl text-mkhe-text">{t("notifications.header_title", "Thông báo")}</h3>
-            <div className="relative global-menu-container" ref={globalMenuRef}>
+            <div className="flex items-center gap-1">
+              <div className="relative global-menu-container" ref={globalMenuRef}>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowGlobalMenu(!showGlobalMenu); setActiveMenuId(null); }}
+                  className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer"
+                >
+                  <MoreHorizontal className="w-5 h-5 text-mkhe-text" />
+                </button>
+                {/* Global Menu */}
+                {showGlobalMenu && (
+                  <div className="absolute right-0 top-full mt-1 w-max min-w-[200px] bg-mkhe-bg border border-mkhe-border rounded-lg shadow-lg p-1 z-[60]" onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      onClick={() => { markAllAsRead(); setShowGlobalMenu(false); }}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-mkhe-border/30 text-mkhe-text flex items-center gap-3 cursor-pointer rounded-md transition-colors whitespace-nowrap"
+                    >
+                      <Check className="w-4 h-4 flex-shrink-0" />
+                      <span>{t("notifications.mark_all_read", "Đánh dấu tất cả là đã đọc")}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
               <button
-                onClick={(e) => { e.stopPropagation(); setShowGlobalMenu(!showGlobalMenu); setActiveMenuId(null); }}
-                className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer"
+                onClick={handleToggle}
+                className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer sm:hidden"
               >
-                <MoreHorizontal className="w-5 h-5 text-mkhe-text" />
+                <X className="w-5 h-5 text-mkhe-text" />
               </button>
-              {/* Global Menu */}
-              {showGlobalMenu && (
-                <div className="absolute right-0 top-full mt-1 w-max min-w-[200px] bg-mkhe-bg border border-mkhe-border rounded-lg shadow-lg p-1 z-[60]" onClick={(e) => e.stopPropagation()}>
-                  <button 
-                    onClick={() => { markAllAsRead(); setShowGlobalMenu(false); }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-mkhe-border/30 text-mkhe-text flex items-center gap-3 cursor-pointer rounded-md transition-colors whitespace-nowrap"
-                  >
-                    <Check className="w-4 h-4 flex-shrink-0" />
-                    <span>{t("notifications.mark_all_read", "Đánh dấu tất cả là đã đọc")}</span>
-                  </button>
-                </div>
-              )}
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 px-4 pb-2 border-b border-mkhe-border/50 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex gap-2 px-4 pb-2 border-b border-mkhe-border/50 overflow-x-auto no-scrollbar whitespace-nowrap shrink-0">
             {(user.role === "Admin" || user.role === "Staff") && (
               <button 
                 onClick={() => setTab("system")}
@@ -337,7 +363,7 @@ export default function NotificationDropdown() {
           </div>
 
           {/* Notifications List */}
-          <div className="max-h-[450px] overflow-y-auto pb-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto pb-4 custom-scrollbar">
             {loading && page === 1 ? (
               <div className="py-10 text-center text-mkhe-text/60 flex flex-col items-center justify-center">
                 <div className="w-6 h-6 border-2 border-mkhe-primary border-t-transparent rounded-full animate-spin mb-3"></div>

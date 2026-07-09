@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { getPasswordErrorKey } from "@/utils/validators";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
@@ -34,7 +35,8 @@ export default function B2BActivationForm() {
     setError({});
 
     if (!password) return setError({ password: "err_empty_pass" });
-    if (password.length < 6) return setError({ password: "err_short_pass" });
+    const passError = getPasswordErrorKey(password);
+    if (passError) return setError({ password: passError });
     if (password !== confirmPassword)
       return setError({ confirmPassword: "err_not_match" });
 
@@ -80,7 +82,7 @@ export default function B2BActivationForm() {
               if (error.password) setError({ ...error, password: null });
             }}
             required
-            error={error.password ? "Vui lòng kiểm tra lại mật khẩu (Tối thiểu 6 ký tự)" : null}
+            error={error.password ? t(`common:${error.password}`) : null}
             rightElement={
               <button
                 type="button"

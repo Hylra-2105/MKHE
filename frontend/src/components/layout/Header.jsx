@@ -209,7 +209,7 @@ export default function Header() {
             alt="MKHE Logo"
             className="h-9 w-auto object-contain"
           />
-          <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold">
+          <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold hidden sm:block">
             MKHE
           </span>
         </Link>
@@ -242,7 +242,7 @@ export default function Header() {
       </nav>
 
       {/* CỤM CHỨC NĂNG BÊN PHẢI */}
-      <div className="flex-shrink-0 lg:w-1/4 flex items-center justify-end gap-3 md:gap-5">
+      <div className="flex-shrink-0 lg:w-1/4 flex items-center justify-end gap-2 sm:gap-3 md:gap-5">
         {/* ẨN KÍNH LÚP VÀ GIỎ HÀNG KHI LÀ ADMIN HOẶC STAFF */}
         {!isAdminOrStaff && (
           <>
@@ -337,18 +337,21 @@ export default function Header() {
 
                     {/* VÙNG DÀNH CHO KHÁCH HÀNG DOANH NGHIỆP (B2B) */}
                     {user.role === "Enterprise" && (
-                      <Link
-                        to="/b2b/dashboard"
-                        onClick={() => setIsDropdownOpen(false)}
-                        className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                          location.pathname.startsWith("/b2b/dashboard")
-                            ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                            : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                        }`}
-                      >
-                        <LayoutGrid className="w-4 h-4" />
-                        Dashboard B2B
-                      </Link>
+                      <>
+                        <div className="h-px bg-mkhe-border/50 my-1.5 mx-4"></div>
+                        <Link
+                          to="/b2b/dashboard"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/b2b/dashboard")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <LayoutGrid className="w-4 h-4" />
+                          {t("user_menu.b2b_dashboard", { defaultValue: "Dashboard B2B" })}
+                        </Link>
+                      </>
                     )}
 
                     {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}

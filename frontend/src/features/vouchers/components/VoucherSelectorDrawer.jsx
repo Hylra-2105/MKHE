@@ -35,6 +35,25 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
     };
   }, [socket, isOpen, fetchWalletVouchers]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      // Chỉ mở khóa nếu MiniCartDrawer không đang mở (tránh xung đột vì VoucherSelector thường nằm trong Cart)
+      // Ta có thể kiểm tra xem thẻ chứa cart có đang mount không
+      if (!document.querySelector('.mini-cart-drawer')) {
+        document.body.style.overflow = '';
+      }
+    } else {
+      if (window.innerWidth < 640 || displayMode === "drawer") {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    return () => {
+      if (!document.querySelector('.mini-cart-drawer')) {
+        document.body.style.overflow = '';
+      }
+    };
+  }, [isOpen, displayMode]);
+
 
   const availableVouchers = walletVouchers.filter((uv) => uv.status === "AVAILABLE");
 
@@ -75,7 +94,7 @@ const VoucherSelectorDrawer = ({ isOpen, onClose, cartItems, cartTotal, selected
       <div 
         className={`voucher-selector-drawer flex flex-col bg-mkhe-bg shadow-2xl overflow-hidden ${
           displayMode === "dropdown" 
-            ? "absolute top-full right-0 mt-4 w-[400px] sm:w-[460px] max-h-[calc(100vh-100px)] z-[110] border border-mkhe-border rounded-xl animate-in fade-in zoom-in-95 duration-200 font-sans text-left" 
+            ? "fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[460px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] z-[110] border-0 sm:border border-mkhe-border sm:rounded-xl animate-in fade-in sm:zoom-in-95 duration-200 font-sans text-left" 
             : "fixed right-0 top-0 bottom-0 w-full md:w-[450px] z-[110] transform transition-transform duration-300 translate-x-0 border-l border-mkhe-border/10"
         }`}
       >

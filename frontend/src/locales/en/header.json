@@ -20,7 +20,8 @@
     "manage_orders": "Manage Orders",
     "manage_blogs": "Blog Management",
     "manage_reviews": "Manage Reviews",
-    "manage_contacts": "Manage Contacts"
+    "manage_contacts": "Manage Contacts",
+    "b2b_dashboard": "B2B dashboard"
   },
   "guest_menu": {
     "login": "Login"

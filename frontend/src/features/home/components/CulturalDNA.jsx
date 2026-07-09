@@ -75,7 +75,7 @@ const CulturalDNA = () => {
           <div className="animate-spin w-10 h-10 border-[1px] border-mkhe-text/20 border-t-mkhe-primary rounded-full" />
         </div>
       ) : (
-        <div className="relative z-10 space-y-40">
+        <div className="relative z-10 space-y-12 md:space-y-20">
           <DnaSection title="Kinh" data={products.KINH} dnaType="KINH" />
           <DnaSection title="Khmer" data={products.KHMER} isReverse={true} dnaType="KHMER" />
           <DnaSection title="Chăm" data={products.CHAM} dnaType="CHAM" />

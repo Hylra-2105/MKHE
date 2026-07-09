@@ -124,10 +124,10 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
               </div>
 
               {/* Vendor & Category TOP RIGHT */}
-              <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col items-end gap-2 max-w-[55%]">
                 {product.vendor && (
-                  <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
-                    <span className="text-[10px] font-bold text-white tracking-[0.1em]">{product.vendor}</span>
+                  <div className="px-2 py-1 sm:px-3 sm:py-1.5 bg-black/40 backdrop-blur-md rounded-xl sm:rounded-full border border-white/20 w-full text-right">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-white tracking-widest line-clamp-2 leading-tight">{product.vendor}</span>
                   </div>
                 )}
               </div>

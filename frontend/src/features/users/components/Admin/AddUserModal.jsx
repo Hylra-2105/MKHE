@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import Dropdown from "@/components/ui/Dropdown";
 import { userApi } from "@/api/userApi";
+import { getPasswordErrorKey } from "@/utils/validators";
 
 const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
   const { t } = useTranslation("admin");
@@ -61,7 +62,10 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
     
     if (formData.role !== "Enterprise") {
       if (!formData.password) errors.password = t("users.errors.pass_required", "Vui lòng điền mật khẩu");
-      else if (formData.password.length < 6) errors.password = t("users.errors.pass_short", "Mật khẩu phải có ít nhất 6 ký tự.");
+      else {
+        const passError = getPasswordErrorKey(formData.password);
+        if (passError) errors.password = t(`common:${passError}`);
+      }
     } else {
       if (!formData.companyName) errors.companyName = t("users.errors.company_required", "Vui lòng điền tên công ty");
       if (!formData.taxCode) {

@@ -4,7 +4,7 @@ export const registerSchema = z.object({
   body: z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    password: z.string().min(6),
+    password: z.string().min(8).regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/),
     language: z.string().optional(),
   }),
 });
@@ -42,6 +42,6 @@ export const resetPasswordSchema = z.object({
   body: z.object({
     email: z.string().email(),
     resetToken: z.string().min(1),
-    newPassword: z.string().min(6),
+    newPassword: z.string().min(8).regex(/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/),
   }),
 });

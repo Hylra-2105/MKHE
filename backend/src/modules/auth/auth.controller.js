@@ -544,7 +544,7 @@ export const activateB2BAccount = async (req, res) => {
       return errorResponse(res, 400, "MISSING_FIELDS");
     }
     
-    if (password.length < 6) {
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password)) {
       return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
     }
 

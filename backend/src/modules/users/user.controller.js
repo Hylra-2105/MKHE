@@ -271,8 +271,8 @@ export const createUser = async (req, res) => {
     // Chuẩn hóa dữ liệu
     name = name.trim();
 
-    // Kiểm tra độ dài mật khẩu
-    if (password.length < 6) {
+    // Kiểm tra độ dài và độ mạnh mật khẩu
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password)) {
       return res
         .status(400)
         .json({ success: false, message: "PASSWORD_TOO_SHORT" });

@@ -19,7 +19,8 @@
     "manage_orders": "Quản lý Đơn hàng",
     "manage_blogs": "Quản lý Bài viết",
     "manage_reviews": "Quản lý Đánh giá",
-    "manage_contacts": "Quản lý Liên hệ"
+    "manage_contacts": "Quản lý Liên hệ",
+    "b2b_dashboard": "Bảng điều khiển B2B"
   },
   "guest_menu": {
     "login": "Đăng nhập"

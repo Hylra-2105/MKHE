@@ -217,17 +217,20 @@ export default function ShopDetailPage() {
 
             {/* Thumbnail Slider */}
             {product.images?.length > 1 && (
-              <div className="h-24">
+              <div className="mt-2">
                 <Swiper
                   onSwiper={setThumbsSwiper}
-                  spaceBetween={16}
-                  slidesPerView={5}
+                  spaceBetween={12}
+                  slidesPerView={4}
+                  breakpoints={{
+                    640: { slidesPerView: 5, spaceBetween: 16 }
+                  }}
                   watchSlidesProgress
-                  className="h-full"
+                  className="w-full"
                 >
                   {product.images?.map((img, index) => (
                     <SwiperSlide key={index} className="cursor-pointer opacity-50 [&.swiper-slide-thumb-active]:opacity-100 transition-opacity">
-                      <div className="w-full h-full rounded-xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10">
+                      <div className="w-full aspect-square rounded-xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10">
                         <img 
                           src={getImageUrl(img)} 
                           alt={`Thumbnail ${index + 1}`}
@@ -248,35 +251,35 @@ export default function ShopDetailPage() {
           {/* CỘT PHẢI: Thông tin Sản phẩm */}
           <div className="flex flex-col">
             <div className="mb-8">
-              <h1 className="text-3xl md:text-5xl font-sans text-mkhe-text font-light leading-tight mb-4">
+              <h1 className="text-3xl md:text-5xl font-sans text-mkhe-text font-light leading-tight mb-3">
                 {product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
               </h1>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-end gap-3">
-                  <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
-                    {formatNumber(finalPrice)} đ
-                  </p>
-                  {(isSaleValid || currentDiscountPercent > 0) && (
-                    <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
-                      {formatNumber(product.price)} đ
-                    </p>
-                  )}
-                  {isSaleValid && currentDiscountPercent === 0 && (
-                    <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
-                      -{Math.round((1 - product.salePrice / product.price) * 100)}%
-                    </div>
-                  )}
-                  {currentDiscountPercent > 0 && (
-                    <div className="bg-mkhe-primary text-white px-2 py-0.5 rounded-lg shadow-lg border border-mkhe-primary/50 text-sm font-bold mb-0.5">
-                      Sỉ -{currentDiscountPercent}%
-                    </div>
-                  )}
+              
+              {product.ratingCount > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 w-fit text-amber-600 rounded-full text-sm font-bold mb-4">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>{product.ratingAverage}</span>
+                  <span className="text-mkhe-text/40 font-normal ml-1">({product.ratingCount} {t("reviews:customer_reviews", { defaultValue: "Đánh giá" })})</span>
                 </div>
-                {product.ratingCount > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-sm font-bold">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span>{product.ratingAverage}</span>
-                    <span className="text-mkhe-text/40 font-normal ml-1">({product.ratingCount} {t("reviews:customer_reviews", { defaultValue: "Đánh giá" })})</span>
+              )}
+
+              <div className="flex flex-wrap items-end gap-3 mb-4">
+                <p className="text-2xl md:text-3xl text-mkhe-primary font-medium tracking-wide">
+                  {formatNumber(finalPrice)} đ
+                </p>
+                {(isSaleValid || currentDiscountPercent > 0) && (
+                  <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
+                    {formatNumber(product.price)} đ
+                  </p>
+                )}
+                {isSaleValid && currentDiscountPercent === 0 && (
+                  <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
+                    -{Math.round((1 - product.salePrice / product.price) * 100)}%
+                  </div>
+                )}
+                {currentDiscountPercent > 0 && (
+                  <div className="bg-mkhe-primary text-white px-2 py-0.5 rounded-lg shadow-lg border border-mkhe-primary/50 text-sm font-bold mb-0.5">
+                    Sỉ -{currentDiscountPercent}%
                   </div>
                 )}
               </div>
