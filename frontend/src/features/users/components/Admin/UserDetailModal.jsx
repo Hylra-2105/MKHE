@@ -283,12 +283,16 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                     className={`h-10 flex items-center justify-center px-4 rounded-lg border transition-colors ${
                       editForm.isBlocked
                         ? "bg-orange-500/10 border-orange-500/20 text-orange-600"
+                        : (user.role === "Enterprise" && user.resetPasswordToken) || user.isVerified === false
+                        ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-600"
                         : "bg-green-500/10 border-green-500/20 text-green-600"
                     }`}
                   >
                     <span className="text-sm font-bold uppercase transition-colors">
                       {editForm.isBlocked
                         ? t("common.blocked")
+                        : (user.role === "Enterprise" && user.resetPasswordToken) || user.isVerified === false
+                        ? t("table.status_pending", "Chờ kích hoạt")
                         : t("common.active")}
                     </span>
                   </div>

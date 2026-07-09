@@ -27,15 +27,22 @@ export const getAllUsers = async (req, res) => {
     if (roleFilter) query.role = roleFilter;
     if (statusFilter === "active") {
       query.isBlocked = { $ne: true };
-      query.$or = [
-        { role: { $ne: "Enterprise" } },
-        { resetPasswordToken: null }
+      query.$and = [
+        {
+          $or: [
+            { role: { $ne: "Enterprise" } },
+            { resetPasswordToken: null }
+          ]
+        },
+        { isVerified: { $ne: false } }
       ];
     } else if (statusFilter === "blocked") {
       query.isBlocked = true;
     } else if (statusFilter === "pending") {
-      query.role = "Enterprise";
-      query.resetPasswordToken = { $ne: null };
+      query.$or = [
+        { role: "Enterprise", resetPasswordToken: { $ne: null } },
+        { isVerified: false }
+      ];
     }
 
     const totalUsers = await User.countDocuments(query);
