@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Nfc, ShieldCheck, Gem } from "lucide-react";
+import { Nfc, ShieldCheck, Gem, Wifi } from "lucide-react";
 import { motion } from "framer-motion";
 
 const CoreTech = () => {
@@ -9,18 +9,18 @@ const CoreTech = () => {
   const features = [
     {
       icon: <Nfc className="w-5 h-5 text-mkhe-primary" />,
-      title: "Hộ chiếu Văn hóa Số",
-      desc: "Chạm NFC để truy xuất nguồn gốc, kỹ thuật chế tác và câu chuyện nghệ nhân đằng sau mỗi tác phẩm.",
+      title: t("core_tech.features.0.title"),
+      desc: t("core_tech.features.0.desc"),
     },
     {
       icon: <Gem className="w-5 h-5 text-mkhe-primary" />,
-      title: "Độc bản & Giới hạn",
-      desc: "Mỗi thiết kế là duy nhất, được cấp chứng nhận tính xác thực vĩnh viễn trên nền tảng Blockchain.",
+      title: t("core_tech.features.1.title"),
+      desc: t("core_tech.features.1.desc"),
     },
     {
       icon: <ShieldCheck className="w-5 h-5 text-mkhe-primary" />,
-      title: "Bảo tồn Di sản",
-      desc: "Cam kết trích xuất doanh thu tái đầu tư vào việc duy trì sự sống của các làng nghề truyền thống.",
+      title: t("core_tech.features.2.title"),
+      desc: t("core_tech.features.2.desc"),
     },
   ];
 
@@ -51,8 +51,8 @@ const CoreTech = () => {
             <div className="relative z-10 flex flex-col items-center">
               <Nfc className="w-20 h-20 lg:w-24 lg:h-24 text-mkhe-text/80 group-hover:text-mkhe-text transition-colors duration-500 mb-6 drop-shadow-lg" />
               <div className="text-center">
-                <p className="text-xs font-logo uppercase tracking-[0.2em] text-mkhe-primary font-bold mb-2">HỘ CHIẾU VĂN HÓA SỐ</p>
-                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">CHẠM ĐỂ XÁC THỰC</p>
+                <p className="text-xs font-logo uppercase tracking-[0.2em] text-mkhe-primary font-bold mb-2">{t("core_tech.card_title")}</p>
+                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">{t("core_tech.card_subtitle")}</p>
               </div>
             </div>
           </div>
@@ -80,11 +80,11 @@ const CoreTech = () => {
           <div className="mb-16">
             <h2 className="text-sm font-bold text-mkhe-primary mb-4 tracking-[0.3em] uppercase flex items-center gap-4">
               <span className="w-8 h-[1px] bg-mkhe-primary"></span>
-              Core Technology
+              {t("core_tech.tag")}
             </h2>
             <h3 className="text-4xl md:text-6xl font-logo font-light text-mkhe-text leading-tight">
-              Đánh thức Di sản bằng <br/>
-              <span className="text-mkhe-primary italic">Công nghệ Đương đại</span>
+              {t("core_tech.title_1")} <br/>
+              <span className="text-mkhe-primary italic">{t("core_tech.title_2")}</span>
             </h3>
           </div>
 

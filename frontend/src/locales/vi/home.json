@@ -103,6 +103,25 @@
     "desc": "Một trải nghiệm giải trí tương tác hoàn toàn mới. Cùng đón chờ hành trình khám phá văn hóa đa chiều qua từng ô cờ sắp được MKHE hé lộ!"
   },
   "core_tech": {
-    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số."
+    "desc": "Chúng tôi không chỉ bán sản phẩm, chúng tôi trao cho bạn chiếc chìa khóa vạn năng để mở ra cánh cửa Không gian Di sản số.",
+    "tag": "Core Technology",
+    "title_1": "Đánh thức Di sản bằng",
+    "title_2": "Công nghệ Đương đại",
+    "card_title": "HỘ CHIẾU VĂN HÓA SỐ",
+    "card_subtitle": "CHẠM ĐỂ XÁC THỰC",
+    "features": [
+      {
+        "title": "Hộ chiếu Sản phẩm Số (DPP)",
+        "desc": "Chạm NFC để truy xuất nguồn gốc minh bạch, kỹ thuật chế tác và câu chuyện nghệ nhân đằng sau mỗi tác phẩm."
+      },
+      {
+        "title": "Độc bản & Chống giả mạo",
+        "desc": "Mỗi thiết kế là duy nhất, được định danh bằng mã UID độc bản, cấp chứng nhận tính xác thực vĩnh viễn cho khách hàng."
+      },
+      {
+        "title": "Sinh kế Bền vững",
+        "desc": "Cam kết san sẻ doanh thu, tạo sinh kế công bằng và duy trì mạch sống cho cộng đồng nghệ nhân tại các làng nghề truyền thống."
+      }
+    ]
   }
 }
