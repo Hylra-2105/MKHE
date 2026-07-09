@@ -24,5 +24,9 @@
   "err_name_length": "Name must be at least 2 characters!",
   "otp_sent": "The OTP code has been sent to your email!",
   "err_email_exists": "This email is already registered!",
-  "error_social_login": "Social login failed! Please try again."
+  "error_social_login": "Social login failed! Please try again.",
+  "err_pass_min_length": "Password must have at least 8 characters.",
+  "err_pass_uppercase": "Password must contain at least 1 capital letter (A-Z).",
+  "err_pass_number": "Password must contain at least 1 digit (0-9).",
+  "err_pass_special": "Password must contain at least 1 special character (!@#...)."
 }

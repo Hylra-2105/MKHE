@@ -17,14 +17,16 @@ const BlogEditor = () => {
   const [saving, setSaving] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   
-  const [formData, setFormData] = useState({
+  const initialData = {
     title: "",
     content: "",
     thumbnail: "",
     category: "Ký sự",
     status: "DRAFT",
     tags: []
-  });
+  };
+  const [formData, setFormData] = useState(initialData);
+  const [originalFormData, setOriginalFormData] = useState(initialData);
 
   const fileInputRef = useRef(null);
 
@@ -43,6 +45,7 @@ const BlogEditor = () => {
         try {
           const parsed = JSON.parse(savedDraft);
           setFormData(parsed);
+          setOriginalFormData(parsed);
           toast.success(t("editor.draft_restored"), { id: 'draft-restore-toast' });
         } catch(e) {}
       }
@@ -78,14 +81,16 @@ const BlogEditor = () => {
       const res = await axiosClient.get(`/blogs/${id}`);
       if (res.data && res.data.success) {
         const blogData = res.data.data;
-        setFormData({
+        const loadedData = {
           title: blogData.title || "",
           content: blogData.content || "",
           thumbnail: blogData.thumbnail || "",
           category: blogData.category || "Ký sự",
           status: blogData.status || "DRAFT",
           tags: blogData.tags ? blogData.tags.map(t => t._id) : []
-        });
+        };
+        setFormData(loadedData);
+        setOriginalFormData(loadedData);
       }
     } catch (error) {
       toast.error(t("editor.not_found"));
@@ -231,6 +236,8 @@ const BlogEditor = () => {
     return <div className="p-6 text-center">{t("common:loading", { defaultValue: "Đang tải dữ liệu..." })}</div>;
   }
 
+  const hasChanges = JSON.stringify(formData) !== JSON.stringify(originalFormData);
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex flex-col gap-4 mb-6">
@@ -287,7 +294,7 @@ const BlogEditor = () => {
             
             <Button
               onClick={() => handleSubmit("PUBLISHED")}
-              disabled={saving}
+              disabled={saving || !hasChanges}
               className="w-full py-3"
             >
               {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : (!id ? t("admin.editor.btn_publish_now") : t("admin.editor.btn_update_publish"))}

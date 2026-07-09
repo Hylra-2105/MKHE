@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
 import DnaSection from "./DnaSection";
 import { motion } from "framer-motion";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const CulturalDNA = () => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation("home");
   const [products, setProducts] = useState({ CHAM: [], KHMER: [], KINH: [] });
   const [loading, setLoading] = useState(true);
@@ -42,8 +44,8 @@ const CulturalDNA = () => {
 
       <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-end mb-32 px-4 gap-12">
         <motion.div 
-          initial={{ opacity: 0, x: -50 }} 
-          whileInView={{ opacity: 1, x: 0 }} 
+          initial={enableEffects ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }} 
+          whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
           viewport={{ once: true, amount: 0.3 }} 
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="lg:w-1/2"
@@ -58,8 +60,8 @@ const CulturalDNA = () => {
           </h2>
         </motion.div>
         <motion.div 
-          initial={{ opacity: 0, x: 50 }} 
-          whileInView={{ opacity: 1, x: 0 }} 
+          initial={enableEffects ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }} 
+          whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
           viewport={{ once: true, amount: 0.3 }} 
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
           className="lg:w-1/2 flex lg:justify-end pb-8"
@@ -75,7 +77,7 @@ const CulturalDNA = () => {
           <div className="animate-spin w-10 h-10 border-[1px] border-mkhe-text/20 border-t-mkhe-primary rounded-full" />
         </div>
       ) : (
-        <div className="relative z-10 space-y-40">
+        <div className="relative z-10 space-y-12 md:space-y-20">
           <DnaSection title="Kinh" data={products.KINH} dnaType="KINH" />
           <DnaSection title="Khmer" data={products.KHMER} isReverse={true} dnaType="KHMER" />
           <DnaSection title="Chăm" data={products.CHAM} dnaType="CHAM" />

@@ -182,14 +182,12 @@ const ReviewManagementFeature = () => {
                     </td>
                     <td className="px-4 py-2.5 max-w-[220px] whitespace-normal break-words">
                       <div className="line-clamp-2">{review.comment || "-"}</div>
-                      {review.comment && review.comment.length > 50 && (
-                        <button 
-                          onClick={() => setSelectedReview(review)}
-                          className="text-mkhe-primary text-xs mt-1 hover:underline cursor-pointer font-semibold"
-                        >
-                          {t("common:view_details", { defaultValue: "Xem chi tiết" })}
-                        </button>
-                      )}
+                      <button 
+                        onClick={() => setSelectedReview(review)}
+                        className="text-mkhe-primary text-xs mt-1 hover:underline cursor-pointer font-semibold block"
+                      >
+                        {t("common:view_details", { defaultValue: "Xem chi tiết" })}
+                      </button>
                       {review.images?.length > 0 && (
                         <div className="flex gap-1 mt-1">
                           {review.images.map((img, idx) => (
@@ -253,7 +251,7 @@ const ReviewManagementFeature = () => {
       {/* Image Preview Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-4xl max-h-[90vh] w-full flex justify-center">
@@ -276,7 +274,7 @@ const ReviewManagementFeature = () => {
       {/* Review Detail Modal */}
       {selectedReview && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedReview(null)}
         >
           <div 
@@ -320,6 +318,23 @@ const ReviewManagementFeature = () => {
                   {selectedReview.comment}
                 </div>
               </div>
+              
+              {selectedReview.images?.length > 0 && (
+                <div>
+                  <span className="font-semibold opacity-70 text-xs uppercase tracking-wider">{t("reviews:modal_images", { defaultValue: "Hình ảnh đính kèm" })}</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedReview.images.map((img, idx) => (
+                      <button 
+                        key={idx}
+                        onClick={() => setSelectedImage(getImageUrl(img))}
+                        className="focus:outline-none cursor-zoom-in hover:opacity-80 transition-opacity"
+                      >
+                        <img src={getImageUrl(img)} className="w-20 h-20 object-cover border border-mkhe-border/30 rounded-md shadow-sm" alt={`Review image ${idx + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

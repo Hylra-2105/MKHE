@@ -1,7 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const SectionTransition = () => {
+  const { enableEffects } = useEffectsConfig();
+
   return (
     <div className="w-full h-32 md:h-48 flex flex-col items-center justify-center relative overflow-hidden z-20 -mt-12 md:-mt-16">
       {/* Background gradient has been removed to prevent blurry white overlay on video */}
@@ -42,8 +45,8 @@ const SectionTransition = () => {
       >
         {/* DNA Strand 2 */}
         <motion.path
-          initial={{ pathLength: 0, opacity: 0 }}
-          whileInView={{ pathLength: 1, opacity: 1 }}
+          initial={enableEffects ? { pathLength: 0, opacity: 0 } : { pathLength: 1, opacity: 1 }}
+          whileInView={enableEffects ? { pathLength: 1, opacity: 1 } : undefined}
           viewport={{ once: true }}
           transition={{ duration: 2.5, ease: "easeInOut", delay: 0.2 }}
           d="M-100,100 C100,0 300,200 500,100 C700,0 900,200 1100,100 C1300,0 1500,200 1700,100"

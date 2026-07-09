@@ -1,8 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const BoardGameTeaser = () => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation("home");
 
   return (
@@ -37,13 +39,13 @@ const BoardGameTeaser = () => {
       </div>
 
       {/* ABSTRACT GLOWING ORBS */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-mkhe-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none"></div>
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse pointer-events-none" style={{ animationDelay: '2s' }}></div>
+      <div className={`absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-mkhe-primary/20 rounded-full blur-[100px] animate-pulse pointer-events-none`}></div>
+      <div className={`absolute top-1/2 right-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse pointer-events-none`} style={{ animationDelay: '2s' }}></div>
 
       {/* FLOATING VIP INVITATION CARD */}
       <motion.div 
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={enableEffects ? { opacity: 0, y: 50 } : { opacity: 1, y: 0 }}
+        whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined}
         transition={{ duration: 1, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.5 }}
         className="relative z-10 max-w-4xl w-full text-center rounded-[2rem] border border-mkhe-border bg-mkhe-input/30 backdrop-blur-xl p-16 md:p-24 shadow-2xl group"
@@ -55,7 +57,7 @@ const BoardGameTeaser = () => {
         {/* Badge "Coming Soon" */}
         <div className="inline-flex items-center gap-3 mb-10">
           <span className="w-8 h-[1px] bg-mkhe-primary"></span>
-          <span className="text-mkhe-primary text-xs font-bold uppercase tracking-[0.3em] animate-pulse">
+          <span className={`text-mkhe-primary text-xs font-bold uppercase tracking-[0.3em] animate-pulse`}>
             {t("boardgame.badge", "Sắp Ra Mắt")}
           </span>
           <span className="w-8 h-[1px] bg-mkhe-primary"></span>
@@ -100,7 +102,7 @@ const BoardGameTeaser = () => {
             <polygon points="20,-20 15,-45 30,-25" fill="#D4A373" opacity="0.7" />
             
             {/* Magical floating dots */}
-            <circle cx="80" cy="80" r="2.5" fill="#E6CC98" className="animate-pulse drop-shadow-[0_0_8px_#E6CC98]" />
+            <circle cx="80" cy="80" r="2.5" fill="#E6CC98" className={`animate-pulse drop-shadow-[0_0_8px_#E6CC98]`} />
             <circle cx="110" cy="30" r="1.5" fill="#D4A373" />
             <circle cx="30" cy="110" r="1.5" fill="#D4A373" />
           </svg>
@@ -125,7 +127,7 @@ const BoardGameTeaser = () => {
             <polygon points="0,0 -10,10 0,20 10,10" fill="#8B5A2B" opacity="0.6" />
             <polygon points="-20,20 -45,15 -25,30" fill="#D4A373" opacity="0.7" />
             <polygon points="20,-20 15,-45 30,-25" fill="#D4A373" opacity="0.7" />
-            <circle cx="80" cy="80" r="2.5" fill="#E6CC98" className="animate-pulse drop-shadow-[0_0_8px_#E6CC98]" />
+            <circle cx="80" cy="80" r="2.5" fill="#E6CC98" className={`animate-pulse drop-shadow-[0_0_8px_#E6CC98]`} />
             <circle cx="110" cy="30" r="1.5" fill="#D4A373" />
             <circle cx="30" cy="110" r="1.5" fill="#D4A373" />
           </svg>
@@ -184,7 +186,7 @@ const BoardGameTeaser = () => {
                   stroke="#8B5A2B" strokeWidth="1" opacity="0.4" fill="none" />
             
             {/* Small floating orbits/dots around the center tip */}
-            <circle cx="500" cy="245" r="4" fill="#E6CC98" className="animate-pulse drop-shadow-[0_0_8px_#E6CC98]" />
+            <circle cx="500" cy="245" r="4" fill="#E6CC98" className={`animate-pulse drop-shadow-[0_0_8px_#E6CC98]`} />
             <circle cx="480" cy="225" r="2.5" fill="#D4A373" opacity="0.8" />
             <circle cx="520" cy="225" r="2.5" fill="#D4A373" opacity="0.8" />
             

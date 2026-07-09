@@ -1,6 +1,6 @@
 import { AlertCircle } from 'lucide-react';
 
-export default function InputField({ type, placeholder, value, onChange, rightElement, label, required, error, ...props }) {
+export default function InputField({ type, placeholder, value, onChange, rightElement, label, required, error, className = "", ...props }) {
   return (
     <div className="relative mb-4 w-full space-y-1">
       {label && (
@@ -14,7 +14,7 @@ export default function InputField({ type, placeholder, value, onChange, rightEl
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm placeholder:text-mkhe-text/50 ${error ? 'border-red-500' : 'border-mkhe-border/50 focus:border-mkhe-primary'} ${rightElement ? "pr-10" : ""}`}
+          className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm placeholder:text-mkhe-text/50 ${error ? 'border-red-500' : 'border-mkhe-border/50 focus:border-mkhe-primary'} ${rightElement ? "pr-10" : ""} ${className}`}
           {...props}
         />
         {rightElement && (

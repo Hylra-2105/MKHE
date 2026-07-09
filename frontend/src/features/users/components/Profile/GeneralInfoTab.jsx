@@ -140,6 +140,14 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
 
   const defaultAddress = user?.addresses?.find(a => a.isDefault);
 
+  const hasChanges = 
+    editForm.name !== originalEditForm.name ||
+    editForm.phone !== originalEditForm.phone ||
+    editForm.bio !== originalEditForm.bio ||
+    addressInput !== (defaultAddress?.addressText || "") ||
+    coordinates?.lat !== defaultAddress?.coordinates?.lat ||
+    coordinates?.lng !== defaultAddress?.coordinates?.lng;
+
   return (
     <>
       <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
@@ -279,7 +287,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               </button>
               <button
                 onClick={handleSave}
-                disabled={isSaving}
+                disabled={isSaving || !hasChanges}
                 className="px-8 py-2.5 bg-mkhe-primary text-white font-bold rounded-xl hover:bg-mkhe-primary/90 transition-all cursor-pointer disabled:opacity-50 text-sm"
               >
                 {isSaving

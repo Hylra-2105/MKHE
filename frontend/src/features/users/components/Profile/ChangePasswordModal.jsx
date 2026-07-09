@@ -5,6 +5,7 @@ import { X, Eye, EyeOff, Info } from "lucide-react";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import { maskEmail } from "@/utils/validators";
+import { getPasswordErrorKey } from "@/utils/validators";
 import { authApi } from "@/api/authApi";
 
 const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
@@ -31,12 +32,26 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     const expiresAt = localStorage.getItem("mkhe_otp_expires_at");
     const savedStep = localStorage.getItem("mkhe_otp_step");
     const savedHasSent = localStorage.getItem("mkhe_otp_has_sent");
+    const updateExpiresAt = localStorage.getItem("mkhe_otp_update_expires_at");
+
+    // Nếu đang ở bước update, kiểm tra xem đã hết 1 phút chưa
+    if (savedStep === "update") {
+      if (updateExpiresAt && Date.now() < parseInt(updateExpiresAt)) {
+        setStep("update");
+        setHasSentOTP(true);
+        return;
+      } else {
+        // Hết hạn 1 phút => reset
+        localStorage.removeItem("mkhe_otp_step");
+        localStorage.removeItem("mkhe_otp_update_expires_at");
+      }
+    }
 
     if (expiresAt) {
       const remaining = Math.ceil((parseInt(expiresAt) - Date.now()) / 1000);
       if (remaining > 0) {
         setTimer(remaining);
-        setStep(savedStep || "verify");
+        setStep(localStorage.getItem("mkhe_otp_step") || "verify");
         setHasSentOTP(savedHasSent === "true");
         return;
       }
@@ -78,10 +93,17 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
         ? Math.ceil((parseInt(expiresAt) - Date.now()) / 1000)
         : 0;
 
-      // Giữ form cập nhật mật khẩu nếu đã xác thực thành công
+      // Giữ form cập nhật mật khẩu nếu đã xác thực thành công (trong vòng 1 phút)
+      const updateExpiresAt = localStorage.getItem("mkhe_otp_update_expires_at");
       if (savedStep === "update") {
-        setStep("update");
-        return;
+        if (updateExpiresAt && Date.now() < parseInt(updateExpiresAt)) {
+          setStep("update");
+          return;
+        } else {
+          // Nếu đã hết hạn 1 phút, xóa trạng thái
+          localStorage.removeItem("mkhe_otp_step");
+          localStorage.removeItem("mkhe_otp_update_expires_at");
+        }
       }
 
       // Giữ form nếu đang trong thời gian chờ
@@ -125,17 +147,6 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
 
   const handleClose = () => {
     setErrorMsg("");
-    if (step === "update") {
-      localStorage.removeItem("mkhe_otp_expires_at");
-      localStorage.removeItem("mkhe_otp_has_sent");
-      localStorage.removeItem("mkhe_otp_step");
-      setStep("verify");
-      setHasSentOTP(false);
-      setTimer(0);
-      setOtp(["", "", "", "", "", ""]);
-      setNewPass({ password: "", confirm: "" });
-      setErrors({});
-    }
     onClose();
   };
 
@@ -188,6 +199,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       if (response.success) {
         setStep("update");
         localStorage.setItem("mkhe_otp_step", "update"); // Lưu trạng thái để không mất form khi reload
+        localStorage.setItem("mkhe_otp_update_expires_at", (Date.now() + 60000).toString()); // Lưu thời hạn 1 phút
         toast.success(t("otp.verified"));
       }
     } catch (error) {
@@ -211,7 +223,8 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
     e.preventDefault();
     setErrorMsg("");
     setErrors({});
-    if (newPass.password.length < 6) return setErrors({ password: t("errors.pass_short") });
+    const passError = getPasswordErrorKey(newPass.password);
+    if (passError) return setErrors({ password: t(`common:${passError}`) });
     if (newPass.password !== newPass.confirm)
       return setErrors({ confirm: t("errors.pass_mismatch") });
 
@@ -229,6 +242,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
         localStorage.removeItem("mkhe_otp_expires_at");
         localStorage.removeItem("mkhe_otp_has_sent");
         localStorage.removeItem("mkhe_otp_step");
+        localStorage.removeItem("mkhe_otp_update_expires_at");
 
         setStep("verify");
         setHasSentOTP(false);
@@ -277,7 +291,6 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
       className={`fixed inset-0 z-[200] flex items-center justify-center bg-black/50 p-4 transition-opacity duration-200 ${
         isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      onClick={(e) => e.target === e.currentTarget && handleClose()}
     >
       <div
         className={`relative bg-[var(--color-mkhe-bg)] w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-[var(--color-mkhe-border)]/30 transform transition-all duration-200 ${

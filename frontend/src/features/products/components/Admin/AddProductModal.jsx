@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
 import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag, Briefcase } from "lucide-react";
 import Button from "@/components/ui/Button";
+import InputField from "@/components/ui/InputField";
 import Dropdown from "@/components/ui/Dropdown";
-import { productApi } from "@/api/productApi";
 import { useTranslation } from "react-i18next";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { draftDB } from "@/utils/db";
@@ -14,6 +14,7 @@ import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import B2BTiersInput from "./B2BTiersInput";
 import { getBlogsApi } from "@/api/blogApi";
+import { productApi } from "@/api/productApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -523,7 +524,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     } catch (error) {
       const errorMsg = error.response?.data?.message;
       if (errorMsg === "SKU_ALREADY_EXISTS") toast.error(t("messages.sku_exists"));
-      else toast.error(t("messages.add_error"));
+      else toast.error(errorMsg || t("messages.add_error"));
     } finally {
       setLoading(false);
     }
@@ -596,25 +597,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 
                 {/* DÒNG 1: TÊN SẢN PHẨM & SKU */}
                 <div className="grid grid-cols-12 gap-4">
-                  <div className="space-y-1 col-span-8">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.name_placeholder")} />
-                    {formErrors.name && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.name}</p>
-                      </div>
-                    )}
+                  <div className="col-span-8">
+                    <InputField type="text" name="name" value={formData.name} onChange={handleChange} label={t("modal.name")} placeholder={t("modal.name_placeholder")} required error={formErrors.name ? formErrors.name : null} />
                   </div>
-                  <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" value={formData.sku} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm uppercase ${formErrors.sku ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.sku_placeholder")} />
-                    {formErrors.sku && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.sku}</p>
-                      </div>
-                    )}
+                  <div className="col-span-4">
+                    <InputField type="text" name="sku" value={formData.sku} onChange={handleChange} label={t("modal.sku")} placeholder={t("modal.sku_placeholder")} required error={formErrors.sku ? formErrors.sku : null} className="uppercase" />
                   </div>
                 </div>
 
@@ -642,9 +629,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       </div>
                     )}
                   </div>
-                  <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
-                    <input type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
+                  <div className="col-span-6">
+                    <InputField type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} label={t("modal.craft_village", "Làng nghề")} placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
                   </div>
                 </div>
 
@@ -695,19 +681,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       )}
                     </div>
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.price_placeholder")} />
-                    {formErrors.price && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.price}</p>
-                      </div>
-                    )}
+                  <div className="col-span-3">
+                    <InputField type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} label={t("modal.price")} placeholder={t("modal.price_placeholder")} required error={formErrors.price ? formErrors.price : null} />
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
-                    <input type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => updateField("stock", parseNumber(e.target.value))} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.stock_placeholder")} />
+                  <div className="col-span-3">
+                    <InputField type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => updateField("stock", parseNumber(e.target.value))} label={t("modal.stock")} placeholder={t("modal.stock_placeholder")} />
                   </div>
                 </div>
 
@@ -743,15 +721,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
                   <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasSale ? "max-h-[700px] mt-5 opacity-100" : "max-h-0 opacity-0"}`}>
                     <div className="grid grid-cols-12 gap-4">
-                      <div className="space-y-1 col-span-4">
-                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.salePrice", "Giá Sale")}</label>
-                        <input type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.salePrice ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm`} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} />
-                        {formErrors.salePrice && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                            <p className="text-xs font-medium">{formErrors.salePrice}</p>
-                          </div>
-                        )}
+                      <div className="col-span-4">
+                        <InputField type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} label={t("form.sale.salePrice", "Giá Sale")} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} error={formErrors.salePrice ? formErrors.salePrice : null} />
                       </div>
                       <div className="space-y-1 col-span-4">
                         <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.startSale", "Bắt đầu Sale")}</label>
@@ -875,15 +846,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 {/* FORM NHẬP LIỆU DPP */}
                 <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[700px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_add")} />
-                      {formErrors.artisanName && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
-                        </div>
-                      )}
+                    <div>
+                      <InputField type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} label={t("modal.dpp.artisan_name")} placeholder={t("modal.dpp.artisan_placeholder_add")} required error={formErrors.artisanName ? formErrors.artisanName : null} />
                     </div>
                     
                     <div className="space-y-1">

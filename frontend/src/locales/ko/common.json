@@ -36,6 +36,12 @@
     "manage_blogs": "블로그 관리",
     "manage_reviews": "리뷰 관리",
     "analytics": "분석 및 보고서",
-    "logout": "로그아웃"
-  }
+    "logout": "로그아웃",
+    "b2b_dashboard": "B2B 대시보드"
+  },
+  "err_pass_min_length": "비밀번호는 8자 이상이어야 합니다.",
+  "err_pass_uppercase": "비밀번호에는 대문자(A-Z)가 1개 이상 포함되어야 합니다.",
+  "err_pass_number": "비밀번호는 최소 1자리 숫자(0-9)를 포함해야 합니다.",
+  "err_pass_special": "비밀번호에는 특수 문자(!@#...)가 1개 이상 포함되어야 합니다.",
+  "err_empty_password": "비밀번호를 입력해주세요."
 }

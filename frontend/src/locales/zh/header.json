@@ -20,7 +20,8 @@
     "manage_orders": "订单管理",
     "manage_blogs": "博客管理",
     "manage_reviews": "评论管理",
-    "manage_contacts": "联系人管理"
+    "manage_contacts": "联系人管理",
+    "b2b_dashboard": "B2B 仪表板"
   },
   "guest_menu": {
     "login": "登录"
@@ -33,7 +34,8 @@
     "theme": "主题",
     "light": "浅色",
     "dark": "深色",
-    "back": "返回"
+    "back": "返回",
+    "effects": "特效"
   },
   "languages": {
     "vi": "越南语",

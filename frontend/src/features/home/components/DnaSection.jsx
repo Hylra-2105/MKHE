@@ -4,8 +4,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import DnaCard from "./DnaCard";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation("home");
   const navigate = useNavigate();
 
@@ -15,8 +17,8 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
 
   const getItemsPerView = (width) => {
     if (width < 450) return 2;
-    if (width < 700) return 3;
-    if (width < 1000) return 4;
+    if (width < 850) return 3;
+    if (width < 1200) return 4;
     return 5;
   };
 
@@ -135,8 +137,8 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, x: isReverse ? -100 : 100 }} 
-      whileInView={{ opacity: 1, x: 0 }} 
+      initial={enableEffects ? { opacity: 0, x: isReverse ? -100 : 100 } : { opacity: 1, x: 0 }} 
+      whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
       viewport={{ once: true, amount: 0.2 }} 
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="relative w-full bg-transparent group/section pb-12"
@@ -151,7 +153,7 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
       <div className="max-w-[1600px] mx-auto px-6 relative z-10">
         
         {/* EDITORIAL HEADER */}
-        <div className={`flex flex-col md:flex-row items-end justify-between mb-16 ${isReverse ? "md:flex-row-reverse text-right" : "text-left"}`}>
+        <div className={`flex flex-col md:flex-row md:items-end justify-between mb-16 ${isReverse ? "items-end md:flex-row-reverse text-right" : "items-start text-left"}`}>
           <div className="relative">
             {/* Sub-label: Dấu ấn di sản */}
             <div className={`flex items-center gap-4 mb-4 opacity-80 ${isReverse ? "justify-end" : "justify-start"}`}>
@@ -289,7 +291,7 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
                     itemsPerView={itemsPerView}
                     isHoveredCard={isHoveredCard}
                     isDimmed={isDimmed}
-                    isMobile={windowWidth < 768}
+                    isMobile={windowWidth < 640}
                     onHover={() => setHoveredCard(idx)}
                     onLeave={() => setHoveredCard(null)}
                   />

@@ -24,5 +24,9 @@
   "err_name_length": "名称必须至少有 2 个字符！",
   "otp_sent": "OTP 代码已发送至您的邮箱！",
   "err_email_exists": "此邮箱号已被注册！",
-  "error_social_login": "社交登录失败！请再试一次。"
+  "error_social_login": "社交登录失败！请再试一次。",
+  "err_pass_min_length": "密码必须至少有 8 个字符。",
+  "err_pass_uppercase": "密码必须包含至少 1 个大写字母 (A-Z)。",
+  "err_pass_number": "密码必须至少包含 1 位数字 (0-9)。",
+  "err_pass_special": "密码必须包含至少 1 个特殊字符 (!@#...)。"
 }

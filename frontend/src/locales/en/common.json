@@ -36,6 +36,12 @@
     "manage_blogs": "Manage Blogs",
     "manage_reviews": "Manage Reviews",
     "analytics": "Analytics & Reports",
-    "logout": "Log Out"
-  }
+    "logout": "Log Out",
+    "b2b_dashboard": "B2B Dashboards"
+  },
+  "err_pass_min_length": "Password must have at least 8 characters.",
+  "err_pass_uppercase": "Password must contain at least 1 capital letter (A-Z).",
+  "err_pass_number": "Password must contain at least 1 digit (0-9).",
+  "err_pass_special": "Password must contain at least 1 special character (!@#...).",
+  "err_empty_password": "Please enter your password."
 }

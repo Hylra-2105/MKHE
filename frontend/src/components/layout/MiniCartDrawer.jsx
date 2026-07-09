@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
 import { useVoucherStore } from "@/stores/useVoucherStore";
@@ -37,19 +37,27 @@ const MiniCartDrawer = () => {
     if (!isCartOpen) {
       setIsEditMode(false);
       setItemToDelete(null);
+      document.body.style.overflow = '';
+    } else {
+      if (window.innerWidth < 640) {
+        document.body.style.overflow = 'hidden';
+      }
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isCartOpen]);
-
-  if (!isCartOpen) return null;
 
   const handleRemove = (productId) => {
     setItemToDelete(productId);
   };
 
+  if (!isCartOpen) return null;
+
   return (
     <>
-      {/* Dropdown */}
-      <div className="absolute top-full right-0 mt-4 w-[400px] sm:w-[460px] z-[100] bg-mkhe-bg max-h-[calc(100vh-100px)] border border-mkhe-border rounded-xl shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
+      {/* Dropdown / Modal */}
+      <div className="mini-cart-drawer fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[460px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] z-[110] bg-mkhe-bg border-0 sm:border border-mkhe-border sm:rounded-xl shadow-2xl flex flex-col animate-in fade-in sm:zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
         
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-mkhe-border/10">
@@ -82,7 +90,7 @@ const MiniCartDrawer = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 custom-scrollbar overflow-x-hidden">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
               <ShoppingCart className="w-16 h-16 mb-4 text-mkhe-text/40" />
@@ -122,7 +130,7 @@ const MiniCartDrawer = () => {
                 const isSelected = selectedItems.includes(item.product._id);
                 
                 return (
-                  <div key={item.product._id} className={`flex gap-4 p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
+                  <div key={item.product._id} className={`flex gap-3 sm:gap-4 p-3 sm:p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
                     {/* Checkbox */}
                     <div className="flex items-center shrink-0">
                       <label className="relative flex items-center cursor-pointer">
@@ -140,12 +148,12 @@ const MiniCartDrawer = () => {
                       </label>
                     </div>
 
-                    <div className="w-24 h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative">
+                    <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative block">
                       {item.product.images && item.product.images.length > 0 ? (
                         <img
                           src={getImageUrl(item.product.images[0])}
                           alt={item.product.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = DEFAULT_FALLBACK_IMAGE;
@@ -155,16 +163,16 @@ const MiniCartDrawer = () => {
                         <img
                           src={DEFAULT_FALLBACK_IMAGE}
                           alt={item.product.name}
-                          className="w-full h-full object-cover opacity-80"
+                          className="w-full h-full object-cover opacity-80 transition-transform hover:scale-105 duration-300"
                         />
                       )}
-                    </div>
+                    </Link>
                   
-                  <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex-1 flex flex-col justify-between min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-sans font-medium text-lg text-mkhe-text line-clamp-2 leading-tight">
+                      <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="font-sans font-medium text-base sm:text-lg text-mkhe-text line-clamp-2 leading-tight hover:text-mkhe-primary transition-colors">
                         {item.product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
-                      </h3>
+                      </Link>
                       <button 
                         onClick={() => handleRemove(item.product._id)}
                         disabled={isLoading}
@@ -175,9 +183,9 @@ const MiniCartDrawer = () => {
                       </button>
                     </div>
                     
-                    <div className="flex items-end justify-between mt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-2 gap-2 sm:gap-0">
                       <div className="flex flex-col">
-                        <p className="text-mkhe-primary font-medium whitespace-nowrap">
+                        <p className="text-mkhe-primary font-medium whitespace-nowrap text-sm sm:text-base">
                           {formatNumber(
                             item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date()
                             ? item.product.salePrice 
@@ -191,7 +199,7 @@ const MiniCartDrawer = () => {
                         )}
                       </div>
                       
-                      <div className="flex items-center gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10">
+                      <div className="flex items-center gap-1 sm:gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10 self-start sm:self-auto">
                         <button 
                           onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
                           disabled={item.quantity <= 1 || isLoading}

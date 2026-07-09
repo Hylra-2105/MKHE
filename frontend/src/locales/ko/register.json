@@ -24,5 +24,9 @@
   "err_name_length": "이름은 2자 이상이어야 합니다!",
   "otp_sent": "OTP 코드가 귀하의 이메일로 전송되었습니다!",
   "err_email_exists": "이 이메일은 이미 등록되었습니다!",
-  "error_social_login": "소셜 로그인에 실패했습니다! 다시 시도해 주세요."
+  "error_social_login": "소셜 로그인에 실패했습니다! 다시 시도해 주세요.",
+  "err_pass_min_length": "비밀번호는 8자 이상이어야 합니다.",
+  "err_pass_uppercase": "비밀번호에는 대문자(A-Z)가 1개 이상 포함되어야 합니다.",
+  "err_pass_number": "비밀번호는 최소 1자리 숫자(0-9)를 포함해야 합니다.",
+  "err_pass_special": "비밀번호에는 특수 문자(!@#...)가 1개 이상 포함되어야 합니다."
 }

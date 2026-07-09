@@ -20,7 +20,8 @@
     "manage_orders": "주문 관리",
     "manage_blogs": "블로그 관리",
     "manage_reviews": "리뷰 관리",
-    "manage_contacts": "연락처 관리"
+    "manage_contacts": "연락처 관리",
+    "b2b_dashboard": "B2B 대시보드"
   },
   "guest_menu": {
     "login": "로그인"
@@ -33,7 +34,8 @@
     "theme": "테마",
     "light": "라이트",
     "dark": "다크",
-    "back": "뒤로"
+    "back": "뒤로",
+    "effects": "효과"
   },
   "languages": {
     "vi": "베트남어",
