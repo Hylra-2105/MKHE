@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 // Tự import ảnh
 import AG1 from "@/assets/images/AG1.png";
@@ -16,6 +17,7 @@ import DT4 from "@/assets/images/DT4.png";
 
 const HeritageStory = () => {
   const { t } = useTranslation("home");
+  const { enableEffects } = useEffectsConfig();
   const [activeTab, setActiveTab] = useState(null);
 
   // Drag-to-scroll logic
@@ -143,8 +145,8 @@ const HeritageStory = () => {
         {/* EDITORIAL HEADER */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 gap-12">
           <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
+            initial={enableEffects ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }} 
+            whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
             viewport={{ once: true, amount: 0.3 }} 
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:w-1/2"
@@ -159,8 +161,8 @@ const HeritageStory = () => {
             </h2>
           </motion.div>
           <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
+            initial={enableEffects ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }} 
+            whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
             viewport={{ once: true, amount: 0.3 }} 
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="lg:w-1/2 flex lg:justify-end pb-8"

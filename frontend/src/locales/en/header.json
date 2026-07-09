@@ -34,7 +34,8 @@
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "back": "Back"
+    "back": "Back",
+    "effects": "Effects"
   },
   "languages": {
     "vi": "Vietnamese",

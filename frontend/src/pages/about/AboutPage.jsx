@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 import { useTranslation } from 'react-i18next';
 import aboutUs1 from '@/assets/images/about-us-1.png';
 import aboutUs2 from '@/assets/images/about-us-2.png';
 
 const AboutPage = () => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation('about');
 
   return (
@@ -12,8 +14,8 @@ const AboutPage = () => {
       
       {/* CREATIVE HERO SECTION */}
       <div className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden bg-mkhe-bg">
-        <div className="absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/20 rounded-full blur-[100px] animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className={`absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/20 rounded-full blur-[100px] animate-pulse`}></div>
+        <div className={`absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse`} style={{ animationDelay: '2s' }}></div>
         
         {/* Large Watermark Text */}
         <div className="absolute inset-0 flex items-center justify-start pointer-events-none opacity-5 overflow-hidden -left-[5vw]">
@@ -23,7 +25,7 @@ const AboutPage = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row items-center justify-between gap-16 py-20">
           
           <motion.div 
-            initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 1, ease: "easeOut" }}
+            initial={enableEffects ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }} animate={enableEffects ? { opacity: 1, x: 0 } : undefined} transition={{ duration: 1, ease: "easeOut" }}
             className="md:w-1/2 relative"
           >
             <div className="inline-flex items-center gap-4 mb-10">
@@ -40,7 +42,7 @@ const AboutPage = () => {
           </motion.div>
           
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+            initial={enableEffects ? { opacity: 0, scale: 0.9 } : { opacity: 1, scale: 1 }} animate={enableEffects ? { opacity: 1, scale: 1 } : undefined} transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
             className="md:w-1/2 relative flex justify-center md:justify-end"
           >
             <div className="relative w-full max-w-[350px] lg:max-w-[450px] aspect-square rounded-t-full rounded-b-[20px] overflow-hidden p-4 bg-gradient-to-b from-white/10 to-transparent backdrop-blur-md border border-black/10 dark:border-white/10">
@@ -53,7 +55,7 @@ const AboutPage = () => {
               </div>
             </div>
             
-            <div className="absolute top-1/4 -left-12 lg:-left-24 w-40 h-40 border-[1px] border-mkhe-primary/30 rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center pointer-events-none hidden md:flex">
+            <div className={`absolute top-1/4 -left-12 lg:-left-24 w-40 h-40 border-[1px] border-mkhe-primary/30 rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center pointer-events-none hidden md:flex`}>
               <div className="w-3 h-3 bg-mkhe-primary rounded-full absolute -top-1.5 shadow-[0_0_15px_#B8860B]"></div>
             </div>
             
@@ -71,7 +73,7 @@ const AboutPage = () => {
           
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
             <motion.div 
-              initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+              initial={enableEffects ? { opacity: 0, y: 50 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }} transition={{ duration: 0.8 }}
               className="lg:col-span-5 lg:col-start-2 pt-10"
             >
               <h3 className="text-sm uppercase tracking-[0.3em] text-mkhe-primary mb-6 font-bold">{t('story.tag')}</h3>
@@ -85,7 +87,7 @@ const AboutPage = () => {
             </motion.div>
             
             <motion.div 
-              initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 1 }}
+              initial={enableEffects ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }} whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} viewport={{ once: true }} transition={{ duration: 1 }}
               className="lg:col-span-6 lg:col-start-7 relative mt-10 lg:mt-0"
             >
               <div className="relative w-full aspect-[4/5] bg-mkhe-input overflow-hidden rounded-sm">
@@ -115,7 +117,7 @@ const AboutPage = () => {
               
               {/* Item 1 */}
               <motion.div 
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+                initial={enableEffects ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }} transition={{ duration: 0.8 }}
                 className="flex flex-col md:flex-row gap-8 md:gap-20 items-start md:items-center relative"
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">01</div>
@@ -131,7 +133,7 @@ const AboutPage = () => {
 
               {/* Item 2 */}
               <motion.div 
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+                initial={enableEffects ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }} transition={{ duration: 0.8 }}
                 className="flex flex-col md:flex-row gap-8 md:gap-20 items-start md:items-center relative"
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">02</div>
@@ -147,7 +149,7 @@ const AboutPage = () => {
 
               {/* Item 3 */}
               <motion.div 
-                initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+                initial={enableEffects ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }} transition={{ duration: 0.8 }}
                 className="flex flex-col md:flex-row gap-8 md:gap-20 items-start md:items-center relative"
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">03</div>
@@ -186,7 +188,7 @@ const AboutPage = () => {
               ].map((item, idx) => (
                 <motion.div 
                   key={idx} 
-                  initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}
+                  initial={enableEffects ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8 }}
                   className={`flex flex-col ${idx % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} items-center gap-10 md:gap-0`}
                 >
                   <div className={`md:w-1/2 flex ${idx % 2 === 0 ? 'md:justify-end md:pr-16' : 'md:justify-start md:pl-16'} text-center md:text-left`}>
@@ -217,7 +219,7 @@ const AboutPage = () => {
         <section className="py-32 px-6">
           <div className="max-w-6xl mx-auto">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              initial={enableEffects ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }}
               className="flex flex-col md:flex-row justify-between items-end mb-24 gap-6"
             >
               <div>
@@ -240,7 +242,7 @@ const AboutPage = () => {
               ].map((member, idx) => (
                 <motion.div 
                   key={idx} 
-                  initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
+                  initial={enableEffects ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }} whileInView={enableEffects ? { opacity: 1, y: 0 } : undefined} viewport={{ once: true }} transition={{ delay: idx * 0.1 }}
                   className={`group relative flex flex-col md:flex-row items-baseline gap-4 md:gap-12 pb-8 border-b border-mkhe-text/10 hover:border-mkhe-primary transition-colors cursor-crosshair ${idx % 2 !== 0 ? 'md:pl-24 lg:pl-48' : ''}`}
                 >
                   <h4 className="text-3xl md:text-5xl lg:text-6xl font-logo font-bold text-mkhe-text text-mkhe-text/80 group-hover:text-mkhe-primary transition-colors">{member.name}</h4>
@@ -251,7 +253,7 @@ const AboutPage = () => {
             </div>
             
             <motion.div 
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }}
+              initial={enableEffects ? { opacity: 0 } : { opacity: 1 }} whileInView={enableEffects ? { opacity: 1 } : undefined} viewport={{ once: true }} transition={{ delay: 0.5 }}
               className="mt-32 text-center"
             >
               <p className="text-xs text-mkhe-text/50 tracking-[0.3em] uppercase">{t('team.mentor_tag')}</p>

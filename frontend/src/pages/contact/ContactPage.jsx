@@ -3,12 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Mail, Phone, MapPin, Send, ChevronDown, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 import InputField from '@/components/ui/InputField';
 import TextAreaField from '@/components/ui/TextAreaField';
 import { contactService } from '@/features/contact/contact.service';
 
 const ContactPage = () => {
   const { t } = useTranslation(["contact", "common"]);
+  const { enableEffects } = useEffectsConfig();
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -134,16 +136,16 @@ const ContactPage = () => {
     <div className="min-h-screen bg-mkhe-bg text-mkhe-text pt-24 pb-32 relative overflow-hidden font-sans selection:bg-mkhe-primary selection:text-white">
       
       {/* CREATIVE BACKGROUND ELEMENTS */}
-      <div className="absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/10 rounded-full blur-[100px] animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className={`absolute top-1/4 left-1/4 w-[30vw] h-[30vw] bg-mkhe-primary/10 rounded-full blur-[100px] animate-pulse`}></div>
+      <div className={`absolute bottom-1/4 right-1/4 w-[40vw] h-[40vw] bg-[#8B5A2B]/10 rounded-full blur-[120px] animate-pulse`} style={{ animationDelay: '2s' }}></div>
       
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
         {/* HEADER SECTION */}
         <motion.div 
-          initial={{ opacity: 0, y: 30 }} 
-          animate={{ opacity: 1, y: 0 }} 
+          initial={enableEffects ? { opacity: 0, y: 30 } : { opacity: 1, y: 0 }} 
+          animate={enableEffects ? { opacity: 1, y: 0 } : undefined} 
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center mb-20 relative pt-10 flex flex-col items-center"
         >
@@ -165,8 +167,8 @@ const ContactPage = () => {
           
           {/* LEFT: VISUALS & CONTACT INFO */}
           <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            animate={{ opacity: 1, x: 0 }} 
+            initial={enableEffects ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }} 
+            animate={enableEffects ? { opacity: 1, x: 0 } : undefined} 
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
             className="lg:col-span-5 flex flex-col space-y-16"
           >
@@ -226,13 +228,13 @@ const ContactPage = () => {
 
           {/* RIGHT: PREMIUM CONTACT FORM */}
           <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            animate={{ opacity: 1, x: 0 }} 
+            initial={enableEffects ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }} 
+            animate={enableEffects ? { opacity: 1, x: 0 } : undefined} 
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.4 }}
             className="lg:col-span-7 relative"
           >
             {/* Spinning decorative element */}
-            <div className="absolute -top-12 -right-12 w-32 h-32 border-[1px] border-mkhe-primary/20 rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center pointer-events-none hidden md:flex z-0">
+            <div className={`absolute -top-12 -right-12 w-32 h-32 border-[1px] border-mkhe-primary/20 rounded-full animate-[spin_20s_linear_infinite] flex items-center justify-center pointer-events-none hidden md:flex z-0`}>
               <div className="w-2 h-2 bg-mkhe-primary rounded-full absolute -top-1 shadow-[0_0_10px_#B8860B]"></div>
             </div>
 

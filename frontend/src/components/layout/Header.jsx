@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
@@ -15,6 +16,7 @@ import {
   Globe,
   Moon,
   Sun,
+  Wand2,
   Check,
   ChevronRight,
   ChevronLeft,
@@ -48,6 +50,7 @@ export default function Header() {
   const user = useAuthStore((state) => state.user);
   const logoutAction = useAuthStore((state) => state.logoutAction);
   const { items, toggleCart } = useCartStore();
+  const { enableEffects, toggleEffects } = useEffectsConfig();
 
   // Check if user is admin or staff
   const isAdmin = user?.role === "Admin";
@@ -103,6 +106,14 @@ export default function Header() {
       localStorage.setItem("theme", "light");
     }
   }, [isDark]);
+
+  useEffect(() => {
+    if (enableEffects) {
+      document.body.classList.remove("pause-animations");
+    } else {
+      document.body.classList.add("pause-animations");
+    }
+  }, [enableEffects]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -520,6 +531,23 @@ export default function Header() {
                       >
                         <div
                           className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${isDark ? "translate-x-4" : "translate-x-0"}`}
+                        />
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={toggleEffects}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors border-none bg-transparent text-current font-inherit"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Wand2 className="w-4 h-4" />
+                        {t("settings.effects")}
+                      </div>
+                      <div
+                        className={`w-10 h-5.5 rounded-full flex items-center px-1 transition-colors duration-300 ${enableEffects ? "bg-mkhe-primary" : "bg-gray-500"}`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${enableEffects ? "translate-x-4" : "translate-x-0"}`}
                         />
                       </div>
                     </button>

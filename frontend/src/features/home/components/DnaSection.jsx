@@ -4,8 +4,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import DnaCard from "./DnaCard";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation("home");
   const navigate = useNavigate();
 
@@ -135,8 +137,8 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, x: isReverse ? -100 : 100 }} 
-      whileInView={{ opacity: 1, x: 0 }} 
+      initial={enableEffects ? { opacity: 0, x: isReverse ? -100 : 100 } : { opacity: 1, x: 0 }} 
+      whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined} 
       viewport={{ once: true, amount: 0.2 }} 
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="relative w-full bg-transparent group/section pb-12"
