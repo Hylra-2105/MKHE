@@ -1,4 +1,10 @@
-{
+const fs = require('fs');
+const path = require('path');
+
+const locales = ['vi', 'en', 'ja', 'ko', 'zh'];
+const basePath = path.join(__dirname, 'src', 'locales');
+
+const viTranslations = {
   "title": "Bảng điều khiển B2B",
   "request_title": "Tạo Yêu Cầu B2B Mới",
   "subtitle": "Điền thông tin yêu cầu của bạn, chúng tôi sẽ liên hệ sớm nhất",
@@ -68,4 +74,58 @@
     "submit": "Gửi Yêu Cầu",
     "submitting": "Đang gửi..."
   }
-}
+};
+
+const enTranslations = {
+  ...viTranslations,
+  "title": "B2B Dashboard",
+  "request_title": "Create B2B Request",
+  "subtitle": "Fill in your requirements, we will contact you soon",
+  "companyInfo": {
+    "title": "Company Information",
+    "desc1": "We will use this information for Contracts & Invoicing",
+    "company": "Company",
+    "taxCode": "Tax Code",
+    "notUpdated": "Not updated",
+    "note": "You can update this in your Profile"
+  },
+  "fields": {
+    "product": "Product / Service",
+    "productPlaceholder": "Select product or service",
+    "quantity": "Estimated Quantity",
+    "budget": "Estimated Budget (VND)",
+    "budgetPlaceholder": "Example: 50,000,000",
+    "deliveryDate": "Expected Delivery Date",
+    "deliveryDatePlaceholder": "Select date...",
+    "packaging": "Packaging Requirements",
+    "packagingPlaceholder": "Select packaging option",
+    "packagingOptions": {
+      "STANDARD_BOX": "MKHE Standard Box",
+      "NO_PACKAGING": "No Packaging"
+    },
+    "note": "Additional Notes",
+    "notePlaceholder": "Special requests for materials, scent, dimensions...",
+    "designFiles": "Attachments (Designs / Detailed Requests)",
+    "dragDrop": "Drag and drop files here or click to select",
+    "fileHint": "Supports .pdf, .ai, .png, .jpg (Max 5 files)",
+    "fileNote": "Maximum 5 files"
+  },
+  "buttons": {
+    "back": "Back to Dashboard",
+    "submit": "Submit Request",
+    "submitting": "Submitting..."
+  }
+};
+
+locales.forEach(lang => {
+  const dirPath = path.join(basePath, lang);
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+  const filePath = path.join(dirPath, 'b2b.json');
+  
+  const translations = lang === 'en' ? enTranslations : viTranslations;
+  
+  fs.writeFileSync(filePath, JSON.stringify(translations, null, 2));
+  console.log(`Updated b2b.json for ${lang}`);
+});

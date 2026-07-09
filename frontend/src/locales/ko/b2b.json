@@ -1,50 +1,71 @@
 {
-  "title": "B2B 주문 요청 생성",
-  "subtitle": "비즈니스 파트너 전용 공간",
-  "consultingPackage": "맞춤형 제품 컨설팅 및 디자인 패키지",
+  "title": "Bảng điều khiển B2B",
+  "request_title": "Tạo Yêu Cầu B2B Mới",
+  "subtitle": "Điền thông tin yêu cầu của bạn, chúng tôi sẽ liên hệ sớm nhất",
+  "admin_title": "Quản lý B2B",
+  "status": {
+    "PENDING_QUOTE": "Chờ báo giá",
+    "NEGOTIATING": "Đang đàm phán",
+    "CONFIRMED": "Đã chốt",
+    "PRODUCING": "Đang sản xuất",
+    "DELIVERING": "Giao hàng",
+    "COMPLETED": "Hoàn thành",
+    "CANCELLED": "Đã hủy"
+  },
+  "download_quote": "Tải Báo giá / Hợp đồng",
+  "confirm_order": "Xác nhận chốt đơn",
+  "chat_placeholder": "Nhập tin nhắn của bạn...",
+  "send": "Gửi",
+  "upload_quote": "Tải PDF lên",
+  "update_status": "Cập nhật",
+  "no_orders": "Chưa có hợp đồng nào.",
+  "confirm_msg": "Bạn có chắc chắn muốn chốt đơn hàng này không?",
+  "pdf_required": "Vui lòng đính kèm file PDF.",
+  "select_status": "Chọn trạng thái",
+  "consultingPackage": "Gói Tư Vấn & Thiết Kế Sản Phẩm Theo Yêu Cầu",
   "companyInfo": {
-    "title": "회사 / 파트너 정보",
-    "desc1": "시스템은 프로필의 기본 정보와 로고를 자동으로 사용합니다.",
-    "company": "회사",
-    "taxCode": "사업자 등록번호",
-    "notUpdated": "업데이트되지 않음",
-    "note": "* 참고: 회사 정보가 정확하지 않은 경우 주문하기 전에 프로필에서 업데이트하십시오."
+    "title": "Thông tin Doanh nghiệp",
+    "desc1": "Chúng tôi sẽ sử dụng thông tin này để làm Hợp đồng & Xuất Hóa Đơn",
+    "company": "Công ty",
+    "taxCode": "MST",
+    "notUpdated": "Chưa cập nhật",
+    "note": "Bạn có thể cập nhật lại trong Trang cá nhân"
   },
   "fields": {
-    "product": "서비스 패키지 / 제품",
-    "productPlaceholder": "-- 서비스 패키지 / 제품 선택 --",
-    "quantity": "예상 수량",
-    "budget": "예상 예산 (VND)",
-    "budgetPlaceholder": "예: 50000000",
-    "deliveryDate": "예상 배송일",
-    "deliveryDatePlaceholder": "배송일 선택...",
-    "packaging": "포장 요구 사항 (선택 사항)",
-    "packagingPlaceholder": "-- 포장 요구 사항 선택 --",
+    "product": "Gói dịch vụ / Sản phẩm",
+    "productPlaceholder": "Chọn dịch vụ/sản phẩm bạn quan tâm",
+    "quantity": "Số lượng dự kiến",
+    "budget": "Ngân sách dự kiến (VNĐ)",
+    "budgetPlaceholder": "Ví dụ: 50.000.000",
+    "deliveryDate": "Ngày cần hàng dự kiến",
+    "deliveryDatePlaceholder": "Chọn ngày...",
+    "packaging": "Quy cách đóng gói",
+    "packagingPlaceholder": "Chọn quy cách đóng gói",
     "packagingOptions": {
-      "STANDARD_BOX": "표준 상자",
-      "NO_PACKAGING": "포장 불필요"
+      "STANDARD_BOX": "Hộp tiêu chuẩn MKHE",
+      "NO_PACKAGING": "Không cần hộp"
     },
-    "note": "추가 참고 사항 (선택 사항)",
-    "notePlaceholder": "예: VAT 청구서 필요, 각 고객 이름이 적힌 카드 첨부...",
-    "designFiles": "디자인 파일 / 아이디어 이미지 업로드 (선택 사항)",
-    "dragDrop": "여기로 파일을 드래그 앤 드롭하거나 클릭하여 파일을 선택하세요",
-    "fileHint": "지원: PDF, AI, PNG, JPG (최대 10MB/파일, 최대 5개 파일)",
-    "fileNote": "* 참고: 프로필의 기본 로고를 사용하는 경우 비워 두세요"
-  },
-  "buttons": {
-    "back": "대시보드로 돌아가기",
-    "submit": "주문 요청 보내기",
-    "submitting": "처리 중..."
+    "note": "Ghi chú thêm",
+    "notePlaceholder": "Yêu cầu đặc biệt về chất liệu, mùi hương, kích thước...",
+    "designFiles": "File đính kèm (Thiết kế / Yêu cầu chi tiết)",
+    "dragDrop": "Kéo thả file vào đây hoặc bấm để chọn",
+    "fileHint": "Hỗ trợ định dạng .pdf, .ai, .png, .jpg (Tối đa 5 file)",
+    "fileNote": "Tối đa 5 file"
   },
   "validation": {
-    "productRequired": "서비스 패키지 / 제품을 선택해주세요.",
-    "quantityRequired": "예상 수량을 입력해주세요.",
-    "deliveryDateRequired": "예상 배송일을 선택해주세요."
+    "productRequired": "Vui lòng chọn sản phẩm/dịch vụ",
+    "quantityRequired": "Vui lòng nhập số lượng",
+    "deliveryDateRequired": "Vui lòng chọn ngày nhận hàng"
   },
   "messages": {
-    "success": "주문 요청을 성공적으로 보냈습니다!",
-    "error": "요청을 보내는 중 오류가 발생했습니다.",
-    "fetchProductsError": "제품 목록을 로드할 수 없습니다.",
-    "maxFiles": "최대 5개의 파일만 업로드할 수 있습니다."
+    "fetchProductsError": "Không thể tải danh sách sản phẩm",
+    "maxFiles": "Bạn chỉ được tải lên tối đa 5 file",
+    "success": "Gửi yêu cầu B2B thành công! Chúng tôi sẽ liên hệ báo giá sớm.",
+    "error": "Có lỗi xảy ra, vui lòng thử lại sau"
+  },
+  "buttons": {
+    "back": "Quay lại Bảng điều khiển",
+    "submit": "Gửi Yêu Cầu",
+    "submitting": "Đang gửi..."
   }
 }

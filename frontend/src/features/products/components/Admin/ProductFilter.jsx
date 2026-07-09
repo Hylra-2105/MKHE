@@ -118,21 +118,22 @@ const ProductFilter = ({
         />
 
         {/* View Mode Toggle */}
-        <div className="flex items-center border border-mkhe-border/50 rounded h-10 overflow-hidden shrink-0">
+        <div className="flex items-center bg-mkhe-border/20 rounded-lg p-1 shrink-0 h-10">
           <button
+            type="button"
             onClick={() => setViewMode("list")}
-            className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "list" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer h-full aspect-square flex items-center justify-center ${viewMode === "list" ? "bg-mkhe-input shadow-sm text-mkhe-primary" : "text-mkhe-text/50 hover:text-mkhe-text"}`}
             title="Danh sách"
           >
             <ListIcon className="w-5 h-5" />
           </button>
-          <div className="w-[1px] h-full bg-mkhe-border/50"></div>
           <button
+            type="button"
             onClick={() => setViewMode("grid")}
-            className={`px-3 h-full flex items-center justify-center transition-colors ${viewMode === "grid" ? "bg-mkhe-primary/20 text-mkhe-primary" : "text-mkhe-text/60 hover:bg-mkhe-border/30 hover:text-mkhe-text"}`}
+            className={`p-1.5 rounded-md transition-colors cursor-pointer h-full aspect-square flex items-center justify-center ${viewMode === "grid" ? "bg-mkhe-input shadow-sm text-mkhe-primary" : "text-mkhe-text/50 hover:text-mkhe-text"}`}
             title="Lưới"
           >
-            <LayoutGrid className="w-4 h-4" />
+            <LayoutGrid className="w-5 h-5" />
           </button>
         </div>
       </div>

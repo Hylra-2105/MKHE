@@ -55,10 +55,21 @@ const b2bOrderSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    quotePdfUrl: {
+      type: String,
+      default: "",
+    },
+    comments: [
+      {
+        sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+      }
+    ],
     status: {
       type: String,
-      enum: ["PENDING", "PROCESSING", "APPROVED", "COMPLETED", "CANCELLED"],
-      default: "PENDING",
+      enum: ["PENDING_QUOTE", "NEGOTIATING", "CONFIRMED", "PRODUCING", "DELIVERING", "COMPLETED", "CANCELLED"],
+      default: "PENDING_QUOTE",
     },
   },
   { timestamps: true }

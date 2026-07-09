@@ -9,6 +9,14 @@ export const formatNumber = (val) => {
   return number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
+export const formatCurrency = (amount) => {
+  if (amount === undefined || amount === null) return "";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
 /**
  * Chuyển đổi ngược lại từ chuỗi "100.000" về số 100000
  */

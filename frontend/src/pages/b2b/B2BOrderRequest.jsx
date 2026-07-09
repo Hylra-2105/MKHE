@@ -113,17 +113,8 @@ export default function B2BOrderRequest() {
       await createB2BOrderApi(data);
       toast.success(t("b2b:messages.success"));
       
-      // Reset form
-      setFormData({
-        productOrService: "",
-        quantity: "",
-        budget: "",
-        deliveryDate: null,
-        packagingRequirement: "STANDARD_BOX",
-        note: "",
-      });
-      setFormErrors({});
-      setDesignFiles([]);
+      // Chuyển hướng về trang quản lý
+      navigate("/b2b/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.message || t("b2b:messages.error"));
     } finally {
@@ -144,7 +135,7 @@ export default function B2BOrderRequest() {
 
       <div className="max-w-3xl w-full bg-mkhe-bg border border-mkhe-border rounded-xl shadow-lg p-6 md:p-8">
         <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1 text-center">
-          {t("b2b:title")}
+          {t("b2b:request_title")}
         </h1>
         <p className="text-sm text-mkhe-text/60 italic text-center mb-6">
           {t("b2b:subtitle")}
@@ -350,7 +341,7 @@ export default function B2BOrderRequest() {
                     <button
                       type="button"
                       onClick={() => removeFile(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer"
                       title="Xóa file"
                     >
                       <X className="w-3 h-3" />
