@@ -1,0 +1,50 @@
+{
+  "title": "Tạo Yêu Cầu Đặt Hàng B2B",
+  "subtitle": "Khu vực dành riêng cho Đối tác Doanh nghiệp",
+  "consultingPackage": "Gói Tư Vấn & Thiết Kế Sản Phẩm Theo Yêu Cầu",
+  "companyInfo": {
+    "title": "Thông tin Công ty / Đối tác",
+    "desc1": "Hệ thống tự động sử dụng thông tin và Logo mặc định từ Hồ sơ của bạn",
+    "company": "Công ty",
+    "taxCode": "MST",
+    "notUpdated": "Chưa cập nhật",
+    "note": "* Lưu ý: Nếu thông tin công ty chưa chính xác, vui lòng cập nhật lại trong Profile trước khi đặt hàng."
+  },
+  "fields": {
+    "product": "Gói Dịch Vụ / Sản Phẩm",
+    "productPlaceholder": "-- Chọn Gói Dịch Vụ / Sản Phẩm --",
+    "quantity": "Số lượng dự kiến",
+    "budget": "Ngân sách dự kiến (VND)",
+    "budgetPlaceholder": "VD: 50000000",
+    "deliveryDate": "Ngày Giao Dự Kiến",
+    "deliveryDatePlaceholder": "Chọn ngày giao hàng...",
+    "packaging": "Yêu cầu Bao bì / Đóng gói (Tùy chọn)",
+    "packagingPlaceholder": "-- Chọn yêu cầu bao bì --",
+    "packagingOptions": {
+      "STANDARD_BOX": "Hộp tiêu chuẩn",
+      "NO_PACKAGING": "Không cần bao bì"
+    },
+    "note": "Ghi chú thêm (Tùy chọn)",
+    "notePlaceholder": "Ví dụ: Cần xuất hóa đơn VAT, yêu cầu đính kèm thiệp ghi tên từng khách, hoặc mô tả ý tưởng thiết kế riêng...",
+    "designFiles": "Tải lên File Thiết kế / Hình ảnh ý tưởng (Tùy chọn)",
+    "dragDrop": "Kéo thả file vào đây, hoặc click để chọn file",
+    "fileHint": "Hỗ trợ: PDF, AI, PNG, JPG (Tối đa 10MB/file, tối đa 5 file)",
+    "fileNote": "* Lưu ý: Bỏ trống nếu sử dụng Logo chuẩn trong Profile của bạn"
+  },
+  "buttons": {
+    "back": "Quay lại Dashboard",
+    "submit": "Gửi Yêu Cầu Đặt Hàng",
+    "submitting": "Đang xử lý..."
+  },
+  "validation": {
+    "productRequired": "Vui lòng chọn Gói Dịch Vụ / Sản Phẩm.",
+    "quantityRequired": "Vui lòng nhập Số lượng dự kiến.",
+    "deliveryDateRequired": "Vui lòng chọn Ngày Giao Dự Kiến."
+  },
+  "messages": {
+    "success": "Đã gửi yêu cầu đặt hàng thành công!",
+    "error": "Có lỗi xảy ra khi gửi yêu cầu.",
+    "fetchProductsError": "Không thể tải danh sách sản phẩm.",
+    "maxFiles": "Chỉ được tải lên tối đa 5 file."
+  }
+}

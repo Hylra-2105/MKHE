@@ -1,5 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { PlusCircle } from "lucide-react";
 
 export default function B2BDashboardPage() {
   const { t } = useTranslation(["common"]);
@@ -13,6 +15,16 @@ export default function B2BDashboardPage() {
         <p className="text-sm text-mkhe-text/60 italic">
           Khu vực dành riêng cho Đối tác Doanh nghiệp
         </p>
+      </div>
+
+      <div className="mb-6 flex justify-end">
+        <Link
+          to="/b2b/order-request"
+          className="flex items-center gap-2 bg-mkhe-primary text-mkhe-bg px-6 py-2.5 rounded-lg font-semibold hover:bg-mkhe-primary/90 transition-colors shadow-lg hover:shadow-mkhe-primary/30"
+        >
+          <PlusCircle className="w-5 h-5" />
+          Tạo Yêu cầu Đặt hàng
+        </Link>
       </div>
 
       <div className="flex-1 flex items-center justify-center border-2 border-dashed border-mkhe-border/50 rounded-2xl bg-mkhe-bg/50">

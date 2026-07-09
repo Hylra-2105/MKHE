@@ -39,6 +39,12 @@
     "craft_village": "Làng nghề",
     "craft_village_placeholder": "VD: Làng dệt Châu Phong...",
     "material": "Chất liệu",
+    "select_material": "Chọn chất liệu",
+    "isService": {
+      "title": "Gói Dịch Vụ B2B",
+      "desc": "Bật tính năng này nếu đây là Gói Dịch Vụ (Tư vấn, gia công...).",
+      "note": "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng."
+    },
     "story": "Câu chuyện sản phẩm",
     "story_placeholder": "Nhập câu chuyện chi tiết về sản phẩm (hỗ trợ in đậm, in nghiêng, chia đoạn...)",
     "gallery_label": "Hình ảnh/video của sản phẩm",

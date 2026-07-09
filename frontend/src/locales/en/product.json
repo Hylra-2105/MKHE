@@ -37,6 +37,7 @@
     "craft_village": "Craft Village",
     "craft_village_placeholder": "e.g., Chau Phong weaving village...",
     "material": "Material",
+    "select_material": "Select material",
     "story": "Product Story",
     "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)",
     "name": "Product Name",
@@ -109,6 +110,11 @@
       "click_upload_new": "Drag & drop or click to upload new file",
       "auto_compress": "System automatically optimizes Mesh & Texture. Supports huge files up to 150MB!",
       "delete": "Delete"
+    },
+    "isService": {
+      "title": "B2B Service Package",
+      "desc": "Enable this feature if this is a Service Package (Consulting, outsourcing...).",
+      "note": "Note: The service package will be completely hidden from the Store page."
     }
   },
   "statuses": {
@@ -164,9 +170,9 @@
     "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
     "optimize_3d_success": "3D optimization successful! Size reduced to: {{size}}MB",
     "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used.",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "gallery_upload_success": "New media added successfully",
+    "gallery_delete_success": "Photo deleted successfully",
+    "draft_restore_success": "Restored unfinished data",
     "public_stock_error": "Cannot publish when stock is 0.",
     "invalid_quantity": "Valid quantity is 1 to 100",
     "restore_failed": "❌ Failed to restore: {{errorMsg}}"

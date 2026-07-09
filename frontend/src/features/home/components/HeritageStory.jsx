@@ -1,74 +1,147 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
 // Tự import ảnh
-import langPhongChauImg from "@/assets/images/lang-phong-chau.png";
-import langdetkhanranImg from "@/assets/images/lang-det-khan-ran.png";
-import langnghemaytreImg from "@/assets/images/lang-nghe-may-tre.png";
+import AG1 from "@/assets/images/AG1.png";
+import AG2 from "@/assets/images/AG2.png";
+import AG3 from "@/assets/images/AG3.png";
+import AG4 from "@/assets/images/AG4.png";
+
+import DT1 from "@/assets/images/DT1.png";
+import DT2 from "@/assets/images/DT2.png";
+import DT3 from "@/assets/images/DT3.png";
+import DT4 from "@/assets/images/DT4.png";
 
 const HeritageStory = () => {
   const { t } = useTranslation("home");
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(null);
+
+  // Drag-to-scroll logic
+  const sliderRef = useRef(null);
+  const timelineRef = useRef(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  // Click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Don't close if clicking inside a node or popup
+      if (event.target.closest('.timeline-node')) {
+        return;
+      }
+      setActiveTab(null);
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleMouseDown = (e) => {
+    setIsDown(true);
+    setStartX(e.pageX - sliderRef.current.offsetLeft);
+    setScrollLeft(sliderRef.current.scrollLeft);
+  };
+  const handleMouseLeave = () => setIsDown(false);
+  const handleMouseUp = () => setIsDown(false);
+  const handleMouseMove = (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Drag speed multiplier
+    sliderRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleNodeClick = (index) => {
+    if (activeTab === index) {
+      setActiveTab(null);
+      return;
+    }
+    setActiveTab(index);
+    if (sliderRef.current && timelineRef.current) {
+      const container = sliderRef.current;
+      const timeline = timelineRef.current;
+      
+      const nodeX = 150 + index * 300;
+      const paddingLeft = timeline.offsetLeft;
+      
+      const targetScrollLeft = (paddingLeft + nodeX) - (container.clientWidth / 2);
+      
+      container.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const journeyData = [
-    {
-      id: "an-giang",
-      province: "An Giang",
-      dna: "Đại diện Mã gen Chăm & Khmer",
-      image: langPhongChauImg,
-      villages: [
-        {
-          name: "Làng dệt thổ cẩm Chăm Châu Phong",
-          desc: "Hợp tác cùng HTX Châu Giang (Nghệ nhân Mohamad) cung cấp vải dệt tay nhuộm tự nhiên.",
-        },
-        {
-          name: "Làng gốm Khmer Phnôm Pi",
-          desc: "Truyền nhân đời thứ 3 Néang Nhây & Néang Vu chế tác gốm mộc nung lộ thiên.",
-        },
-      ],
+    { 
+      id: "ag1", province: t("heritage.nodes.ag1.province"), dna: t("heritage.nodes.ag1.dna"), image: AG1, type: 'ag',
+      content: {
+        title: t("heritage.nodes.ag1.title"),
+        text: t("heritage.nodes.ag1.text")
+      }
     },
-    {
-      id: "dong-thap",
-      province: "Đồng Tháp",
-      dna: "Đại diện Mã gen Kinh",
-      image: langdetkhanranImg,
-      villages: [
-        {
-          name: "Làng dệt khăn rằn Long Tả / Long Khánh",
-          desc: "Đồng hành cùng nghệ nhân Nguyễn Thị Kim Chiều giữ gìn nguồn khăn rằn rực rỡ.",
-        },
-        {
-          name: "Thương hiệu Hanhsilk",
-          desc: "Cùng bà Lương Thanh Hạnh phát triển kỹ thuật rút sợi tơ sen sinh thái cao cấp.",
-        },
-      ],
+    { 
+      id: "ag2", province: t("heritage.nodes.ag2.province"), dna: t("heritage.nodes.ag2.dna"), image: AG2, type: 'ag',
+      content: {
+        title: t("heritage.nodes.ag2.title"),
+        text: t("heritage.nodes.ag2.text")
+      }
     },
-    {
-      id: "can-tho",
-      province: "Cần Thơ",
-      dna: "Trung tâm Chế tác & Lan tỏa",
-      image: langnghemaytreImg,
-      villages: [
-        {
-          name: "Cô Ba Khăn Rằn (Offline Hub)",
-          desc: "Trạm trung chuyển huyết mạch, xưởng may túi xách, nón từ vải di sản.",
-        },
-        {
-          name: "Tre đan mỹ nghệ Miền Tây",
-          desc: "Anh Nguyên cung cấp khay, hộp mây tre đan sinh thái hoàn thiện hệ sinh thái bao bì.",
-        },
-      ],
+    { 
+      id: "ag3", province: t("heritage.nodes.ag3.province"), dna: t("heritage.nodes.ag3.dna"), image: AG3, type: 'ag',
+      content: {
+        title: t("heritage.nodes.ag3.title"),
+        text: t("heritage.nodes.ag3.text")
+      }
+    },
+    { 
+      id: "ag4", province: t("heritage.nodes.ag4.province"), dna: t("heritage.nodes.ag4.dna"), image: AG4, type: 'ag',
+      content: {
+        title: t("heritage.nodes.ag4.title"),
+        text: t("heritage.nodes.ag4.text")
+      }
+    },
+    { 
+      id: "dt1", province: t("heritage.nodes.dt1.province"), dna: t("heritage.nodes.dt1.dna"), image: DT1, type: 'dt',
+      content: {
+        title: t("heritage.nodes.dt1.title"),
+        text: t("heritage.nodes.dt1.text")
+      }
+    },
+    { 
+      id: "dt2", province: t("heritage.nodes.dt2.province"), dna: t("heritage.nodes.dt2.dna"), image: DT2, type: 'dt',
+      content: {
+        title: t("heritage.nodes.dt2.title"),
+        text: t("heritage.nodes.dt2.text")
+      }
+    },
+    { 
+      id: "dt3", province: t("heritage.nodes.dt3.province"), dna: t("heritage.nodes.dt3.dna"), image: DT3, type: 'dt',
+      content: {
+        title: t("heritage.nodes.dt3.title"),
+        text: t("heritage.nodes.dt3.text")
+      }
+    },
+    { 
+      id: "dt4", province: t("heritage.nodes.dt4.province"), dna: t("heritage.nodes.dt4.dna"), image: DT4, type: 'dt',
+      content: {
+        title: t("heritage.nodes.dt4.title"),
+        text: t("heritage.nodes.dt4.text")
+      }
     },
   ];
 
   return (
-    <section className="pt-20 pb-48 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10">
+    <section className="pt-20 pb-20 md:pb-32 bg-gradient-to-b from-mkhe-bg to-mkhe-primary/10 text-mkhe-text relative z-10">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        
         {/* EDITORIAL HEADER */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-12">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 gap-12">
           <motion.div 
             initial={{ opacity: 0, x: -50 }} 
             whileInView={{ opacity: 1, x: 0 }} 
@@ -78,11 +151,11 @@ const HeritageStory = () => {
           >
             <div className="inline-flex items-center gap-4 mb-8">
               <span className="w-16 h-[1px] bg-mkhe-primary"></span>
-              <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">The Journey</span>
+              <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("heritage.journey_tag", "The Journey")}</span>
             </div>
             <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
-              Hành trình <br/>
-              <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">Di sản</span>
+              {t("heritage.title_1", "Hành trình ")} <br/>
+              <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("heritage.title_2", "Di sản")}</span>
             </h2>
           </motion.div>
           <motion.div 
@@ -93,125 +166,111 @@ const HeritageStory = () => {
             className="lg:w-1/2 flex lg:justify-end pb-8"
           >
             <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 lg:ml-0 font-light">
-              Mekong không chỉ là dòng sông, mà là dòng chảy của những di sản đa văn hóa. Chúng tôi đi dọc dòng Mekong để đánh thức và kết nối những giá trị đang dần lãng quên.
+              {t("heritage.desc")}
             </p>
           </motion.div>
         </div>
+      </div>
 
-        {/* DESKTOP TIMELINE (Hidden on mobile) */}
-        <div className="hidden md:block relative w-full h-[400px] mb-10">
-          {/* Wavy SVG Path */}
-          <svg
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            viewBox="0 0 1200 400"
-            preserveAspectRatio="none"
-          >
-            <path 
-              d="M 0,200 C 100,200 100,300 200,300 S 500,100 600,100 S 900,300 1000,300 S 1100,200 1200,200" 
-              className="stroke-mkhe-primary/50 stroke-[2] fill-transparent" 
-            />
-          </svg>
-
-          {/* Timeline Nodes */}
-          {journeyData.map((tab, index) => {
-            const isActive = activeTab === index;
-            // Precise positioning to match the bezier curve peaks/valleys
-            const leftPos = index === 0 ? "16.666%" : index === 1 ? "50%" : "83.333%";
-            const topPos = index === 0 ? "75%" : index === 1 ? "25%" : "75%";
-            
-            return (
-              <div 
-                key={tab.id}
-                className="absolute flex flex-col items-center"
-                style={{ left: leftPos, top: topPos, transform: 'translate(-50%, -50%)' }}
-              >
-                <button 
-                  onClick={() => setActiveTab(index)}
-                  className={`cursor-pointer relative w-40 h-40 rounded-full border-4 overflow-hidden transition-all duration-500 group ${isActive ? 'border-mkhe-primary scale-110 shadow-[0_0_20px_rgba(212,163,115,0.4)] z-10' : 'border-mkhe-border hover:border-mkhe-primary/50 opacity-70 hover:opacity-100 grayscale hover:grayscale-0 z-0'}`}
-                >
-                  <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
-                  <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40 group-hover:bg-transparent'}`}></div>
-                  
-                  {/* Glowing dot on the timeline path */}
-                  <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full transition-all duration-500 ${isActive ? 'bg-mkhe-primary shadow-[0_0_10px_#D4A373]' : 'bg-mkhe-primary/50 opacity-0 group-hover:opacity-100'}`}></div>
-                </button>
-                
-                {/* Node Label */}
-                <div className="absolute text-center w-64 transition-all duration-500 top-[120%]">
-                  <h4 className={`text-2xl font-bold tracking-wide ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
-                  <p className="text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* MOBILE TIMELINE (Hidden on desktop) */}
-        <div className="md:hidden flex flex-col gap-12 mt-10 relative">
-          <div className="absolute left-[39px] top-4 bottom-4 w-[2px] bg-mkhe-primary/20"></div>
-          {journeyData.map((tab, index) => {
-            const isActive = activeTab === index;
-            return (
-              <div key={tab.id} className="relative flex items-center gap-6">
-                <button 
-                  onClick={() => setActiveTab(index)}
-                  className={`cursor-pointer relative z-10 w-20 h-20 rounded-full flex-shrink-0 border-2 overflow-hidden transition-all duration-300 ${isActive ? 'border-mkhe-primary shadow-[0_0_15px_rgba(212,163,115,0.4)] scale-110' : 'border-mkhe-border grayscale opacity-70'}`}
-                >
-                  <img src={tab.image} alt={tab.province} className="w-full h-full object-cover" />
-                  <div className={`absolute inset-0 transition-colors duration-500 ${isActive ? 'bg-transparent' : 'bg-black/40'}`}></div>
-                </button>
-                <div>
-                  <h4 className={`text-xl font-bold ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
-                  <p className="text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* DETAILS BLOCK (Below timeline) */}
-        <div className="mt-16 md:mt-24 max-w-4xl mx-auto border-t border-mkhe-primary/20 pt-16 relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-mkhe-bg border border-mkhe-primary/50 rotate-45"></div>
+      {/* HORIZONTAL SCROLLABLE TIMELINE */}
+      <div 
+        ref={sliderRef}
+        className={`relative z-20 w-full overflow-x-auto pb-32 pt-24 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDown ? 'cursor-grabbing' : 'cursor-grab'}`}
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
+      >
+        <div className="flex">
+          {/* Padding spacers that adapt to the screen width and max-w-7xl container */}
+          <div className="shrink-0 w-[max(1.5rem,calc((100vw-80rem)/2))] lg:w-[max(2rem,calc((100vw-80rem)/2))]"></div>
           
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-10"
+          {/* Inner container to hold the wide SVG and nodes */}
+          <div ref={timelineRef} className="relative w-[2400px] h-[400px] shrink-0"> 
+            {/* Wavy SVG Path */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 2400 400"
+              preserveAspectRatio="none"
             >
-              <div className="text-center">
-                <h4 className="text-2xl md:text-3xl font-bold text-mkhe-text mb-2">
-                  Khám phá <span className="text-mkhe-primary font-logo italic font-normal text-4xl md:text-5xl ml-2">{journeyData[activeTab].province}</span>
-                </h4>
-              </div>
+              {/* Background Path (Faint) */}
+              <path 
+                d="M 0,200 Q 150,400 300,200 T 600,200 T 900,200 T 1200,200 T 1500,200 T 1800,200 T 2100,200 T 2400,200" 
+                className="stroke-mkhe-border/20 stroke-[2] fill-transparent" 
+              />
+              {/* Active Animated Path */}
+              <motion.path 
+                d="M 0,200 Q 150,400 300,200 T 600,200 T 900,200 T 1200,200 T 1500,200 T 1800,200 T 2100,200 T 2400,200" 
+                className="stroke-mkhe-primary stroke-[4] fill-transparent" 
+                style={{ filter: 'drop-shadow(0 0 8px rgba(212,163,115,0.6))' }}
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: activeTab !== null ? (activeTab + 0.5) / 8 : 0 }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+              />
+            </svg>
+
+            {/* Timeline Nodes */}
+            {journeyData.map((tab, index) => {
+              const isActive = activeTab === index;
+              // 8 nodes distributed evenly. 2400px total width.
+              const leftPos = `${(150 + index * 300) / 24}%`;
+              const topPos = index % 2 === 0 ? "75%" : "25%";
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {journeyData[activeTab].villages.map((village, vIdx) => (
-                  <div key={vIdx} className="bg-mkhe-bg/40 p-6 border border-mkhe-border/30 hover:border-mkhe-primary/50 transition-colors rounded-sm">
-                    <h5 className="font-bold text-lg mb-3 text-mkhe-text flex items-center gap-3">
-                      <span className="w-2 h-2 rounded-full bg-mkhe-primary shrink-0"></span>
-                      {village.name}
-                    </h5>
-                    <p className="text-mkhe-text/60 text-sm leading-relaxed font-light">
-                      {village.desc}
-                    </p>
+              return (
+                <div 
+                  key={tab.id}
+                  className="absolute flex flex-col items-center timeline-node"
+                  style={{ left: leftPos, top: topPos, transform: 'translate(-50%, -50%)' }}
+                >
+                  <button 
+                    onClick={() => handleNodeClick(index)}
+                    className={`cursor-pointer relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 overflow-hidden transition-all duration-500 group ${isActive ? 'border-mkhe-primary scale-110 shadow-[0_0_30px_rgba(212,163,115,0.6)] z-10' : 'border-mkhe-border hover:border-mkhe-primary/50 z-0 bg-mkhe-bg'}`}
+                  >
+                    <img src={tab.image} alt={tab.province} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  </button>
+                  
+                  {/* Node Label */}
+                  <div className={`absolute text-center w-64 transition-all duration-500 ${index % 2 === 0 ? 'top-[115%]' : 'bottom-[115%]'}`}>
+                    <h4 className={`text-xl md:text-2xl font-bold tracking-wide ${isActive ? 'text-mkhe-primary' : 'text-mkhe-text'}`}>{tab.province}</h4>
+                    <p className="text-[10px] md:text-xs text-mkhe-text/50 uppercase tracking-wider mt-1">{tab.dna}</p>
                   </div>
-                ))}
-              </div>
-              
-              <div className="pt-4 flex justify-center">
-                <button className="cursor-pointer group flex items-center gap-4 text-sm font-bold uppercase tracking-widest text-mkhe-text hover:text-mkhe-primary transition-colors border border-mkhe-border px-8 py-4 hover:border-mkhe-primary rounded-sm">
-                  Tới trạm di sản
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+
+                  {/* Pop-up Story Card */}
+                  <AnimatePresence>
+                    {isActive && (
+                      <motion.div
+                        initial={{ opacity: 0, y: index % 2 === 0 ? 20 : -20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: index % 2 === 0 ? 20 : -20, scale: 0.95 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        className={`absolute w-[85vw] max-w-[380px] left-1/2 -translate-x-1/2 bg-mkhe-bg/95 backdrop-blur-xl border border-mkhe-primary/30 p-5 md:p-6 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] z-30 pointer-events-auto flex flex-col items-center text-center ${
+                          index % 2 === 0 ? 'bottom-[140%]' : 'top-[140%]'
+                        }`}
+                      >
+                        {/* Triangle pointer */}
+                        <div className={`absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-mkhe-bg border-mkhe-primary/30 rotate-45 ${
+                          index % 2 === 0 ? 'bottom-0 translate-y-[8px] border-b border-r' : 'top-0 -translate-y-[8px] border-t border-l'
+                        }`}></div>
+                        
+                        <h5 className="font-bold text-lg md:text-xl mb-3 text-mkhe-primary font-logo leading-tight">
+                          {tab.content.title}
+                        </h5>
+                        <p className="text-mkhe-text/90 text-xs md:text-sm leading-relaxed font-light">
+                          {tab.content.text}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+          
+          <div className="shrink-0 w-[max(1.5rem,calc((100vw-80rem)/2))] lg:w-[max(2rem,calc((100vw-80rem)/2))]"></div>
         </div>
       </div>
+
+
 
       {/* Bờ cong sóng (Wave Divider) nghệ thuật */}
       <div className="absolute bottom-0 left-0 w-full leading-[0] z-20 pointer-events-none translate-y-1/2">

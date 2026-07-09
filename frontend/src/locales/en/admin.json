@@ -69,12 +69,12 @@
   "errors": {
     "FORBIDDEN_ACCESS": "You do not have permission to access this feature!",
     "fetch_failed": "Error occurred while fetching user list!",
-    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
+    "error_3d_format": "Only accept 3D model formats (.glb, .gltf)"
   },
   "table": {
     "avatar": "Avatar",
     "name": "Full Name",
-    "email": "Email",
+    "email": "E-mail",
     "role": "Role",
     "status": "Status",
     "status_active": "Active",
@@ -84,7 +84,7 @@
     "no_user": "No matching user found.",
     "view": "View",
     "block": "Block",
-    "status_pending": "Chờ kích hoạt"
+    "status_pending": "Wait for activation"
   },
   "filter": {
     "placeholder": "Search by name or email...",
@@ -244,9 +244,9 @@
     "scan_at_counter": "Scan at counter",
     "use_online": "Use Online",
     "min_order_card": "Min order {{value}} VND",
-    "percentage": "Phần trăm (%)",
-    "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển",
+    "percentage": "Percent (%)",
+    "fixed_amount": "Amount (VND)",
+    "free_ship": "Free shipping",
     "errors": {
       "MISSING_REQUIRED_FIELDS": "Please fill all required fields",
       "INVALID_PERCENTAGE": "Invalid percentage",
@@ -411,7 +411,7 @@
     "delete": "Delete",
     "detail_title": "Contact Details",
     "name": "Customer Name",
-    "email": "Email",
+    "email": "E-mail",
     "phone": "Phone Number",
     "company": "Company Name",
     "tax_code": "Tax Code",

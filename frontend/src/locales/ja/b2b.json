@@ -1,0 +1,50 @@
+{
+  "title": "B2B注文リクエストの作成",
+  "subtitle": "ビジネスパートナー専用エリア",
+  "consultingPackage": "カスタム製品コンサルティングおよびデザインパッケージ",
+  "companyInfo": {
+    "title": "会社/パートナー情報",
+    "desc1": "システムはプロフィールからデフォルト情報とロゴを自動的に使用します",
+    "company": "会社",
+    "taxCode": "税務番号",
+    "notUpdated": "未更新",
+    "note": "* 注：会社情報が正しくない場合は、注文する前にプロフィールで更新してください。"
+  },
+  "fields": {
+    "product": "サービスパッケージ / 製品",
+    "productPlaceholder": "-- サービスパッケージ / 製品を選択 --",
+    "quantity": "予定数量",
+    "budget": "予定予算 (VND)",
+    "budgetPlaceholder": "例: 50000000",
+    "deliveryDate": "予定納期",
+    "deliveryDatePlaceholder": "納期を選択...",
+    "packaging": "パッケージの要件 (オプション)",
+    "packagingPlaceholder": "-- パッケージの要件を選択 --",
+    "packagingOptions": {
+      "STANDARD_BOX": "標準ボックス",
+      "NO_PACKAGING": "パッケージなし"
+    },
+    "note": "追加メモ (オプション)",
+    "notePlaceholder": "例：VAT請求書が必要、各ゲストの名前が書かれたカードを添付する要求、またはカスタムデザインのアイデアを説明する...",
+    "designFiles": "デザインファイル / アイデア画像のアップロード (オプション)",
+    "dragDrop": "ここにファイルをドラッグアンドドロップするか、クリックしてファイルを選択します",
+    "fileHint": "サポート：PDF、AI、PNG、JPG（最大10MB/ファイル、最大5ファイル）",
+    "fileNote": "* 注：プロフィールの標準ロゴを使用する場合は空白のままにしてください"
+  },
+  "buttons": {
+    "back": "ダッシュボードに戻る",
+    "submit": "注文リクエストを作成",
+    "submitting": "送信中..."
+  },
+  "validation": {
+    "productRequired": "サービスパッケージ / 製品を選択してください。",
+    "quantityRequired": "予定数量を入力してください。",
+    "deliveryDateRequired": "予定納期を選択してください。"
+  },
+  "messages": {
+    "success": "注文リクエストが正常に送信されました！",
+    "error": "リクエストの送信中にエラーが発生しました。",
+    "fetchProductsError": "製品リストを読み込めません。",
+    "maxFiles": "最大5つのファイルのみアップロードできます。"
+  }
+}

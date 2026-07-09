@@ -6,11 +6,11 @@
   "infoTitle": "Contact Information",
   "address": "Address",
   "phoneTitle": "Phone",
-  "emailTitle": "Email",
+  "emailTitle": "E-mail",
   "fields": {
     "name": "Full Name",
     "phone": "Phone Number",
-    "email": "Email",
+    "email": "E-mail",
     "company": "Company Name / Tax ID",
     "interest": "-- Select Interest --",
     "message": "Detailed Message",

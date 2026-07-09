@@ -38,6 +38,6 @@
   "receive_btn": "已收货",
   "confirm_receive": "确认您已完好收到产品？",
   "confirm_btn": "确认",
-  "receive_success": "Đã xác nhận nhận hàng thành công!",
-  "receive_error": "Lỗi xác nhận nhận hàng"
+  "receive_success": "确认发货成功！",
+  "receive_error": "确认收到货物时出错"
 }

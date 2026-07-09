@@ -42,6 +42,12 @@
     "craft_village": "工艺村",
     "craft_village_placeholder": "例如：Chau Phong 编织村...",
     "material": "材料",
+    "select_material": "选择材料",
+    "isService": {
+      "title": "B2B 服务套餐",
+      "desc": "如果这是服务套餐（咨询、外包...），请开启此功能。",
+      "note": "注意：服务套餐将从商店页面完全隐藏。"
+    },
     "name": "产品名称",
     "name_placeholder": "示例：条纹锦缎手提袋",
     "sku": "存货单位",
@@ -169,12 +175,12 @@
     "optimizing_3d": "正在优化 3D 文件 ({{size}}MB)... 这将使用您的 CPU，请不要关闭页面！",
     "optimize_3d_success": "3D 优化成功！大小减小到：{{size}}MB",
     "optimize_3d_error": "3D 优化失败：{{error}}。将使用原始文件。",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
-    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
-    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
-    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
+    "gallery_upload_success": "新媒体添加成功",
+    "gallery_delete_success": "照片删除成功",
+    "draft_restore_success": "恢复未完成的数据",
+    "public_stock_error": "库存为 0 时无法设置公开状态。",
+    "invalid_quantity": "有效数字为 1 到 100",
+    "restore_failed": "❌恢复错误：{{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFC标签管理",

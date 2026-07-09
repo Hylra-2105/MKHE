@@ -17,7 +17,7 @@
     "change_pass_success": "비밀번호가 성공적으로 업데이트되었습니다!",
     "otp_sent_success": "OTP가 성공적으로 전송되었습니다!",
     "otp_send_error": "OTP 전송 오류",
-    "delete_success": "Đã xóa tài khoản thành công!"
+    "delete_success": "계정이 삭제되었습니다!"
   },
   "auth": {
     "new_password": "새 비밀번호",

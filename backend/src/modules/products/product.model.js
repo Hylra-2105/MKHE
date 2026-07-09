@@ -135,6 +135,11 @@ const productSchema = new mongoose.Schema(
       default: false,
       index: true,
     },
+    isService: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
   },
   { timestamps: true },
 );

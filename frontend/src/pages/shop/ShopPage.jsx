@@ -102,16 +102,15 @@ const ShopPage = () => {
         const exists = prev.some((p) => p._id === updatedProduct._id);
         
         if (exists) {
-          // If it's no longer published, remove it from the shop view
-          if (updatedProduct.status !== "PUBLISHED") {
+          // If it's no longer published or is now a service, remove it from the shop view
+          if (updatedProduct.status !== "PUBLISHED" || updatedProduct.isService) {
             return prev.filter((p) => p._id !== updatedProduct._id);
           }
           // Otherwise update its data
           return prev.map((p) => p._id === updatedProduct._id ? updatedProduct : p);
         } else {
-          // If it doesn't exist but is now PUBLISHED, fetch the list again to add it 
-          // (fetching ensures correct filtering/pagination)
-          if (updatedProduct.status === "PUBLISHED") {
+          // If it doesn't exist but is now PUBLISHED and is not a service, fetch the list again to add it 
+          if (updatedProduct.status === "PUBLISHED" && !updatedProduct.isService) {
             setTimeout(() => fetchProducts(), 0);
           }
           return prev;

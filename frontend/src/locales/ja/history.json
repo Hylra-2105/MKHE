@@ -38,6 +38,6 @@
   "receive_btn": "受け取りました",
   "confirm_receive": "商品を無事に受け取ったことを確認しますか？",
   "confirm_btn": "確認",
-  "receive_success": "Đã xác nhận nhận hàng thành công!",
-  "receive_error": "Lỗi xác nhận nhận hàng"
+  "receive_success": "無事に納品が確認されました！",
+  "receive_error": "商品の受領確認エラー"
 }

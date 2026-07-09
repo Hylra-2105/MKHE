@@ -42,6 +42,7 @@
     "craft_village": "공예 마을",
     "craft_village_placeholder": "예: 차우퐁 직조 마을...",
     "material": "재료",
+    "select_material": "재료 선택",
     "name": "제품명",
     "name_placeholder": "예: 줄무늬 브로케이드 토트백",
     "sku": "SKU",
@@ -114,7 +115,12 @@
       "delete": "삭제"
     },
     "story": "제품 스토리",
-    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
+    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)",
+    "isService": {
+      "title": "B2B 서비스 패키지",
+      "desc": "서비스 패키지(컨설팅, 아웃소싱...)인 경우 이 기능을 활성화하십시오.",
+      "note": "참고: 서비스 패키지는 스토어 페이지에서 완전히 숨겨집니다."
+    }
   },
   "statuses": {
     "DRAFT": "초안",
@@ -169,9 +175,9 @@
     "optimizing_3d": "3D 파일({{size}}MB)을 최적화하는 중... CPU를 사용합니다. 페이지를 닫지 마세요!",
     "optimize_3d_success": "3D 최적화 성공! 크기가 축소되었습니다: {{size}}MB",
     "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다.",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "gallery_upload_success": "새 미디어가 추가되었습니다.",
+    "gallery_delete_success": "사진이 삭제되었습니다.",
+    "draft_restore_success": "미완성 데이터 복원",
     "public_stock_error": "재고가 0일 때 공개로 설정할 수 없습니다.",
     "invalid_quantity": "수량은 1에서 100 사이여야 합니다",
     "restore_failed": "❌ 복구 실패: {{errorMsg}}"

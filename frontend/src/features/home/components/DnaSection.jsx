@@ -162,7 +162,7 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
                 </>
               )}
               <span className="text-mkhe-primary tracking-[0.4em] text-xs md:text-sm uppercase font-bold">
-                Dấu ấn di sản
+                {t("dna.heritage_mark", "Dấu ấn di sản")}
               </span>
               {isReverse && (
                 <>

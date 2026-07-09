@@ -3,7 +3,67 @@
     "title": "Các Sản Phẩm Văn Hóa",
     "subtitle": "Khám phá những tinh hoa thủ công đặc trưng",
     "view_all": "Xem toàn bộ",
-    "buy_now": "Mua ngay"
+    "buy_now": "Mua ngay",
+    "header_title_1": "Sản phẩm",
+    "header_title_2": "Văn hóa",
+    "header_desc": "Mỗi chế tác không chỉ là một sản phẩm, mà là một mảnh ghép của di sản. Được tạo nên từ đôi bàn tay của những nghệ nhân đa dân tộc, mỗi tác phẩm lưu giữ tinh hoa văn hóa và kể tiếp câu chuyện của dòng chảy Mekong qua từng đường nét.",
+    "heritage_mark": "Dấu ấn di sản"
+  },
+  "heritage": {
+    "journey_tag": "The Journey",
+    "title_1": "Hành trình",
+    "title_2": "Di sản",
+    "desc": "Mekong không chỉ là dòng sông, mà là dòng chảy của những di sản đa văn hóa. Chúng tôi đi dọc dòng Mekong để đánh thức và kết nối những giá trị đang dần lãng quên.",
+    "nodes": {
+      "ag1": {
+        "province": "An Giang",
+        "dna": "Đại diện Mã gen Chăm & Khmer",
+        "title": "Vùng đất của những câu chuyện",
+        "text": "Có những vùng đất được nhớ đến bởi cảnh đẹp. Còn An Giang được nhớ đến bởi những câu chuyện."
+      },
+      "ag2": {
+        "province": "An Giang",
+        "dna": "Đại diện Mã gen Chăm & Khmer",
+        "title": "Điểm giao thoa văn hóa",
+        "text": "Nằm nơi dòng Mekong chia thành những nhánh sông ôm lấy miền Tây Nam Bộ, An Giang là điểm giao thoa của nhiều cộng đồng dân tộc: Kinh, Khmer, Chăm và Hoa. Mỗi cộng đồng mang theo một ngôn ngữ, tín ngưỡng, nghề thủ công và nếp sống riêng, cùng nhau dệt nên một bức tranh văn hóa đa sắc nhưng hài hòa."
+      },
+      "ag3": {
+        "province": "An Giang",
+        "dna": "Đại diện Mã gen Chăm & Khmer",
+        "title": "Trách nhiệm gìn giữ di sản",
+        "text": "An Giang vì thế không chỉ là một điểm đến, mà còn là lời nhắc về trách nhiệm gìn giữ di sản. Mỗi hành trình khám phá nơi đây không đơn thuần là ngắm cảnh, mà là lắng nghe những câu chuyện được viết bằng dòng sông, bằng bàn tay người nghệ nhân và bằng bản sắc của những cộng đồng đã cùng nhau sinh sống qua bao thế hệ."
+      },
+      "ag4": {
+        "province": "An Giang",
+        "dna": "Đại diện Mã gen Chăm & Khmer",
+        "title": "Sống mãi trong ký ức",
+        "text": "Bởi khi những câu chuyện ấy còn được kể, An Giang sẽ không chỉ tồn tại trên bản đồ, mà sẽ luôn sống trong ký ức của những người từng đặt chân đến vùng đất đầu nguồn Mekong."
+      },
+      "dt1": {
+        "province": "Đồng Tháp",
+        "dna": "Đại diện Mã gen Kinh",
+        "title": "Vùng đất của ký ức",
+        "text": "Có những vùng đất không khiến người ta choáng ngợp ngay từ lần đầu đặt chân đến, nhưng lại âm thầm ở lại trong ký ức. Đồng Tháp là một nơi như thế."
+      },
+      "dt2": {
+        "province": "Đồng Tháp",
+        "dna": "Đại diện Mã gen Kinh",
+        "title": "Mùa nước nổi",
+        "text": "Mỗi mùa nước nổi, dòng Mekong mang theo phù sa bồi đắp những cánh đồng, nuôi lớn rừng tràm, đồng sen và biết bao xóm làng ven sông."
+      },
+      "dt3": {
+        "province": "Đồng Tháp",
+        "dna": "Đại diện Mã gen Kinh",
+        "title": "Hài hòa cùng thiên nhiên",
+        "text": "Từ nhịp chèo xuồng len lỏi giữa những đầm sen hồng, tiếng chim gọi bầy ở rừng tràm, đến những phiên chợ quê mộc mạc, Đồng Tháp kể câu chuyện về một vùng đất sống hài hòa cùng thiên nhiên."
+      },
+      "dt4": {
+        "province": "Đồng Tháp",
+        "dna": "Đại diện Mã gen Kinh",
+        "title": "Lưu giữ mạch nguồn văn hóa",
+        "text": "Nhưng Đồng Tháp không chỉ có sen. Đó còn là nơi lưu giữ những giá trị văn hóa của miền Tây sông nước, nơi những làng nghề truyền thống vẫn bền bỉ đỏ lửa, những điệu hò, câu hát vẫn vang lên trên dòng sông, và những câu chuyện về nghĩa tình luôn được truyền từ đời này sang đời khác."
+      }
+    }
   },
   "hero": {
     "tag": "Heritage & Elegance",

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag } from "lucide-react";
+import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag, Briefcase } from "lucide-react";
 import Button from "@/components/ui/Button";
 import Dropdown from "@/components/ui/Dropdown";
 import { productApi } from "@/api/productApi";
@@ -386,7 +386,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     let errors = {};
     if (!formData.name) errors.name = t("products.errors.name_required", "Vui lòng điền tên sản phẩm");
     if (!formData.sku) errors.sku = t("products.errors.sku_required", "Vui lòng điền mã SKU");
-    if (!formData.price) errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    if (!formData.isService && (!formData.price || Number(formData.price) <= 0)) {
+      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    } else if (formData.isService && (formData.price === "" || formData.price === null || formData.price === undefined)) {
+      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    }
     if (!formData.vendor) errors.vendor = t("products.errors.vendor_required", "Vui lòng chọn nhà cung cấp");
 
     if (formData.hasDPP) {
@@ -423,7 +427,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
       }
     }
 
-    if (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") {
+    if (!formData.isService && (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard")) {
       if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
         errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
       } else {
@@ -528,7 +532,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
   const resetForm = () => {
     setFormData({
       name: "", sku: "", vendor: "", craftVillage: "", material: [], description: "", categoryMatrix: "B2C_Mass_Premium",
-      culturalDNA: "OTHER", price: "", salePrice: "", saleStartDate: "", saleEndDate: "", stock: "", hasDPP: false, artisanName: "", gpsLocation: "", storyBlogId: "", b2bTiers: [],
+      culturalDNA: "OTHER", price: "", salePrice: "", saleStartDate: "", saleEndDate: "", status: "PUBLISHED", hasDPP: false, artisanName: "", gpsLocation: "", hasSale: false, b2bTiers: [],
+      isPublicEvent: false, isService: false,
     });
     setImageFiles([]); setFile3D(null);
     previewUrls.forEach((preview) => URL.revokeObjectURL(preview.url));
@@ -655,8 +660,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       >
                         <span className="truncate">
                           {formData.material?.length > 0
-                            ? formData.material.join(", ")
-                            : "Chọn chất liệu"}
+                            ? formData.material.map(val => predefinedMaterials.find(m => m.value === val)?.label || val).join(", ")
+                            : t("modal.select_material", "Chọn chất liệu")}
                         </span>
                         <ChevronDown className={`w-4 h-4 transition-transform duration-300 shrink-0 ${isMaterialDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
@@ -804,12 +809,39 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
                 {/* BẢNG GIÁ SỈ (CHỈ HIỂN THỊ NẾU LÀ SẢN PHẨM B2B) */}
                 {(formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") && (
-                  <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
-                    <B2BTiersInput
-                      tiers={formData.b2bTiers}
-                      onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
-                      error={formErrors.b2bTiers}
-                    />
+                  <div className="space-y-4">
+                    <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                      <B2BTiersInput
+                        tiers={formData.b2bTiers}
+                        onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
+                        error={formErrors.b2bTiers}
+                      />
+                    </div>
+
+                    {/* B2B SERVICE TOGGLE */}
+                    <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-mkhe-primary/20 rounded-lg text-mkhe-primary">
+                            <Briefcase className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-mkhe-text text-sm">{t("modal.isService.title", "Gói Dịch Vụ B2B")}</h4>
+                            <p className="text-[11px] text-mkhe-text/60 mt-0.5">{t("modal.isService.desc", "Bật tính năng này nếu đây là Gói Dịch Vụ (Tư vấn, gia công...).")}</p>
+                            <p className="text-[11px] text-red-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.isService}
+                            onChange={(e) => setFormData(prev => ({ ...prev, isService: e.target.checked }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-mkhe-border/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 )}
 
