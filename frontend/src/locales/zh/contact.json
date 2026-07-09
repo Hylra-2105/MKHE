@@ -41,5 +41,6 @@
     "emptyCompanyName": "请输入公司名称。",
     "emptyTaxCode": "请输入税号。",
     "invalidTaxCode": "无效的税号（10位或13位）。"
-  }
+  },
+  "tag": "湄公河文化"
 }

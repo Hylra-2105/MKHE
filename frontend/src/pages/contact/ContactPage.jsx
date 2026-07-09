@@ -149,7 +149,7 @@ const ContactPage = () => {
         >
           <div className="inline-flex items-center gap-4 mb-6">
             <span className="w-12 h-[1px] bg-mkhe-primary"></span>
-            <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">Mekong Culture</span>
+            <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("contact:tag")}</span>
             <span className="w-12 h-[1px] bg-mkhe-primary"></span>
           </div>
           <h1 className="text-5xl md:text-7xl font-logo italic tracking-wide text-mkhe-primary mb-6 drop-shadow-md">

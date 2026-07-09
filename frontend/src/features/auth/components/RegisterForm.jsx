@@ -11,7 +11,6 @@ import { signInWithPopup } from "firebase/auth";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function RegisterForm() {
@@ -132,42 +131,47 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-[360px] mx-auto">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto">
       <h1 className="text-3xl font-logo font-bold mb-2 text-gradient-gold">
         {t("title")}
       </h1>
       <p className="text-mkhe-text/60 mb-8 text-sm italic">{t("subtitle")}</p>
 
-      <div className="space-y-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <InputField
             type="text"
+            label={t("name_placeholder")}
             placeholder={t("name_placeholder")}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
               if (errors.name) setErrors((prev) => ({ ...prev, name: null }));
             }}
+            required
+            error={errors.name ? t(errors.name) : null}
           />
-          <ErrorText error={errors.name} t={t} />
         </div>
 
         <div>
           <InputField
             type="email"
+            label={t("email_placeholder")}
             placeholder={t("email_placeholder")}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
               if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
             }}
+            required
+            error={errors.email ? t(errors.email) : null}
           />
-          <ErrorText error={errors.email} t={t} />
         </div>
 
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label={t("password_placeholder")}
             placeholder={t("password_placeholder")}
             value={password}
             onChange={(e) => {
@@ -175,26 +179,24 @@ export default function RegisterForm() {
               if (errors.password)
                 setErrors((prev) => ({ ...prev, password: null }));
             }}
+            required
+            error={errors.password ? t(errors.password) : null}
             rightElement={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="cursor-pointer p-1"
               >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             }
           />
-          <ErrorText error={errors.password} t={t} />
         </div>
 
         <div>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
+            label={t("confirm_password_placeholder")}
             placeholder={t("confirm_password_placeholder")}
             value={confirmPassword}
             onChange={(e) => {
@@ -202,21 +204,18 @@ export default function RegisterForm() {
               if (errors.confirmPassword)
                 setErrors((prev) => ({ ...prev, confirmPassword: null }));
             }}
+            required
+            error={errors.confirmPassword ? t(errors.confirmPassword) : null}
             rightElement={
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 className="cursor-pointer p-1"
               >
-                {showConfirmPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             }
           />
-          <ErrorText error={errors.confirmPassword} t={t} />
         </div>
       </div>
 

@@ -9,7 +9,6 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function LoginForm() {
@@ -166,34 +165,35 @@ export default function LoginForm() {
         <div>
           <InputField
             type="email"
+            label={t("email_placeholder")}
             placeholder={t("email_placeholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            required
+            error={errors.email ? t(errors.email) : null}
           />
-          <ErrorText error={errors.email} t={t} />
         </div>
+        
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label={t("password_placeholder")}
             placeholder={t("password_placeholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            error={errors.password ? t(errors.password) : null}
             rightElement={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="cursor-pointer p-1"
               >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             }
           />
-          <ErrorText error={errors.password} t={t} />
         </div>
       </div>
 

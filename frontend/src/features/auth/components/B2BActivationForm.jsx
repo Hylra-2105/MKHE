@@ -6,7 +6,6 @@ import { Eye, EyeOff } from "lucide-react";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 import { authApi } from "@/api/authApi";
 
 export default function B2BActivationForm() {
@@ -73,12 +72,15 @@ export default function B2BActivationForm() {
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label="Mật khẩu mới"
             placeholder="Mật khẩu mới"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
               if (error.password) setError({ ...error, password: null });
             }}
+            required
+            error={error.password ? "Vui lòng kiểm tra lại mật khẩu (Tối thiểu 6 ký tự)" : null}
             rightElement={
               <button
                 type="button"
@@ -93,12 +95,12 @@ export default function B2BActivationForm() {
               </button>
             }
           />
-          <ErrorText error={error.password ? "Vui lòng kiểm tra lại mật khẩu (Tối thiểu 6 ký tự)" : null} />
         </div>
 
         <div>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
+            label="Xác nhận mật khẩu mới"
             placeholder="Xác nhận mật khẩu mới"
             value={confirmPassword}
             onChange={(e) => {
@@ -106,6 +108,8 @@ export default function B2BActivationForm() {
               if (error.confirmPassword)
                 setError({ ...error, confirmPassword: null });
             }}
+            required
+            error={error.confirmPassword ? "Mật khẩu không khớp" : null}
             rightElement={
               <button
                 type="button"
@@ -120,7 +124,6 @@ export default function B2BActivationForm() {
               </button>
             }
           />
-          <ErrorText error={error.confirmPassword ? "Mật khẩu không khớp" : null} />
         </div>
       </div>
 

@@ -7,7 +7,6 @@ import { Eye, EyeOff } from "lucide-react";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 
 export default function ResetPasswordForm() {
   const { t } = useTranslation(["forgot_password", "common"]);
@@ -82,12 +81,15 @@ export default function ResetPasswordForm() {
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label={t("pass_placeholder")}
             placeholder={t("pass_placeholder")}
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
               if (error.password) setError({ ...error, password: null });
             }}
+            required
+            error={error.password ? t(error.password) : null}
             rightElement={
               <button
                 type="button"
@@ -102,12 +104,12 @@ export default function ResetPasswordForm() {
               </button>
             }
           />
-          <ErrorText error={error.password} t={t} />
         </div>
 
         <div>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
+            label={t("confirm_placeholder")}
             placeholder={t("confirm_placeholder")}
             value={confirmPassword}
             onChange={(e) => {
@@ -115,6 +117,8 @@ export default function ResetPasswordForm() {
               if (error.confirmPassword)
                 setError({ ...error, confirmPassword: null });
             }}
+            required
+            error={error.confirmPassword ? t(error.confirmPassword) : null}
             rightElement={
               <button
                 type="button"
@@ -129,7 +133,6 @@ export default function ResetPasswordForm() {
               </button>
             }
           />
-          <ErrorText error={error.confirmPassword} t={t} />
         </div>
       </div>
 
