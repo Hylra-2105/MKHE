@@ -214,7 +214,7 @@ const BlogList = () => {
                   </div>
                 )}
                 <div className="absolute top-3 right-3 flex gap-2">
-                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${blog.status === "PUBLISHED" ? "bg-green-500/80 text-white" : "bg-mkhe-border/80 text-mkhe-text"}`}>
+                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${blog.status === "PUBLISHED" ? "bg-emerald-500/80 text-white" : "bg-mkhe-border/80 text-mkhe-text"}`}>
                     {blog.status === "PUBLISHED" ? t("admin.status.PUBLISHED") : t("admin.status.DRAFT")}
                   </span>
                 </div>
@@ -245,7 +245,7 @@ const BlogList = () => {
                         <Eye className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.delete")}>
+                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.delete")}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -283,7 +283,7 @@ const BlogList = () => {
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-emerald-500/10 text-emerald-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
                       {blog.status === "PUBLISHED" ? t("admin.status.PUBLISHED") : t("admin.status.DRAFT")}
                     </span>
                   </td>
@@ -300,7 +300,7 @@ const BlogList = () => {
                           <Eye className="w-4 h-4" />
                         </button>
                       )}
-                      <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
+                      <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

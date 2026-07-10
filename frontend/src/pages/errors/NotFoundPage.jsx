@@ -32,7 +32,7 @@ export default function NotFoundPage() {
 
         <div className="flex justify-center">
           <Link
-            to="/home"
+            to="/"
             className="inline-flex items-center gap-2.5 bg-mkhe-primary text-white px-7 py-3 rounded-md hover:opacity-90 transition-opacity font-semibold tracking-wider text-sm uppercase shadow-lg"
           >
             {t("back_to_home")}

@@ -134,7 +134,7 @@ const VouchersTab = () => {
                 )}
                 {userVoucher.status === "EXPIRED" && (
                   <div className="absolute inset-0 bg-mkhe-bg/60 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
-                    <span className="font-bold text-red-500/80 text-lg px-4 py-1 bg-mkhe-card/80 border border-red-500/20 rounded-lg shadow-sm transform -rotate-12">
+                    <span className="font-bold text-rose-500/80 text-lg px-4 py-1 bg-mkhe-card/80 border border-rose-500/20 rounded-lg shadow-sm transform -rotate-12">
                       {t("profile.voucher_expired", { defaultValue: "ĐÃ HẾT HẠN" })}
                     </span>
                   </div>

@@ -128,7 +128,7 @@ const ReturnDetailModal = ({ returnRequest, onClose, onSuccess }) => {
           
           <div className="bg-[var(--color-mkhe-input)]/30 p-5 rounded-2xl border border-[var(--color-mkhe-primary)]/20 shadow-sm shadow-[var(--color-mkhe-primary)]/5">
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-3">
-              {t("returns.admin_note")} {isPending && <span className="text-red-500">*</span>}
+              {t("returns.admin_note")} {isPending && <span className="text-rose-500">*</span>}
             </h3>
             <textarea
               defaultValue={returnRequest.adminNote || ""}
@@ -187,7 +187,7 @@ const ReturnDetailModal = ({ returnRequest, onClose, onSuccess }) => {
                   setConfirmData({ status: "REJECTED", actionName: t("returns.reject_btn") });
                 }}
                 disabled={isSubmitting}
-                className="px-6 py-2.5 rounded-lg font-bold text-sm bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-all disabled:opacity-50 cursor-pointer"
+                className="px-6 py-2.5 rounded-lg font-bold text-sm bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {t("returns.reject_btn")}
               </button>

@@ -23,8 +23,8 @@ const ReturnList = () => {
 
   const STATUS_CONFIG = useMemo(() => ({
     PENDING: { color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30", label: t("returns.status.PENDING") },
-    APPROVED: { color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30", label: t("returns.status.APPROVED") },
-    REJECTED: { color: "text-red-600", bg: "bg-red-500/10", border: "border-red-500/30", label: t("returns.status.REJECTED") }
+    APPROVED: { color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30", label: t("returns.status.APPROVED") },
+    REJECTED: { color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30", label: t("returns.status.REJECTED") }
   }), [t]);
 
   useEffect(() => {

@@ -253,7 +253,7 @@ const ReturnModal = ({ order, onClose, onSuccess }) => {
                       <div className="flex items-center justify-between">
                         <h4 className="font-semibold text-sm text-[var(--color-mkhe-text)]">{item.name}</h4>
                         {isFullyReturned && (
-                          <span className="text-[10px] font-bold bg-red-500/20 text-red-500 px-2.5 py-1 rounded-full whitespace-nowrap border border-red-500/20 shadow-sm shadow-red-500/10">Đã báo lỗi tối đa</span>
+                          <span className="text-[10px] font-bold bg-rose-500/20 text-rose-500 px-2.5 py-1 rounded-full whitespace-nowrap border border-rose-500/20 shadow-sm shadow-rose-500/10">Đã báo lỗi tối đa</span>
                         )}
                       </div>
                       <p className="text-xs text-[var(--color-mkhe-text)]/50 mt-1">Đã mua: {item.quantity}</p>
@@ -289,7 +289,7 @@ const ReturnModal = ({ order, onClose, onSuccess }) => {
 
                       <div>
                         <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-2">
-                          {t("returns.create.upload_proof")} <span className="ml-1 text-red-500">*</span>
+                          {t("returns.create.upload_proof")} <span className="ml-1 text-rose-500">*</span>
                         </label>
                         <div className="flex flex-wrap gap-3">
                           {itemState.proofImages.map((img, index) => (
@@ -343,7 +343,7 @@ const ReturnModal = ({ order, onClose, onSuccess }) => {
                           </label>
                         </div>
                         {formErrors[`images_${item._id}`] && (
-                          <div className="flex items-center gap-1.5 mt-2 ml-1 text-red-500">
+                          <div className="flex items-center gap-1.5 mt-2 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0" />
                             <p className="text-xs font-medium">{formErrors[`images_${item._id}`]}</p>
                           </div>

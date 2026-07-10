@@ -161,7 +161,7 @@ export default function ContactManagementFeature() {
       case "CONTACTED":
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-600 border border-blue-500/30">{t("contacts.status_contacted")}</span>;
       case "RESOLVED":
-        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-600 border border-green-500/30">{t("contacts.status_resolved")}</span>;
+        return <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/30">{t("contacts.status_resolved")}</span>;
       default:
         return <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-500/10 text-gray-600 border border-gray-500/30">{status}</span>;
     }
@@ -325,7 +325,7 @@ export default function ContactManagementFeature() {
                       </button>
                       <button
                         onClick={() => setContactToDelete(contact._id)}
-                        className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
+                        className="p-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-full transition-colors cursor-pointer flex items-center justify-center w-9 h-9 shrink-0"
                         title={t("contacts.delete_request")}
                       >
                         <Trash2 className="w-4 h-4" />

@@ -33,7 +33,7 @@ const Model3DUploader = ({
           isDragging3D
             ? "border-mkhe-primary bg-mkhe-primary/10"
             : file3D
-            ? "border-green-500/50 bg-green-500/5 hover:border-green-500"
+            ? "border-emerald-500/50 bg-emerald-500/5 hover:border-emerald-500"
             : "border-[var(--color-mkhe-border)]/50 hover:border-mkhe-primary hover:bg-mkhe-primary/5"
         }`}
       >
@@ -54,21 +54,21 @@ const Model3DUploader = ({
           </div>
         ) : file3D ? (
           <div className="flex flex-col items-center text-center">
-            <CheckCircle className="w-6 h-6 mb-1 text-green-500" />
-            <p className="text-xs font-semibold text-green-600 truncate max-w-[200px]">
+            <CheckCircle className="w-6 h-6 mb-1 text-emerald-500" />
+            <p className="text-xs font-semibold text-emerald-600 truncate max-w-[200px]">
               {file3D.name || t("modal.3d_file.selected_file", { defaultValue: "Đã chọn file 3D mới" })}
             </p>
-            <p className="text-[10px] text-green-600/70 mt-0.5">
+            <p className="text-[10px] text-emerald-600/70 mt-0.5">
               {(file3D.size / (1024 * 1024)).toFixed(2)} MB
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-[10px] px-2 py-1 bg-green-500/10 rounded font-medium text-green-600">
+              <span className="text-[10px] px-2 py-1 bg-emerald-500/10 rounded font-medium text-emerald-600">
                 {t("modal.3d_file.optimized", { defaultValue: "Đã nén chuẩn Web" })}
               </span>
               <button
                 type="button"
                 onClick={onRemove3DFile}
-                className="text-[10px] text-red-500 hover:text-red-600 font-bold px-2 py-1 bg-red-500/10 hover:bg-red-500/20 rounded transition-colors"
+                className="text-[10px] text-rose-500 hover:text-rose-600 font-bold px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 rounded transition-colors"
               >
                 {t("modal.3d_file.delete", { defaultValue: "Xóa" })}
               </button>
@@ -76,8 +76,8 @@ const Model3DUploader = ({
           </div>
         ) : isDeleted3D ? (
           <div className="flex flex-col items-center text-center">
-            <AlertTriangle className="w-6 h-6 mb-2 text-red-500" />
-            <p className="text-sm font-semibold text-red-500">
+            <AlertTriangle className="w-6 h-6 mb-2 text-rose-500" />
+            <p className="text-sm font-semibold text-rose-500">
               {t("modal.3d_file.deleted", { defaultValue: "Sẽ Xóa Model 3D hiện tại" })}
             </p>
             <p className="text-xs text-mkhe-text/50 mt-1">

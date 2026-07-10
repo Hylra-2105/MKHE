@@ -228,7 +228,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             <div className="space-y-2 pt-1">
               <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
                 {t("users.role", "Vai trò (Phân quyền)")}{" "}
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-rose-500">*</span>
               </label>
               <Dropdown
                 value={formData.role}

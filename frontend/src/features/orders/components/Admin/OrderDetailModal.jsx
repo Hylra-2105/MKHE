@@ -40,8 +40,8 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
       case "PENDING": return "!bg-yellow-500/10 !text-yellow-600 !border-yellow-500/30";
       case "CONFIRMED": return "!bg-blue-500/10 !text-blue-600 !border-blue-500/30";
       case "DELIVERING": return "!bg-indigo-500/10 !text-indigo-600 !border-indigo-500/30";
-      case "COMPLETED": return "!bg-green-500/10 !text-green-600 !border-green-500/30";
-      case "CANCELLED": return "!bg-red-500/10 !text-red-600 !border-red-500/30";
+      case "COMPLETED": return "!bg-emerald-500/10 !text-emerald-600 !border-emerald-500/30";
+      case "CANCELLED": return "!bg-rose-500/10 !text-rose-600 !border-rose-500/30";
       default: return "!bg-gray-500/10 !text-gray-600 !border-gray-500/30";
     }
   };
@@ -109,7 +109,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                       value={localPaymentStatus}
                       options={[
                         { value: "UNPAID", label: t("admin:orders.unpaid", { defaultValue: "Chưa thanh toán" }), color: "text-amber-500" },
-                        { value: "PAID", label: t("admin:orders.paid", { defaultValue: "Đã thanh toán" }), color: "text-green-600" }
+                        { value: "PAID", label: t("admin:orders.paid", { defaultValue: "Đã thanh toán" }), color: "text-emerald-600" }
                       ]}
                       onChange={(val) => {
                         setLocalPaymentStatus(val);
@@ -153,7 +153,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                     optionClassName="text-sm font-semibold"
                   />
                   {(order.orderStatus === "CANCELLED" || order.orderStatus === "COMPLETED") && (
-                    <p className="text-xs text-red-500/80 mt-1 italic">Trạng thái này không thể thay đổi nữa.</p>
+                    <p className="text-xs text-rose-500/80 mt-1 italic">Trạng thái này không thể thay đổi nữa.</p>
                   )}
                 </div>
               </div>
@@ -218,7 +218,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                   <span>{order.shippingFee.toLocaleString()}đ</span>
                 </div>
                 {order.discountAmount > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-emerald-600">
                     <span>{t("history:discount", { defaultValue: "Giảm giá" })}:</span>
                     <span>-{order.discountAmount.toLocaleString()}đ</span>
                   </div>

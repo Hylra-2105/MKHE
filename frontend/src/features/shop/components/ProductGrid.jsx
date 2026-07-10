@@ -117,7 +117,7 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
                   </div>
                 )}
                 {isSaleValid && (
-                  <div className="bg-red-600/90 text-white px-2.5 py-1 rounded-xl shadow-lg backdrop-blur-md border border-red-500/50">
+                  <div className="bg-rose-600/90 text-white px-2.5 py-1 rounded-xl shadow-lg backdrop-blur-md border border-rose-500/50">
                     <span className="text-[11px] font-bold tracking-wider">-{Math.round((1 - product.salePrice / product.price) * 100)}%</span>
                   </div>
                 )}

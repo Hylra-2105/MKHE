@@ -1,6 +1,9 @@
 {
-  "title": "我的订单",
-  "desc": "跟踪和管理您的订单",
+  "title": "交易记录",
+  "desc": "追踪和管理您的订单",
+  "tx_title": "交易记录",
+  "tx_desc": "管理您的付款记录",
+  "completed": "已完成",
   "fetch_orders_error": "无法加载订单历史",
   "no_orders": "您还没有任何订单。",
   "fetch_order_error": "无法加载订单详细信息",

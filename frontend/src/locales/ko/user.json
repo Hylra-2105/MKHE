@@ -26,6 +26,8 @@
   "profile": {
     "title": "개인 프로필",
     "general_info": "일반 정보",
+    "transactions": "거래 내역",
+    "vouchers": "내 바우처",
     "change_password": "비밀번호 변경",
     "update_avatar": "아바타 업데이트",
     "drag_drop": "이미지/비디오를 여기에 드래그 앤 드롭하세요.",
@@ -58,5 +60,13 @@
   "INVALID_OR_EXPIRED_OTP": "OTP 코드가 유효하지 않거나 만료되었습니다.",
   "PASSWORD_MUST_BE_DIFFERENT": "새 비밀번호는 현재 비밀번호와 달라야 합니다.",
   "USER_NOT_FOUND": "User account not found.",
-  "SERVER_ERROR": "예상치 못한 오류가 발생했습니다. 나중에 다시 시도해 주세요."
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "사용 가능",
+    "status_used": "사용됨",
+    "status_expired": "만료됨",
+    "discount": "할인",
+    "expiry": "만료일",
+    "no_vouchers": "아직 바우처가 없습니다"
+  }
 }

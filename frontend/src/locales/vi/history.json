@@ -1,6 +1,9 @@
 {
-  "title": "Đơn hàng của tôi",
+  "title": "Lịch sử mua hàng",
   "desc": "Theo dõi và quản lý các đơn hàng của bạn",
+  "tx_title": "Lịch sử giao dịch",
+  "tx_desc": "Quản lý dòng tiền thanh toán",
+  "completed": "Hoàn tất",
   "fetch_orders_error": "Không thể tải lịch sử đơn hàng",
   "no_orders": "Bạn chưa có đơn hàng nào.",
   "fetch_order_error": "Lỗi khi tải chi tiết đơn hàng",

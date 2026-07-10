@@ -91,7 +91,7 @@ const ImageGalleryUploader = ({
                     e.stopPropagation();
                     onMarkImageForDeletion(url);
                   }}
-                  className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 cursor-pointer shadow-md"
+                  className="absolute top-1 right-1 p-1 bg-rose-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600 z-10 cursor-pointer shadow-md"
                   title={t("modal.mark_for_deletion", { defaultValue: "Xóa ảnh" })}
                 >
                   <Trash2 className="w-3 h-3" />
@@ -131,7 +131,7 @@ const ImageGalleryUploader = ({
                     e.stopPropagation();
                     onRemoveNewImage(index);
                   }}
-                  className="absolute top-1 right-1 p-1 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10 cursor-pointer shadow-md"
+                  className="absolute top-1 right-1 p-1 bg-rose-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600 z-10 cursor-pointer shadow-md"
                   title={t("modal.delete_image", { defaultValue: "Xóa" })}
                 >
                   <X className="w-3 h-3" />
@@ -150,14 +150,14 @@ const ImageGalleryUploader = ({
       {/* 3. ẢNH ĐÁNH DẤU XÓA (DELETED IMAGES) */}
       {deletedImages.length > 0 && (
         <div className="mt-6">
-          <p className="text-[10px] font-bold text-red-500 uppercase mb-3">
+          <p className="text-[10px] font-bold text-rose-500 uppercase mb-3">
             {t("modal.marked_for_deletion", { defaultValue: "ĐÃ ĐÁNH DẤU XÓA" })}
           </p>
           <div className="grid grid-cols-3 gap-3">
             {deletedImages.map((url, index) => (
               <div
                 key={`deleted-${index}`}
-                className="relative rounded-lg overflow-hidden border-2 border-red-500/50 aspect-square"
+                className="relative rounded-lg overflow-hidden border-2 border-rose-500/50 aspect-square"
               >
                 <img
                   src={url}
@@ -166,7 +166,7 @@ const ImageGalleryUploader = ({
                   className="w-full h-full object-cover grayscale opacity-40 blur-[1px]"
                 />
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/10">
-                  <Trash2 className="w-6 h-6 text-red-500 mb-1" />
+                  <Trash2 className="w-6 h-6 text-rose-500 mb-1" />
                 </div>
                 <button
                   type="button"

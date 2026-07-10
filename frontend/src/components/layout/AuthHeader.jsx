@@ -55,7 +55,7 @@ export default function AuthHeader() {
     <header className="relative z-[100] flex justify-between items-center px-8 py-4 bg-mkhe-input border-b border-mkhe-border transition-colors duration-300">
       {/* LOGO */}
       <Link
-        to="/home"
+        to="/"
         className="flex items-center gap-3 select-none cursor-pointer"
       >
         <img src={logo} alt="MKHE Logo" className="h-9 w-auto object-contain" />

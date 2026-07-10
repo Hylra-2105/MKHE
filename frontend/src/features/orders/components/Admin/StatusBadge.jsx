@@ -9,8 +9,8 @@ const StatusBadge = ({ status }) => {
       case "PENDING": return "bg-yellow-500/10 text-yellow-600 border border-yellow-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
       case "CONFIRMED": return "bg-blue-500/10 text-blue-600 border border-blue-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
       case "DELIVERING": return "bg-indigo-500/10 text-indigo-600 border border-indigo-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
-      case "COMPLETED": return "bg-green-500/10 text-green-600 border border-green-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
-      case "CANCELLED": return "bg-red-500/10 text-red-600 border border-red-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
+      case "COMPLETED": return "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
+      case "CANCELLED": return "bg-rose-500/10 text-rose-600 border border-rose-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
       default: return "bg-gray-500/10 text-gray-600 border border-gray-500/30 font-semibold px-3 py-1 rounded-full text-xs inline-block text-center min-w-[100px]";
     }
   };

@@ -11,7 +11,7 @@ export default function AuthRoute({ children }) {
     if (user?.role === "Staff") {
       return <Navigate to="/admin/products" replace />;
     }
-    return <Navigate to="/home" replace />; 
+    return <Navigate to="/" replace />; 
   }
 
   return children;

@@ -269,7 +269,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                     {t("common.role")}
                   </label>
                   <div
-                    className={`h-10 flex items-center justify-center gap-2 px-4 rounded-lg border transition-colors ${user.role === "Admin" ? "bg-red-500/10 border-red-500/20 text-red-600" : "bg-blue-500/10 border-blue-500/20 text-blue-600"}`}
+                    className={`h-10 flex items-center justify-center gap-2 px-4 rounded-lg border transition-colors ${user.role === "Admin" ? "bg-rose-500/10 border-rose-500/20 text-rose-600" : "bg-blue-500/10 border-blue-500/20 text-blue-600"}`}
                   >
                     <span className="text-sm font-bold transition-colors">
                       {t(`roles.${user.role?.toLowerCase()}`)}
@@ -286,7 +286,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                         ? "bg-orange-500/10 border-orange-500/20 text-orange-600"
                         : (user.role === "Enterprise" && user.resetPasswordToken) || user.isVerified === false
                         ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-600"
-                        : "bg-green-500/10 border-green-500/20 text-green-600"
+                        : "bg-emerald-500/10 border-emerald-500/20 text-emerald-600"
                     }`}
                   >
                     <span className="text-sm font-bold uppercase transition-colors">
@@ -393,7 +393,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
             {!lockOnly && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+                className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
               >
                 <Trash2 className="w-4 h-4 transition-colors" />{" "}
                 {t("common.delete_account")}
@@ -403,7 +403,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
               <button
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 border border-green-200 text-green-600 rounded-lg font-bold text-sm hover:bg-green-100 hover:border-green-300 transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-lg font-bold text-sm hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Unlock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.unlock_account")}
@@ -412,7 +412,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
               <button
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 border border-orange-200 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-100 hover:border-orange-300 transition-all cursor-pointer disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-500/20 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Lock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.lock_account")}

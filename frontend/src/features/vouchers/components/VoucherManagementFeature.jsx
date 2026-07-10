@@ -118,7 +118,7 @@ const VoucherManagementFeature = () => {
     }
     
     if (isVoucherEnded(voucher)) {
-      return <span className="px-2.5 py-1 text-xs rounded-full bg-red-500/10 text-red-500 font-bold">{t("voucher.status_ended", { defaultValue: "Đã kết thúc" })}</span>;
+      return <span className="px-2.5 py-1 text-xs rounded-full bg-rose-500/10 text-rose-500 font-bold">{t("voucher.status_ended", { defaultValue: "Đã kết thúc" })}</span>;
     }
 
     // Status is PUBLISHED
@@ -129,7 +129,7 @@ const VoucherManagementFeature = () => {
       return <span className="px-2.5 py-1 text-xs rounded-full bg-yellow-500/10 text-yellow-500 font-bold">{t("voucher.badge_upcoming", { defaultValue: "Sắp diễn ra" })}</span>;
     }
 
-    return <span className="px-2.5 py-1 text-xs rounded-full bg-green-500/10 text-green-500 font-bold">{t("voucher.status_running", { defaultValue: "Đang chạy" })}</span>;
+    return <span className="px-2.5 py-1 text-xs rounded-full bg-emerald-500/10 text-emerald-500 font-bold">{t("voucher.status_running", { defaultValue: "Đang chạy" })}</span>;
   };
 
   const isVoucherEnded = (voucher) => {
@@ -253,7 +253,7 @@ const VoucherManagementFeature = () => {
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="font-semibold text-mkhe-text flex items-center gap-1.5">
-                        <TrendingDown className="w-4 h-4 text-green-500" />
+                        <TrendingDown className="w-4 h-4 text-emerald-500" />
                         {voucher.type === "PERCENTAGE" && `${voucher.discountValue}%`}
                         {voucher.type === "FIXED_AMOUNT" && t("voucher.discount_fixed_val", { val: formatNumber(voucher.discountValue) })}
                         {voucher.type === "FREE_SHIP" && t("voucher.free_shipping")}
@@ -327,7 +327,7 @@ const VoucherManagementFeature = () => {
                           {(voucher.status === "DRAFT" || (voucher.status === "PUBLISHED" && new Date(voucher.startDate) > new Date())) && (
                             <button 
                               onClick={() => openConfirmModal(voucher, true)} 
-                              className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full transition-colors cursor-pointer"
+                              className="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-full transition-colors cursor-pointer"
                               title={t("voucher.action_delete")}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -423,7 +423,7 @@ const VoucherManagementFeature = () => {
             </button>
 
             <div className="flex flex-col items-center text-center">
-              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${confirmModal.isDelete ? "bg-red-100 text-red-500" : "bg-yellow-100 text-yellow-600"}`}>
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${confirmModal.isDelete ? "bg-rose-100 text-rose-500" : "bg-yellow-100 text-yellow-600"}`}>
                 {confirmModal.isDelete ? <Trash2 className="w-8 h-8" /> : <StopCircle className="w-8 h-8" />}
               </div>
               <h3 className="text-xl font-bold text-mkhe-text mb-2">
@@ -444,7 +444,7 @@ const VoucherManagementFeature = () => {
                 <button 
                   onClick={executeAction}
                   disabled={loading}
-                  className={`px-6 py-2.5 rounded-xl font-bold text-white transition-all text-sm cursor-pointer disabled:opacity-50 ${confirmModal.isDelete ? "bg-red-500 hover:bg-red-600 shadow-lg shadow-red-500/20" : "bg-mkhe-primary hover:bg-mkhe-primary/90 shadow-lg shadow-mkhe-primary/20"}`}
+                  className={`px-6 py-2.5 rounded-xl font-bold text-white transition-all text-sm cursor-pointer disabled:opacity-50 ${confirmModal.isDelete ? "bg-rose-500 hover:bg-rose-600 shadow-lg shadow-rose-500/20" : "bg-mkhe-primary hover:bg-mkhe-primary/90 shadow-lg shadow-mkhe-primary/20"}`}
                 >
                   {loading ? t("voucher.processing", { defaultValue: "Đang xử lý..." }) : t("voucher.confirm", { defaultValue: "Xác nhận" })}
                 </button>

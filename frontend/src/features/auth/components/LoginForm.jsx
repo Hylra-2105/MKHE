@@ -58,14 +58,10 @@ export default function LoginForm() {
           navigate(redirectPath, { state: location.state });
         } else {
           const userRole = useAuthStore.getState().user?.role;
-          if (userRole === "Admin") {
-            navigate("/admin/users");
-          } else if (userRole === "Staff") {
-            navigate("/admin/products");
-          } else if (userRole === "Enterprise") {
-            navigate("/home");
+          if (userRole === "Admin" || userRole === "Staff") {
+            navigate("/admin/dashboard");
           } else {
-            navigate("/home");
+            navigate("/");
           }
         }
       } else {
@@ -125,14 +121,10 @@ export default function LoginForm() {
         navigate(redirectPath, { state: location.state });
       } else {
         const userRole = useAuthStore.getState().user?.role;
-        if (userRole === "Admin") {
-          navigate("/admin/users");
-        } else if (userRole === "Staff") {
-          navigate("/admin/products");
-        } else if (userRole === "Enterprise") {
-          navigate("/home");
+        if (userRole === "Admin" || userRole === "Staff") {
+          navigate("/admin/dashboard");
         } else {
-          navigate("/home");
+          navigate("/");
         }
       }
     } else {

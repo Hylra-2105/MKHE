@@ -1,6 +1,9 @@
 {
-  "title": "私の注文",
+  "title": "注文履歴",
   "desc": "注文の追跡と管理",
+  "tx_title": "取引履歴",
+  "tx_desc": "支払い履歴の管理",
+  "completed": "完了",
   "fetch_orders_error": "注文履歴を読み込めませんでした",
   "no_orders": "まだ注文はありません。",
   "fetch_order_error": "注文の詳細を読み込めませんでした",

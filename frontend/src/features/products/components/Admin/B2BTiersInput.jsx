@@ -64,7 +64,7 @@ const B2BTiersInput = ({ tiers = [], onChange, error }) => {
       </div>
 
       {error && (
-        <div className="flex items-start gap-1.5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500">
+        <div className="flex items-start gap-1.5 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500">
           <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
           <p className="text-xs font-medium leading-relaxed">{error}</p>
         </div>
@@ -102,7 +102,7 @@ const B2BTiersInput = ({ tiers = [], onChange, error }) => {
               <button
                 type="button"
                 onClick={() => handleRemoveClick(index)}
-                className="p-2.5 mt-5 cursor-pointer text-mkhe-text/40 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="p-2.5 mt-5 cursor-pointer text-mkhe-text/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
                 title={t('product:products.b2b.remove_tier')}
               >
                 <Trash2 className="w-4 h-4" />

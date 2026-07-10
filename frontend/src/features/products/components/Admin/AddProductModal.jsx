@@ -608,11 +608,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 {/* DÒNG 2: PHÂN LOẠI & MÃ GEN */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.categoryMatrix} options={categories} onChange={(val) => updateField("categoryMatrix", val)} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.culturalDNA} options={culturalDNAs} onChange={(val) => updateField("culturalDNA", val)} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                 </div>
@@ -620,10 +620,10 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                 {/* DÒNG 3: NHÀ CUNG CẤP & LÀNG NGHỀ */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-rose-500">*</span></label>
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-rose-500" : ""}`} optionClassName="text-sm truncate" />
                     {formErrors.vendor && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                         <p className="text-xs font-medium">{formErrors.vendor}</p>
                       </div>
@@ -730,11 +730,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                           value={formatFlatpickrDate(formData.saleStartDate)}
                           onChange={([date]) => updateField("saleStartDate", date)}
                           options={saleStartDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleStartDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleStartDate}</p>
                           </div>
@@ -746,11 +746,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                           value={formatFlatpickrDate(formData.saleEndDate)}
                           onChange={([date]) => updateField("saleEndDate", date)}
                           options={saleEndDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleEndDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleEndDate}</p>
                           </div>
@@ -799,7 +799,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                           <div>
                             <h4 className="font-semibold text-mkhe-text text-sm">{t("modal.isService.title", "Gói Dịch Vụ B2B")}</h4>
                             <p className="text-[11px] text-mkhe-text/60 mt-0.5">{t("modal.isService.desc", "Bật tính năng này nếu đây là Gói Dịch Vụ (Tư vấn, gia công...).")}</p>
-                            <p className="text-[11px] text-red-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
+                            <p className="text-[11px] text-rose-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
                           </div>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -851,7 +851,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     </div>
                     
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-rose-500">*</span></label>
                       <input 
                         type="text" 
                         name="gpsLocation" 
@@ -864,11 +864,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                           }
                           updateField("gpsLocation", val);
                         }} 
-                        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
+                        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-rose-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder")} 
                       />
                       {formErrors.gpsLocation && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                           <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                           <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
                         </div>

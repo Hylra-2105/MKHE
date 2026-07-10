@@ -26,6 +26,8 @@
   "profile": {
     "title": "Personal Profile",
     "general_info": "General Information",
+    "transactions": "Transaction History",
+    "vouchers": "My Vouchers",
     "change_password": "Change Password",
     "update_avatar": "Update Avatar",
     "drag_drop": "Drag and drop image/video here",
@@ -58,5 +60,13 @@
   "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP code.",
   "PASSWORD_MUST_BE_DIFFERENT": "New password must be different from the current password.",
   "USER_NOT_FOUND": "User account not found.",
-  "SERVER_ERROR": "An unexpected error occurred. Please try again later."
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "Available",
+    "status_used": "Used",
+    "status_expired": "Expired",
+    "discount": "Discount",
+    "expiry": "EXP",
+    "no_vouchers": "You don't have any vouchers yet"
+  }
 }

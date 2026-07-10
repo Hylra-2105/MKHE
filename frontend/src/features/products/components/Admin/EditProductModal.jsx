@@ -763,11 +763,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 {/* DÒNG 2: PHÂN LOẠI, MÃ GEN & TRẠNG THÁI */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.categoryMatrix} options={categories} onChange={(val) => handleChange({ target: { name: "categoryMatrix", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.culturalDNA} options={culturalDNAs} onChange={(val) => handleChange({ target: { name: "culturalDNA", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-4">
@@ -779,10 +779,10 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 {/* DÒNG 3: NHÀ CUNG CẤP & LÀNG NGHỀ */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-rose-500">*</span></label>
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-rose-500" : ""}`} optionClassName="text-sm truncate" />
                     {formErrors.vendor && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                         <p className="text-xs font-medium">{formErrors.vendor}</p>
                       </div>
@@ -889,11 +889,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           value={formatFlatpickrDate(formData.saleStartDate)}
                           onChange={([date]) => updateField("saleStartDate", date)}
                           options={saleStartDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleStartDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleStartDate}</p>
                           </div>
@@ -905,11 +905,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           value={formatFlatpickrDate(formData.saleEndDate)}
                           onChange={([date]) => updateField("saleEndDate", date)}
                           options={saleEndDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleEndDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleEndDate}</p>
                           </div>
@@ -958,7 +958,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           <div>
                             <h4 className="font-semibold text-mkhe-text text-sm">{t("modal.isService.title", "Gói Dịch Vụ B2B")}</h4>
                             <p className="text-[11px] text-mkhe-text/60 mt-0.5">{t("modal.isService.desc", "Bật tính năng này nếu đây là Gói Dịch Vụ (Tư vấn, gia công...).")}</p>
-                            <p className="text-[11px] text-red-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
+                            <p className="text-[11px] text-rose-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
                           </div>
                         </div>
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -1007,7 +1007,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       <InputField type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} label={t("modal.dpp.artisan_name")} placeholder={t("modal.dpp.artisan_placeholder_edit")} required error={formErrors.artisanName ? formErrors.artisanName : null} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-rose-500">*</span></label>
                       <input 
                         type="text" 
                         name="gpsLocation" 
@@ -1020,11 +1020,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           }
                           handleChange(e);
                         }} 
-                        className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
+                        className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-rose-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder_edit")} 
                       />
                       {formErrors.gpsLocation && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                           <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                           <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
                         </div>
@@ -1089,17 +1089,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     {/* HIỂN THỊ FILE 3D HIỆN TẠI (LÀM MỜ NẾU BỊ ĐÁNH DẤU XÓA HOẶC BỊ GHI ĐÈ BỞI FILE MỚI) */}
                     {product?.file3D && (
                       <div className={`mt-3 border rounded-lg p-3 flex items-center justify-between shadow-sm transition-all duration-300
-                        ${(isDeleted3D || file3D) ? 'bg-gray-50 border-gray-200 opacity-60 grayscale' : 'bg-green-50 border-green-200'}
+                        ${(isDeleted3D || file3D) ? 'bg-gray-50 border-gray-200 opacity-60 grayscale' : 'bg-emerald-50 border-emerald-200'}
                       `}>
                         <div className="flex items-center gap-3 text-mkhe-text">
-                          <div className={`p-2 rounded-md ${(isDeleted3D || file3D) ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-600'}`}>
+                          <div className={`p-2 rounded-md ${(isDeleted3D || file3D) ? 'bg-gray-200 text-gray-500' : 'bg-emerald-100 text-emerald-600'}`}>
                             <Box className="w-5 h-5" />
                           </div>
                           <div className="flex flex-col">
-                            <span className={`text-sm font-bold ${(isDeleted3D || file3D) ? 'text-gray-500 line-through' : 'text-green-700'}`}>
+                            <span className={`text-sm font-bold ${(isDeleted3D || file3D) ? 'text-gray-500 line-through' : 'text-emerald-700'}`}>
                               {t("modal.3d_file.has_file")}
                             </span>
-                            <a href={product.file3D} target="_blank" rel="noopener noreferrer" className={`text-[11px] hover:underline flex items-center gap-1 mt-0.5 pointer-events-auto ${(isDeleted3D || file3D) ? 'text-gray-400' : 'text-green-600 hover:text-green-800'}`}>
+                            <a href={product.file3D} target="_blank" rel="noopener noreferrer" className={`text-[11px] hover:underline flex items-center gap-1 mt-0.5 pointer-events-auto ${(isDeleted3D || file3D) ? 'text-gray-400' : 'text-emerald-600 hover:text-emerald-800'}`}>
                               {t("modal.3d_file.click_view")} <ExternalLink className="w-3 h-3"/>
                             </a>
                           </div>
@@ -1110,7 +1110,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                             type="button"
                             onClick={(e) => { e.preventDefault(); setIsDeleted3D(!isDeleted3D); }}
                             className={`p-1.5 rounded-md transition-colors pointer-events-auto cursor-pointer
-                              ${isDeleted3D ? 'text-mkhe-primary hover:bg-mkhe-primary/10' : 'text-red-500 hover:bg-red-100'}
+                              ${isDeleted3D ? 'text-mkhe-primary hover:bg-mkhe-primary/10' : 'text-rose-500 hover:-rose-100'}
                             `}
                             title={isDeleted3D ? t("modal.3d_file.restore_btn") : t("modal.3d_file.delete_btn")}
                           >
@@ -1140,7 +1140,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
           <button
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
           >
             <Trash2 className="w-4 h-4" /> {t("table.delete")}
           </button>
