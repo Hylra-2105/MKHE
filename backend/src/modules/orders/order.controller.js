@@ -3,7 +3,7 @@ import Product from "../products/product.model.js";
 import Cart from "../cart/cart.model.js";
 import UserVoucher from "../vouchers/userVoucher.model.js";
 import Voucher from "../vouchers/voucher.model.js";
-import OTP from "../auth/otp.model.js";
+import redisClient from "../../config/redis.js";
 import Notification from "../notifications/notification.model.js";
 import Return from "../returns/return.model.js";
 import { getIO } from "../../config/socket.js";
@@ -32,8 +32,7 @@ export const sendCheckoutOtp = async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    await OTP.deleteMany({ email: user.email, purpose: "CHECKOUT" });
-    await OTP.create({ email: user.email, otp, purpose: "CHECKOUT" });
+    await redisClient.setex(`otp:CHECKOUT:${user.email}`, 900, otp);
 
     // Simulate SMS
     console.info(`[SIMULATE SMS] OTP for Checkout (${user.email}): ${otp}`);
@@ -63,9 +62,9 @@ export const checkout = async (req, res) => {
     // 1. Verify OTP
     if (paymentMethod === "COD" && !isTrustedDevice) {
       if (!otp) throw new Error("OTP_REQUIRED");
-      const validOtp = await OTP.findOne({ email: user.email, otp, purpose: "CHECKOUT" });
-      if (!validOtp) throw new Error("INVALID_OTP");
-      await OTP.deleteOne({ _id: validOtp._id });
+      const storedOtp = await redisClient.get(`otp:CHECKOUT:${user.email}`);
+      if (storedOtp !== otp) throw new Error("INVALID_OTP");
+      await redisClient.del(`otp:CHECKOUT:${user.email}`);
     }
 
     // 2. Check stock & calculate subtotal
