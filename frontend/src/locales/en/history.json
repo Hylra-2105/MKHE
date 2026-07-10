@@ -1,7 +1,10 @@
 {
-  "title": "My Orders",
+  "title": "Order History",
   "desc": "Track and manage your orders",
-  "fetch_orders_error": "Failed to load order history",
+  "tx_title": "Transaction History",
+  "tx_desc": "Manage your payment cash flow",
+  "completed": "Completed",
+  "fetch_orders_error": "Failed to fetch order history",
   "no_orders": "You don't have any orders yet.",
   "fetch_order_error": "Failed to load order details",
   "confirm_cancel": "Are you sure you want to cancel this order?",

@@ -178,7 +178,7 @@ export default function ContactDetailModal({ contact, isOpen, onClose, onUpdateS
           <div className="flex gap-3">
             <button
               onClick={() => onDelete(contact._id)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-bold border border-red-200 text-red-500 hover:bg-red-100 hover:border-red-300 rounded-lg transition-all duration-300 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-lg transition-all duration-300 cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
               {t("contacts.delete_request")}

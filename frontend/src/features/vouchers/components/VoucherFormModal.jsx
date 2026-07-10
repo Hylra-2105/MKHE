@@ -442,7 +442,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.discount_type_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.discount_type_label")} <span className="text-rose-500">*</span></label>
                   <Dropdown 
                     value={formData.type} 
                     options={voucherTypes} 
@@ -508,7 +508,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.start_date_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.start_date_label")} <span className="text-rose-500">*</span></label>
                   <Flatpickr
                     ref={startDateRef}
                     onClick={() => {
@@ -523,18 +523,18 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     }}
                     options={startDateOptions}
                     disabled={isPublished}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
                   {formErrors.startDate && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                       <p className="text-xs font-medium">{formErrors.startDate}</p>
                     </div>
                   )}
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.end_date_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.end_date_label")} <span className="text-rose-500">*</span></label>
                   <Flatpickr
                     ref={endDateRef}
                     onClick={() => {
@@ -546,11 +546,11 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                       if (formErrors.endDate) setFormErrors(prev => ({ ...prev, endDate: null }));
                     }}
                     options={endDateOptions}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
                     placeholder={t("voucher.end_date_placeholder")}
                   />
                   {formErrors.endDate && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                       <p className="text-xs font-medium">{formErrors.endDate}</p>
                     </div>
@@ -704,7 +704,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   type="button"
                   onClick={(e) => handleSubmit(e, "DRAFT")}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-transparent border border-red-500/50 text-red-500 rounded-xl hover:bg-red-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                  className="px-6 py-2.5 bg-transparent border border-rose-500/50 text-rose-500 rounded-xl hover:bg-rose-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
                 >
                   {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
                 </button>

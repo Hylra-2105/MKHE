@@ -223,7 +223,7 @@ const ProductGalleryUpload = ({
                   type="button"
                   onClick={() => removeImage(index)}
                   disabled={isUploading}
-                  className="absolute top-1 right-1 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 cursor-pointer"
+                  className="absolute top-1 right-1 p-1.5 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 cursor-pointer"
                 >
                   <X className="w-3 h-3" />
                 </button>

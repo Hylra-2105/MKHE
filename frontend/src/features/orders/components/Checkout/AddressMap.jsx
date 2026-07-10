@@ -72,7 +72,7 @@ export default function AddressMap({ address, coordinates, onLocationChange }) {
           onDragEnd={onMarkerDragEnd}
           anchor="bottom"
         >
-          <div className="cursor-grab active:cursor-grabbing text-red-500 hover:scale-110 transition-transform">
+          <div className="cursor-grab active:cursor-grabbing text-rose-500 hover:scale-110 transition-transform">
             <MapPin size={36} strokeWidth={2.5} fill="#f87171" />
           </div>
         </Marker>

@@ -71,6 +71,7 @@ export const collectVoucher = async (req, res) => {
       });
       const io = getIO();
       io.to(`user_${userId}`).emit("new_notification", notif);
+      io.to(`user_${userId}`).emit("wallet_updated", userVoucher);
     } catch (err) {
       console.error(err);
     }
@@ -90,10 +91,13 @@ export const collectVoucher = async (req, res) => {
 // @access  Private
 export const getUserWallet = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
+    console.log("getUserWallet triggered for user:", userId);
+    
     const userVouchers = await UserVoucher.find({ user: userId })
       .populate("voucher")
       .sort({ createdAt: -1 });
+    console.log("Found userVouchers:", userVouchers.length);
 
     // Tự động kiểm tra và cập nhật trạng thái EXPIRED
     const now = new Date();
@@ -360,6 +364,7 @@ export const collectVoucherByCode = async (req, res) => {
       });
       const io = getIO();
       io.to(`user_${userId}`).emit("new_notification", notif);
+      io.to(`user_${userId}`).emit("wallet_updated", userVoucher);
     } catch (err) {
       console.error(err);
     }
@@ -516,6 +521,7 @@ export const claimNfcGacha = async (req, res) => {
       });
       const io = getIO();
       io.to(`user_${userId}`).emit("new_notification", notif);
+      io.to(`user_${userId}`).emit("wallet_updated", newUserVoucher);
     } catch (err) {
       console.error(err);
     }

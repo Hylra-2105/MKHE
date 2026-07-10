@@ -46,7 +46,7 @@ const UserReturnDetailModal = ({ returnRequest, onClose }) => {
           <div className="mb-8">
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("returns.detail_status", { defaultValue: "Trạng thái" })}</h3>
             {isRejected ? (
-              <div className="bg-red-500/10 text-red-500 p-4 rounded-xl flex items-center gap-3 font-semibold">
+              <div className="bg-rose-500/10 text-rose-500 p-4 rounded-xl flex items-center gap-3 font-semibold">
                 <XCircle className="w-6 h-6" />
                 {t("returns.status.REJECTED", { defaultValue: "Đã từ chối" })}
               </div>
@@ -112,7 +112,7 @@ const UserReturnDetailModal = ({ returnRequest, onClose }) => {
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("returns.items_title")}</h3>
             <div className="space-y-4">
               {returnRequest.items.map((item, index) => (
-                <div key={index} className="flex flex-col gap-4 p-4 rounded-xl bg-[var(--color-mkhe-input)]/20 border border-mkhe-primary/10 hover:border-mkhe-primary/30 transition-colors group">
+                <div key={index} className="flex flex-col gap-4 p-4 rounded-xl bg-[var(--color-mkhe-input)]/20 border border-[var(--color-mkhe-primary)]/30 hover:border-mkhe-primary/60 transition-colors group">
                   <div className="flex gap-4">
                     <div className="w-20 h-20 bg-[var(--color-mkhe-bg)] rounded-lg overflow-hidden border border-[var(--color-mkhe-border)]/10 shrink-0">
                       {item.image ? (
@@ -135,7 +135,7 @@ const UserReturnDetailModal = ({ returnRequest, onClose }) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     {/* Reason */}
-                    <div className="bg-[var(--color-mkhe-input)]/40 p-4 rounded-xl border border-[var(--color-mkhe-border)]/30">
+                    <div className="bg-[var(--color-mkhe-input)]/40 p-4 rounded-xl border border-[var(--color-mkhe-primary)]/30">
                       <h4 className="text-xs font-bold text-[var(--color-mkhe-text)]/70 flex items-center gap-1.5 mb-2">
                         <HelpCircle className="w-4 h-4 text-mkhe-primary" />
                         {t("returns.reason_label")}
@@ -145,7 +145,7 @@ const UserReturnDetailModal = ({ returnRequest, onClose }) => {
                     
                     {/* Proof Images */}
                     {item.proofImages && item.proofImages.length > 0 && (
-                      <div className="bg-[var(--color-mkhe-input)]/40 p-4 rounded-xl border border-[var(--color-mkhe-border)]/30">
+                      <div className="bg-[var(--color-mkhe-input)]/40 p-4 rounded-xl border border-[var(--color-mkhe-primary)]/30">
                         <h4 className="text-xs font-bold text-[var(--color-mkhe-text)]/70 flex items-center gap-1.5 mb-2">
                           <ImageIcon className="w-4 h-4 text-mkhe-primary" />
                           {t("returns.create.upload_proof", { defaultValue: "Hình ảnh/Video" })}

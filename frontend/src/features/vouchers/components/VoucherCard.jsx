@@ -121,7 +121,7 @@ const VoucherCard = ({
 
         
         {!isEligible && reason && mode === "selector" && (
-          <p className="text-[10px] text-red-500/90 mt-2 bg-red-500/10 p-1.5 rounded border border-red-500/20">
+          <p className="text-[10px] text-rose-500/90 mt-2 bg-rose-500/10 p-1.5 rounded border border-rose-500/20">
             {reason}
           </p>
         )}

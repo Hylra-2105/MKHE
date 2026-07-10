@@ -22,8 +22,8 @@ const ReturnHistoryTab = () => {
 
   const STATUS_CONFIG = {
     PENDING: { color: "text-amber-500", bg: "bg-amber-500/10", label: t("returns.status.PENDING") },
-    APPROVED: { color: "text-green-500", bg: "bg-green-500/10", label: t("returns.status.APPROVED") },
-    REJECTED: { color: "text-red-500", bg: "bg-red-500/10", label: t("returns.status.REJECTED") }
+    APPROVED: { color: "text-emerald-500", bg: "bg-emerald-500/10", label: t("returns.status.APPROVED") },
+    REJECTED: { color: "text-rose-500", bg: "bg-rose-500/10", label: t("returns.status.REJECTED") }
   };
 
   useEffect(() => {
@@ -125,68 +125,52 @@ const ReturnHistoryTab = () => {
                 <div 
                   key={request._id}
                   onClick={() => setSelectedReturn(request)}
-                  className="group relative bg-[var(--color-mkhe-surface)] border border-[var(--color-mkhe-border)]/10 rounded-2xl p-5 hover:border-mkhe-primary/30 transition-all cursor-pointer overflow-hidden shadow-lg hover:shadow-xl hover:-translate-y-1"
+                  className="bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-primary)]/30 rounded-2xl p-5 mb-4 shadow-sm hover:shadow-md hover:border-mkhe-primary/60 transition-all group cursor-pointer"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-mkhe-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="flex justify-between items-center mb-4 border-b border-[var(--color-mkhe-border)]/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Package className="w-5 h-5 text-mkhe-primary" />
+                      <span className="font-bold text-[var(--color-mkhe-text)]">
+                        {request.order?.orderCode}
+                      </span>
+                      <span className="text-sm text-[var(--color-mkhe-text)]/50 hidden sm:inline-flex items-center gap-1 ml-2">
+                        <Clock className="w-4 h-4" />
+                        {new Date(request.createdAt).toLocaleDateString("vi-VN")}
+                      </span>
+                    </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold ${status.bg} ${status.color}`}>
+                      {status.label}
+                    </div>
+                  </div>
                   
-                  <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
-                    
-                    <div className="flex-1 w-full space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2.5 rounded-xl bg-[var(--color-mkhe-input)] text-mkhe-primary group-hover:scale-110 transition-transform">
-                            <Package className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-[var(--color-mkhe-text)] text-sm sm:text-base">
-                              {t("returns.order_code")} <span className="text-mkhe-primary">{request.order?.orderCode}</span>
-                            </p>
-                            <div className="flex items-center gap-2 text-xs text-[var(--color-mkhe-text)]/50 mt-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>
-                                {new Date(request.createdAt).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}
-                                {" "}
-                                {new Date(request.createdAt).toLocaleDateString("vi-VN")}
-                              </span>
-                            </div>
-                          </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      {request.items && request.items[0]?.image ? (
+                        <img 
+                          src={request.items[0].image} 
+                          alt={request.items[0].name}
+                          className="w-12 h-12 rounded-lg object-cover border border-[var(--color-mkhe-border)]/20 bg-white"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-[var(--color-mkhe-border)]/10 flex items-center justify-center text-[8px] text-[var(--color-mkhe-text)]/40 border border-[var(--color-mkhe-border)]/20">
+                          No Image
                         </div>
-
-                        <div className={`px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${status.bg} ${status.color} border border-current/20 shadow-sm self-start sm:self-auto`}>
-                          {status.label}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between gap-4 bg-[var(--color-mkhe-input)]/50 rounded-xl p-3 pr-4 group-hover:bg-[var(--color-mkhe-input)] transition-colors">
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          {request.items && request.items[0]?.image ? (
-                            <img 
-                              src={request.items[0].image} 
-                              alt={request.items[0].name}
-                              className="w-12 h-12 rounded-lg object-cover border border-[var(--color-mkhe-border)]/20 bg-white"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 rounded-lg bg-[var(--color-mkhe-border)]/10 flex items-center justify-center text-[8px] text-[var(--color-mkhe-text)]/40 border border-[var(--color-mkhe-border)]/20">
-                              No Image
-                            </div>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-[var(--color-mkhe-text)] truncate">
-                              {request.items && request.items[0] ? request.items[0].name : "N/A"}
-                            </p>
-                            <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">
-                              {t("returns.return_quantity")}: <span className="font-semibold text-mkhe-primary">{request.items && request.items[0] ? request.items[0].quantity : 0}</span>
-                            </p>
-                            {request.items && request.items.length > 1 && (
-                              <p className="text-[10px] text-[var(--color-mkhe-text)]/40 mt-1 italic">
-                                + {request.items.length - 1} {t("other_products")}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <ChevronRight className="w-5 h-5 shrink-0 text-[var(--color-mkhe-text)]/30 group-hover:text-mkhe-primary group-hover:translate-x-1 transition-all" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-[var(--color-mkhe-text)] truncate">
+                          {request.items && request.items[0] ? request.items[0].name : "N/A"}
+                        </p>
+                        <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">
+                          {t("returns.return_quantity")}: <span className="font-semibold text-mkhe-primary">{request.items && request.items[0] ? request.items[0].quantity : 0}</span>
+                        </p>
+                        {request.items && request.items.length > 1 && (
+                          <p className="text-[10px] text-[var(--color-mkhe-text)]/40 mt-1 italic">
+                            + {request.items.length - 1} {t("other_products")}
+                          </p>
+                        )}
                       </div>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-[var(--color-mkhe-text)]/30 group-hover:text-mkhe-primary transition-colors" />
                   </div>
                 </div>
               );

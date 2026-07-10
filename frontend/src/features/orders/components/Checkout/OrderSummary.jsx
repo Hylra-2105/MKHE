@@ -78,7 +78,7 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
             <span className="font-medium text-mkhe-text">{shippingFee === 0 ? t("summary.free") : formatMoney(shippingFee)}</span>
           </div>
           {discountAmount > 0 && (
-            <div className="flex justify-between text-green-500">
+            <div className="flex justify-between text-emerald-500">
               <span>{t("summary.discount")}:</span>
               <span>-{formatMoney(discountAmount)}</span>
             </div>

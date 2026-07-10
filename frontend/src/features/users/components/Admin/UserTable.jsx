@@ -78,9 +78,9 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                   <span
                     className={`px-2.5 py-1 rounded text-xs font-bold border ${
                       user.role === "Admin"
-                        ? "bg-red-500/10 text-red-600 border-red-500/30"
+                        ? "bg-rose-500/10 text-rose-600 border-rose-500/30"
                         : user.role === "Staff"
-                          ? "bg-green-500/10 text-green-600 border-green-500/30"
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
                           : "bg-blue-500/10 text-blue-600 border-blue-500/30"
                     }`}
                   >
@@ -97,7 +97,7 @@ const UserTable = ({ users, loading, onViewUser, currentUser }) => {
                       {t("table.status_pending")}
                     </span>
                   ) : (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-green-500/10 text-green-600 border border-green-500/30">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/30">
                       {t("table.status_active")}
                     </span>
                   )}

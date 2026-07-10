@@ -297,13 +297,19 @@ export const getMyOrders = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    const paymentStatus = req.query.paymentStatus;
 
-    const orders = await Order.find({ user: req.user._id })
+    const query = { user: req.user._id };
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+
+    const orders = await Order.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Order.countDocuments({ user: req.user._id });
+    const total = await Order.countDocuments(query);
 
     return successResponse(res, 200, "OK", {
       data: orders,

@@ -26,6 +26,8 @@
   "profile": {
     "title": "Hồ sơ cá nhân",
     "general_info": "Thông tin chung",
+    "transactions": "Lịch sử giao dịch",
+    "vouchers": "Ví Voucher",
     "change_password": "Đổi mật khẩu",
     "update_avatar": "Cập nhật ảnh đại diện",
     "drag_drop": "Kéo thả ảnh/video vào đây",
@@ -55,7 +57,14 @@
     "edit": "Chỉnh sửa",
     "save_info": "Lưu thông tin"
   },
-
+  "vouchers_tab": {
+    "status_available": "Khả dụng",
+    "status_used": "Đã sử dụng",
+    "status_expired": "Đã hết hạn",
+    "discount": "Giảm",
+    "expiry": "HSD",
+    "no_vouchers": "Bạn chưa có voucher nào"
+  },
   "INVALID_OR_EXPIRED_OTP": "Mã OTP không hợp lệ hoặc đã hết hạn.",
   "PASSWORD_MUST_BE_DIFFERENT": "Mật khẩu mới không được trùng với mật khẩu hiện tại.",
   "USER_NOT_FOUND": "Không tìm thấy thông tin tài khoản.",

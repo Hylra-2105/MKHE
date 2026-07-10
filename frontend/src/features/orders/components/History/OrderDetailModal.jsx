@@ -182,7 +182,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
           <div className="mb-8">
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("history:order_status", { defaultValue: "Trạng thái đơn hàng" })}</h3>
             {isCancelled ? (
-              <div className="bg-red-500/10 text-red-500 p-4 rounded-xl flex items-center gap-3 font-semibold">
+              <div className="bg-rose-500/10 text-rose-500 p-4 rounded-xl flex items-center gap-3 font-semibold">
                 <X className="w-6 h-6" />
                 {t("history:status_cancelled", { defaultValue: "Đơn hàng đã bị hủy" })}
               </div>
@@ -253,7 +253,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                 <p>{order.paymentMethod === "COD" ? t("checkout:payment_method.cod", { defaultValue: "Thanh toán khi nhận hàng (COD)" }) : t("checkout:payment_method.bank_transfer", { defaultValue: "Chuyển khoản ngân hàng" })}</p>
                 <p className="mt-2 font-semibold flex items-center gap-2">
                   {t("history:payment_status", { defaultValue: "Trạng thái" })}: 
-                  <span className={order.paymentStatus === "PAID" ? "text-green-500" : "text-amber-500"}>
+                  <span className={order.paymentStatus === "PAID" ? "text-emerald-500" : "text-amber-500"}>
                     {order.paymentStatus === "PAID" ? t("history:payment_paid", { defaultValue: "Đã thanh toán" }) : t("history:payment_unpaid", { defaultValue: "Chưa thanh toán" })}
                   </span>
                 </p>
@@ -329,7 +329,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                 <span>{formatMoney(order.shippingFee)}</span>
               </div>
               {order.discountAmount > 0 && (
-                <div className="flex justify-between text-green-500">
+                <div className="flex justify-between text-emerald-500">
                   <span>{t("history:discount", { defaultValue: "Giảm giá" })} {order.voucherCode ? `(${order.voucherCode})` : ""}</span>
                   <span>-{formatMoney(order.discountAmount)}</span>
                 </div>
@@ -348,7 +348,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             <button
               onClick={handleCancelOrderClick}
               disabled={isCancelling}
-              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors disabled:opacity-50 cursor-pointer"
+              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 transition-colors disabled:opacity-50 cursor-pointer"
             >
               {isCancelling ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : t("history:cancel_btn", { defaultValue: "Hủy đơn hàng" })}
             </button>
@@ -358,7 +358,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             <button
               onClick={handleReceiveClick}
               disabled={isReceiving}
-              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer border border-green-500/30"
+              className="px-6 py-2.5 rounded-xl font-bold text-sm bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer border border-emerald-500/30"
             >
               {isReceiving ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

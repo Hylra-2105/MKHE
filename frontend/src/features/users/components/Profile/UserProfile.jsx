@@ -11,7 +11,9 @@ import {
   UploadCloud,
   X,
   ShoppingBag,
-  Gift
+  Gift,
+  CreditCard,
+  Ticket
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
@@ -19,9 +21,11 @@ import GeneralInfoTab from "./GeneralInfoTab";
 import ChangePasswordModal from "./ChangePasswordModal";
 import OrderHistoryTab from "@/features/orders/components/History/OrderHistoryTab";
 import ReturnHistoryTab from "@/features/returns/components/User/ReturnHistoryTab";
+import TransactionHistoryTab from "./TransactionHistoryTab";
+import MyVouchersTab from "./MyVouchersTab";
 import { useLocation, useNavigate } from "react-router-dom";
 const UserProfile = () => {
-  const { t } = useTranslation(["user", "history"]);
+  const { t } = useTranslation(["user", "history", "header"]);
 
   const { user, setUser, isFetchingUser } = useAuthStore();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -206,7 +210,12 @@ const UserProfile = () => {
             </button>
           </div>
 
-          <div className="w-full space-y-3">
+          <div className="w-full flex flex-col gap-3">
+            {/* KHU VỰC: TÀI KHOẢN */}
+            <div className="w-full text-left px-2 pt-2 pb-1 text-[10px] font-bold text-[var(--color-mkhe-text)]/40 uppercase tracking-wider">
+              {t("header:user_menu.section_account", { defaultValue: "Quản lý tài khoản" })}
+            </div>
+
             <button
               onClick={() => handleTabChange("general")}
               className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
@@ -220,8 +229,40 @@ const UserProfile = () => {
             </button>
 
             <button
+              onClick={() => handleTabChange("vouchers")}
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
+                activeTab === "vouchers"
+                  ? "bg-mkhe-primary text-white border-transparent"
+                  : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
+              }`}
+            >
+              <Ticket className="w-5 h-5" />
+              <span>{t("profile.vouchers", { defaultValue: "Ví Voucher" })}</span>
+            </button>
+
+            {hasPassword && (
+              <button
+                onClick={() => setIsPasswordModalOpen(true)}
+                className="w-full flex items-center justify-between px-6 py-3.5 rounded-xl font-bold text-sm bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10 shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none"
+              >
+                <div className="flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-mkhe-primary" />
+                  <span>{t("profile.change_password")}</span>
+                </div>
+                <ChevronRight className="w-4 h-4 opacity-40" />
+              </button>
+            )}
+
+            <div className="w-full h-px bg-[var(--color-mkhe-border)]/10 my-2"></div>
+
+            {/* KHU VỰC: GIAO DỊCH & HOẠT ĐỘNG */}
+            <div className="w-full text-left px-2 pt-2 pb-1 text-[10px] font-bold text-[var(--color-mkhe-text)]/40 uppercase tracking-wider">
+              {t("header:user_menu.section_activities", { defaultValue: "Giao dịch & Hoạt động" })}
+            </div>
+
+            <button
               onClick={() => handleTabChange("orders")}
-              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none ${
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
                 activeTab === "orders"
                   ? "bg-mkhe-primary text-white border-transparent"
                   : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
@@ -232,8 +273,20 @@ const UserProfile = () => {
             </button>
 
             <button
+              onClick={() => handleTabChange("transactions")}
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
+                activeTab === "transactions"
+                  ? "bg-mkhe-primary text-white border-transparent"
+                  : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
+              }`}
+            >
+              <CreditCard className="w-5 h-5" />
+              <span>{t("profile.transactions", { defaultValue: "Lịch sử giao dịch" })}</span>
+            </button>
+
+            <button
               onClick={() => handleTabChange("returns")}
-              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none ${
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
                 activeTab === "returns"
                   ? "bg-mkhe-primary text-white border-transparent"
                   : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
@@ -242,19 +295,6 @@ const UserProfile = () => {
               <Gift className="w-5 h-5" />
               <span>{t("history:returns_tab", { defaultValue: "Đổi / Trả" })}</span>
             </button>
-
-            {hasPassword && (
-              <button
-                onClick={() => setIsPasswordModalOpen(true)}
-                className="w-full flex items-center justify-between px-6 py-3.5 rounded-xl font-bold text-sm bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10 shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none"
-              >
-                <div className="flex items-center gap-3">
-                  <ShieldCheck className="w-5 h-5 text-mkhe-primary" />
-                  <span>{t("profile.change_password")}</span>
-                </div>
-                <ChevronRight className="w-4 h-4 opacity-40" />
-              </button>
-            )}
           </div>
         </div>
 
@@ -268,6 +308,12 @@ const UserProfile = () => {
           </div>
           <div className={`${activeTab === "returns" ? "block" : "hidden"} flex-1 flex flex-col`}>
             <ReturnHistoryTab />
+          </div>
+          <div className={`${activeTab === "transactions" ? "block" : "hidden"} flex-1 flex flex-col`}>
+            <TransactionHistoryTab />
+          </div>
+          <div className={`${activeTab === "vouchers" ? "block" : "hidden"} flex-1 flex flex-col`}>
+            <MyVouchersTab />
           </div>
         </div>
       </div>

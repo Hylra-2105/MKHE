@@ -20,45 +20,45 @@ const ConfirmModal = ({
   const getIcon = () => {
     switch (icon) {
       case "trash":
-        return <Trash2 className="w-8 h-8 text-red-500" />;
+        return <Trash2 className="w-8 h-8 text-rose-500" />;
       case "shield":
-        return <ShieldCheck className="w-8 h-8 text-green-500" />;
+        return <ShieldCheck className="w-8 h-8 text-emerald-500" />;
       case "alert":
         return <AlertCircle className="w-8 h-8 text-amber-500" />;
       case "check":
       default:
-        return <CheckCircle className="w-8 h-8 text-green-500" />;
+        return <CheckCircle className="w-8 h-8 text-emerald-500" />;
     }
   };
 
   const getIconBgColor = () => {
     switch (icon) {
       case "trash":
-        return "bg-red-50 border border-red-100";
+        return "bg-rose-50 border border-rose-100";
       case "shield":
-        return "bg-green-50 border border-green-100";
+        return "bg-emerald-50 border border-emerald-100";
       case "alert":
         return "bg-amber-50 border border-amber-100";
       case "check":
       default:
-        return "bg-green-50 border border-green-100";
+        return "bg-emerald-50 border border-emerald-100";
     }
   };
 
   const getButtonColor = () => {
     if (isDanger) {
-      return "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30";
+      return "bg-rose-500 text-white hover:bg-rose-600 shadow-lg shadow-rose-500/30";
     }
     switch (icon) {
       case "trash":
-        return "bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/30";
+        return "bg-rose-500 text-white hover:bg-rose-600 shadow-lg shadow-rose-500/30";
       case "shield":
-        return "bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/30";
+        return "bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/30";
       case "alert":
         return "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-500/30";
       case "check":
       default:
-        return "bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/30";
+        return "bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/30";
     }
   };
 

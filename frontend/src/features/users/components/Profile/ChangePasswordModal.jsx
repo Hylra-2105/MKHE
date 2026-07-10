@@ -346,7 +346,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-1.5 -mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-4">
+                <div className="flex items-center gap-1.5 -mt-2 text-rose-500 text-xs font-medium px-1 justify-center mb-4">
                   <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
@@ -452,7 +452,7 @@ const ChangePasswordModal = ({ isOpen, onClose, userEmail }) => {
               </div>
 
               {errorMsg && (
-                <div className="flex items-center gap-1.5 mt-2 text-red-500 text-xs font-medium px-1 justify-center mb-2">
+                <div className="flex items-center gap-1.5 mt-2 text-rose-500 text-xs font-medium px-1 justify-center mb-2">
                   <Info className="w-4 h-4 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>

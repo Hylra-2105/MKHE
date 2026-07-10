@@ -34,6 +34,7 @@ import {
   Mail,
   LayoutGrid,
   Gift,
+  CreditCard,
   Briefcase,
   UserCheck,
   Newspaper,
@@ -49,7 +50,7 @@ const LANGUAGES = [
 ];
 
 export default function Header() {
-  const { t, i18n } = useTranslation(["header", "history"]);
+  const { t, i18n } = useTranslation(["header", "history", "user"]);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
@@ -182,7 +183,7 @@ export default function Header() {
   };
 
   const navLinks = [
-    { key: "home", path: "/home" },
+    { key: "home", path: "/" },
     { key: "about", path: "/about" },
     { key: "shop", path: "/shop" },
     { key: "storytelling", path: "/storytelling" },
@@ -193,14 +194,14 @@ export default function Header() {
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
-  const isHomePage = location.pathname === "/home" || location.pathname === "/";
+  const isHomePage = location.pathname === "/";
   const headerClasses = isHomePage && !isScrolled
     ? "bg-transparent border-transparent text-white drop-shadow-md" 
     : "bg-mkhe-bg border-mkhe-border text-current";
 
   const isActive = (path) => {
-    if (path === "/home" && (location.pathname === "/" || location.pathname === "/home")) return true;
-    if (path !== "/home" && location.pathname.startsWith(path)) return true;
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
     return false;
   };
 
@@ -217,7 +218,7 @@ export default function Header() {
         </button>
 
         <Link
-          to="/home"
+          to="/"
           className="flex items-center gap-3 select-none cursor-pointer"
         >
           <img
@@ -337,6 +338,22 @@ export default function Header() {
                       {t("user_menu.profile")}
                     </Link>
 
+                    {/* Ví Voucher */}
+                    <Link
+                      to="/profile?tab=vouchers"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=vouchers")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <Ticket className="w-4 h-4" />
+                      {t("user:profile.vouchers", { defaultValue: "Ví Voucher" })}
+                    </Link>
+
+                    <div className="h-px bg-mkhe-border/50 my-1.5 mx-4"></div>
+
                     {/* Lịch sử đơn hàng */}
                     <Link
                       to="/profile?tab=orders"
@@ -349,6 +366,20 @@ export default function Header() {
                     >
                       <ShoppingBag className="w-4 h-4" />
                       {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
+                    </Link>
+
+                    {/* Lịch sử giao dịch */}
+                    <Link
+                      to="/profile?tab=transactions"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=transactions")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      {t("user:profile.transactions", { defaultValue: "Lịch sử giao dịch" })}
                     </Link>
 
                     {/* Lịch sử Đổi/Trả */}

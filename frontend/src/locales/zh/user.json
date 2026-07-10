@@ -26,6 +26,8 @@
   "profile": {
     "title": "个人简介",
     "general_info": "一般信息",
+    "transactions": "交易记录",
+    "vouchers": "我的代金券",
     "change_password": "更改密码",
     "update_avatar": "更新头像",
     "drag_drop": "将图像/视频拖放到此处",
@@ -58,5 +60,13 @@
   "INVALID_OR_EXPIRED_OTP": "OTP 代码无效或过期。",
   "PASSWORD_MUST_BE_DIFFERENT": "新密码必须与当前密码不同。",
   "USER_NOT_FOUND": "未找到用户帐户。",
-  "SERVER_ERROR": "发生意外错误。请稍后重试。"
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "可用",
+    "status_used": "已使用",
+    "status_expired": "已过期",
+    "discount": "折扣",
+    "expiry": "有效期至",
+    "no_vouchers": "您还没有任何优惠券"
+  }
 }

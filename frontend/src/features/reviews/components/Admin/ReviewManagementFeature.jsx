@@ -203,7 +203,7 @@ const ReviewManagementFeature = () => {
                       )}
                     </td>
                     <td className="px-4 py-2.5 text-center">
-                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${review.isHidden ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"}`}>
+                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${review.isHidden ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"}`}>
                         {review.isHidden ? t("reviews:hidden") : t("reviews:visible")}
                       </span>
                     </td>
@@ -213,8 +213,8 @@ const ReviewManagementFeature = () => {
                           onClick={() => handleToggleVisibility(review._id, review.isHidden)}
                           className={`p-2 rounded-full transition-colors cursor-pointer w-9 h-9 flex items-center justify-center shrink-0 ${
                             review.isHidden 
-                              ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" 
-                              : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
+                              ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20" 
+                              : "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
                           }`}
                           title={review.isHidden ? t("reviews:show") : t("reviews:hide")}
                         >
@@ -223,7 +223,7 @@ const ReviewManagementFeature = () => {
                         {user?.role === "Admin" && review.user && (
                           <button 
                             onClick={() => { setSelectedUser(review.user); setIsUserModalOpen(true); }}
-                            className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${review.user.isBlocked ? "text-green-600 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
+                            className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${review.user.isBlocked ? "text-emerald-600 hover:bg-emerald-500/20 bg-emerald-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
                             title={review.user.isBlocked ? t("common:unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("common:lock_account", { defaultValue: "Khóa Tài Khoản" })}
                           >
                             <FiLock size={16} />
