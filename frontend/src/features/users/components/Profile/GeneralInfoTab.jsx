@@ -150,8 +150,16 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
 
   return (
     <>
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
-
+      <div className="flex-1 p-8 space-y-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gradient-gold flex items-center gap-3">
+            <User className="w-7 h-7 text-mkhe-primary" />
+            {t("profile.general_info", { ns: "user" })}
+          </h2>
+          <p className="text-[var(--color-mkhe-text)]/60 mt-2">
+            {t("profile.general_info_desc", { ns: "user", defaultValue: "Quản lý thông tin cá nhân và địa chỉ giao hàng của bạn" })}
+          </p>
+        </div>
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
             <User className="w-4 h-4" />{" "}

@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema(
     },
     culturalDNA: {
       type: String,
-      enum: ["CHAM", "KHMER", "KINH", "OTHER"],
+      enum: ["CHAM", "KHMER", "KINH", "HOA", "OTHER"],
       default: "OTHER",
     },
     craftVillage: {

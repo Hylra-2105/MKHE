@@ -2,27 +2,27 @@
   "title": "B2B Dashboard",
   "request_title": "Create B2B Request",
   "subtitle": "Fill in your requirements, we will contact you soon",
-  "admin_title": "Quản lý B2B",
+  "admin_title": "B2B Management",
   "status": {
-    "PENDING_QUOTE": "Chờ báo giá",
-    "NEGOTIATING": "Đang đàm phán",
-    "CONFIRMED": "Đã chốt",
-    "PRODUCING": "Đang sản xuất",
-    "DELIVERING": "Giao hàng",
-    "COMPLETED": "Hoàn thành",
-    "CANCELLED": "Đã hủy"
+    "PENDING_QUOTE": "Waiting for quote",
+    "NEGOTIATING": "Negotiating",
+    "CONFIRMED": "Closed",
+    "PRODUCING": "In production",
+    "DELIVERING": "Delivery",
+    "COMPLETED": "Complete",
+    "CANCELLED": "Canceled"
   },
-  "download_quote": "Tải Báo giá / Hợp đồng",
-  "confirm_order": "Xác nhận chốt đơn",
-  "chat_placeholder": "Nhập tin nhắn của bạn...",
-  "send": "Gửi",
-  "upload_quote": "Tải PDF lên",
-  "update_status": "Cập nhật",
-  "no_orders": "Chưa có hợp đồng nào.",
-  "confirm_msg": "Bạn có chắc chắn muốn chốt đơn hàng này không?",
-  "pdf_required": "Vui lòng đính kèm file PDF.",
-  "select_status": "Chọn trạng thái",
-  "consultingPackage": "Gói Tư Vấn & Thiết Kế Sản Phẩm Theo Yêu Cầu",
+  "download_quote": "Download Quote / Contract",
+  "confirm_order": "Confirmation of order closing",
+  "chat_placeholder": "Enter your message...",
+  "send": "Send",
+  "upload_quote": "Upload PDF",
+  "update_status": "Update",
+  "no_orders": "There are no contracts yet.",
+  "confirm_msg": "Are you sure you want to close this order?",
+  "pdf_required": "Please attach PDF file.",
+  "select_status": "Select status",
+  "consultingPackage": "Consulting & Product Design Packages on Demand",
   "companyInfo": {
     "title": "Company Information",
     "desc1": "We will use this information for Contracts & Invoicing",
@@ -53,15 +53,15 @@
     "fileNote": "Maximum 5 files"
   },
   "validation": {
-    "productRequired": "Vui lòng chọn sản phẩm/dịch vụ",
-    "quantityRequired": "Vui lòng nhập số lượng",
-    "deliveryDateRequired": "Vui lòng chọn ngày nhận hàng"
+    "productRequired": "Please select product/service",
+    "quantityRequired": "Please enter quantity",
+    "deliveryDateRequired": "Please select a delivery date"
   },
   "messages": {
-    "fetchProductsError": "Không thể tải danh sách sản phẩm",
-    "maxFiles": "Bạn chỉ được tải lên tối đa 5 file",
-    "success": "Gửi yêu cầu B2B thành công! Chúng tôi sẽ liên hệ báo giá sớm.",
-    "error": "Có lỗi xảy ra, vui lòng thử lại sau"
+    "fetchProductsError": "Unable to load product list",
+    "maxFiles": "You can only upload a maximum of 5 files",
+    "success": "B2B request sent successfully! We will contact you soon for a quote.",
+    "error": "An error occurred, please try again later"
   },
   "buttons": {
     "back": "Back to Dashboard",

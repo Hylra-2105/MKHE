@@ -44,6 +44,7 @@ import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
 import ContactManagementPage from "./pages/contact/ContactManagementPage";
 
 import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
+import ReturnManagementPage from "./pages/returns/ReturnManagementPage";
 import DashboardPage from "./pages/admin/DashboardPage";
 import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
 import B2BOrderRequest from "./pages/b2b/B2BOrderRequest";
@@ -165,12 +166,29 @@ function App() {
         "VOUCHER_SAVED": "notifications.title.voucher_saved",
         "LUCKY_WHEEL_WON": "notifications.title.lucky_wheel_won",
         "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published"
+        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
+        "USER_RETURN_CREATED": "notifications.title.USER_RETURN_CREATED",
+        "USER_RETURN_UPDATED": "notifications.title.USER_RETURN_UPDATED",
+        "USER_RETURN_UPDATED_APPROVED": "notifications.title.USER_RETURN_UPDATED_APPROVED",
+        "USER_RETURN_UPDATED_REJECTED": "notifications.title.USER_RETURN_UPDATED_REJECTED",
+        "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
+        "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED"
       };
       const currentT = tRef.current;
       const translatedTitle = map[notif.title] ? currentT(map[notif.title], { defaultValue: notif.title }) : notif.title;
 
-      toast(translatedTitle, {
+      let toastMessage = translatedTitle;
+      if (notif.title === "USER_RETURN_UPDATED_APPROVED" || notif.title === "USER_RETURN_UPDATED_REJECTED") {
+        const isApproved = notif.title === "USER_RETURN_UPDATED_APPROVED";
+        const statusStr = currentT(`notifications.title.return_status_${isApproved ? 'approved' : 'rejected'}`, { defaultValue: isApproved ? "Đã duyệt" : "Từ chối" });
+        toastMessage = currentT("notifications.title.return_updated_toast", {
+          defaultValue: `Cập nhật đổi trả đơn ${notif.orderCode || ''}: ${statusStr}`,
+          orderCode: notif.orderCode || '',
+          status: statusStr
+        });
+      }
+
+      toast(toastMessage, {
         icon: '🔔',
       });
     });
@@ -183,7 +201,9 @@ function App() {
           "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
           "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
           "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
-          "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
+          "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert",
+          "ADMIN_RETURN_NEW": "notifications.title.ADMIN_RETURN_NEW",
+          "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW"
         };
         const currentT = tRef.current;
         const translatedTitle = adminMap[notif.title] ? currentT(adminMap[notif.title], { defaultValue: notif.title }) : notif.title;
@@ -220,13 +240,15 @@ function App() {
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
+        containerStyle={{
+          zIndex: 999999,
+        }}
         toastOptions={{
           className: '!bg-mkhe-bg !text-mkhe-text !border !border-mkhe-border !rounded-xl !shadow-lg',
           style: {
             padding: '12px 16px',
             fontSize: '14px',
             fontWeight: '500',
-            zIndex: 9999
           },
           success: {
             iconTheme: {
@@ -353,6 +375,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <ReviewManagementPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/admin/returns"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ReturnManagementPage />
               </ProtectedRoute>
             }
           />

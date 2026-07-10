@@ -39,5 +39,43 @@
   "confirm_receive": "商品を無事に受け取ったことを確認しますか？",
   "confirm_btn": "確認",
   "receive_success": "無事に納品が確認されました！",
-  "receive_error": "商品の受領確認エラー"
+  "receive_error": "商品の受領確認エラー",
+  "write_review": "レビューを書く",
+  "request_return": "返品・交換をリクエスト",
+  "returns": {
+    "title": "交換・返品履歴",
+    "desc": "製品の返品リクエストを追跡および管理する",
+    "status": {
+      "PENDING": "処理を待っています",
+      "APPROVED": "承認された",
+      "REJECTED": "拒否する"
+    },
+    "order_code": "単一コード:",
+    "fetch_error": "返品履歴のロード中にエラーが発生しました",
+    "fetch_detail_error": "返品の詳細の読み込み中にエラーが発生しました",
+    "no_returns": "まだ交換/返品をリクエストしていません。",
+    "return_quantity": "必要な数量",
+    "detail_title": "交換・返品詳細",
+    "detail_status": "状態",
+    "reason_label": "返品理由",
+    "admin_note": "カスタマーサービス部門からのフィードバック",
+    "items_title": "交換・返品が必要な商品です",
+    "create": {
+      "title": "交換/返品のリクエスト",
+      "desc": "交換・返品をご希望の商品と数量を選択してください",
+      "reason_placeholder": "交換/返品の理由を入力してください (例: 不良品、デザイン違いなど)",
+      "upload_proof": "証明写真をダウンロードする",
+      "upload_desc": "ドラッグ アンド ドロップまたはクリックして、最大 3 つの写真/ビデオをアップロードします",
+      "submit_btn": "リクエストの送信",
+      "cancel_btn": "キャンセル",
+      "item_qty": "支払った数量",
+      "error_select_item": "返品する商品を少なくとも 1 つ選択してください",
+      "error_reason": "返品理由を入力してください",
+      "error_qty": "返品数量は 0 より大きくなければなりません",
+      "error_upload": "写真のアップロードエラー",
+      "success": "交換/返品リクエストは正常に送信されました。"
+    },
+    "updated_toast": "返品注文 {{orderCode}} を更新: {{status}}"
+  },
+  "returns_tab": "交換・返品"
 }

@@ -33,6 +33,11 @@ import {
   X,
   Mail,
   LayoutGrid,
+  Gift,
+  Briefcase,
+  UserCheck,
+  Newspaper,
+  Building2
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -323,7 +328,7 @@ export default function Header() {
                       to="/profile"
                       onClick={() => setIsDropdownOpen(false)}
                       className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                        location.pathname.startsWith("/profile") && !location.search.includes("tab=orders")
+                        location.pathname.startsWith("/profile") && !location.search.includes("tab=")
                           ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                           : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                       }`}
@@ -346,6 +351,20 @@ export default function Header() {
                       {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
                     </Link>
 
+                    {/* Lịch sử Đổi/Trả */}
+                    <Link
+                      to="/profile?tab=returns"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=returns")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <Gift className="w-4 h-4" />
+                      {t("history:returns_tab", { defaultValue: "Đổi / Trả" })}
+                    </Link>
+
                     {/* VÙNG DÀNH CHO KHÁCH HÀNG DOANH NGHIỆP (B2B) */}
                     {user.role === "Enterprise" && (
                       <>
@@ -365,136 +384,61 @@ export default function Header() {
                       </>
                     )}
 
-                    {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}
+                    {/* ADMIN/STAFF: Grouped submenu buttons */}
                     {(user.role === "Admin" || user.role === "Staff") && (
-                      <div className="py-1">
+                      <>
                         <div className="h-px bg-mkhe-border/50 my-1 mx-4"></div>
 
-                        {/* ================= CỤM 1: CỐT LÕI ================= */}
-                        {/* Thống kê - Phân tích (Admin only) */}
+                        {/* Vận hành */}
+                        <button
+                          onClick={() => setActiveMenu("admin_core")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Briefcase className="w-4 h-4" />
+                            {t("user_menu.section_core", { defaultValue: "Vận hành" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Khách hàng & Ưu đãi */}
+                        <button
+                          onClick={() => setActiveMenu("admin_customers")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <UserCheck className="w-4 h-4" />
+                            {t("user_menu.section_customers", { defaultValue: "Khách hàng & Ưu đãi" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Nội dung & Hỗ trợ */}
+                        <button
+                          onClick={() => setActiveMenu("admin_content")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Newspaper className="w-4 h-4" />
+                            {t("user_menu.section_content", { defaultValue: "Nội dung & Hỗ trợ" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Doanh nghiệp (B2B) */}
                         {user.role === "Admin" && (
-                          <Link
-                            to="/admin/analysis"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/analysis")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
+                          <button
+                            onClick={() => setActiveMenu("admin_b2b")}
+                            className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
                           >
-                            <BarChart className="w-4 h-4" />
-                            {t("user_menu.analytics")}
-                          </Link>
+                            <div className="flex items-center gap-3">
+                              <Building2 className="w-4 h-4" />
+                              {t("user_menu.section_b2b", { defaultValue: "Doanh nghiệp" })}
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-50" />
+                          </button>
                         )}
-
-                        {/* Quản lý Đơn hàng (Admin/Staff) */}
-                        <Link
-                          to="/admin/orders"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/orders")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <ShoppingBag className="w-4 h-4" />
-                          {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
-                        </Link>
-
-                        {/* Quản lý Sản phẩm (Admin/Staff) */}
-                        <Link
-                          to="/admin/products"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/products")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Package className="w-4 h-4" />
-                          {t("user_menu.manage_products")}
-                        </Link>
-
-                        <div className="h-px bg-mkhe-border/30 my-1.5 mx-4"></div>
-
-                        {/* ================= CỤM 2: KHÁCH HÀNG & MARKETING ================= */}
-                        {/* Quản lý Người dùng (Admin only) */}
-                        {user.role === "Admin" && (
-                          <Link
-                            to="/admin/users"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/users")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
-                          >
-                            <Users className="w-4 h-4" />
-                            {t("user_menu.manage_users")}
-                          </Link>
-                        )}
-
-                        {/* Quản lý Voucher (Admin/Staff) */}
-                        <Link
-                          to="/admin/vouchers"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/vouchers")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Ticket className="w-4 h-4" />
-                          {t("user_menu.manage_vouchers")}
-                        </Link>
-
-                        {/* Quản lý Đánh giá (Admin only) */}
-                        {user.role === "Admin" && (
-                          <Link
-                            to="/admin/reviews"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/reviews")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
-                          >
-                            <Star className="w-4 h-4" />
-                            {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
-                          </Link>
-                        )}
-
-                        <div className="h-px bg-mkhe-border/30 my-1.5 mx-4"></div>
-
-                        {/* ================= CỤM 3: NỘI DUNG & HỖ TRỢ ================= */}
-                        {/* Quản lý Bài viết (Admin/Staff) */}
-                        <Link
-                          to="/admin/blogs"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/blogs")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <FileText className="w-4 h-4" />
-                          {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
-                        </Link>
-
-                        {/* Quản lý Liên hệ (Admin/Staff) */}
-                        <Link
-                          to="/admin/contacts"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/contacts")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Mail className="w-4 h-4" />
-                          {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
-                        </Link>
-                      </div>
+                      </>
                     )}
 
                     <div className="h-px bg-mkhe-border/30 my-2 mx-4"></div>
@@ -596,6 +540,101 @@ export default function Header() {
                         )}
                       </button>
                     ))}
+                  </div>
+                )}
+
+                {/* ADMIN SUBMENUS */}
+                {activeMenu === "admin_core" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/analysis" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/analysis") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <BarChart className="w-4 h-4" /> {t("user_menu.analytics")}
+                      </Link>
+                    )}
+                    <Link to="/admin/orders" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/orders") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <ShoppingBag className="w-4 h-4" /> {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
+                    </Link>
+                    <Link to="/admin/returns" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/returns") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Gift className="w-4 h-4" /> {t("user_menu.manage_returns", { defaultValue: "Quản lý Đổi/Trả" })}
+                    </Link>
+                    <Link to="/admin/products" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/products") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Package className="w-4 h-4" /> {t("user_menu.manage_products")}
+                    </Link>
+                  </div>
+                )}
+
+                {activeMenu === "admin_customers" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/users" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/users") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <Users className="w-4 h-4" /> {t("user_menu.manage_users")}
+                      </Link>
+                    )}
+                    <Link to="/admin/vouchers" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/vouchers") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Ticket className="w-4 h-4" /> {t("user_menu.manage_vouchers")}
+                    </Link>
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/reviews" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/reviews") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <Star className="w-4 h-4" /> {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
+                      </Link>
+                    )}
+                  </div>
+                )}
+
+                {activeMenu === "admin_content" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    <Link to="/admin/blogs" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/blogs") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <FileText className="w-4 h-4" /> {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
+                    </Link>
+                    <Link to="/admin/contacts" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/contacts") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Mail className="w-4 h-4" /> {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
+                    </Link>
+                  </div>
+                )}
+
+                {activeMenu === "admin_b2b" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    <Link to="/admin/b2b-orders" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/b2b-orders") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <LayoutGrid className="w-4 h-4" /> {t("user_menu.b2b_orders", { defaultValue: "Đơn hàng B2B" })}
+                    </Link>
                   </div>
                 )}
               </div>

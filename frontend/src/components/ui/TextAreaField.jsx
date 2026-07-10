@@ -1,11 +1,11 @@
 import { AlertCircle } from 'lucide-react';
 
-export default function TextAreaField({ placeholder, value, onChange, label, required, error, ...props }) {
+export default function TextAreaField({ placeholder, value, onChange, label, required, error, rows = 4, ...props }) {
   return (
-    <div className="relative mb-4 w-full">
+    <div className={`relative mb-4 w-full space-y-1 ${props.className || ''}`}>
       {label && (
-        <label className="block text-sm mb-1.5 text-mkhe-text/80 font-medium">
-          {label} {required && <span className="text-red-500">*</span>}
+        <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
+          {label} {required && <span className="ml-1 text-red-500">*</span>}
         </label>
       )}
       <textarea
@@ -13,13 +13,14 @@ export default function TextAreaField({ placeholder, value, onChange, label, req
         value={value}
         onChange={onChange}
         required={required}
-        className={`w-full p-3 bg-mkhe-input text-mkhe-text border ${error ? 'border-red-500 focus:border-red-500' : 'border-mkhe-border focus:border-mkhe-primary'} rounded outline-none transition-colors placeholder:text-mkhe-text/50 resize-y min-h-[120px]`}
+        rows={rows}
+        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm placeholder:text-mkhe-text/50 custom-scrollbar resize-none ${error ? 'border-red-500' : 'border-mkhe-border/50 focus:border-mkhe-primary'}`}
         {...props}
       ></textarea>
       {error && (
-        <div className="text-red-500 text-xs mt-1.5 flex items-start gap-1">
-          <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-          <span>{error}</span>
+        <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <p className="text-xs font-medium">{error}</p>
         </div>
       )}
     </div>

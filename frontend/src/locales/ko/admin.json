@@ -92,7 +92,13 @@
     "all_status": "모든 상태",
     "active": "활동적인",
     "blocked": "차단됨",
-    "pending": "활성화 대기 중"
+    "pending": "활성화 대기 중",
+    "status": {
+      "active": "활동적인",
+      "inactive": "비활성",
+      "hidden": "숨겨진"
+    },
+    "manage_menu": "메뉴 관리"
   },
   "roles": {
     "all": "모든 역할",
@@ -438,5 +444,34 @@
     "interest_support": "주문 및 제품 지원",
     "interest_design": "공간 디자인 컨설팅",
     "interest_boardgame": "보드 게임 문의"
+  },
+  "returns": {
+    "title": "교환/반품 요청 관리",
+    "desc": "고객의 제품 반품 요청 처리",
+    "search_placeholder": "주문 코드, 이메일로 검색...",
+    "all_status": "모든 상태",
+    "status": {
+      "PENDING": "처리를 기다리는 중",
+      "APPROVED": "승인됨",
+      "REJECTED": "거절하다"
+    },
+    "fetch_error": "교환/반품 목록을 로드하는 중에 오류가 발생했습니다.",
+    "no_results": "반품 요청을 찾을 수 없습니다.",
+    "order_code": "주문코드",
+    "customer": "고객",
+    "reason_label": "이유",
+    "date": "요청 날짜",
+    "detail_title": "교환/반품 신청 내용",
+    "items_title": "필요한 제품",
+    "return_quantity": "수량",
+    "proof_images": "사진/영상 증명",
+    "admin_note": "메모/거부 사유(고객에게 전송)",
+    "admin_note_placeholder": "고객에게 보내는 이유나 메시지를 입력하세요.",
+    "update_success": "상태가 성공적으로 업데이트되었습니다!",
+    "error_empty_note": "메모(거절 이유 또는 메시지)를 입력해 주세요.",
+    "approve_btn": "요청 찾아보기",
+    "reject_btn": "거절하다",
+    "close_btn": "닫다",
+    "new_return_toast": "새로운 반품 요청이 있습니다!"
   }
 }

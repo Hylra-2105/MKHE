@@ -21,7 +21,14 @@
     "manage_blogs": "Blog Management",
     "manage_reviews": "Manage Reviews",
     "manage_contacts": "Manage Contacts",
-    "b2b_dashboard": "B2B dashboard"
+    "b2b_dashboard": "B2B dashboard",
+    "manage_returns": "Exchange/Return Management",
+    "section_core": "Operate",
+    "section_customers": "Customers & Offers",
+    "section_content": "Content & Support",
+    "section_b2b": "Enterprise",
+    "b2b_orders": "B2B orders",
+    "back_to_site": "Back to home page"
   },
   "guest_menu": {
     "login": "Login"
@@ -60,7 +67,14 @@
       "admin_order_paid": "Order Paid",
       "admin_order_completed": "Order Completed",
       "admin_stock_alert": "Low Stock Alert",
-      "admin_contact_new": "New Contact Request"
+      "admin_contact_new": "New Contact Request",
+      "USER_RETURN_CREATED": "Successful Exchange/Return request",
+      "USER_RETURN_UPDATED": "Update Exchange/Return",
+      "ADMIN_RETURN_NEW": "Request a new Exchange/Return",
+      "USER_RETURN_UPDATED_REJECTED": "Exchange/Return refused",
+      "return_updated_toast": "Return update for order {{orderCode}}: {{status}}",
+      "return_status_approved": "Approved",
+      "return_status_rejected": "Rejected"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
@@ -77,7 +91,12 @@
       "admin_order_paid": "Order #{{orderCode}} has been successfully paid (Online).",
       "admin_order_completed": "Customer has confirmed receipt and payment for order #{{orderCode}}.",
       "admin_stock_alert": "Product {{productName}} is running low on stock ({{currentStock}} left).",
-      "admin_contact_new": "Customer {{name}} has sent a request: {{interest}}"
+      "admin_contact_new": "Customer {{name}} has sent a request: {{interest}}",
+      "USER_RETURN_CREATED": "The return request for order {{orderCode}} has been submitted and is pending.",
+      "USER_RETURN_UPDATED": "The return request for order {{orderCode}} has been updated.",
+      "ADMIN_RETURN_NEW": "The customer has just sent an exchange/return request for order {{orderCode}}.",
+      "USER_RETURN_UPDATED_APPROVED": "The return request of order {{orderCode}} has been ACCEPTED.",
+      "USER_RETURN_UPDATED_REJECTED": "The return request for order {{orderCode}} has been REJECTED."
     },
     "header_title": "Notifications",
     "mark_all_read": "Mark all as read",

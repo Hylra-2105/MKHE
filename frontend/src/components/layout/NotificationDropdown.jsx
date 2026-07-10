@@ -35,7 +35,15 @@ const translateNotificationTitle = (title, t) => {
     "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
     "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
     "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert",
-    "ADMIN_CONTACT_NEW": "notifications.title.admin_contact_new"
+    "ADMIN_CONTACT_NEW": "notifications.title.admin_contact_new",
+    "USER_RETURN_CREATED": "notifications.title.USER_RETURN_CREATED",
+    "USER_RETURN_UPDATED": "notifications.title.USER_RETURN_UPDATED",
+    "USER_RETURN_UPDATED_APPROVED": "notifications.title.USER_RETURN_UPDATED_APPROVED",
+    "USER_RETURN_UPDATED_REJECTED": "notifications.title.USER_RETURN_UPDATED_REJECTED",
+    "ADMIN_RETURN_NEW": "notifications.title.ADMIN_RETURN_NEW",
+    "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
+    "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED",
+    "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
@@ -101,7 +109,15 @@ const translateNotificationMessage = (message, title, t) => {
     "ORDER_CANCELLED": "notifications.message.order_cancelled",
     "ADMIN_ORDER_NEW": "notifications.message.admin_order_new",
     "ADMIN_ORDER_PAID": "notifications.message.admin_order_paid",
-    "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed"
+    "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed",
+    "USER_RETURN_CREATED": "notifications.message.USER_RETURN_CREATED",
+    "USER_RETURN_UPDATED": "notifications.message.USER_RETURN_UPDATED",
+    "USER_RETURN_UPDATED_APPROVED": "notifications.message.USER_RETURN_UPDATED_APPROVED",
+    "USER_RETURN_UPDATED_REJECTED": "notifications.message.USER_RETURN_UPDATED_REJECTED",
+    "ADMIN_RETURN_NEW": "notifications.message.ADMIN_RETURN_NEW",
+    "Yêu cầu Đổi/Trả thành công": "notifications.message.USER_RETURN_CREATED",
+    "Cập nhật trạng thái Đổi/Trả": "notifications.message.USER_RETURN_UPDATED",
+    "Yêu cầu Đổi/Trả mới": "notifications.message.ADMIN_RETURN_NEW"
   };
 
   if (title === "ADMIN_CONTACT_NEW" || message.startsWith("ADMIN_CONTACT_NEW_MESSAGE::")) {

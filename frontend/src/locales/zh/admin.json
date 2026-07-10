@@ -92,7 +92,13 @@
     "all_status": "所有状态",
     "active": "活跃",
     "blocked": "已封锁",
-    "pending": "等待激活"
+    "pending": "等待激活",
+    "status": {
+      "active": "积极的",
+      "inactive": "不活跃",
+      "hidden": "隐"
+    },
+    "manage_menu": "菜单管理"
   },
   "roles": {
     "all": "所有角色",
@@ -438,5 +444,34 @@
     "interest_support": "订单和产品支持",
     "interest_design": "空间设计咨询",
     "interest_boardgame": "桌游咨询"
+  },
+  "returns": {
+    "title": "管理换货/退货请求",
+    "desc": "处理客户的产品退货请求",
+    "search_placeholder": "按订单代码、电子邮件搜索...",
+    "all_status": "所有状态",
+    "status": {
+      "PENDING": "等待处理",
+      "APPROVED": "得到正式认可的",
+      "REJECTED": "拒绝"
+    },
+    "fetch_error": "加载换货/退货列表时出错",
+    "no_results": "未找到退货请求",
+    "order_code": "订购代码",
+    "customer": "客户",
+    "reason_label": "原因",
+    "date": "请求日期",
+    "detail_title": "换货/退货请求详情",
+    "items_title": "所需产品",
+    "return_quantity": "数量",
+    "proof_images": "照片/视频证明",
+    "admin_note": "备注/拒绝原因（发送给客户）",
+    "admin_note_placeholder": "输入给客户的原因或消息...",
+    "update_success": "状态更新成功！",
+    "error_empty_note": "请输入备注（拒绝原因或消息）。",
+    "approve_btn": "浏览请求",
+    "reject_btn": "拒绝",
+    "close_btn": "关闭",
+    "new_return_toast": "有新的退货请求！"
   }
 }

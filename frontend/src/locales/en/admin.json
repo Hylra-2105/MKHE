@@ -92,7 +92,13 @@
     "all_status": "All Statuses",
     "active": "Active",
     "blocked": "Blocked",
-    "pending": "Pending Activation"
+    "pending": "Pending Activation",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "hidden": "Hidden"
+    },
+    "manage_menu": "Menu Management"
   },
   "roles": {
     "all": "All Roles",
@@ -438,5 +444,34 @@
     "interest_support": "Order & Product Support",
     "interest_design": "Space Design Consulting",
     "interest_boardgame": "Board Game Inquiry"
+  },
+  "returns": {
+    "title": "Manage Exchange/Return Requests",
+    "desc": "Handle product return requests from customers",
+    "search_placeholder": "Search by order code, email...",
+    "all_status": "All status",
+    "status": {
+      "PENDING": "Waiting for processing",
+      "APPROVED": "Approved",
+      "REJECTED": "Refuse"
+    },
+    "fetch_error": "Error loading exchange/return list",
+    "no_results": "No return requests found",
+    "order_code": "Order code",
+    "customer": "Client",
+    "reason_label": "Reason",
+    "date": "Request date",
+    "detail_title": "Details of Exchange/Return Request",
+    "items_title": "Product required",
+    "return_quantity": "Quantity",
+    "proof_images": "Photo/Video proof",
+    "admin_note": "Notes/Reason for rejection (Sent to customers)",
+    "admin_note_placeholder": "Enter a reason or message for the customer...",
+    "update_success": "Status updated successfully!",
+    "error_empty_note": "Please enter a note (reason for refusal or message).",
+    "approve_btn": "Browse requests",
+    "reject_btn": "Refuse",
+    "close_btn": "Close",
+    "new_return_toast": "There is a new return request!"
   }
 }

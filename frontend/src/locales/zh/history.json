@@ -39,5 +39,43 @@
   "confirm_receive": "确认您已完好收到产品？",
   "confirm_btn": "确认",
   "receive_success": "确认发货成功！",
-  "receive_error": "确认收到货物时出错"
+  "receive_error": "确认收到货物时出错",
+  "write_review": "评价产品",
+  "request_return": "申请退换货",
+  "returns": {
+    "title": "换货/退货历史记录",
+    "desc": "跟踪和管理您的产品退货请求",
+    "status": {
+      "PENDING": "等待处理",
+      "APPROVED": "得到正式认可的",
+      "REJECTED": "拒绝"
+    },
+    "order_code": "单一代码：",
+    "fetch_error": "加载返回历史记录时出错",
+    "fetch_detail_error": "加载退货详细信息时出错",
+    "no_returns": "您尚未要求任何换货/退货。",
+    "return_quantity": "所需数量",
+    "detail_title": "换货/退货详情",
+    "detail_status": "地位",
+    "reason_label": "退货原因",
+    "admin_note": "客户服务部反馈",
+    "items_title": "产品需要换货/退货",
+    "create": {
+      "title": "请求换货/退货",
+      "desc": "请选择您要换/退货的产品及数量",
+      "reason_placeholder": "输入换货/退货的原因（例如：有缺陷的商品、错误的设计...）",
+      "upload_proof": "下载证明照片",
+      "upload_desc": "拖放或单击上传最多 3 张照片/视频",
+      "submit_btn": "发送请求",
+      "cancel_btn": "取消",
+      "item_qty": "已付数量",
+      "error_select_item": "请至少选择一件要退货的产品",
+      "error_reason": "请输入退货原因",
+      "error_qty": "退货数量必须大于0",
+      "error_upload": "上传照片时出错",
+      "success": "换货/退货请求已成功发送！"
+    },
+    "updated_toast": "更新退货订单 {{orderCode}}：{{status}}"
+  },
+  "returns_tab": "换货/退货"
 }
