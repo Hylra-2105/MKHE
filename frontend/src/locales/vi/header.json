@@ -20,7 +20,14 @@
     "manage_blogs": "Quản lý Bài viết",
     "manage_reviews": "Quản lý Đánh giá",
     "manage_contacts": "Quản lý Liên hệ",
-    "b2b_dashboard": "Bảng điều khiển B2B"
+    "manage_returns": "Quản lý Đổi/Trả",
+    "b2b_dashboard": "Bảng điều khiển B2B",
+    "section_core": "Vận hành",
+    "section_customers": "Khách hàng & Ưu đãi",
+    "section_content": "Nội dung & Hỗ trợ",
+    "section_b2b": "Doanh nghiệp",
+    "b2b_orders": "Đơn hàng B2B",
+    "back_to_site": "Về trang chủ"
   },
   "guest_menu": {
     "login": "Đăng nhập"
@@ -59,7 +66,15 @@
       "admin_order_paid": "Đơn hàng đã thanh toán",
       "admin_order_completed": "Đơn hàng hoàn tất",
       "admin_stock_alert": "Cảnh báo tồn kho",
-      "admin_contact_new": "Yêu cầu liên hệ mới"
+      "admin_contact_new": "Yêu cầu liên hệ mới",
+      "USER_RETURN_CREATED": "Yêu cầu Đổi/Trả thành công",
+      "USER_RETURN_UPDATED": "Cập nhật Đổi/Trả",
+      "USER_RETURN_UPDATED_APPROVED": "Đổi/Trả được chấp nhận",
+      "USER_RETURN_UPDATED_REJECTED": "Đổi/Trả bị từ chối",
+      "ADMIN_RETURN_NEW": "Yêu cầu Đổi/Trả mới",
+      "return_updated_toast": "Cập nhật đổi trả đơn {{orderCode}}: {{status}}",
+      "return_status_approved": "Đã duyệt",
+      "return_status_rejected": "Từ chối"
     },
     "message": {
       "order_placed": "Đơn hàng {{orderCode}} đã được đặt thành công. Đang chờ xử lý.",
@@ -76,7 +91,12 @@
       "admin_order_paid": "Đơn hàng #{{orderCode}} vừa được thanh toán thành công (Online).",
       "admin_order_completed": "Khách hàng đã xác nhận nhận hàng và thanh toán cho đơn #{{orderCode}}.",
       "admin_stock_alert": "Sản phẩm {{productName}} sắp hết hàng (còn {{currentStock}} cái).",
-      "admin_contact_new": "Khách hàng {{name}} đã gửi một yêu cầu: {{interest}}"
+      "admin_contact_new": "Khách hàng {{name}} đã gửi một yêu cầu: {{interest}}",
+      "USER_RETURN_CREATED": "Yêu cầu đổi trả cho đơn hàng {{orderCode}} đã được gửi và đang chờ xử lý.",
+      "USER_RETURN_UPDATED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã được cập nhật.",
+      "USER_RETURN_UPDATED_APPROVED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã được CHẤP NHẬN.",
+      "USER_RETURN_UPDATED_REJECTED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã bị TỪ CHỐI.",
+      "ADMIN_RETURN_NEW": "Khách hàng vừa gửi yêu cầu đổi/trả cho đơn hàng {{orderCode}}."
     },
     "header_title": "Thông báo",
     "mark_all_read": "Đánh dấu tất cả là đã đọc",

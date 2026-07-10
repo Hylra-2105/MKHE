@@ -21,7 +21,14 @@
     "manage_blogs": "ブログ管理",
     "manage_reviews": "レビュー管理",
     "manage_contacts": "連絡先管理",
-    "b2b_dashboard": "B2B ダッシュボード"
+    "b2b_dashboard": "B2B ダッシュボード",
+    "manage_returns": "交換・返品管理",
+    "section_core": "操作する",
+    "section_customers": "顧客と特典",
+    "section_content": "コンテンツとサポート",
+    "section_b2b": "企業",
+    "b2b_orders": "B2B注文",
+    "back_to_site": "ホームページに戻る"
   },
   "guest_menu": {
     "login": "ログイン"
@@ -60,7 +67,15 @@
       "admin_order_paid": "支払い済み注文",
       "admin_order_completed": "注文完了",
       "admin_stock_alert": "在庫不足アラート",
-      "admin_contact_new": "新しい連絡先リクエスト"
+      "admin_contact_new": "新しい連絡先リクエスト",
+      "USER_RETURN_CREATED": "交換/返品リクエストの成功",
+      "USER_RETURN_UPDATED": "アップデート交換・返品",
+      "USER_RETURN_UPDATED_APPROVED": "交換・返品承ります",
+      "USER_RETURN_UPDATED_REJECTED": "交換・返品お断り",
+      "ADMIN_RETURN_NEW": "新たな交換/返品をリクエストする",
+      "return_updated_toast": "注文 {{orderCode}} の返品の更新: {{status}}",
+      "return_status_approved": "承認済み",
+      "return_status_rejected": "拒否されました"
     },
     "message": {
       "order_placed": "注文 {{orderCode}} が正常に行われました。処理を待っています。",
@@ -77,7 +92,12 @@
       "admin_order_paid": "注文 #{{orderCode}} の支払いが正常に完了しました (オンライン)。",
       "admin_order_completed": "お客様が注文 #{{orderCode}} の受取と支払いを確認しました。",
       "admin_stock_alert": "製品 {{productName}} の在庫が少なくなっています (残り {{currentStock}} 個)。",
-      "admin_contact_new": "お客様 {{name}} からリクエストがありました: {{interest}}"
+      "admin_contact_new": "お客様 {{name}} からリクエストがありました: {{interest}}",
+      "USER_RETURN_CREATED": "注文 {{orderCode}} の返品リクエストが送信され、保留中です。",
+      "USER_RETURN_UPDATED": "注文 {{orderCode}} の返品リクエストが更新されました。",
+      "USER_RETURN_UPDATED_APPROVED": "注文 {{orderCode}} の返品リクエストは受け入れられました。",
+      "USER_RETURN_UPDATED_REJECTED": "注文 {{orderCode}} の返品リクエストは拒否されました。",
+      "ADMIN_RETURN_NEW": "お客様は注文 {{orderCode}} の交換/返品リクエストを送信しました。"
     },
     "header_title": "通知",
     "mark_all_read": "すべて既読にする",

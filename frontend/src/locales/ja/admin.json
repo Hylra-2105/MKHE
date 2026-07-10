@@ -92,7 +92,13 @@
     "all_status": "すべてのステータス",
     "active": "アクティブ",
     "blocked": "ブロックされました",
-    "pending": "アクティベーション待ち"
+    "pending": "アクティベーション待ち",
+    "status": {
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "hidden": "隠れた"
+    },
+    "manage_menu": "メニュー管理"
   },
   "roles": {
     "all": "すべての役割",
@@ -438,5 +444,34 @@
     "interest_support": "注文および製品サポート",
     "interest_design": "空間デザインコンサルティング",
     "interest_boardgame": "ボードゲームに関するお問い合わせ"
+  },
+  "returns": {
+    "title": "交換/返品リクエストの管理",
+    "desc": "顧客からの返品リクエストに対応する",
+    "search_placeholder": "注文コード、メールアドレスで検索...",
+    "all_status": "すべてのステータス",
+    "status": {
+      "PENDING": "処理を待っています",
+      "APPROVED": "承認された",
+      "REJECTED": "拒否する"
+    },
+    "fetch_error": "交換/返品リストの読み込みエラー",
+    "no_results": "返品リクエストが見つかりませんでした",
+    "order_code": "注文コード",
+    "customer": "クライアント",
+    "reason_label": "理由",
+    "date": "リクエスト日",
+    "detail_title": "交換・返品リクエストの詳細",
+    "items_title": "必要な製品",
+    "return_quantity": "量",
+    "proof_images": "写真/ビデオ証拠",
+    "admin_note": "注意事項・お断り理由（お客様宛）",
+    "admin_note_placeholder": "理由やお客様へのメッセージを入力してください...",
+    "update_success": "ステータスが正常に更新されました。",
+    "error_empty_note": "備考（拒否理由やメッセージ）をご入力ください。",
+    "approve_btn": "リクエストの閲覧",
+    "reject_btn": "拒否する",
+    "close_btn": "近い",
+    "new_return_toast": "新たな返品リクエストがあります!"
   }
 }

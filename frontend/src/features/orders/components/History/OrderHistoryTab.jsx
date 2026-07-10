@@ -66,7 +66,7 @@ const OrderHistoryTab = () => {
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-[525px]">
+      <div className="flex-1 pr-2">
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (

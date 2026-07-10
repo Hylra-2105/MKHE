@@ -18,6 +18,7 @@ import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
 import GeneralInfoTab from "./GeneralInfoTab";
 import ChangePasswordModal from "./ChangePasswordModal";
 import OrderHistoryTab from "@/features/orders/components/History/OrderHistoryTab";
+import ReturnHistoryTab from "@/features/returns/components/User/ReturnHistoryTab";
 import { useLocation, useNavigate } from "react-router-dom";
 const UserProfile = () => {
   const { t } = useTranslation(["user", "history"]);
@@ -186,7 +187,7 @@ const UserProfile = () => {
         {t("profile.title")}
       </h1>
 
-      <div className="bg-[var(--color-mkhe-input)] rounded-2xl shadow-xl border border-[var(--color-mkhe-border)]/30 overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+      <div className="bg-[var(--color-mkhe-input)] rounded-2xl shadow-xl border border-[var(--color-mkhe-border)]/30 overflow-hidden flex flex-col md:flex-row">
 
         <div className="md:w-[35%] bg-mkhe-primary/5 p-8 border-b md:border-b-0 md:border-r border-[var(--color-mkhe-border)]/20 flex flex-col items-center transition-colors">
           <div className="relative mb-10 mt-4 group">
@@ -208,9 +209,9 @@ const UserProfile = () => {
           <div className="w-full space-y-3">
             <button
               onClick={() => handleTabChange("general")}
-              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer ${
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer outline-none focus:outline-none focus:ring-0 active:outline-none ${
                 activeTab === "general"
-                  ? "bg-mkhe-primary text-white"
+                  ? "bg-mkhe-primary text-white border-transparent"
                   : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
               }`}
             >
@@ -220,9 +221,9 @@ const UserProfile = () => {
 
             <button
               onClick={() => handleTabChange("orders")}
-              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 ${
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none ${
                 activeTab === "orders"
-                  ? "bg-mkhe-primary text-white"
+                  ? "bg-mkhe-primary text-white border-transparent"
                   : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
               }`}
             >
@@ -230,10 +231,22 @@ const UserProfile = () => {
               <span>{t("history:title", { defaultValue: "Đơn hàng của tôi" })}</span>
             </button>
 
+            <button
+              onClick={() => handleTabChange("returns")}
+              className={`w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-bold text-sm shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none ${
+                activeTab === "returns"
+                  ? "bg-mkhe-primary text-white border-transparent"
+                  : "bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10"
+              }`}
+            >
+              <Gift className="w-5 h-5" />
+              <span>{t("history:returns_tab", { defaultValue: "Đổi / Trả" })}</span>
+            </button>
+
             {hasPassword && (
               <button
                 onClick={() => setIsPasswordModalOpen(true)}
-                className="w-full flex items-center justify-between px-6 py-3.5 rounded-xl font-bold text-sm bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10 shadow-sm transition-all cursor-pointer mt-3"
+                className="w-full flex items-center justify-between px-6 py-3.5 rounded-xl font-bold text-sm bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-border)] border border-[var(--color-mkhe-border)]/10 shadow-sm transition-all cursor-pointer mt-3 outline-none focus:outline-none focus:ring-0 active:outline-none"
               >
                 <div className="flex items-center gap-3">
                   <ShieldCheck className="w-5 h-5 text-mkhe-primary" />
@@ -246,12 +259,16 @@ const UserProfile = () => {
         </div>
 
 
-        <div className="flex-1 flex flex-col bg-[var(--color-mkhe-input)] transition-colors">
-          {activeTab === "general" ? (
+        <div className="flex-1 flex flex-col bg-[var(--color-mkhe-input)] transition-colors relative">
+          <div className={`${activeTab === "general" ? "block" : "hidden"} flex-1 flex flex-col`}>
             <GeneralInfoTab user={user} />
-          ) : (
+          </div>
+          <div className={`${activeTab === "orders" ? "block" : "hidden"} flex-1 flex flex-col`}>
             <OrderHistoryTab />
-          )}
+          </div>
+          <div className={`${activeTab === "returns" ? "block" : "hidden"} flex-1 flex flex-col`}>
+            <ReturnHistoryTab />
+          </div>
         </div>
       </div>
 

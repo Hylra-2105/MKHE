@@ -92,7 +92,13 @@
     "all_status": "Tất cả trạng thái",
     "active": "Hoạt động",
     "blocked": "Bị khóa",
-    "pending": "Chờ kích hoạt"
+    "pending": "Chờ kích hoạt",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "hidden": "Hidden"
+    },
+    "manage_menu": "Quản lý Menu"
   },
   "roles": {
     "all": "Tất cả vai trò",
@@ -437,5 +443,34 @@
     "interest_support": "Hỗ trợ đơn hàng & Sản phẩm",
     "interest_design": "Tư vấn thiết kế Không gian",
     "interest_boardgame": "Tìm hiểu mảng Board Game"
+  },
+  "returns": {
+    "title": "Quản lý Yêu cầu Đổi/Trả",
+    "desc": "Xử lý các yêu cầu đổi trả sản phẩm từ khách hàng",
+    "search_placeholder": "Tìm kiếm theo mã đơn, email...",
+    "all_status": "Tất cả trạng thái",
+    "status": {
+      "PENDING": "Chờ xử lý",
+      "APPROVED": "Đã duyệt",
+      "REJECTED": "Từ chối"
+    },
+    "fetch_error": "Lỗi tải danh sách đổi/trả",
+    "no_results": "Không tìm thấy yêu cầu đổi trả nào",
+    "order_code": "Mã đơn hàng",
+    "customer": "Khách hàng",
+    "reason_label": "Lý do",
+    "date": "Ngày yêu cầu",
+    "detail_title": "Chi tiết Yêu cầu Đổi/Trả",
+    "items_title": "Sản phẩm yêu cầu",
+    "return_quantity": "Số lượng",
+    "proof_images": "Ảnh/Video minh chứng",
+    "admin_note": "Ghi chú/Lý do từ chối (Gửi cho khách hàng)",
+    "admin_note_placeholder": "Nhập lý do hoặc lời nhắn cho khách hàng...",
+    "update_success": "Đã cập nhật trạng thái thành công!",
+    "error_empty_note": "Vui lòng nhập ghi chú (lý do từ chối hoặc lời nhắn).",
+    "approve_btn": "Duyệt yêu cầu",
+    "reject_btn": "Từ chối",
+    "close_btn": "Đóng",
+    "new_return_toast": "Có yêu cầu đổi trả mới!"
   }
 }

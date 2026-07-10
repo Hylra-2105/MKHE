@@ -7,6 +7,7 @@ import orderApi from "@/api/orderApi";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useCartStore } from "@/stores/useCartStore";
 import ReviewModal from "@/features/reviews/components/ReviewModal";
+import ReturnModal from "./ReturnModal";
 
 const STATUS_STEPS = ["PENDING", "CONFIRMED", "DELIVERING", "COMPLETED"];
 
@@ -25,26 +26,30 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [reviewItem, setReviewItem] = useState(null);
 
+  // Return state
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+
   const formatMoney = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
   };
   const addToCart = useCartStore((state) => state.addToCart);
   const setCartOpen = useCartStore((state) => state.setCartOpen);
 
-  useEffect(() => {
-    const fetchOrderDetail = async () => {
-      try {
-        const response = await orderApi.getOrderById(orderId);
-        if (response && response.success) {
-          setOrder(response.data);
-        }
-      } catch (error) {
-        toast.error(t("history:fetch_order_error"));
-        onClose();
-      } finally {
-        setIsLoading(false);
+  const fetchOrderDetail = async () => {
+    try {
+      const response = await orderApi.getOrderById(orderId);
+      if (response && response.success) {
+        setOrder(response.data);
       }
-    };
+    } catch (error) {
+      toast.error(t("history:fetch_order_error"));
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchOrderDetail();
   }, [orderId, onClose, t]);
 
@@ -129,12 +134,30 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
   const isCancelled = order.orderStatus === "CANCELLED";
   const currentStepIndex = STATUS_STEPS.indexOf(order.orderStatus);
 
+  // Check if order is completed within 7 days
+  const isCompletedWithin7Days = () => {
+    if (order.orderStatus !== "COMPLETED") return false;
+    const updatedAt = new Date(order.updatedAt);
+    const now = new Date();
+    const diffTime = Math.abs(now - updatedAt);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  };
+
+  const showReturnButton = isCompletedWithin7Days();
+
   return (
-    <div className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
-      <div className="bg-[var(--color-mkhe-bg)] w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200">
+    <div 
+      className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200 cursor-pointer"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[var(--color-mkhe-bg)] w-full max-w-3xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200 cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[var(--color-mkhe-border)]/10">
+        <div className="flex items-center justify-between p-6 border-b border-[var(--color-mkhe-border)]/30">
           <div>
             <h2 className="text-xl font-bold text-[var(--color-mkhe-text)] flex items-center gap-2">
               <Package className="w-6 h-6 text-mkhe-primary" />
@@ -164,27 +187,37 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                 {t("history:status_cancelled", { defaultValue: "Đơn hàng đã bị hủy" })}
               </div>
             ) : (
-              <div className="relative z-0 flex justify-between items-center w-full max-w-xl mx-auto mt-6 mb-2">
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-[var(--color-mkhe-border)]/20 -z-10 rounded-full"></div>
+              <div className="relative z-0 flex flex-col sm:flex-row justify-between items-start sm:items-center w-full max-w-xl mx-auto mt-2 sm:mt-6 mb-4 sm:mb-2 gap-8 sm:gap-0 px-4 sm:px-0">
+                {/* Horizontal progress bar for desktop */}
+                <div className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-[var(--color-mkhe-border)]/20 -z-10 rounded-full"></div>
                 <div 
-                  className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-mkhe-primary -z-10 rounded-full transition-all duration-500"
+                  className="hidden sm:block absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-mkhe-primary -z-10 rounded-full transition-all duration-500"
                   style={{ width: `${(Math.max(0, currentStepIndex) / (STATUS_STEPS.length - 1)) * 100}%` }}
                 ></div>
+
+                {/* Vertical progress bar for mobile */}
+                <div className="sm:hidden absolute left-[32px] top-4 bottom-4 w-1 -translate-x-1/2 -z-10">
+                  <div className="absolute inset-0 bg-[var(--color-mkhe-border)]/20 rounded-full"></div>
+                  <div 
+                    className="absolute top-0 left-0 w-full bg-mkhe-primary rounded-full transition-all duration-500"
+                    style={{ height: `${(Math.max(0, currentStepIndex) / (STATUS_STEPS.length - 1)) * 100}%` }}
+                  ></div>
+                </div>
 
                 {STATUS_STEPS.map((step, index) => {
                   const isActive = index <= currentStepIndex;
                   const labels = [t("history:status_pending", { defaultValue: "Chờ xác nhận" }), t("history:status_confirmed", { defaultValue: "Đã xác nhận" }), t("history:status_delivering", { defaultValue: "Đang giao" }), t("history:status_completed", { defaultValue: "Hoàn thành" })];
                   
                   return (
-                    <div key={step} className="flex flex-col items-center gap-2 relative">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-500 ${
+                    <div key={step} className="flex flex-row sm:flex-col items-center gap-4 sm:gap-2 relative">
+                      <div className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center font-bold text-sm transition-colors duration-500 ${
                         isActive 
                           ? "bg-mkhe-primary text-white shadow-md shadow-mkhe-primary/30" 
                           : "bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)]/40 border border-[var(--color-mkhe-border)]/20"
                       }`}>
                         {isActive ? <CheckCircle2 className="w-5 h-5" /> : index + 1}
                       </div>
-                      <span className={`text-xs absolute top-10 whitespace-nowrap font-medium ${
+                      <span className={`text-sm sm:text-xs sm:absolute sm:top-10 whitespace-nowrap font-medium ${
                         isActive ? "text-mkhe-primary" : "text-[var(--color-mkhe-text)]/40"
                       }`}>
                         {labels[index]}
@@ -198,7 +231,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 mt-12">
             {/* Shipping Info */}
-            <div className="bg-[var(--color-mkhe-input)]/50 p-5 rounded-2xl border border-[var(--color-mkhe-border)]/10">
+            <div className="bg-[var(--color-mkhe-input)]/40 p-5 rounded-2xl border border-mkhe-primary/30 shadow-md">
               <h3 className="font-bold text-[var(--color-mkhe-text)] flex items-center gap-2 mb-4">
                 <MapPin className="w-5 h-5 text-mkhe-primary" />
                 {t("checkout:shipping_info.title", { defaultValue: "Thông tin giao hàng" })}
@@ -211,7 +244,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             </div>
 
             {/* Payment Info */}
-            <div className="bg-[var(--color-mkhe-input)]/50 p-5 rounded-2xl border border-[var(--color-mkhe-border)]/10">
+            <div className="bg-[var(--color-mkhe-input)]/40 p-5 rounded-2xl border border-mkhe-primary/30 shadow-md">
               <h3 className="font-bold text-[var(--color-mkhe-text)] flex items-center gap-2 mb-4">
                 <CreditCard className="w-5 h-5 text-mkhe-primary" />
                 {t("checkout:payment_method.title", { defaultValue: "Phương thức thanh toán" })}
@@ -229,7 +262,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
           </div>
 
           {order.note && (
-            <div className="bg-[var(--color-mkhe-input)]/50 p-5 rounded-2xl border border-[var(--color-mkhe-border)]/10 mb-8">
+            <div className="bg-[var(--color-mkhe-input)]/40 p-5 rounded-2xl border border-mkhe-primary/30 shadow-md mb-8">
               <h3 className="font-bold text-[var(--color-mkhe-text)] flex items-center gap-2 mb-2">
                 <MessageSquare className="w-5 h-5 text-mkhe-primary" />
                 {t("history:note", { defaultValue: "Ghi chú đơn hàng" })}
@@ -243,7 +276,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
             <h3 className="font-bold text-[var(--color-mkhe-text)] mb-4">{t("checkout:summary.title", { defaultValue: "Đơn hàng" })}</h3>
             <div className="space-y-4">
               {order.items.map((item) => (
-                <div key={item._id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-[var(--color-mkhe-input)]/30 rounded-xl border border-[var(--color-mkhe-border)]/5">
+                <div key={item._id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-[var(--color-mkhe-input)]/30 rounded-xl border border-mkhe-primary/30 shadow-sm">
                   <div className="flex items-center gap-4 flex-1">
                     <div className="w-16 h-16 rounded-lg bg-[var(--color-mkhe-bg)] overflow-hidden flex-shrink-0">
                       <img 
@@ -286,7 +319,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
               ))}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-[var(--color-mkhe-border)]/10 space-y-2 text-sm">
+            <div className="mt-6 pt-4 border-t border-mkhe-primary/30 space-y-2 text-sm">
               <div className="flex justify-between text-[var(--color-mkhe-text)]/70">
                 <span>{t("history:subtotal", { defaultValue: "Tạm tính" })}</span>
                 <span>{formatMoney(order.subtotal)}</span>
@@ -301,7 +334,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                   <span>-{formatMoney(order.discountAmount)}</span>
                 </div>
               )}
-              <div className="flex justify-between items-center font-bold text-lg pt-2 border-t border-[var(--color-mkhe-border)]/10">
+              <div className="flex justify-between items-center font-bold text-lg pt-2 border-t border-mkhe-primary/30">
                 <span className="text-[var(--color-mkhe-text)]">{t("history:total", { defaultValue: "Tổng cộng" })}</span>
                 <span className="text-mkhe-primary">{formatMoney(order.totalAmount)}</span>
               </div>
@@ -310,7 +343,7 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
         </div>
 
         {/* Actions */}
-        <div className="p-4 border-t border-[var(--color-mkhe-border)]/10 bg-[var(--color-mkhe-input)]/20 flex items-center justify-end gap-3">
+        <div className="p-4 border-t border-[var(--color-mkhe-border)]/30 bg-[var(--color-mkhe-input)]/20 flex items-center justify-end gap-3">
           {order.orderStatus === "PENDING" && (
             <button
               onClick={handleCancelOrderClick}
@@ -352,6 +385,15 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
               </>
             )}
           </button>
+
+          {showReturnButton && (
+            <button
+              onClick={() => setIsReturnModalOpen(true)}
+              className="px-6 py-2.5 rounded-xl font-bold text-sm border border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary/10 transition-all flex items-center gap-2 cursor-pointer"
+            >
+              {t("history:request_return", { defaultValue: "Yêu cầu Đổi/Trả" })}
+            </button>
+          )}
         </div>
       </div>
 
@@ -396,6 +438,17 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
           });
         }}
       />
+
+      {isReturnModalOpen && (
+        <ReturnModal
+          order={order}
+          onClose={() => setIsReturnModalOpen(false)}
+          onSuccess={() => {
+            fetchOrderDetail();
+            if (onOrderUpdated) onOrderUpdated();
+          }}
+        />
+      )}
     </div>
   );
 };

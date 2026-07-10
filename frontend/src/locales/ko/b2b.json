@@ -1,71 +1,71 @@
 {
-  "title": "Bảng điều khiển B2B",
-  "request_title": "Tạo Yêu Cầu B2B Mới",
-  "subtitle": "Điền thông tin yêu cầu của bạn, chúng tôi sẽ liên hệ sớm nhất",
-  "admin_title": "Quản lý B2B",
+  "title": "B2B 대시보드",
+  "request_title": "새 B2B 요청 생성",
+  "subtitle": "요청 정보를 작성해 주시면 최대한 빨리 연락드리겠습니다.",
+  "admin_title": "B2B 관리",
   "status": {
-    "PENDING_QUOTE": "Chờ báo giá",
-    "NEGOTIATING": "Đang đàm phán",
-    "CONFIRMED": "Đã chốt",
-    "PRODUCING": "Đang sản xuất",
-    "DELIVERING": "Giao hàng",
-    "COMPLETED": "Hoàn thành",
-    "CANCELLED": "Đã hủy"
+    "PENDING_QUOTE": "견적을 기다리는 중",
+    "NEGOTIATING": "협상 중",
+    "CONFIRMED": "닫은",
+    "PRODUCING": "생산 중",
+    "DELIVERING": "배달",
+    "COMPLETED": "완벽한",
+    "CANCELLED": "취소"
   },
-  "download_quote": "Tải Báo giá / Hợp đồng",
-  "confirm_order": "Xác nhận chốt đơn",
-  "chat_placeholder": "Nhập tin nhắn của bạn...",
-  "send": "Gửi",
-  "upload_quote": "Tải PDF lên",
-  "update_status": "Cập nhật",
-  "no_orders": "Chưa có hợp đồng nào.",
-  "confirm_msg": "Bạn có chắc chắn muốn chốt đơn hàng này không?",
-  "pdf_required": "Vui lòng đính kèm file PDF.",
-  "select_status": "Chọn trạng thái",
-  "consultingPackage": "Gói Tư Vấn & Thiết Kế Sản Phẩm Theo Yêu Cầu",
+  "download_quote": "견적/계약서 다운로드",
+  "confirm_order": "주문 마감 확인",
+  "chat_placeholder": "메시지를 입력하세요...",
+  "send": "보내다",
+  "upload_quote": "PDF 업로드",
+  "update_status": "업데이트",
+  "no_orders": "아직 계약이 없습니다.",
+  "confirm_msg": "정말로 이 주문을 종료하시겠습니까?",
+  "pdf_required": "PDF 파일을 첨부해주세요.",
+  "select_status": "상태 선택",
+  "consultingPackage": "주문형 컨설팅 및 제품 설계 패키지",
   "companyInfo": {
-    "title": "Thông tin Doanh nghiệp",
-    "desc1": "Chúng tôi sẽ sử dụng thông tin này để làm Hợp đồng & Xuất Hóa Đơn",
-    "company": "Công ty",
+    "title": "사업정보",
+    "desc1": "우리는 이 정보를 사용하여 계약서 및 송장을 작성합니다.",
+    "company": "회사",
     "taxCode": "MST",
-    "notUpdated": "Chưa cập nhật",
-    "note": "Bạn có thể cập nhật lại trong Trang cá nhân"
+    "notUpdated": "아직 업데이트되지 않았습니다.",
+    "note": "개인 페이지에서 다시 업데이트할 수 있습니다."
   },
   "fields": {
-    "product": "Gói dịch vụ / Sản phẩm",
-    "productPlaceholder": "Chọn dịch vụ/sản phẩm bạn quan tâm",
-    "quantity": "Số lượng dự kiến",
-    "budget": "Ngân sách dự kiến (VNĐ)",
-    "budgetPlaceholder": "Ví dụ: 50.000.000",
-    "deliveryDate": "Ngày cần hàng dự kiến",
-    "deliveryDatePlaceholder": "Chọn ngày...",
-    "packaging": "Quy cách đóng gói",
-    "packagingPlaceholder": "Chọn quy cách đóng gói",
+    "product": "서비스 패키지/제품",
+    "productPlaceholder": "관심 있는 서비스/제품을 선택하세요.",
+    "quantity": "예상 수량",
+    "budget": "예상 예산(VND)",
+    "budgetPlaceholder": "예: 50,000,000",
+    "deliveryDate": "예상 배송일",
+    "deliveryDatePlaceholder": "날짜 선택...",
+    "packaging": "포장 사양",
+    "packagingPlaceholder": "포장을 선택하세요",
     "packagingOptions": {
-      "STANDARD_BOX": "Hộp tiêu chuẩn MKHE",
-      "NO_PACKAGING": "Không cần hộp"
+      "STANDARD_BOX": "MKHE 표준 상자",
+      "NO_PACKAGING": "상자가 필요하지 않습니다."
     },
-    "note": "Ghi chú thêm",
-    "notePlaceholder": "Yêu cầu đặc biệt về chất liệu, mùi hương, kích thước...",
-    "designFiles": "File đính kèm (Thiết kế / Yêu cầu chi tiết)",
-    "dragDrop": "Kéo thả file vào đây hoặc bấm để chọn",
-    "fileHint": "Hỗ trợ định dạng .pdf, .ai, .png, .jpg (Tối đa 5 file)",
-    "fileNote": "Tối đa 5 file"
+    "note": "추가 참고사항",
+    "notePlaceholder": "재료, 향, 크기에 대한 특별 요구사항...",
+    "designFiles": "첨부파일(설계/상세요구사항)",
+    "dragDrop": "여기에 파일을 끌어다 놓거나 클릭하여 선택하세요.",
+    "fileHint": ".pdf, .ai, .png, .jpg 형식 지원(최대 5개 파일)",
+    "fileNote": "최대 5개 파일"
   },
   "validation": {
-    "productRequired": "Vui lòng chọn sản phẩm/dịch vụ",
-    "quantityRequired": "Vui lòng nhập số lượng",
-    "deliveryDateRequired": "Vui lòng chọn ngày nhận hàng"
+    "productRequired": "제품/서비스를 선택해주세요",
+    "quantityRequired": "수량을 입력해주세요",
+    "deliveryDateRequired": "배송일을 선택해주세요"
   },
   "messages": {
-    "fetchProductsError": "Không thể tải danh sách sản phẩm",
-    "maxFiles": "Bạn chỉ được tải lên tối đa 5 file",
-    "success": "Gửi yêu cầu B2B thành công! Chúng tôi sẽ liên hệ báo giá sớm.",
-    "error": "Có lỗi xảy ra, vui lòng thử lại sau"
+    "fetchProductsError": "제품 목록을 로드할 수 없습니다.",
+    "maxFiles": "최대 5개의 파일만 업로드할 수 있습니다.",
+    "success": "B2B 요청이 성공적으로 전송되었습니다! 견적을 위해 곧 연락드리겠습니다.",
+    "error": "오류가 발생했습니다. 나중에 다시 시도해 주세요."
   },
   "buttons": {
-    "back": "Quay lại Bảng điều khiển",
-    "submit": "Gửi Yêu Cầu",
-    "submitting": "Đang gửi..."
+    "back": "대시보드로 돌아가기",
+    "submit": "요청 보내기",
+    "submitting": "배상..."
   }
 }

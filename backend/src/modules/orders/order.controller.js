@@ -5,6 +5,7 @@ import UserVoucher from "../vouchers/userVoucher.model.js";
 import Voucher from "../vouchers/voucher.model.js";
 import OTP from "../auth/otp.model.js";
 import Notification from "../notifications/notification.model.js";
+import Return from "../returns/return.model.js";
 import { getIO } from "../../config/socket.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
@@ -323,11 +324,32 @@ export const getMyOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findOne({ _id: id, user: req.user._id }).populate("items.product");
+    const order = await Order.findOne({ _id: id, user: req.user._id }).populate("items.product").lean();
     
     if (!order) {
       return errorResponse(res, 404, "ORDER_NOT_FOUND");
     }
+
+    const returns = await Return.find({ order: id });
+    const returnedItemsMap = {};
+
+    for (const ret of returns) {
+      for (const retItem of ret.items) {
+        const pId = retItem.product.toString();
+        if (!returnedItemsMap[pId]) returnedItemsMap[pId] = 0;
+        returnedItemsMap[pId] += retItem.quantity;
+      }
+    }
+
+    order.items = order.items.map(item => {
+      const pId = item.product?._id ? item.product._id.toString() : item.product.toString();
+      const returnedQuantity = returnedItemsMap[pId] || 0;
+      return {
+        ...item,
+        returnedQuantity,
+        remainReturnQuantity: Math.max(0, item.quantity - returnedQuantity)
+      };
+    });
 
     return successResponse(res, 200, "OK", order);
   } catch (error) {

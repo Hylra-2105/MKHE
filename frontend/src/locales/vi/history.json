@@ -39,5 +39,41 @@
   "confirm_receive": "Xác nhận bạn đã nhận được hàng và sản phẩm không có vấn đề gì?",
   "confirm_btn": "Đồng ý",
   "receive_success": "Đã xác nhận nhận hàng thành công!",
-  "receive_error": "Lỗi xác nhận nhận hàng"
+  "receive_error": "Lỗi xác nhận nhận hàng",
+  "returns_tab": "Đổi / Trả",
+  "returns": {
+    "title": "Lịch sử Đổi/Trả",
+    "desc": "Theo dõi và quản lý các yêu cầu đổi trả sản phẩm của bạn",
+    "status": {
+      "PENDING": "Chờ xử lý",
+      "APPROVED": "Đã duyệt",
+      "REJECTED": "Từ chối"
+    },
+    "order_code": "Mã đơn:",
+    "fetch_error": "Lỗi khi tải lịch sử đổi trả",
+    "fetch_detail_error": "Lỗi khi tải chi tiết đổi trả",
+    "no_returns": "Bạn chưa có yêu cầu đổi/trả nào.",
+    "return_quantity": "Số lượng yêu cầu",
+    "detail_title": "Chi tiết Đổi/Trả",
+    "detail_status": "Trạng thái",
+    "reason_label": "Lý do đổi trả",
+    "admin_note": "Phản hồi từ bộ phận CSKH",
+    "items_title": "Sản phẩm yêu cầu đổi/trả",
+    "create": {
+      "title": "Yêu cầu Đổi/Trả",
+      "desc": "Vui lòng chọn sản phẩm và số lượng muốn đổi/trả",
+      "reason_placeholder": "Nhập lý do đổi/trả (VD: Hàng lỗi, sai mẫu mã...)",
+      "upload_proof": "Tải ảnh minh chứng",
+      "upload_desc": "Kéo thả hoặc click để tải lên tối đa 3 ảnh/video",
+      "submit_btn": "Gửi yêu cầu",
+      "cancel_btn": "Hủy bỏ",
+      "item_qty": "Số lượng trả",
+      "error_select_item": "Vui lòng chọn ít nhất một sản phẩm để đổi trả",
+      "error_reason": "Vui lòng nhập lý do đổi trả",
+      "error_qty": "Số lượng đổi trả phải lớn hơn 0",
+      "error_upload": "Lỗi khi tải ảnh lên",
+      "success": "Yêu cầu đổi/trả đã được gửi thành công!"
+    },
+    "updated_toast": "Cập nhật đổi trả đơn {{orderCode}}: {{status}}"
+  }
 }

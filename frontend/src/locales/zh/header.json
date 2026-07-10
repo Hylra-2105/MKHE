@@ -21,7 +21,14 @@
     "manage_blogs": "博客管理",
     "manage_reviews": "评论管理",
     "manage_contacts": "联系人管理",
-    "b2b_dashboard": "B2B 仪表板"
+    "b2b_dashboard": "B2B 仪表板",
+    "manage_returns": "换货/退货管理",
+    "section_core": "操作",
+    "section_customers": "客户与优惠",
+    "section_content": "内容与支持",
+    "section_b2b": "企业",
+    "b2b_orders": "B2B订单",
+    "back_to_site": "返回首页"
   },
   "guest_menu": {
     "login": "登录"
@@ -60,7 +67,15 @@
       "admin_order_paid": "已付款订单",
       "admin_order_completed": "订单完成",
       "admin_stock_alert": "库存预警",
-      "admin_contact_new": "新联系请求"
+      "admin_contact_new": "新联系请求",
+      "USER_RETURN_CREATED": "成功的换货/退货请求",
+      "USER_RETURN_UPDATED": "更新换货/退货",
+      "USER_RETURN_UPDATED_APPROVED": "接受换货/退货",
+      "USER_RETURN_UPDATED_REJECTED": "换货/退货被拒绝",
+      "ADMIN_RETURN_NEW": "请求新的换货/退货",
+      "return_updated_toast": "更新换货/退货订单 {{orderCode}}: {{status}}",
+      "return_status_approved": "已批准",
+      "return_status_rejected": "已拒绝"
     },
     "message": {
       "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
@@ -77,7 +92,12 @@
       "admin_order_paid": "订单 #{{orderCode}} 已成功付款 (在线)。",
       "admin_order_completed": "客户已确认订单 #{{orderCode}} 的收货和付款。",
       "admin_stock_alert": "产品 {{productName}} 库存不足 (剩余 {{currentStock}} 个)。",
-      "admin_contact_new": "客户 {{name}} 发送了一个请求: {{interest}}"
+      "admin_contact_new": "客户 {{name}} 发送了一个请求: {{interest}}",
+      "USER_RETURN_CREATED": "订单 {{orderCode}} 的退货请求已提交，正在等待处理。",
+      "USER_RETURN_UPDATED": "订单 {{orderCode}} 的退货请求已更新。",
+      "USER_RETURN_UPDATED_APPROVED": "订单 {{orderCode}} 的退货请求已被接受。",
+      "USER_RETURN_UPDATED_REJECTED": "订单 {{orderCode}} 的退货请求已被拒绝。",
+      "ADMIN_RETURN_NEW": "客户刚刚发送了订单 {{orderCode}} 的换货/退货请求。"
     },
     "header_title": "通知",
     "mark_all_read": "全部标为已读",
