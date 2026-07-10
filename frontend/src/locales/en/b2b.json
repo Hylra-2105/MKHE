@@ -1,50 +1,71 @@
 {
-  "title": "Create B2B Order Request",
-  "subtitle": "Exclusive area for Business Partners",
-  "consultingPackage": "Custom Product Consulting & Design Package",
+  "title": "B2B Dashboard",
+  "request_title": "Create B2B Request",
+  "subtitle": "Fill in your requirements, we will contact you soon",
+  "admin_title": "Quản lý B2B",
+  "status": {
+    "PENDING_QUOTE": "Chờ báo giá",
+    "NEGOTIATING": "Đang đàm phán",
+    "CONFIRMED": "Đã chốt",
+    "PRODUCING": "Đang sản xuất",
+    "DELIVERING": "Giao hàng",
+    "COMPLETED": "Hoàn thành",
+    "CANCELLED": "Đã hủy"
+  },
+  "download_quote": "Tải Báo giá / Hợp đồng",
+  "confirm_order": "Xác nhận chốt đơn",
+  "chat_placeholder": "Nhập tin nhắn của bạn...",
+  "send": "Gửi",
+  "upload_quote": "Tải PDF lên",
+  "update_status": "Cập nhật",
+  "no_orders": "Chưa có hợp đồng nào.",
+  "confirm_msg": "Bạn có chắc chắn muốn chốt đơn hàng này không?",
+  "pdf_required": "Vui lòng đính kèm file PDF.",
+  "select_status": "Chọn trạng thái",
+  "consultingPackage": "Gói Tư Vấn & Thiết Kế Sản Phẩm Theo Yêu Cầu",
   "companyInfo": {
-    "title": "Company / Partner Information",
-    "desc1": "The system automatically uses the default information and Logo from your Profile",
+    "title": "Company Information",
+    "desc1": "We will use this information for Contracts & Invoicing",
     "company": "Company",
     "taxCode": "Tax Code",
     "notUpdated": "Not updated",
-    "note": "* Note: If the company information is incorrect, please update it in your Profile before ordering."
+    "note": "You can update this in your Profile"
   },
   "fields": {
-    "product": "Service Package / Product",
-    "productPlaceholder": "-- Select Service Package / Product --",
-    "quantity": "Expected Quantity",
-    "budget": "Expected Budget (VND)",
-    "budgetPlaceholder": "Ex: 50000000",
+    "product": "Product / Service",
+    "productPlaceholder": "Select product or service",
+    "quantity": "Estimated Quantity",
+    "budget": "Estimated Budget (VND)",
+    "budgetPlaceholder": "Example: 50,000,000",
     "deliveryDate": "Expected Delivery Date",
-    "deliveryDatePlaceholder": "Select delivery date...",
-    "packaging": "Packaging Requirements (Optional)",
-    "packagingPlaceholder": "-- Select packaging requirement --",
+    "deliveryDatePlaceholder": "Select date...",
+    "packaging": "Packaging Requirements",
+    "packagingPlaceholder": "Select packaging option",
     "packagingOptions": {
-      "STANDARD_BOX": "Standard Box",
+      "STANDARD_BOX": "MKHE Standard Box",
       "NO_PACKAGING": "No Packaging"
     },
-    "note": "Additional Notes (Optional)",
-    "notePlaceholder": "Ex: Need VAT invoice, request to attach cards with each guest's name, or describe custom design idea...",
-    "designFiles": "Upload Design File / Idea Image (Optional)",
-    "dragDrop": "Drag and drop file here, or click to select file",
-    "fileHint": "Supported: PDF, AI, PNG, JPG (Max 10MB/file, max 5 files)",
-    "fileNote": "* Note: Leave blank if using standard Logo in your Profile"
+    "note": "Additional Notes",
+    "notePlaceholder": "Special requests for materials, scent, dimensions...",
+    "designFiles": "Attachments (Designs / Detailed Requests)",
+    "dragDrop": "Drag and drop files here or click to select",
+    "fileHint": "Supports .pdf, .ai, .png, .jpg (Max 5 files)",
+    "fileNote": "Maximum 5 files"
+  },
+  "validation": {
+    "productRequired": "Vui lòng chọn sản phẩm/dịch vụ",
+    "quantityRequired": "Vui lòng nhập số lượng",
+    "deliveryDateRequired": "Vui lòng chọn ngày nhận hàng"
+  },
+  "messages": {
+    "fetchProductsError": "Không thể tải danh sách sản phẩm",
+    "maxFiles": "Bạn chỉ được tải lên tối đa 5 file",
+    "success": "Gửi yêu cầu B2B thành công! Chúng tôi sẽ liên hệ báo giá sớm.",
+    "error": "Có lỗi xảy ra, vui lòng thử lại sau"
   },
   "buttons": {
     "back": "Back to Dashboard",
-    "submit": "Create Order Request",
+    "submit": "Submit Request",
     "submitting": "Submitting..."
-  },
-  "validation": {
-    "productRequired": "Please select Service Package / Product.",
-    "quantityRequired": "Please enter Expected Quantity.",
-    "deliveryDateRequired": "Please select Expected Delivery Date."
-  },
-  "messages": {
-    "success": "Order request sent successfully!",
-    "error": "An error occurred while sending the request.",
-    "fetchProductsError": "Unable to load product list.",
-    "maxFiles": "You can upload a maximum of 5 files."
   }
 }

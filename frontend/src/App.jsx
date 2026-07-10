@@ -60,6 +60,7 @@ import ContactPage from "@/pages/contact/ContactPage";
 import CheckoutPage from "./pages/orders/CheckoutPage";
 import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
 import OrderManagementPage from "./pages/orders/OrderManagementPage";
+import AdminB2BOrdersPage from "./pages/admin/AdminB2BOrdersPage";
 
 function App() {
   const { t } = useTranslation(["header"]);
@@ -309,6 +310,31 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <ContactManagementPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/b2b/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/b2b/request"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BOrderRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/b2b-orders"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <AdminB2BOrdersPage />
               </ProtectedRoute>
             }
           />
