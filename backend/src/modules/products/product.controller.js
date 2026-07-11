@@ -119,7 +119,6 @@ export const createProduct = async (req, res) => {
 };
 
 // [GET] /api/products - Lấy danh sách sản phẩm với phân trang
-import fs from "fs";
 
 export const getProducts = async (req, res) => {
   try {
@@ -292,6 +291,10 @@ export const updateProduct = async (req, res) => {
         return errorResponse(res, 400, "SKU_ALREADY_EXISTS");
       }
     }
+
+    // Bảo vệ các trường không được phép ghi đè (Mass Assignment Protection)
+    const protectedFields = ["sold", "ratingAverage", "ratingCount", "isDeleted", "dppProfileId", "storyBlogId", "_id", "createdAt", "updatedAt", "__v"];
+    protectedFields.forEach(field => delete updates[field]);
 
     Object.assign(product, updates);
 
@@ -469,14 +472,14 @@ export const deleteProductImages = async (req, res) => {
 
     for (const imageUrl of imagesToDelete) {
       try {
-        const urlParts = imageUrl.split("/");
-        const publicIdWithExt = urlParts[urlParts.length - 1];
-        const isVideo = imageUrl.includes("mkhe_videos");
-        const folder = isVideo ? "mkhe_videos" : "mkhe_avatars";
-        const resourceType = isVideo ? "video" : "image";
-        const publicId = `${folder}/${publicIdWithExt.split(".")[0]}`;
-
-        await cloudinary.uploader.destroy(publicId, { type: "upload", resource_type: resourceType });
+        const regex = /\/upload\/(?:v\d+\/)?([^\.]+)/;
+        const match = imageUrl.match(regex);
+        if (match && match[1]) {
+          const publicId = match[1];
+          const isVideo = imageUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|ogg)$/i) || imageUrl.includes("mkhe_videos");
+          const resourceType = isVideo ? "video" : "image";
+          await cloudinary.uploader.destroy(publicId, { type: "upload", resource_type: resourceType });
+        }
       } catch (error) {
         console.error(`[Delete Image] Failed to delete ${imageUrl}`);
       }
