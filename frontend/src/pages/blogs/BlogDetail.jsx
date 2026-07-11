@@ -5,6 +5,7 @@ import { getBlogBySlugApi } from "@/api/blogApi";
 import { Calendar, User, ChevronLeft, ChevronRight, Tag, ShoppingCart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/stores/useCartStore";
+import DOMPurify from "dompurify";
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -95,7 +96,7 @@ const BlogDetail = () => {
         {/* Nội dung bài viết */}
         <div 
           className="prose dark:prose-invert prose-lg max-w-none text-mkhe-text/90 marker:text-mkhe-primary prose-a:text-mkhe-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:border prose-img:border-mkhe-border/30 dark:[&_[style]]:!text-mkhe-text dark:[&_a]:!text-mkhe-primary"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
         />
 
         {/* Sản phẩm liên kết (Call to Action Mua Hàng) */}

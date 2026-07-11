@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { checkNfcClaimApi, claimNfcGachaApi } from "@/api/voucherApi";
 import AuthBottomSheet from "./AuthBottomSheet";
 import WelcomeToast from "./WelcomeToast";
+import DOMPurify from "dompurify";
 
 const DPPContainer = () => {
   const { uid } = useParams();
@@ -410,7 +411,7 @@ const DPPContainer = () => {
           {product.story && (
             <div 
               className="text-sm text-mkhe-text/60 leading-relaxed font-light [&>p]:mb-3 last:[&>p]:mb-0 [&>strong]:text-mkhe-text [&>strong]:font-bold [&>em]:italic"
-              dangerouslySetInnerHTML={{ __html: product.story }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.story) }}
             />
           )}
         </div>
