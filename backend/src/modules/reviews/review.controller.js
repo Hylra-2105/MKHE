@@ -3,6 +3,7 @@ import Product from "../products/product.model.js";
 import User from "../users/user.model.js";
 import Order from "../orders/order.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // Tính toán lại ratingAverage và ratingCount
 const calculateAverageRating = async (productId) => {
@@ -123,7 +124,8 @@ export const getAllReviews = async (req, res) => {
     }
 
     if (req.query.search) {
-      const regex = new RegExp(req.query.search, "i");
+      const safeSearchStr = createVietnameseRegex(req.query.search);
+      const regex = new RegExp(safeSearchStr, "i");
       
       const productIds = await Product.find({ 
         $or: [{ name: regex }, { sku: regex }] 
