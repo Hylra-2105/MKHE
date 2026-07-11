@@ -68,8 +68,8 @@ export default function UserManagementFeature() {
       const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter, statusFilter);
 
       if (res.success) {
-        setUsers(res.data);
-        setTotalPages(res.pagination.totalPages);
+        setUsers(res.data.data);
+        setTotalPages(res.data.pagination.totalPages);
       }
     } catch (error) {
       const errorStatus = error.response?.status;
