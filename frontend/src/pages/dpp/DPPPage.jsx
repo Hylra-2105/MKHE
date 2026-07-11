@@ -1,4 +1,3 @@
-import React from "react";
 import DPPContainer from "@/features/dpp/components/DPPContainer";
 import Header from "@/components/layout/Header";
 

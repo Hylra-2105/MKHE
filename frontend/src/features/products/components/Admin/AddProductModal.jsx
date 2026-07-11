@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
+import {  useState, useRef, useEffect  } from "react";
 import toast from "react-hot-toast";
 import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag, Briefcase } from "lucide-react";
 import Button from "@/components/ui/Button";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {  useEffect, useState  } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
 import { useCartStore } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
@@ -57,7 +57,7 @@ const MiniCartDrawer = () => {
   return (
     <>
       {/* Dropdown / Modal */}
-      <div className="mini-cart-drawer fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[460px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] z-[110] bg-mkhe-bg border-0 sm:border border-mkhe-border sm:rounded-xl shadow-2xl flex flex-col animate-in fade-in sm:zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
+      <div className="mini-cart-drawer fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[460px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] z-[110] bg-mkhe-bg text-mkhe-text border-0 sm:border border-mkhe-border sm:rounded-xl shadow-2xl flex flex-col animate-in fade-in sm:zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
         
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-mkhe-border/10">

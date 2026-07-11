@@ -1,4 +1,3 @@
-import React from "react";
 import { formatNumber } from "@/utils/formatters";
 import { QrCode, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";

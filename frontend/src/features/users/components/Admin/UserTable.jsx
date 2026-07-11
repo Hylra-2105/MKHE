@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { getLastNameInitial, isVideoMedia } from "@/utils/validators";
 import { Eye } from "lucide-react";

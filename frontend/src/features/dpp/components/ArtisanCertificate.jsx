@@ -1,4 +1,3 @@
-import React from "react";
 import { Fingerprint, Award, Quote } from "lucide-react";
 import { useTranslation } from "react-i18next";
 

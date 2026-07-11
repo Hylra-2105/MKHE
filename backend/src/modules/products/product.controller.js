@@ -97,10 +97,6 @@ export const createProduct = async (req, res) => {
         );
         newProduct.isPublicEvent = false;
         await newProduct.save();
-
-        try {
-          getIO().emit("product_updated", newProduct);
-        } catch (err) {}
       }
     }
 
@@ -349,10 +345,6 @@ export const deleteProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!deletedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-    
-    try {
-      getIO().emit("product_updated", deletedProduct);
-    } catch (err) {}
 
     const io = getIO();
     io.emit("admin_product_updated", deletedProduct);
@@ -472,7 +464,7 @@ export const deleteProductImages = async (req, res) => {
 
     for (const imageUrl of imagesToDelete) {
       try {
-        const regex = /\/upload\/(?:v\d+\/)?([^\.]+)/;
+        const regex = /\/upload\/(?:v\d+\/)?([^.]+)/;
         const match = imageUrl.match(regex);
         if (match && match[1]) {
           const publicId = match[1];
@@ -559,7 +551,7 @@ export const getShopProducts = async (req, res) => {
     if (culturalDNA) query.culturalDNA = culturalDNA;
     
     if (craftVillage) {
-      const cvRegex = createVietnameseRegex(craftVillage);
+      const cvRegex = createVietnameseRegex(craftVillage.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
       andConditions.push({
         $or: [
           { craftVillage: { $regex: cvRegex, $options: "i" } },

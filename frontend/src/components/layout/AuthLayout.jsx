@@ -1,6 +1,7 @@
+import React from "react";
 import { Outlet } from "react-router-dom";
 import AuthHeader from "./AuthHeader";
-import React from "react";
+
 import PageSkeleton from "../ui/PageSkeleton";
 
 export default function AuthLayout() {

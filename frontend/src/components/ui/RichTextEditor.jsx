@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import {  useEffect, useState, useRef  } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";

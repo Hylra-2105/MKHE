@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {  useState  } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Star, Upload, Loader2, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";

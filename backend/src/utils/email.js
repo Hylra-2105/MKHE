@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Buffer } from "buffer";
 import { getGmailClient } from "../config/nodemailer.js";
 import { loadTranslation, getTranslation } from "../config/i18n.js";
 
@@ -339,8 +340,8 @@ export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
  * Gửi email thông báo cập nhật trạng thái đơn hàng
  */
 export const sendOrderStatusEmail = async (toEmail, order, status, lang = "vi") => {
-  let title = "";
-  let message = "";
+  let title;
+  let message;
   let color = "#bc9c6a"; // default primary color
 
   switch (status) {

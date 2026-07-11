@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { Download, CheckCircle, Clock, Check, Truck, Settings, Package, Loader2, ChevronLeft, PhoneCall, Mail, User, FileText, Image as ImageIcon, Wallet, Calendar, Hash } from "lucide-react";
 import { confirmB2BOrderApi } from "@/api/b2bApi";

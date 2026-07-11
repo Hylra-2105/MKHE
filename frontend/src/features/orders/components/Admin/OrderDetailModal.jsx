@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { X, MapPin, Phone, User, Package, MessageSquare } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";

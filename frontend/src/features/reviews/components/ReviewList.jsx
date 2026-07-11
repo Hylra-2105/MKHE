@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, User, ChevronDown } from "lucide-react";
 import { reviewApi } from "@/api/reviewApi";

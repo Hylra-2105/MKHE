@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import toast from "react-hot-toast";
 import { Copy, Plus, Cpu, AlertCircle } from "lucide-react";
 import { nfcApi } from "@/api/nfcApi";

@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import bannerVideo from "@/assets/videos/video-banner-mkhe.mp4";
 import { useTranslation } from "react-i18next";

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState  } from "react";
 import { Bell, Check, Package, X, Gift, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -304,7 +304,7 @@ export default function NotificationDropdown() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] bg-mkhe-bg sm:border sm:border-mkhe-border sm:rounded-xl shadow-2xl z-[70] flex flex-col overflow-hidden origin-top-right animate-in fade-in sm:zoom-in-95 duration-200">
+        <div className="fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] bg-mkhe-bg text-mkhe-text sm:border sm:border-mkhe-border sm:rounded-xl shadow-2xl z-[70] flex flex-col overflow-hidden origin-top-right animate-in fade-in sm:zoom-in-95 duration-200">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 shrink-0">
             <h3 className="font-bold text-2xl text-mkhe-text">{t("notifications.header_title", "Thông báo")}</h3>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition } from "react";
+import {  useState, useEffect, useTransition  } from "react";
 import toast from "react-hot-toast";
 import { X, Trash2, RefreshCw } from "lucide-react";
 import { productApi } from "@/api/productApi";

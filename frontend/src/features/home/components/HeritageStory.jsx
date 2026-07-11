@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import {  useState, useRef, useEffect  } from "react";
 import { ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";

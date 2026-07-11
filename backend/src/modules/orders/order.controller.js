@@ -72,36 +72,49 @@ export const checkout = async (req, res) => {
     let subtotal = 0;
     const orderItems = [];
     const lowStockAlerts = []; // To trigger after order is successfully created
+    const deductedStocks = []; // To track for manual rollback
+    let usedUserVoucherId = null;
 
-    for (const item of items) {
-      const product = await Product.findById(item.productId);
-      if (!product) throw new Error(`PRODUCT_NOT_FOUND:${item.productId}`);
-      if (product.stock < item.quantity) throw new Error(`INSUFFICIENT_STOCK:${product.name}`);
+    try {
+      for (const item of items) {
+        // Atomic Operation: Chỉ update khi stock >= quantity
+        const product = await Product.findOneAndUpdate(
+          { _id: item.productId, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { new: true }
+        );
+        
+        if (!product) {
+          // Check xem có phải do không đủ hàng hay do sản phẩm không tồn tại
+          const existingProduct = await Product.findById(item.productId);
+          if (!existingProduct) throw new Error(`PRODUCT_NOT_FOUND:${item.productId}`);
+          throw new Error(`INSUFFICIENT_STOCK:${existingProduct.name}`);
+        }
 
-      subtotal += product.price * item.quantity;
-      
-      orderItems.push({
-        product: product._id,
-        name: product.name,
-        image: product.images?.[0] || "",
-        price: product.price,
-        quantity: item.quantity,
-      });
+        // Lưu vào ds đã trừ để Rollback nếu có lỗi phía sau
+        deductedStocks.push({ productId: product._id, quantity: item.quantity });
 
-      const oldStock = product.stock;
-      product.stock -= item.quantity;
-      
-      if (product.stock <= 10 && !product.lowStockAlerted) {
-        lowStockAlerts.push({
-          productName: product.name,
-          productId: product._id,
-          currentStock: product.stock
+        subtotal += product.price * item.quantity;
+        
+        orderItems.push({
+          product: product._id,
+          name: product.name,
+          image: product.images?.[0] || "",
+          price: product.price,
+          quantity: item.quantity,
         });
-        product.lowStockAlerted = true;
+
+        if (product.stock <= 10 && !product.lowStockAlerted) {
+          lowStockAlerts.push({
+            productName: product.name,
+            productId: product._id,
+            currentStock: product.stock
+          });
+          product.lowStockAlerted = true;
+          await product.save(); // Save lowStockAlerted flag
+        }
       }
 
-      await product.save();
-    }
 
     // 3. Voucher & Total
     let shippingFee = 0; 
@@ -109,33 +122,31 @@ export const checkout = async (req, res) => {
     let appliedVoucherCode = null;
 
     if (voucherId) {
-      const userVoucher = await UserVoucher.findOne({ 
-        voucher: voucherId, 
-        user: user._id, 
-        status: "AVAILABLE" 
-      }).populate("voucher");
+      // Atomic Operation: Khóa Double Spend
+      const userVoucher = await UserVoucher.findOneAndUpdate(
+        { voucher: voucherId, user: user._id, status: "AVAILABLE" },
+        { status: "USED", usedAt: new Date() },
+        { new: true }
+      ).populate("voucher");
       
       if (!userVoucher) {
         throw new Error("VOUCHER_NOT_ELIGIBLE_OR_USED");
       }
-
+      
+      usedUserVoucherId = userVoucher._id;
       const v = userVoucher.voucher;
       appliedVoucherCode = v.code;
         
-        if (v.type === "FIXED_AMOUNT") {
-          discountAmount = v.discountValue;
-        } else if (v.type === "PERCENTAGE") {
-          let calculated = (subtotal * v.discountValue) / 100;
-          if (v.maxDiscount) calculated = Math.min(calculated, v.maxDiscount);
-          discountAmount = calculated;
-        }
+      if (v.type === "FIXED_AMOUNT") {
+        discountAmount = v.discountValue;
+      } else if (v.type === "PERCENTAGE") {
+        let calculated = (subtotal * v.discountValue) / 100;
+        if (v.maxDiscount) calculated = Math.min(calculated, v.maxDiscount);
+        discountAmount = calculated;
+      }
 
-        userVoucher.status = "USED";
-        userVoucher.usedAt = new Date();
-        await userVoucher.save();
-
-        // Increment usedCount on Voucher model
-        await Voucher.findByIdAndUpdate(v._id, { $inc: { usedCount: 1 } });
+      // Increment usedCount on Voucher model
+      await Voucher.findByIdAndUpdate(v._id, { $inc: { usedCount: 1 } });
     }
 
     const totalAmount = Math.max(0, subtotal + shippingFee - discountAmount);
@@ -262,6 +273,24 @@ export const checkout = async (req, res) => {
 
     return successResponse(res, 201, "ORDER_CREATED", payosData ? { order: newOrder[0], payosData } : newOrder[0]);
 
+    } catch (innerError) {
+      // ROLLBACK STOCK TỰ ĐỘNG
+      if (deductedStocks && deductedStocks.length > 0) {
+        console.log("Rolling back stock for:", deductedStocks);
+        for (const item of deductedStocks) {
+          await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity } });
+        }
+      }
+      
+      // ROLLBACK VOUCHER
+      if (usedUserVoucherId && voucherId) {
+        console.log("Rolling back voucher for:", usedUserVoucherId);
+        await UserVoucher.findByIdAndUpdate(usedUserVoucherId, { status: "AVAILABLE", usedAt: null });
+        await Voucher.findByIdAndUpdate(voucherId, { $inc: { usedCount: -1 } });
+      }
+      
+      throw innerError; // Quăng lỗi ra cho catch tổng xử lý
+    }
   } catch (error) {
     console.error("Checkout Error:", error);
     
@@ -383,11 +412,23 @@ export const cancelOrder = async (req, res) => {
 
     // ROLLBACK STOCK
     for (const item of order.items) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
       const product = await Product.findById(item.product);
-      if (product) {
-        product.stock += item.quantity;
-        if (product.status === "OUT_OF_STOCK") product.status = "PUBLISHED";
+      if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
+        product.status = "PUBLISHED";
         await product.save();
+      }
+    }
+
+    // ROLLBACK VOUCHER
+    if (order.voucherCode) {
+      const voucher = await Voucher.findOne({ code: order.voucherCode });
+      if (voucher) {
+        await UserVoucher.findOneAndUpdate(
+          { user: order.user, voucher: voucher._id, status: "USED" },
+          { status: "AVAILABLE", usedAt: null }
+        );
+        await Voucher.findByIdAndUpdate(voucher._id, { $inc: { usedCount: -1 } });
       }
     }
 
@@ -589,17 +630,29 @@ export const updateOrderStatus = async (req, res) => {
 
     order.orderStatus = status;
     
-    // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED -> Hoàn kho
-    if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
-      for (const item of order.items) {
-        const product = await Product.findById(item.product);
-        if (product) {
-          product.stock += item.quantity;
-          if (product.status === "OUT_OF_STOCK") product.status = "PUBLISHED";
-          await product.save();
+    // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED      // ROLLBACK STOCK KHI ADMIN HỦY
+      if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
+        for (const item of order.items) {
+          await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+          const product = await Product.findById(item.product);
+          if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
+            product.status = "PUBLISHED";
+            await product.save();
+          }
+        }
+
+        // ROLLBACK VOUCHER
+        if (order.voucherCode) {
+          const voucher = await Voucher.findOne({ code: order.voucherCode });
+          if (voucher) {
+            await UserVoucher.findOneAndUpdate(
+              { user: order.user, voucher: voucher._id, status: "USED" },
+              { status: "AVAILABLE", usedAt: null }
+            );
+            await Voucher.findByIdAndUpdate(voucher._id, { $inc: { usedCount: -1 } });
+          }
         }
       }
-    }
 
     await order.save();
 
@@ -731,11 +784,15 @@ export const payosWebhook = async (req, res) => {
 
     // code "00" nghĩa là thanh toán thành công
     if (webhookData.code === "00") {
-      const order = await Order.findOne({ payosOrderCode: data.orderCode });
-      if (order && order.paymentStatus !== "PAID") {
-        order.paymentStatus = "PAID";
-        await order.save();
-        
+      // SỬ DỤNG ATOMIC OPERATION để khóa Race Condition
+      // Nếu 2 webhook đến cùng lúc, chỉ có 1 request tìm thấy đơn hàng thỏa mãn điều kiện $ne: "PAID"
+      const order = await Order.findOneAndUpdate(
+        { payosOrderCode: data.orderCode, paymentStatus: { $ne: "PAID" } },
+        { paymentStatus: "PAID" },
+        { new: true } // Trả về document sau khi update
+      );
+      
+      if (order) {
         // Increment sold count
         for (const item of order.items) {
           await Product.findByIdAndUpdate(item.product, { $inc: { sold: item.quantity } });
@@ -776,14 +833,18 @@ export const payosWebhook = async (req, res) => {
             paymentStatus: "PAID"
           });
           
-          // Gửi email hóa đơn
+          // Gửi email hóa đơn (CHẠY NGẦM - BACKGROUND JOB)
+          // Không dùng await ở đây để tránh làm Timeout Webhook của PayOS
           const userForEmail = await User.findById(order.user);
           if (userForEmail) {
             try {
               const userLang = userForEmail.language || "vi";
-              await sendInvoiceEmail(userForEmail.email, order, userLang);
+              // Bỏ await để response về PayOS ngay lập tức
+              sendInvoiceEmail(userForEmail.email, order, userLang).catch(err => {
+                console.error("Failed to send invoice email in background:", err.message);
+              });
             } catch (err) {
-              console.error("Failed to send invoice email in webhook:", err.message);
+              console.error("Failed to extract user info for email in webhook:", err.message);
             }
           }
         } catch (err) {

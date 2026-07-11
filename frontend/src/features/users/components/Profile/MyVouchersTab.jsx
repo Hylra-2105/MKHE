@@ -119,8 +119,8 @@ const MyVouchersTab = () => {
                   }`}
                 >
                   {/* Decorator circles */}
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] border-r border-[var(--color-mkhe-border)]/10" />
-                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] border-l border-[var(--color-mkhe-border)]/10" />
+                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] dark:bg-[#3d271d] border-r border-[var(--color-mkhe-border)]/30 dark:border-white/10" />
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] dark:bg-[#3d271d] border-l border-[var(--color-mkhe-border)]/30 dark:border-white/10" />
                   
                   <div className="flex justify-between items-start">
                     <div>

@@ -1,5 +1,3 @@
-import React from "react";
-
 const ErrorText = ({ error, t }) => {
   if (!error) return null;
 

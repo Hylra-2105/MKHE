@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import {  useState, useEffect  } from "react";
 import Map, { Marker } from 'react-map-gl/mapbox';
 import goongjs from '@goongmaps/goong-js';
 import { MapPin } from 'lucide-react';

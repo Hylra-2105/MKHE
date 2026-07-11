@@ -1,4 +1,3 @@
-import React from "react";
 import { X, Package, CheckCircle2, Clock, XCircle, AlertCircle, MessageSquare, HelpCircle, ImageIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
