@@ -9,6 +9,7 @@
     "filter_status": "Tất cả trạng thái",
     "empty_title": "Chưa có bài viết nào",
     "empty_desc": "Hãy tạo bài viết đầu tiên để kể những câu chuyện di sản đầy tự hào của MKHE.",
+    "delete_success": "Đã xóa bài viết thành công",
     "table": {
       "article": "Bài viết",
       "category": "Danh mục",
@@ -86,7 +87,9 @@
       "back": "QUAY LẠI",
       "related_products": "Sản phẩm liên quan đến bài viết",
       "view_detail": "Xem chi tiết",
-      "add_to_cart": "Thêm vào giỏ hàng"
+      "add_to_cart": "Thêm vào giỏ hàng",
+      "not_found_title": "Không tìm thấy bài viết",
+      "not_found_desc": "Bài viết này có thể đã bị xóa hoặc tạm thời không khả dụng. Vui lòng quay lại danh sách bài viết."
     }
   },
   "fetch_list_error": "Không thể tải danh sách bài viết",

@@ -47,7 +47,8 @@
   },
   "shipping_info": {
     "title": "配送情報",
-    "address_title": "お届け先住所",
+    "address_title": "配送先住所",
+    "edit_btn": "編集",
     "change_btn": "変更",
     "add_info_btn": "配送情報を追加",
     "full_name": "フルネーム",

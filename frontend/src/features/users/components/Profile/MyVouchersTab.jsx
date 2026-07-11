@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Ticket, Loader2, Clock, CheckCircle2 } from "lucide-react";
+import { Ticket, Loader2, Clock, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { getUserWalletApi } from "@/api/voucherApi";
 import { useSocketStore } from "@/stores/useSocketStore";
@@ -104,7 +104,7 @@ const MyVouchersTab = () => {
             <p>{t("user:vouchers_tab.no_vouchers", { defaultValue: "Bạn chưa có voucher nào" })}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3 py-1">
             {paginatedVouchers.map((userVoucher) => {
               const v = userVoucher.voucher;
               if (!v) return null;
@@ -112,15 +112,23 @@ const MyVouchersTab = () => {
               return (
                 <div 
                   key={userVoucher._id}
-                  className={`bg-[var(--color-mkhe-surface)] border rounded-2xl p-5 flex flex-col gap-4 relative overflow-hidden transition-all ${
+                  className={`group bg-[var(--color-mkhe-bg)] dark:bg-[#3d271d] border rounded-2xl p-5 flex flex-col gap-4 relative transition-all ${
                     userVoucher.status === "AVAILABLE" 
                       ? "border-[var(--color-mkhe-primary)]/50 shadow-md hover:shadow-lg hover:border-[var(--color-mkhe-primary)]" 
                       : "border-[var(--color-mkhe-primary)]/20 opacity-80"
                   }`}
                 >
                   {/* Decorator circles */}
-                  <div className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] dark:bg-[#3d271d] border-r border-[var(--color-mkhe-border)]/30 dark:border-white/10" />
-                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-bg)] dark:bg-[#3d271d] border-l border-[var(--color-mkhe-border)]/30 dark:border-white/10" />
+                  <div className={`absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-input)] border-r z-10 transition-all ${
+                    userVoucher.status === "AVAILABLE" 
+                      ? "border-[var(--color-mkhe-primary)]/50 group-hover:border-[var(--color-mkhe-primary)]" 
+                      : "border-[var(--color-mkhe-primary)]/20"
+                  }`} />
+                  <div className={`absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[var(--color-mkhe-input)] border-l z-10 transition-all ${
+                    userVoucher.status === "AVAILABLE" 
+                      ? "border-[var(--color-mkhe-primary)]/50 group-hover:border-[var(--color-mkhe-primary)]" 
+                      : "border-[var(--color-mkhe-primary)]/20"
+                  }`} />
                   
                   <div className="flex justify-between items-start">
                     <div>
@@ -146,25 +154,25 @@ const MyVouchersTab = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-[var(--color-mkhe-border)]/10">
           <button
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1 || isLoading}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--color-mkhe-border)]/20 hover:bg-[var(--color-mkhe-border)]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="p-2 rounded-xl bg-[var(--color-mkhe-input)] hover:bg-[var(--color-mkhe-border)]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
           >
-            {"<"}
+            <ChevronLeft className="w-5 h-5 text-[var(--color-mkhe-text)]" />
           </button>
           
-          <span className="text-sm font-medium px-4">
+          <span className="text-sm font-semibold text-[var(--color-mkhe-text)]/70">
             {page} / {totalPages}
           </span>
           
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages || isLoading}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--color-mkhe-border)]/20 hover:bg-[var(--color-mkhe-border)]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="p-2 rounded-xl bg-[var(--color-mkhe-input)] hover:bg-[var(--color-mkhe-border)]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
           >
-            {">"}
+            <ChevronRight className="w-5 h-5 text-[var(--color-mkhe-text)]" />
           </button>
         </div>
       )}

@@ -8,12 +8,19 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useTranslation } from "react-i18next";
 
-export default function AddressBookModal({ isOpen, onClose, user, onAddressSelected, onAddressAdded }) {
+export default function AddressBookModal({ isOpen, onClose, user, onAddressSelected, onAddressAdded, currentAddressId }) {
   const { t } = useTranslation("checkout");
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(
-    user?.addresses?.find((a) => a.isDefault)?._id || user?.addresses?.[0]?._id
+    currentAddressId || user?.addresses?.find((a) => a.isDefault)?._id || user?.addresses?.[0]?._id
   );
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setSelectedAddressId(currentAddressId || user?.addresses?.find((a) => a.isDefault)?._id || user?.addresses?.[0]?._id);
+      setShowAddForm(false);
+    }
+  }, [isOpen, currentAddressId, user]);
   
   // States for new address form
   const [newAddressInfo, setNewAddressInfo] = useState({
@@ -126,7 +133,7 @@ export default function AddressBookModal({ isOpen, onClose, user, onAddressSelec
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50">
       <div className="bg-mkhe-bg rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="p-4 border-b border-mkhe-border/10 flex justify-between items-center bg-mkhe-border/5">
           <h2 className="text-xl font-medium text-mkhe-text">

@@ -73,7 +73,8 @@
       "Ký sự": "ストーリー",
       "Sự kiện": "イベント",
       "Cẩm nang": "ハンドブック"
-    }
+    },
+    "delete_success": "投稿は正常に削除されました"
   },
   "public": {
     "page_title_story": "遺産の物語",
@@ -86,7 +87,9 @@
       "back": "戻る",
       "related_products": "関連記事",
       "view_detail": "詳細を見る",
-      "add_to_cart": "カートに追加"
+      "add_to_cart": "カートに追加",
+      "not_found_title": "記事が見つかりませんでした",
+      "not_found_desc": "この記事は削除されたか、一時的に閲覧できなくなった可能性があります。記事一覧へお戻りください。"
     }
   },
   "fetch_list_error": "記事リストを読み込めません",

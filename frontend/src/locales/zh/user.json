@@ -10,7 +10,9 @@
     "pass_mismatch": "密码不匹配",
     "invalid_file_type": "请选择有效的图像或视频文件！",
     "video_too_large": "视频上传不得超过10MB！",
-    "image_too_large": "图片上传不得超过5MB！"
+    "image_too_large": "图片上传不得超过5MB！",
+    "name_required": "请输入您的全名",
+    "phone_required": "请输入您的电话号码"
   },
   "messages": {
     "update_success": "更新成功！",

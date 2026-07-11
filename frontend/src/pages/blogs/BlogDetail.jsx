@@ -2,7 +2,7 @@ import {  useState, useEffect  } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getBlogBySlugApi } from "@/api/blogApi";
-import { Calendar, User, ChevronLeft, ChevronRight, Tag, ShoppingCart } from "lucide-react";
+import { Calendar, User, ChevronLeft, ChevronRight, Tag, ShoppingCart, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/stores/useCartStore";
 import DOMPurify from "dompurify";
@@ -46,10 +46,24 @@ const BlogDetail = () => {
 
   if (!blog) {
     return (
-      <div className="min-h-screen bg-mkhe-bg flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-bold text-mkhe-text mb-4">Không tìm thấy bài viết</h2>
-        <Link to="/storytelling" className="text-mkhe-primary hover:underline flex items-center gap-2">
-          <ChevronLeft className="w-5 h-5" /> {t("public.detail.back", { defaultValue: "Quay lại danh sách" })}
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-mkhe-bg transition-colors duration-300">
+        <div className="flex justify-center mb-6 relative">
+          <AlertCircle className="w-16 h-16 text-mkhe-primary opacity-60" strokeWidth={1.5} />
+        </div>
+        
+        <h2 className="text-2xl font-bold text-mkhe-text/90 tracking-wider mb-2 py-1">
+          {t("public.detail.not_found_title", { defaultValue: "Không tìm thấy bài viết" })}
+        </h2>
+        
+        <p className="text-mkhe-text/60 mb-8 text-sm leading-relaxed max-w-sm mx-auto">
+          {t("public.detail.not_found_desc", { defaultValue: "Bài viết này có thể đã bị xóa hoặc tạm thời không khả dụng. Vui lòng quay lại danh sách bài viết." })}
+        </p>
+
+        <Link 
+          to="/storytelling" 
+          className="inline-flex items-center justify-center bg-mkhe-primary text-white px-8 py-3 rounded-md hover:opacity-90 transition-opacity font-semibold tracking-wider text-xs md:text-sm uppercase shadow-lg cursor-pointer gap-2"
+        >
+          <ChevronLeft className="w-4 h-4" /> {t("public.detail.back", { defaultValue: "Quay lại danh sách" })}
         </Link>
       </div>
     );

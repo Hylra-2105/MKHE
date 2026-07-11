@@ -73,7 +73,8 @@
       "Ký sự": "故事",
       "Sự kiện": "活动",
       "Cẩm nang": "手册"
-    }
+    },
+    "delete_success": "帖子删除成功"
   },
   "public": {
     "page_title_story": "遗产故事",
@@ -86,7 +87,9 @@
       "back": "返回",
       "related_products": "相关产品",
       "view_detail": "查看详情",
-      "add_to_cart": "加入购物车"
+      "add_to_cart": "加入购物车",
+      "not_found_title": "没有找到文章",
+      "not_found_desc": "这篇文章可能已被删除或暂时不可用。请返回文章列表。"
     }
   },
   "fetch_list_error": "无法加载文章列表",

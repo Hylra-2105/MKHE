@@ -57,12 +57,7 @@ export default function LoginForm() {
         if (redirectPath) {
           navigate(redirectPath, { state: location.state });
         } else {
-          const userRole = useAuthStore.getState().user?.role;
-          if (userRole === "Admin" || userRole === "Staff") {
-            navigate("/admin/dashboard");
-          } else {
-            navigate("/");
-          }
+          navigate("/");
         }
       } else {
         const msg = res?.message || "";
@@ -120,12 +115,7 @@ export default function LoginForm() {
       if (redirectPath) {
         navigate(redirectPath, { state: location.state });
       } else {
-        const userRole = useAuthStore.getState().user?.role;
-        if (userRole === "Admin" || userRole === "Staff") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/");
-        }
+        navigate("/");
       }
     } else {
       const msg = result.message || "";

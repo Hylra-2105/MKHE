@@ -32,7 +32,6 @@ export default function CheckoutSuccessPage() {
             setTimeout(() => {
               setOrder(res.data);
               setIsProcessing(false);
-              toast.success(t("success.payment_success_toast"));
             }, 2000);
           }
         } catch (error) {
@@ -94,7 +93,8 @@ export default function CheckoutSuccessPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+            style={{ zIndex: 9999 }}
+            className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm"
           >
             <div className="bg-mkhe-input p-8 rounded-2xl flex flex-col items-center shadow-2xl border border-mkhe-border max-w-sm w-full mx-4">
               <Loader2 className="w-12 h-12 text-mkhe-primary animate-spin mb-4" />

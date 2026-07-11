@@ -73,7 +73,8 @@
       "Ký sự": "Story",
       "Sự kiện": "Event",
       "Cẩm nang": "Handbook"
-    }
+    },
+    "delete_success": "Post deleted successfully"
   },
   "public": {
     "page_title_story": "Heritage Stories",
@@ -86,7 +87,9 @@
       "back": "GO BACK",
       "related_products": "Related Products",
       "view_detail": "View Details",
-      "add_to_cart": "Add to Cart"
+      "add_to_cart": "Add to Cart",
+      "not_found_title": "No articles found",
+      "not_found_desc": "This article may have been deleted or be temporarily unavailable. Please return to the article list."
     }
   },
   "fetch_list_error": "Failed to load blogs",

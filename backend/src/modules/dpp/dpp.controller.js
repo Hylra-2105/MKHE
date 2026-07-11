@@ -12,7 +12,7 @@ const verifyDPP = async (req, res) => {
     const { hash } = req.query;
 
     if (!uid || !hash) {
-      return res.status(403).json({
+      return res.status(400).json({
         success: false,
         message: "Missing credentials (UID or Hash)",
       });
@@ -21,7 +21,7 @@ const verifyDPP = async (req, res) => {
     // Kiểm tra NFC tag trong cơ sở dữ liệu
     const tag = await NfcTag.findOne({ uid }).populate({
       path: "product",
-      select: "name story images file3D artisanName culturalDNA categoryMatrix gpsLocation sku storyBlogId",
+      select: "name story images file3D artisanName culturalDNA categoryMatrix gpsLocation sku storyBlogId status",
       populate: {
         path: "storyBlogId",
         select: "slug title",
@@ -29,7 +29,7 @@ const verifyDPP = async (req, res) => {
     });
 
     if (!tag) {
-      return res.status(403).json({
+      return res.status(404).json({
         success: false,
         message: "Invalid Tag (Not Found)",
       });
@@ -37,7 +37,7 @@ const verifyDPP = async (req, res) => {
 
     // Verify Hash
     if (tag.hash !== hash) {
-      return res.status(403).json({
+      return res.status(400).json({
         success: false,
         message: "Invalid Tag (Hash mismatch)",
       });
@@ -45,18 +45,24 @@ const verifyDPP = async (req, res) => {
 
     // Kiểm tra trạng thái thẻ
     if (tag.status !== "ACTIVE") {
-      return res.status(403).json({
+      return res.status(400).json({
         success: false,
         message: "Tag is not active",
         status: tag.status,
       });
     }
 
-    // Kiểm tra sản phẩm
     if (!tag.product) {
       return res.status(404).json({
         success: false,
         message: "Product associated with this tag not found",
+      });
+    }
+
+    if (tag.product.status === "DRAFT" || tag.product.status === "HIDDEN") {
+      return res.status(404).json({
+        success: false,
+        message: "Product is not available for public view",
       });
     }
 

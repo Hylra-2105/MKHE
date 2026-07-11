@@ -4,6 +4,7 @@ import User from "../users/user.model.js";
 import Order from "../orders/order.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
+import { clearProductCache } from "../../utils/cache.js";
 
 // Tính toán lại ratingAverage và ratingCount
 const calculateAverageRating = async (productId) => {
@@ -83,6 +84,9 @@ export const createReview = async (req, res) => {
 
     // 4. Update rating statistics
     await calculateAverageRating(newReview.product);
+
+    // Xóa cache để frontend cập nhật số lượng đánh giá ngay lập tức
+    clearProductCache();
 
     return successResponse(res, 201, "REVIEW_CREATED_SUCCESS", newReview);
   } catch (error) {
@@ -177,6 +181,7 @@ export const toggleVisibility = async (req, res) => {
 
     // Re-calculate rating
     await calculateAverageRating(review.product);
+    clearProductCache();
 
     return successResponse(res, 200, "REVIEW_VISIBILITY_TOGGLED", review);
   } catch (error) {

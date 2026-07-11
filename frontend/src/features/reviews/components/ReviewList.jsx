@@ -2,6 +2,8 @@ import {  useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { Star, User, ChevronDown } from "lucide-react";
 import { reviewApi } from "@/api/reviewApi";
+import { getImageUrl } from "@/utils/formatters";
+import { isVideoMedia } from "@/utils/validators";
 
 const ReviewList = ({ productId }) => {
   const { t } = useTranslation(["common", "reviews"]);
@@ -57,7 +59,26 @@ const ReviewList = ({ productId }) => {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-border)]/20 flex items-center justify-center overflow-hidden">
                   {review.user?.avatar ? (
-                    <img src={review.user.avatar} alt={review.user.name} className="w-full h-full object-cover" />
+                    isVideoMedia(review.user.avatar) ? (
+                      <video
+                        src={getImageUrl(review.user.avatar)}
+                        className="w-full h-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img 
+                        src={getImageUrl(review.user.avatar)} 
+                        alt={review.user.name} 
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(review.user?.name || 'User')}&background=random`;
+                        }}
+                      />
+                    )
                   ) : (
                     <User className="w-5 h-5 text-[var(--color-mkhe-text)]/40" />
                   )}

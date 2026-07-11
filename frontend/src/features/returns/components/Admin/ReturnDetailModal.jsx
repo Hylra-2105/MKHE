@@ -211,14 +211,17 @@ const ReturnDetailModal = ({ returnRequest, onClose, onSuccess }) => {
       </div>
 
       {previewMedia && (
-        <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/90 p-4" onClick={() => setPreviewMedia(null)}>
-          <button className="absolute top-4 right-4 text-white hover:text-gray-300 cursor-pointer p-2 bg-black/50 rounded-full transition-colors">
+        <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/90 p-4" onClick={(e) => { e.stopPropagation(); setPreviewMedia(null); }}>
+          <button 
+            onClick={(e) => { e.stopPropagation(); setPreviewMedia(null); }}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 cursor-pointer p-2 bg-black/50 rounded-full transition-colors z-[410]"
+          >
             <X className="w-8 h-8" />
           </button>
           {isVideo(previewMedia) ? (
-            <video src={previewMedia} controls autoPlay className="max-w-4xl max-h-[80vh] w-full object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} />
+            <video src={previewMedia} controls autoPlay className="max-w-4xl max-h-[80vh] w-full object-contain rounded-lg shadow-2xl relative z-[410]" onClick={(e) => e.stopPropagation()} />
           ) : (
-            <img src={previewMedia} alt="Preview" className="max-w-4xl max-h-[80vh] w-full object-contain rounded-lg shadow-2xl" onClick={(e) => e.stopPropagation()} />
+            <img src={previewMedia} alt="Preview" className="max-w-4xl max-h-[80vh] w-full object-contain rounded-lg shadow-2xl relative z-[410]" onClick={(e) => e.stopPropagation()} />
           )}
         </div>
       )}

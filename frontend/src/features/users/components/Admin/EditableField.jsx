@@ -1,4 +1,5 @@
 import SearchableDropdown from "@/features/users/components/Admin/SearchableDropdown";
+import { AlertCircle } from "lucide-react";
 
 const EditableField = ({
   label,
@@ -12,6 +13,7 @@ const EditableField = ({
   disabled,
   t,
   prefix,
+  error,
 }) => {
   const displayValue =
     prefix && value && !value.startsWith(prefix) ? `${prefix} ${value}` : value;
@@ -56,7 +58,7 @@ const EditableField = ({
               onChange={onChange}
               disabled={disabled}
               placeholder={placeholder}
-              className={`w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 h-8 focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors ${prefix ? "rounded-r" : "rounded"}`}
+              className={`w-full p-2 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border ${error ? "border-red-500" : "border-[var(--color-mkhe-primary)]/50"} h-8 focus:outline-none focus:ring-2 ${error ? "focus:ring-red-500/20" : "focus:ring-[var(--color-mkhe-primary)]/20"} text-sm transition-colors ${prefix ? "rounded-r" : "rounded"}`}
             />
           </div>
         )
@@ -66,6 +68,12 @@ const EditableField = ({
         >
           {displayValue || placeholder}
         </p>
+      )}
+      {error && isEditing && (
+        <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          <p className="text-xs font-medium">{error}</p>
+        </div>
       )}
     </div>
   );

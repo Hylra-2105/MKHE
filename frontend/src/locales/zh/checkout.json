@@ -48,6 +48,7 @@
   "shipping_info": {
     "title": "送货信息",
     "address_title": "送货地址",
+    "edit_btn": "编辑",
     "change_btn": "更改",
     "add_info_btn": "添加送货信息",
     "full_name": "全名",

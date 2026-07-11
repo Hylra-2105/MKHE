@@ -10,7 +10,9 @@
     "pass_mismatch": "Passwords do not match",
     "invalid_file_type": "Please select a valid image or video file!",
     "video_too_large": "Video upload must not exceed 10MB!",
-    "image_too_large": "Image upload must not exceed 5MB!"
+    "image_too_large": "Image upload must not exceed 5MB!",
+    "name_required": "Please enter your full name",
+    "phone_required": "Please enter your phone number"
   },
   "messages": {
     "update_success": "Update successful!",
