@@ -24,7 +24,7 @@ const generateTokens = async (user) => {
   );
 
   // Lưu refresh token vào Redis (hết hạn sau 7 ngày)
-  await redisClient.setex(`refresh_token:${user._id}`, 7 * 24 * 60 * 60, refreshToken);
+  await redisClient.setex(`refresh_token:${user._id}:${refreshToken}`, 7 * 24 * 60 * 60, "active");
 
   return { token, refreshToken };
 };
@@ -43,7 +43,8 @@ export const registerUser = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
-    const userLang = language || "vi";
+    const requestedLang = (language || "").toLowerCase();
+    const userLang = requestedLang.startsWith("en") ? "en" : "vi";
 
     const user = await User.create({
       name: name.trim(),
@@ -53,7 +54,7 @@ export const registerUser = async (req, res) => {
     });
 
     if (user) {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
 
       // Lưu OTP vào Redis (15 phút TTL)
       await redisClient.setex(`otp:VERIFY_EMAIL:${user.email}`, 900, otp);
@@ -64,6 +65,9 @@ export const registerUser = async (req, res) => {
         console.error("[Email Error]", err.message);
         return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
       }
+
+      const { getIO } = await import("../../config/socket.js");
+      getIO().emit("user_created", user);
 
       return successResponse(res, 201, "REGISTER_SUCCESS", { email: user.email });
     } else {
@@ -103,6 +107,9 @@ export const verifyEmail = async (req, res) => {
     await user.save();
 
     await redisClient.del(`otp:VERIFY_EMAIL:${email}`);
+
+    const { getIO } = await import("../../config/socket.js");
+    getIO().emit("user_updated", user);
 
     return successResponse(res, 200, "VERIFY_SUCCESS");
   } catch (error) {
@@ -189,7 +196,7 @@ export const resendOTP = async (req, res) => {
       return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
 
     await redisClient.setex(`otp:VERIFY_EMAIL:${user.email}`, 900, otp);
 
@@ -220,8 +227,10 @@ export const socialLogin = async (req, res) => {
     const providerName = providerId ? providerId.split(".")[0] : "google";
 
     let user = await User.findOne({ email });
+    let isNewUser = false;
 
     if (!user) {
+      isNewUser = true;
       const randomPassword = crypto.randomBytes(16).toString("hex");
 
       user = await User.create({
@@ -253,6 +262,11 @@ export const socialLogin = async (req, res) => {
     }
 
     const { token, refreshToken } = await generateTokens(user);
+
+    if (isNewUser) {
+      const { getIO } = await import("../../config/socket.js");
+      getIO().emit("user_created", user);
+    }
 
     return successResponse(res, 200, "LOGIN_SUCCESS", {
       token,
@@ -289,7 +303,7 @@ export const forgotPassword = async (req, res) => {
       return errorResponse(res, 400, "USE_SOCIAL_LOGIN");
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
 
     await redisClient.setex(`otp:RESET_PASSWORD:${user.email}`, 900, otp);
 
@@ -369,7 +383,13 @@ export const resetPassword = async (req, res) => {
 export const logoutUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    await redisClient.del(`refresh_token:${userId}`);
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      return errorResponse(res, 400, "MISSING_REFRESH_TOKEN");
+    }
+
+    await redisClient.del(`refresh_token:${userId}:${refreshToken}`);
     return successResponse(res, 200, "LOGOUT_SUCCESS");
   } catch (error) {
     console.error("Logout Error:", error);
@@ -385,8 +405,8 @@ export const refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
     
-    const storedToken = await redisClient.get(`refresh_token:${decoded.id}`);
-    if (storedToken !== refreshToken) {
+    const storedTokenStatus = await redisClient.get(`refresh_token:${decoded.id}:${refreshToken}`);
+    if (!storedTokenStatus) {
       return errorResponse(res, 403, "INVALID_REFRESH_TOKEN");
     }
 
@@ -412,7 +432,7 @@ export const sendChangePasswordOtp = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
 
     await redisClient.setex(`otp:CHANGE_PASSWORD:${user.email}`, 900, otp);
 
@@ -514,23 +534,33 @@ export const activateB2BAccount = async (req, res) => {
       return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
     }
 
-    // Vì b2b accounts có reset token riêng (được sinh ra lúc Admin tạo user) 
-    // Chúng ta vẫn nên kiểm tra trong DB hoặc chuyển hẳn lên Redis.
-    // Nếu token vẫn được cấp bằng cách nào đó, ta sẽ check Redis, 
-    // nhưng ở đây ta check bằng cách tìm tất cả user có role="Enterprise" 
-    // Do token không còn ở DB, admin phải sinh token đưa vào Redis. 
-    // Hiện tại mình sửa để nó query qua Redis.
-    // NOTE: Cần cập nhật controller tạo tài khoản B2B (nếu có) để set key "activate_b2b:token" => email.
-    
-    // Tạm thời, giả sử Redis lưu `activate_b2b_token:${email}` = token
-    // Để query ngược từ token ra email trong Redis hơi khó, 
-    // Tốt nhất Frontend nên gửi thêm `email` trong request này.
-    
-    // Nếu req không có email, chúng ta phải scan (hơi tệ) 
-    // Giải pháp: Frontend PHẢI gửi thêm email hoặc token bản thân nó là JWT.
-    
-    return errorResponse(res, 400, "UNSUPPORTED_METHOD_AFTER_REDIS_MIGRATION");
-    // (B2B Activation cần review lại quy trình tạo tài khoản).
+    const email = await redisClient.get(`activate_b2b_token:${token}`);
+    if (!email) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_SESSION");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return errorResponse(res, 404, "USER_NOT_FOUND");
+    }
+
+    user.password = password;
+    user.isVerified = true;
+    await user.save();
+
+    await redisClient.del(`activate_b2b_token:${token}`);
+
+    getIO().emit("user_updated", user);
+
+    const { sendB2BAccountCreatedEmail } = await import("../../utils/email.js");
+    try {
+      const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
+      await sendB2BAccountCreatedEmail(user.email, user.name, password, userLang);
+    } catch (err) {
+      console.error("Failed to send B2B created email:", err);
+    }
+
+    return successResponse(res, 200, "B2B_ACTIVATED_SUCCESS");
 
   } catch (error) {
     console.error("Activate B2B Error:", error);

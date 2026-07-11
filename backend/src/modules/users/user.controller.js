@@ -3,6 +3,7 @@ import { successResponse, errorResponse } from "../../utils/response.js";
 import { getIO } from "../../config/socket.js";
 import { createVietnameseRegex, isValidEmail } from "../../utils/helpers.js";
 import { sendBlockAccountEmail } from "../../utils/email.js";
+import redisClient from "../../config/redis.js";
 
 // admin lấy danh sách users
 export const getAllUsers = async (req, res) => {
@@ -27,22 +28,11 @@ export const getAllUsers = async (req, res) => {
     if (roleFilter) query.role = roleFilter;
     if (statusFilter === "active") {
       query.isBlocked = { $ne: true };
-      query.$and = [
-        {
-          $or: [
-            { role: { $ne: "Enterprise" } },
-            { resetPasswordToken: null }
-          ]
-        },
-        { isVerified: { $ne: false } }
-      ];
+      query.isVerified = { $ne: false };
     } else if (statusFilter === "blocked") {
       query.isBlocked = true;
     } else if (statusFilter === "pending") {
-      query.$or = [
-        { role: "Enterprise", resetPasswordToken: { $ne: null } },
-        { isVerified: false }
-      ];
+      query.isVerified = false;
     }
 
     const totalUsers = await User.countDocuments(query);
@@ -488,13 +478,13 @@ export const createB2BAccount = async (req, res) => {
       role: "Enterprise",
       companyName,
       taxCode,
-      isVerified: true,
+      isVerified: false,
       provider: "local",
-      resetPasswordToken: activationToken,
-      resetPasswordExpires: activationExpires
     });
 
     await newUser.save();
+
+    await redisClient.setex(`activate_b2b_token:${activationToken}`, 86400, email);
 
     // Send email
     const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
@@ -502,8 +492,6 @@ export const createB2BAccount = async (req, res) => {
 
     const userData = newUser.toObject();
     delete userData.password;
-    delete userData.resetPasswordToken;
-    delete userData.resetPasswordExpires;
 
     try {
       const io = getIO();
