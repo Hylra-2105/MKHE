@@ -73,7 +73,8 @@
       "Ký sự": "스토리",
       "Sự kiện": "이벤트",
       "Cẩm nang": "핸드북"
-    }
+    },
+    "delete_success": "게시물이 삭제되었습니다."
   },
   "public": {
     "page_title_story": "유산 이야기",
@@ -86,7 +87,9 @@
       "back": "돌아가기",
       "related_products": "관련 제품",
       "view_detail": "세부 정보 보기",
-      "add_to_cart": "장바구니에 추가"
+      "add_to_cart": "장바구니에 추가",
+      "not_found_title": "기사를 찾을 수 없습니다.",
+      "not_found_desc": "이 글은 삭제되었거나 일시적으로 이용이 불가능할 수 있습니다. 기사 목록으로 돌아가주세요."
     }
   },
   "fetch_list_error": "블로그 목록을 불러오지 못했습니다",

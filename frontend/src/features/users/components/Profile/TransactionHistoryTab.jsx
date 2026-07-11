@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { CreditCard, Clock } from "lucide-react";
+import { CreditCard, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 import orderApi from "@/api/orderApi";
 import { useSocketStore } from "@/stores/useSocketStore";
@@ -15,7 +15,7 @@ const TransactionHistoryTab = () => {
   const fetchTransactions = useCallback(async (currentPage) => {
     setIsLoading(true);
     try {
-      const response = await orderApi.getMyOrders({ page: currentPage, limit: 3, paymentStatus: "PAID" });
+      const response = await orderApi.getMyOrders({ page: currentPage, limit: 4, paymentStatus: "PAID" });
       if (response && response.success) {
         setTransactions(response.data.data || []);
         setTotalPages(response.data.pagination?.totalPages || 1);
@@ -126,25 +126,25 @@ const TransactionHistoryTab = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-[var(--color-mkhe-border)]/10">
           <button
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1 || isLoading}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--color-mkhe-border)]/20 hover:bg-[var(--color-mkhe-border)]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="p-2 rounded-xl bg-[var(--color-mkhe-input)] hover:bg-[var(--color-mkhe-border)]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
           >
-            {"<"}
+            <ChevronLeft className="w-5 h-5 text-[var(--color-mkhe-text)]" />
           </button>
           
-          <span className="text-sm font-medium px-4">
+          <span className="text-sm font-semibold text-[var(--color-mkhe-text)]/70">
             {page} / {totalPages}
           </span>
           
           <button
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages || isLoading}
-            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--color-mkhe-border)]/20 hover:bg-[var(--color-mkhe-border)]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="p-2 rounded-xl bg-[var(--color-mkhe-input)] hover:bg-[var(--color-mkhe-border)]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
           >
-            {">"}
+            <ChevronRight className="w-5 h-5 text-[var(--color-mkhe-text)]" />
           </button>
         </div>
       )}

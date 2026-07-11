@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Edit2, Trash2, Dna, Package } from "lucide-react";
 import { isVideoMedia } from "@/utils/validators";

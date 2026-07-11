@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import {  useEffect, useState  } from "react";
 import { X, Ticket } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useVoucherStore } from "@/stores/useVoucherStore";

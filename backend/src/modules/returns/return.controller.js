@@ -4,6 +4,7 @@ import User from "../users/user.model.js";
 import Notification from "../notifications/notification.model.js";
 import { getIO } from "../../config/socket.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // createReturn
 export const createReturn = async (req, res) => {
@@ -146,13 +147,14 @@ export const getAdminReturns = async (req, res) => {
     }
 
     if (search) {
-      const orderDocs = await Order.find({ orderCode: { $regex: search, $options: "i" } }, "_id");
+      const searchRegex = createVietnameseRegex(search);
+      const orderDocs = await Order.find({ orderCode: { $regex: searchRegex, $options: "i" } }, "_id");
       const orderIds = orderDocs.map(o => o._id);
 
       const userDocs = await User.find({
         $or: [
-          { name: { $regex: search, $options: "i" } },
-          { email: { $regex: search, $options: "i" } }
+          { name: { $regex: searchRegex, $options: "i" } },
+          { email: { $regex: searchRegex, $options: "i" } }
         ]
       }, "_id");
       const userIds = userDocs.map(u => u._id);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import {  useState, useEffect, useRef  } from "react";
 import { useTranslation } from 'react-i18next';
 import { Mail, Phone, MapPin, Send, ChevronDown, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';

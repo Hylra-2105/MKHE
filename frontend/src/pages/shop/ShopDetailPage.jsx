@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import {  useState, useEffect, useRef  } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
@@ -9,6 +9,7 @@ import { ChevronLeft, ShoppingCart, Info, Plus, Minus, ShieldCheck, MapPin, Laye
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, EffectFade } from "swiper/modules";
 import ReviewList from "@/features/reviews/components/ReviewList";
+import DOMPurify from "dompurify";
 
 // Swiper styles
 import "swiper/css";
@@ -439,7 +440,7 @@ export default function ShopDetailPage() {
                   <div 
                     ref={storyRef}
                     className={`prose prose-sm md:prose-base max-w-none prose-p:text-mkhe-text/80 prose-headings:text-mkhe-text prose-a:text-mkhe-primary prose-strong:text-mkhe-text prose-li:text-mkhe-text/80 prose-ul:text-mkhe-text/80 prose-ol:text-mkhe-text/80 marker:text-mkhe-primary/50 prose-blockquote:text-mkhe-text/80 prose-blockquote:border-mkhe-primary overflow-hidden transition-all duration-700 ease-in-out ${isStoryExpanded ? 'max-h-[5000px]' : 'max-h-[200px]'}`}
-                    dangerouslySetInnerHTML={{ __html: product.story || product.description }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.story || product.description) }}
                   />
                   
                   {/* Gradient Fade */}

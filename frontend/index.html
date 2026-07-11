@@ -17,6 +17,15 @@
         --color-mkhe-border: #c8b6a6;
       }
 
+      /* GIẢI QUYẾT LỖI CHỚP SÁNG (FLASH OF WHITE): 
+         Sử dụng biến --color-mkhe-bg cho body ngay lập tức */
+      body {
+        background-color: var(--color-mkhe-bg);
+        color: var(--color-mkhe-text);
+        margin: 0;
+        overflow-anchor: none;
+      }
+
       /* Disable transition trên lần đầu tiên */
       html.no-transition,
       html.no-transition *,
@@ -25,11 +34,24 @@
         transition: none !important;
       }
     </style>
+    <script>
+      // Chạy đồng bộ (Synchronous) NGAY TRONG HEAD để tránh FOUC (chớp trắng)
+      (function() {
+        var theme = localStorage.getItem("theme");
+        var isDark = theme === "dark" || (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        if (isDark) {
+          document.documentElement.style.setProperty("--color-mkhe-bg", "#1a0f0a");
+          document.documentElement.style.setProperty("--color-mkhe-text", "#d9c5b2");
+          document.documentElement.style.setProperty("--color-mkhe-input", "#2a1c14");
+          document.documentElement.style.setProperty("--color-mkhe-border", "#4a3525");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module">
-      // Initialize theme before React renders
+      // Khởi tạo các event listeners bổ sung (nếu cần) thông qua theme.js
       import { initializeTheme } from "/src/utils/theme.js";
       initializeTheme();
       import("/src/main.jsx");

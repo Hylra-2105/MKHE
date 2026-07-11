@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import {  useState  } from "react";
 import { Filter } from "lucide-react";
 import ShopFilters from "./ShopFilters";
 import { useTranslation } from "react-i18next";

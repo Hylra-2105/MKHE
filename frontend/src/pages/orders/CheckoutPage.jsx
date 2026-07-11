@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   const [isVoucherDrawerOpen, setIsVoucherDrawerOpen] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpSending, setOtpSending] = useState(false);
+  const [lastOtpTime, setLastOtpTime] = useState(0);
 
   // Listen to product updates
   useEffect(() => {
@@ -146,6 +147,7 @@ export default function CheckoutPage() {
     try {
       const res = await orderApi.sendCheckoutOtp({ paymentMethod });
       if (res.success) {
+        setLastOtpTime(Date.now());
         toast.success(t("success.otp_sent"));
         setShowOtpModal(true);
       }
@@ -176,6 +178,10 @@ export default function CheckoutPage() {
     const isTrustedDevice = localStorage.getItem("is_trusted_device") === "true";
 
     if (paymentMethod === "COD" && !isTrustedDevice && !showOtpModal) {
+      if (Date.now() - lastOtpTime < 60000) {
+        setShowOtpModal(true);
+        return;
+      }
       handleSendOtp();
       return;
     }
@@ -310,6 +316,7 @@ export default function CheckoutPage() {
         handleSendOtp={handleSendOtp}
         isSubmitting={isSubmitting}
         otpSending={otpSending}
+        lastOtpTime={lastOtpTime}
       />
     </div>
   );

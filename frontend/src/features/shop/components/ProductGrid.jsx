@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {  useState  } from "react";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";

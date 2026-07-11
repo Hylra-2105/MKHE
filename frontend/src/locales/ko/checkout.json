@@ -48,6 +48,7 @@
   "shipping_info": {
     "title": "배송 정보",
     "address_title": "배송지 주소",
+    "edit_btn": "편집",
     "change_btn": "변경",
     "add_info_btn": "배송 정보 추가",
     "full_name": "성명",

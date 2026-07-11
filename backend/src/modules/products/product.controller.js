@@ -4,6 +4,8 @@ import { createVietnameseRegex } from "../../utils/helpers.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
 import { getIO } from "../../config/socket.js";
+import redisClient from "../../config/redis.js";
+import { clearProductCache } from "../../utils/cache.js";
 
 // [POST] /api/products - Tạo sản phẩm mới
 export const createProduct = async (req, res) => {
@@ -95,16 +97,13 @@ export const createProduct = async (req, res) => {
         );
         newProduct.isPublicEvent = false;
         await newProduct.save();
-
-        try {
-          getIO().emit("product_updated", newProduct);
-        } catch (err) {}
       }
     }
 
     const io = getIO();
     io.emit("admin_product_updated", newProduct);
     io.emit("product_updated", newProduct);
+    clearProductCache();
     return successResponse(res, 201, "PRODUCT_CREATED_SUCCESS", newProduct);
   } catch (error) {
     console.error("Error in createProduct:", error);
@@ -116,7 +115,6 @@ export const createProduct = async (req, res) => {
 };
 
 // [GET] /api/products - Lấy danh sách sản phẩm với phân trang
-import fs from "fs";
 
 export const getProducts = async (req, res) => {
   try {
@@ -220,6 +218,14 @@ export const getShopProductById = async (req, res) => {
   try {
     const { id } = req.params;
     
+    const role = req.user ? req.user.role : "Guest";
+    const cacheKey = `cache:products:id:${id}:${role}`;
+    
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return successResponse(res, 200, "GET_PRODUCT_SUCCESS", JSON.parse(cachedData));
+    }
+    
     // Tìm kiếm bằng Mongoose ObjectId hoặc bằng mã SKU
     let product;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -252,6 +258,7 @@ export const getShopProductById = async (req, res) => {
       return errorResponse(res, 403, "FORBIDDEN_SERVICE");
     }
 
+    await redisClient.setex(cacheKey, 1800, JSON.stringify(product));
     return successResponse(res, 200, "GET_PRODUCT_SUCCESS", product);
   } catch (error) {
     console.error("Error in getShopProductById:", error);
@@ -280,6 +287,10 @@ export const updateProduct = async (req, res) => {
         return errorResponse(res, 400, "SKU_ALREADY_EXISTS");
       }
     }
+
+    // Bảo vệ các trường không được phép ghi đè (Mass Assignment Protection)
+    const protectedFields = ["sold", "ratingAverage", "ratingCount", "isDeleted", "dppProfileId", "storyBlogId", "_id", "createdAt", "updatedAt", "__v"];
+    protectedFields.forEach(field => delete updates[field]);
 
     Object.assign(product, updates);
 
@@ -313,6 +324,7 @@ export const updateProduct = async (req, res) => {
     const io = getIO();
     io.emit("admin_product_updated", updatedProduct);
     io.emit("product_updated", updatedProduct);
+    clearProductCache();
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("Error in updateProduct:", error);
@@ -333,14 +345,11 @@ export const deleteProduct = async (req, res) => {
       { returnDocument: "after" },
     );
     if (!deletedProduct) return errorResponse(res, 404, "PRODUCT_NOT_FOUND");
-    
-    try {
-      getIO().emit("product_updated", deletedProduct);
-    } catch (err) {}
 
     const io = getIO();
     io.emit("admin_product_updated", deletedProduct);
     io.emit("product_updated", deletedProduct);
+    clearProductCache();
     return successResponse(res, 200, "PRODUCT_DELETED_SUCCESS", deletedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -380,6 +389,7 @@ export const restoreProduct = async (req, res) => {
     const io = getIO();
     io.emit("admin_product_updated", restoredProduct);
     io.emit("product_updated", restoredProduct);
+    clearProductCache();
     return successResponse(res, 200, "PRODUCT_RESTORED_SUCCESS", restoredProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -405,6 +415,7 @@ export const uploadProductGallery = async (req, res) => {
     const io = getIO();
     io.emit("admin_product_updated", updatedProduct);
     io.emit("product_updated", updatedProduct);
+    clearProductCache();
     return successResponse(res, 200, "GALLERY_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload Gallery] Error:", error);
@@ -430,6 +441,7 @@ export const uploadProduct3D = async (req, res) => {
     const io = getIO();
     io.emit("admin_product_updated", updatedProduct);
     io.emit("product_updated", updatedProduct);
+    clearProductCache();
     return successResponse(res, 200, "FILE_3D_UPLOAD_SUCCESS", updatedProduct);
   } catch (error) {
     console.error("[Upload 3D] Error:", error);
@@ -452,14 +464,14 @@ export const deleteProductImages = async (req, res) => {
 
     for (const imageUrl of imagesToDelete) {
       try {
-        const urlParts = imageUrl.split("/");
-        const publicIdWithExt = urlParts[urlParts.length - 1];
-        const isVideo = imageUrl.includes("mkhe_videos");
-        const folder = isVideo ? "mkhe_videos" : "mkhe_avatars";
-        const resourceType = isVideo ? "video" : "image";
-        const publicId = `${folder}/${publicIdWithExt.split(".")[0]}`;
-
-        await cloudinary.uploader.destroy(publicId, { type: "upload", resource_type: resourceType });
+        const regex = /\/upload\/(?:v\d+\/)?([^.]+)/;
+        const match = imageUrl.match(regex);
+        if (match && match[1]) {
+          const publicId = match[1];
+          const isVideo = imageUrl.match(/\.(mp4|mov|avi|wmv|flv|webm|ogg)$/i) || imageUrl.includes("mkhe_videos");
+          const resourceType = isVideo ? "video" : "image";
+          await cloudinary.uploader.destroy(publicId, { type: "upload", resource_type: resourceType });
+        }
       } catch (error) {
         console.error(`[Delete Image] Failed to delete ${imageUrl}`);
       }
@@ -474,6 +486,7 @@ export const deleteProductImages = async (req, res) => {
     const io = getIO();
     io.emit("admin_product_updated", updatedProduct);
     io.emit("product_updated", updatedProduct);
+    clearProductCache();
     return successResponse(res, 200, "IMAGES_DELETED_SUCCESS", updatedProduct);
   } catch (error) {
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -485,7 +498,16 @@ export const getShopProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 12;
-    const { search, category, culturalDNA, craftVillage, material, onSale } = req.query;
+    const { search, category, culturalDNA, craftVillage, onSale } = req.query;
+    const materialQuery = req.query.material || req.query["material[]"];
+
+    const role = req.user ? req.user.role : "Guest";
+    const cacheKey = `cache:products:shop:${page}:${limit}:${search || ''}:${category || ''}:${culturalDNA || ''}:${craftVillage || ''}:${materialQuery || ''}:${onSale || ''}:${role}`;
+
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) {
+      return successResponse(res, 200, "GET_SHOP_PRODUCTS_SUCCESS", JSON.parse(cachedData));
+    }
 
     const skip = (page - 1) * limit;
 
@@ -529,7 +551,7 @@ export const getShopProducts = async (req, res) => {
     if (culturalDNA) query.culturalDNA = culturalDNA;
     
     if (craftVillage) {
-      const cvRegex = createVietnameseRegex(craftVillage);
+      const cvRegex = createVietnameseRegex(craftVillage.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
       andConditions.push({
         $or: [
           { craftVillage: { $regex: cvRegex, $options: "i" } },
@@ -548,7 +570,6 @@ export const getShopProducts = async (req, res) => {
     }
     
     // Tìm material (có chứa trong mảng)
-    const materialQuery = req.query.material || req.query["material[]"];
     if (materialQuery) {
       const materialList = Array.isArray(materialQuery) ? materialQuery : materialQuery.split(",");
       const materialRegexes = materialList.map(m => new RegExp(`^${m.trim()}$`, "i"));
@@ -567,7 +588,7 @@ export const getShopProducts = async (req, res) => {
 
     const totalPages = Math.ceil(totalProducts / limit);
 
-    return successResponse(res, 200, "GET_SHOP_PRODUCTS_SUCCESS", {
+    const result = {
       pagination: {
         totalItems: totalProducts,
         totalPages,
@@ -575,7 +596,9 @@ export const getShopProducts = async (req, res) => {
         limit,
       },
       data: products,
-    });
+    };
+    await redisClient.setex(cacheKey, 900, JSON.stringify(result));
+    return successResponse(res, 200, "GET_SHOP_PRODUCTS_SUCCESS", result);
   } catch (error) {
     console.error("Error in getShopProducts:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

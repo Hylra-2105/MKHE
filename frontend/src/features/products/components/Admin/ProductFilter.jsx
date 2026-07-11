@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import Dropdown from "@/components/ui/Dropdown";
 import { LayoutGrid, List as ListIcon } from "lucide-react";

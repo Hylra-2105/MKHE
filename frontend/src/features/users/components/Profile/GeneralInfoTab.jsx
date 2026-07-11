@@ -16,6 +16,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   const [editForm, setEditForm] = useState({});
   const [originalEditForm, setOriginalEditForm] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // States for Address Autocomplete
   const [addressInput, setAddressInput] = useState("");
@@ -97,6 +98,21 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   };
 
   const handleSave = async () => {
+    setErrors({});
+    let newErrors = {};
+
+    if (!editForm.name || !editForm.name.trim()) {
+      newErrors.name = t("errors.name_required", { ns: "user", defaultValue: "Vui lòng nhập họ và tên" });
+    }
+    if (!editForm.phone || !editForm.phone.trim()) {
+      newErrors.phone = t("errors.phone_required", { ns: "user", defaultValue: "Vui lòng nhập số điện thoại" });
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     let dataToSave = { 
       ...editForm,
       addressText: addressInput,
@@ -136,6 +152,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
     setIsEditing(false);
     setIsUserTyping(false);
     setSuggestions([]);
+    setErrors({});
   };
 
   const defaultAddress = user?.addresses?.find(a => a.isDefault);
@@ -172,6 +189,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               value={editForm.name}
               isEditing={isEditing}
               onChange={handleInputChange}
+              error={errors.name}
             />
             <div>
               <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
@@ -197,6 +215,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               isEditing={isEditing}
               onChange={handleInputChange}
               placeholder={t("users.phone_placeholder")}
+              error={errors.phone}
             />
           </div>
 

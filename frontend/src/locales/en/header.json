@@ -76,7 +76,8 @@
       "USER_RETURN_UPDATED_REJECTED": "Exchange/Return refused",
       "return_updated_toast": "Return update for order {{orderCode}}: {{status}}",
       "return_status_approved": "Approved",
-      "return_status_rejected": "Rejected"
+      "return_status_rejected": "Rejected",
+      "USER_RETURN_UPDATED_APPROVED": "Exchange/Return is accepted"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",

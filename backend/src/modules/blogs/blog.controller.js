@@ -1,6 +1,7 @@
 import Blog from "./blog.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import { getIO } from "../../config/socket.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // Lấy danh sách blog (lọc, phân trang)
 export const getBlogs = async (req, res) => {
@@ -20,7 +21,8 @@ export const getBlogs = async (req, res) => {
     if (productTag) filter.tags = productTag;
     
     if (search) {
-      filter.title = { $regex: search, $options: "i" };
+      const searchRegex = createVietnameseRegex(search);
+      filter.title = { $regex: searchRegex, $options: "i" };
     }
 
     const blogs = await Blog.find(filter)

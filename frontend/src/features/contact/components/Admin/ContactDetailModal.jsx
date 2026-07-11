@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { X, Building2, User, Mail, Phone, MessageSquare, AlertCircle, Info, Trash2, UserPlus } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from '@/components/ui/Button';

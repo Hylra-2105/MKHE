@@ -1,4 +1,3 @@
-import React from "react";
 import ReturnList from "@/features/returns/components/Admin/ReturnList";
 
 const ReturnManagementPage = () => {

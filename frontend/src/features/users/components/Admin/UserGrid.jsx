@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Users, Eye, Edit2 } from "lucide-react";
 

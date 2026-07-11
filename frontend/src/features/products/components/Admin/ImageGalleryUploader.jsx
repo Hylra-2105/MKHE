@@ -1,4 +1,3 @@
-import React from "react";
 import { UploadCloud, ImageIcon, Trash2, RotateCcw, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isVideoMedia } from "@/utils/validators";

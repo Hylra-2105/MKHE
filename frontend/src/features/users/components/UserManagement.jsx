@@ -68,8 +68,8 @@ export default function UserManagementFeature() {
       const res = await getAllUsersApi(page, limit, appliedSearch, roleFilter, statusFilter);
 
       if (res.success) {
-        setUsers(res.data);
-        setTotalPages(res.pagination.totalPages);
+        setUsers(res.data.data);
+        setTotalPages(res.data.pagination.totalPages);
       }
     } catch (error) {
       const errorStatus = error.response?.status;
@@ -101,7 +101,13 @@ export default function UserManagementFeature() {
   useEffect(() => {
     if (socket) {
       socket.on("user_updated", fetchUsers);
-      return () => socket.off("user_updated", fetchUsers);
+      socket.on("user_created", fetchUsers);
+      socket.on("user_deleted", fetchUsers);
+      return () => {
+        socket.off("user_updated", fetchUsers);
+        socket.off("user_created", fetchUsers);
+        socket.off("user_deleted", fetchUsers);
+      };
     }
   }, [socket, fetchUsers]);
 

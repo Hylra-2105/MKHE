@@ -1,4 +1,3 @@
-import React from "react";
 import B2BDashboard from "../../features/b2b/components/B2BDashboard";
 
 const B2BDashboardPage = () => {

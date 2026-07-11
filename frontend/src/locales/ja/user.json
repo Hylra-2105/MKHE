@@ -10,7 +10,9 @@
     "pass_mismatch": "パスワードが一致しません",
     "invalid_file_type": "有効な画像またはビデオ ファイルを選択してください。",
     "video_too_large": "ビデオのアップロードは 10MB を超えてはなりません。",
-    "image_too_large": "画像のアップロードは 5MB を超えてはなりません。"
+    "image_too_large": "画像のアップロードは 5MB を超えてはなりません。",
+    "name_required": "氏名を入力してください",
+    "phone_required": "電話番号を入力してください"
   },
   "messages": {
     "update_success": "アップデートが成功しました！",

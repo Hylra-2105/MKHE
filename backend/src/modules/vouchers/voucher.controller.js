@@ -6,6 +6,7 @@ import Product from "../products/product.model.js";
 import Notification from "../notifications/notification.model.js";
 import { getIO } from "../../config/socket.js";
 import { createBulkMarketingNotifications } from "../notifications/notification.controller.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // @desc    Lấy danh sách mã public có thể sưu tầm
 // @route   GET /api/vouchers/public
@@ -254,9 +255,10 @@ export const getAllAdminVouchers = async (req, res) => {
     let query = {};
 
     if (search) {
+      const searchRegex = createVietnameseRegex(search);
       query.$or = [
-        { code: { $regex: search, $options: "i" } },
-        { title: { $regex: search, $options: "i" } }
+        { code: { $regex: searchRegex, $options: "i" } },
+        { title: { $regex: searchRegex, $options: "i" } }
       ];
     }
 

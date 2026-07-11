@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import {  useState, useRef, useEffect  } from "react";
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { FaFacebook } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';

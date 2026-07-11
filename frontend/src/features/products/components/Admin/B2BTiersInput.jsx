@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import {  useState  } from "react";
 import { Plus, Trash2, Info, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmModal from '@/components/ui/ConfirmModal';

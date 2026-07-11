@@ -48,6 +48,7 @@
   "shipping_info": {
     "title": "Thông tin giao hàng",
     "address_title": "Địa chỉ nhận hàng",
+    "edit_btn": "Chỉnh sửa",
     "change_btn": "Thay đổi",
     "add_info_btn": "Thêm thông tin giao hàng",
     "full_name": "Họ và tên",
