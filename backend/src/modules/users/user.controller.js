@@ -106,7 +106,12 @@ export const updateUser = async (req, res) => {
 
     try {
       const io = getIO();
-      if (io) io.emit("user_updated");
+      if (io) {
+        io.emit("user_updated");
+        if (isBlocked === true) {
+          io.to(`user_${id}`).emit("force_logout", { reason: blockReason });
+        }
+      }
     } catch (socketErr) {
       console.error("[Socket] Failed to emit user_updated:", socketErr);
     }

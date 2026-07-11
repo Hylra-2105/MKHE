@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -24,44 +24,46 @@ import ScrollToTop from "./components/router/ScrollToTop";
 import AuthLayout from "./components/layout/AuthLayout";
 import MainLayout from "./components/layout/MainLayout";
 
-import LoginPage from "./pages/auth/LoginPage";
-import RegisterPage from "./pages/auth/RegisterPage";
-import VerifyOTPPage from "./pages/auth/VerifyOTPPage";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import B2BActivationPage from "./pages/auth/B2BActivationPage";
+import PageSkeleton from "./components/ui/PageSkeleton";
 
-import HomePage from "./pages/home/HomePage";
-import BlogList from "./features/blogs/components/Admin/BlogList";
-import BlogEditor from "./features/blogs/components/Admin/BlogEditor";
-import BlogPage from "./pages/blogs/BlogPage";
-import BlogDetail from "./pages/blogs/BlogDetail";
-import ShopPage from "./pages/shop/ShopPage";
-import ShopDetailPage from "./pages/shop/ShopDetailPage";
-import UserManagement from "./pages/users/UserManagementPage";
-import ProductManagementPage from "./pages/products/ProductManagementPage";
-import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
-import ContactManagementPage from "./pages/contact/ContactManagementPage";
+const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
+const RegisterPage = React.lazy(() => import("./pages/auth/RegisterPage"));
+const VerifyOTPPage = React.lazy(() => import("./pages/auth/VerifyOTPPage"));
+const ForgotPasswordPage = React.lazy(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = React.lazy(() => import("./pages/auth/ResetPasswordPage"));
+const B2BActivationPage = React.lazy(() => import("./pages/auth/B2BActivationPage"));
 
-import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
-import ReturnManagementPage from "./pages/returns/ReturnManagementPage";
-import DashboardPage from "./pages/admin/DashboardPage";
-import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
-import B2BOrderRequest from "./pages/b2b/B2BOrderRequest";
+const HomePage = React.lazy(() => import("./pages/home/HomePage"));
+const BlogList = React.lazy(() => import("./features/blogs/components/Admin/BlogList"));
+const BlogEditor = React.lazy(() => import("./features/blogs/components/Admin/BlogEditor"));
+const BlogPage = React.lazy(() => import("./pages/blogs/BlogPage"));
+const BlogDetail = React.lazy(() => import("./pages/blogs/BlogDetail"));
+const ShopPage = React.lazy(() => import("./pages/shop/ShopPage"));
+const ShopDetailPage = React.lazy(() => import("./pages/shop/ShopDetailPage"));
+const UserManagement = React.lazy(() => import("./pages/users/UserManagementPage"));
+const ProductManagementPage = React.lazy(() => import("./pages/products/ProductManagementPage"));
+const VoucherManagementPage = React.lazy(() => import("./pages/vouchers/VoucherManagementPage"));
+const ContactManagementPage = React.lazy(() => import("./pages/contact/ContactManagementPage"));
 
-import ForbiddenPage from "./pages/errors/ForbiddenPage";
-import NotFoundPage from "./pages/errors/NotFoundPage";
+const ReviewManagementPage = React.lazy(() => import("./pages/reviews/ReviewManagementPage"));
+const ReturnManagementPage = React.lazy(() => import("./pages/returns/ReturnManagementPage"));
+const DashboardPage = React.lazy(() => import("./pages/admin/DashboardPage"));
+const B2BDashboardPage = React.lazy(() => import("./pages/b2b/B2BDashboardPage"));
+const B2BOrderRequest = React.lazy(() => import("./pages/b2b/B2BOrderRequest"));
 
-import ProfilePage from "@/pages/users/ProfilePage";
+const ForbiddenPage = React.lazy(() => import("./pages/errors/ForbiddenPage"));
+const NotFoundPage = React.lazy(() => import("./pages/errors/NotFoundPage"));
 
-import DPPPage from "@/pages/dpp/DPPPage";
-import AboutPage from "@/pages/about/AboutPage";
-import ContactPage from "@/pages/contact/ContactPage";
+const ProfilePage = React.lazy(() => import("@/pages/users/ProfilePage"));
 
-import CheckoutPage from "./pages/orders/CheckoutPage";
-import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
-import OrderManagementPage from "./pages/orders/OrderManagementPage";
-import AdminB2BOrdersPage from "./pages/admin/AdminB2BOrdersPage";
+const DPPPage = React.lazy(() => import("@/pages/dpp/DPPPage"));
+const AboutPage = React.lazy(() => import("@/pages/about/AboutPage"));
+const ContactPage = React.lazy(() => import("@/pages/contact/ContactPage"));
+
+const CheckoutPage = React.lazy(() => import("./pages/orders/CheckoutPage"));
+const CheckoutSuccessPage = React.lazy(() => import("./pages/orders/CheckoutSuccessPage"));
+const OrderManagementPage = React.lazy(() => import("./pages/orders/OrderManagementPage"));
+const AdminB2BOrdersPage = React.lazy(() => import("./pages/admin/AdminB2BOrdersPage"));
 
 function App() {
   const { t } = useTranslation(["header"]);
@@ -224,6 +226,17 @@ function App() {
       if (updateProductInItems) {
         updateProductInItems(updatedProduct);
       }
+    });
+
+    socket.on("force_logout", (data) => {
+      const currentT = tRef.current;
+      toast.error(
+        data?.reason 
+          ? `${currentT("messages.account_blocked_reason", { defaultValue: "Tài khoản của bạn đã bị khóa:" })} ${data.reason}` 
+          : currentT("messages.account_blocked", { defaultValue: "Tài khoản của bạn đã bị khóa bởi Quản trị viên!" }),
+        { duration: 5000 }
+      );
+      useAuthStore.getState().logoutAction();
     });
 
     return () => {
@@ -490,10 +503,10 @@ function App() {
           />
         </Route>
 
-        <Route path="/dpp/:uid" element={<DPPPage />} />
+        <Route path="/dpp/:uid" element={<Suspense fallback={<PageSkeleton />}><DPPPage /></Suspense>} />
 
-        <Route path="/403" element={<ForbiddenPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/403" element={<Suspense fallback={<PageSkeleton />}><ForbiddenPage /></Suspense>} />
+        <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFoundPage /></Suspense>} />
       </Routes>
     </Router>
   );
