@@ -1,6 +1,7 @@
 import Order from "./order.model.js";
 import Product from "../products/product.model.js";
 import Cart from "../cart/cart.model.js";
+import User from "../users/user.model.js";
 import UserVoucher from "../vouchers/userVoucher.model.js";
 import Voucher from "../vouchers/voucher.model.js";
 import redisClient from "../../config/redis.js";
@@ -630,7 +631,7 @@ export const updateOrderStatus = async (req, res) => {
         const io = getIO();
         io.to(`user_${order.user}`).emit("new_notification", notif);
 
-        const userForEmail = await mongoose.model("User").findById(order.user);
+        const userForEmail = await User.findById(order.user);
         if (userForEmail && userForEmail.email) {
           sendInvoiceEmail(userForEmail.email, order, "vi").catch(err => {
              console.error("Failed to send payment invoice email:", err);
@@ -686,7 +687,7 @@ export const updateOrderStatus = async (req, res) => {
         if (status === "DELIVERING" || status === "CANCELLED") {
           try {
             // Lấy user email
-            const userForEmail = await mongoose.model("User").findById(order.user);
+            const userForEmail = await User.findById(order.user);
             if (userForEmail && userForEmail.email) {
               sendOrderStatusEmail(userForEmail.email, order, status).catch(err => {
                  console.error("Failed to send status email:", err);
@@ -719,8 +720,7 @@ export const payosWebhook = async (req, res) => {
       return res.json({ success: true });
     }
 
-    const m = await import("@payos/node");
-    const PayOS = m.default.PayOS;
+    const { PayOS } = await import("@payos/node");
     const payos = new PayOS({
       clientId: process.env.PAYOS_CLIENT_ID,
       apiKey: process.env.PAYOS_API_KEY,
