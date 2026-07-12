@@ -11,13 +11,13 @@ export const syncCartApi = async (items) => {
   return response.data;
 };
 
-export const updateCartItemApi = async (productId, quantity, color) => {
-  const response = await axiosClient.put(ENDPOINTS.CART.ITEMS, { productId, quantity, color });
+export const updateCartItemApi = async (productId, quantity, color, addOns) => {
+  const response = await axiosClient.put(ENDPOINTS.CART.ITEMS, { productId, quantity, color, addOns });
   return response.data;
 };
 
-export const removeCartItemApi = async (productId, color) => {
+export const removeCartItemApi = async (productId, color, addOns) => {
   const params = color ? { color } : {};
-  const response = await axiosClient.delete(`${ENDPOINTS.CART.ITEMS}/${productId}`, { params });
+  const response = await axiosClient.delete(`${ENDPOINTS.CART.ITEMS}/${productId}`, { params, data: { addOns } });
   return response.data;
 };

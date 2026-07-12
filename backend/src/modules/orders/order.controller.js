@@ -11,6 +11,7 @@ import { getIO } from "../../config/socket.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
 import { sendCheckoutOtpEmail, sendInvoiceEmail, sendOrderStatusEmail } from "../../utils/email.js";
+import { clearProductCache } from "../../utils/cache.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 
 const generateOrderCode = () => {
@@ -73,6 +74,7 @@ export const checkout = async (req, res) => {
     const orderItems = [];
     const lowStockAlerts = []; // To trigger after order is successfully created
     const deductedStocks = []; // To track for manual rollback
+    const updatedProducts = [];
     let usedUserVoucherId = null;
 
     try {
@@ -112,6 +114,7 @@ export const checkout = async (req, res) => {
 
         // Lưu vào ds đã trừ để Rollback nếu có lỗi phía sau
         deductedStocks.push({ productId: product._id, quantity: item.quantity, color: item.color });
+        updatedProducts.push(product);
 
         subtotal += product.price * item.quantity;
         
@@ -680,7 +683,8 @@ export const updateOrderStatus = async (req, res) => {
     order.orderStatus = status;
     
     // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED      // ROLLBACK STOCK KHI ADMIN HỦY
-      if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
+      const updatedProducts = [];
+    if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
         for (const item of order.items) {
           if (item.color) {
             await Product.findOneAndUpdate(

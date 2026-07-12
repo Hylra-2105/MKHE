@@ -90,7 +90,15 @@ const productSchema = new mongoose.Schema(
         name: { type: String, required: true },
         image: { type: String }, // Links to a gallery image
         stock: { type: Number, default: 0, min: 0 },
+        priceOverride: { type: Number, min: 0 }, // Optional specific price for this color
       },
+    ],
+    addOns: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true, min: 0 },
+        image: { type: String }, // Optional image for the add-on
+      }
     ],
     status: {
       type: String,

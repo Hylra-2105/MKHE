@@ -77,7 +77,7 @@ const ProductColorsInput = ({ colors = [], onChange, galleryImages = [], error }
               <X className="w-4 h-4" />
             </button>
 
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
               <InputField
                 label={t("form.colors.color_name")}
                 placeholder={t("form.colors.color_name_placeholder")}
@@ -93,6 +93,17 @@ const ProductColorsInput = ({ colors = [], onChange, galleryImages = [], error }
                 value={color.stock}
                 onChange={(e) => handleChange(index, "stock", parseInt(e.target.value) || 0)}
                 required
+              />
+              
+              <InputField
+                type="text"
+                label={t("form.colors.price_override")}
+                placeholder={t("form.colors.price_override_placeholder")}
+                value={color.priceOverride ? color.priceOverride.toLocaleString('vi-VN') : ""}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  handleChange(index, "priceOverride", val ? parseInt(val, 10) : "");
+                }}
               />
             </div>
 

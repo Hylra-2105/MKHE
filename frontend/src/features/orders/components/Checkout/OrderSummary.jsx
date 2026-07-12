@@ -40,14 +40,40 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
                 {item.color && (
                   <p className="text-xs text-mkhe-text/60 mt-0.5">{t("summary.color", "Màu sắc:")} {item.color}</p>
                 )}
+                {item.addOns && item.addOns.length > 0 && (
+                  <div className="mt-1 flex flex-col gap-0.5">
+                    {item.addOns.map((addOn, idx) => (
+                      <div key={idx} className="flex items-center gap-1.5">
+                        <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {formatMoney(addOn.price)}</span>
+                        <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <div className="flex justify-between items-center mt-1">
                   <span className="text-mkhe-text/60 text-sm">{t("summary.qty")}: {item.quantity}</span>
                   <span className="font-medium text-mkhe-primary">
                     {(() => {
+                      let basePrice = item.product.price;
+                      if (item.color && item.product.colors) {
+                        const colorVariant = item.product.colors.find(c => c.name === item.color);
+                        if (colorVariant && colorVariant.priceOverride) {
+                          basePrice = colorVariant.priceOverride;
+                        }
+                      }
                       const now = new Date();
                       const isSaleValid = item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate 
                                           && new Date(item.product.saleStartDate) <= now && new Date(item.product.saleEndDate) >= now;
-                      return formatMoney(isSaleValid ? item.product.salePrice : item.product.price);
+                      let effectivePrice = basePrice;
+                      if (isSaleValid) {
+                        const salePercentage = (item.product.price - item.product.salePrice) / item.product.price;
+                        effectivePrice = Math.round(basePrice * (1 - salePercentage));
+                      }
+                      let addOnsCost = 0;
+                      if (item.addOns && item.addOns.length > 0) {
+                        addOnsCost = item.addOns.reduce((sum, addOn) => sum + addOn.price, 0);
+                      }
+                      return formatMoney(effectivePrice + addOnsCost);
                     })()}
                   </span>
                 </div>

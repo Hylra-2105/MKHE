@@ -198,6 +198,16 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                               {t("history:color", { defaultValue: "Màu sắc:" })} {item.color}
                             </span>
                           )}
+                          {item.addOns && item.addOns.length > 0 && (
+                            <div className="mt-1 flex flex-col gap-0.5">
+                              {item.addOns.map((addOn, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5">
+                                  <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {addOn.price.toLocaleString()}đ</span>
+                                  <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </span>
                       </div>
                     </td>

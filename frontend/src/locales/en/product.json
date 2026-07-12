@@ -281,7 +281,24 @@
       "remove_color": "Remove this color",
       "picker_title": "Select image for color",
       "picker_empty": "You have not uploaded any images to the Gallery.",
-      "picker_empty_desc": "Please upload images in the left column first."
+      "picker_empty_desc": "Please upload images in the left column first.",
+      "price_override": "Custom Price (Optional)",
+      "price_override_placeholder": "Ex: 350000"
+    },
+    "addons": {
+      "title": "Add-ons / Accessories",
+      "subtitle": "Gift boxes, greeting cards...",
+      "add_btn": "Add Add-on",
+      "remove_btn": "Remove Add-on",
+      "name": "Add-on Name",
+      "name_placeholder": "Ex: Premium Gift Box",
+      "price": "Price (+)",
+      "price_placeholder": "Ex: 50000",
+      "image": "Image",
+      "change_image": "Change Image",
+      "choose_image": "Choose Image",
+      "empty": "This product has no add-ons.",
+      "picker_title": "Select Image for Add-on"
     }
   },
   "products": {

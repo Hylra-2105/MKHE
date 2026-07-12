@@ -286,7 +286,24 @@
       "remove_color": "この色を削除",
       "picker_title": "色の画像を選択",
       "picker_empty": "ギャラリーに画像がアップロードされていません。",
-      "picker_empty_desc": "先に左の列で画像をアップロードしてください。"
+      "picker_empty_desc": "先に左の列で画像をアップロードしてください。",
+      "price_override": "カスタム価格 (任意)",
+      "price_override_placeholder": "例: 350000"
+    },
+    "addons": {
+      "title": "アドオン / アクセサリー",
+      "subtitle": "ギフトボックス、グリーティングカード...",
+      "add_btn": "アドオンを追加",
+      "remove_btn": "アドオンを削除",
+      "name": "アドオン名",
+      "name_placeholder": "例：プレミアムギフトボックス",
+      "price": "価格 (+)",
+      "price_placeholder": "例：50000",
+      "image": "画像",
+      "change_image": "画像を変更",
+      "choose_image": "画像を選択",
+      "empty": "この製品にはアドオンがありません。",
+      "picker_title": "アドオンの画像を選択"
     }
   },
   "products": {

@@ -280,7 +280,24 @@
       "remove_color": "Xóa màu này",
       "picker_title": "Chọn ảnh cho màu",
       "picker_empty": "Bạn chưa tải lên ảnh nào trong Gallery.",
-      "picker_empty_desc": "Vui lòng tải ảnh lên ở cột bên trái trước."
+      "picker_empty_desc": "Vui lòng tải ảnh lên ở cột bên trái trước.",
+      "price_override": "Giá riêng (Tùy chọn)",
+      "price_override_placeholder": "VD: 350000"
+    },
+    "addons": {
+      "title": "Phụ kiện mua kèm / Add-ons",
+      "subtitle": "Hộp quà, thiệp chúc mừng...",
+      "add_btn": "Thêm phụ kiện",
+      "remove_btn": "Xóa phụ kiện",
+      "name": "Tên phụ kiện",
+      "name_placeholder": "VD: Hộp quà cao cấp",
+      "price": "Giá bán (+)",
+      "price_placeholder": "VD: 50000",
+      "image": "Ảnh minh họa",
+      "change_image": "Đổi ảnh",
+      "choose_image": "Chọn ảnh",
+      "empty": "Sản phẩm này chưa có phụ kiện mua kèm nào.",
+      "picker_title": "Chọn ảnh cho phụ kiện"
     }
   },
   "products": {

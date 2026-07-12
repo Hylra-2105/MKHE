@@ -1,6 +1,6 @@
 import {  useEffect, useState  } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
-import { useCartStore } from "@/stores/useCartStore";
+import { useCartStore, getCartItemId } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -26,7 +26,7 @@ const MiniCartDrawer = () => {
 
   useEffect(() => {
     if (selectedVoucher) {
-      const eligibility = checkVoucherEligibility(selectedVoucher, items.filter((item) => selectedItems.includes(item.product._id)), getCartTotal());
+      const eligibility = checkVoucherEligibility(selectedVoucher, items.filter((item) => selectedItems.includes(getCartItemId(item))), getCartTotal());
       if (!eligibility.isEligible) {
         setSelectedVoucher(null);
       }
@@ -51,6 +51,8 @@ const MiniCartDrawer = () => {
   const handleRemove = (item) => {
     setItemToDelete(item);
   };
+
+  const validSelectedCount = items.filter(item => selectedItems.includes(getCartItemId(item))).length;
 
   if (!isCartOpen) return null;
 
@@ -109,12 +111,12 @@ const MiniCartDrawer = () => {
                   <div className="relative flex items-center">
                     <input
                       type="checkbox"
-                      checked={items.length > 0 && selectedItems.length === items.length}
+                      checked={items.length > 0 && validSelectedCount === items.length}
                       onChange={(e) => selectAllItems(e.target.checked)}
                       className="peer sr-only"
                     />
                     <div className="w-5 h-5 rounded border-2 border-mkhe-text/40 bg-mkhe-bg peer-checked:bg-mkhe-primary peer-checked:border-mkhe-primary flex items-center justify-center transition-colors">
-                      {items.length > 0 && selectedItems.length === items.length && (
+                      {items.length > 0 && validSelectedCount === items.length && (
                         <Check className="w-3.5 h-3.5 text-[#1a110a]" strokeWidth={4} />
                       )}
                     </div>
@@ -127,17 +129,48 @@ const MiniCartDrawer = () => {
               
               {items.map((item) => {
                 const isLoading = loadingItems.includes(item.product._id);
-                const isSelected = selectedItems.includes(item.product._id);
+                const isSelected = selectedItems.includes(getCartItemId(item));
+                
+                // --- BẮT ĐẦU TÍNH GIÁ CHÍNH XÁC ---
+                let basePrice = item.product.price;
+                if (item.color && item.product.colors) {
+                  const colorVariant = item.product.colors.find(c => c.name === item.color);
+                  if (colorVariant && colorVariant.priceOverride) {
+                    basePrice = colorVariant.priceOverride;
+                  }
+                }
+                
+                let actualPrice = basePrice;
+                const now = new Date();
+                const isSaleValid = item.product.salePrice > 0 && 
+                                    item.product.saleStartDate && 
+                                    item.product.saleEndDate && 
+                                    new Date(item.product.saleStartDate) <= now && 
+                                    new Date(item.product.saleEndDate) >= now;
+                                    
+                if (isSaleValid) {
+                  const salePercentage = (item.product.price - item.product.salePrice) / item.product.price;
+                  actualPrice = Math.round(basePrice * (1 - salePercentage));
+                }
+                
+                let addOnsCost = 0;
+                if (item.addOns && item.addOns.length > 0) {
+                  addOnsCost = item.addOns.reduce((sum, addOn) => sum + addOn.price, 0);
+                }
+                
+                const finalItemPrice = actualPrice + addOnsCost;
+                const finalOriginalPrice = basePrice + addOnsCost;
+                // --- KẾT THÚC TÍNH GIÁ ---
                 
                 return (
-                  <div key={item.product._id} className={`flex gap-3 sm:gap-4 p-3 sm:p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
+                  <div key={getCartItemId(item)} className={`flex gap-3 sm:gap-4 p-3 sm:p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
                     {/* Checkbox */}
                     <div className="flex items-center shrink-0">
                       <label className="relative flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => toggleSelectItem(item.product._id)}
+                          onChange={() => toggleSelectItem(getCartItemId(item))}
                           className="peer sr-only"
                         />
                         <div className="w-5 h-5 rounded border-2 border-mkhe-text/40 bg-mkhe-bg peer-checked:bg-mkhe-primary peer-checked:border-mkhe-primary flex items-center justify-center transition-colors group-hover:border-mkhe-primary/70">
@@ -180,6 +213,16 @@ const MiniCartDrawer = () => {
                             <span className="text-xs font-medium text-mkhe-text/80">{item.color}</span>
                           </div>
                         )}
+                        {item.addOns && item.addOns.length > 0 && (
+                          <div className="mt-1 flex flex-col gap-0.5">
+                            {item.addOns.map((addOn, idx) => (
+                              <div key={idx} className="flex items-center gap-1.5">
+                                <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {formatNumber(addOn.price)}đ</span>
+                                <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <button 
                         onClick={() => handleRemove(item)}
@@ -194,22 +237,18 @@ const MiniCartDrawer = () => {
                     <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-2 gap-2 sm:gap-0">
                       <div className="flex flex-col">
                         <p className="text-mkhe-primary font-medium whitespace-nowrap text-sm sm:text-base">
-                          {formatNumber(
-                            item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date()
-                            ? item.product.salePrice 
-                            : item.product.price
-                          )} đ
+                          {formatNumber(finalItemPrice)} đ
                         </p>
-                        {item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date() && (
+                        {isSaleValid && (
                           <p className="text-xs text-mkhe-text/50 line-through whitespace-nowrap">
-                            {formatNumber(item.product.price)} đ
+                            {formatNumber(finalOriginalPrice)} đ
                           </p>
                         )}
                       </div>
                       
                       <div className="flex items-center gap-1 sm:gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10 self-start sm:self-auto">
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.color)}
+                          onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.color, item.addOns)}
                           disabled={item.quantity <= 1 || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
@@ -221,7 +260,7 @@ const MiniCartDrawer = () => {
                         </span>
                         
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.color)}
+                          onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.color, item.addOns)}
                           disabled={item.quantity >= (item.color && item.product.colors ? item.product.colors.find(c => c.name === item.color)?.stock : item.product.stock) || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
@@ -246,7 +285,7 @@ const MiniCartDrawer = () => {
               </h3>
               <p className="text-mkhe-text/80 mb-6 text-center text-sm">
                 {itemToDelete === 'multiple' 
-                  ? t("remove_multiple_confirm", { count: selectedItems.length, defaultValue: "Bạn có chắc muốn xóa sản phẩm đã chọn khỏi giỏ?" })
+                  ? t("remove_multiple_confirm", { count: validSelectedCount, defaultValue: "Bạn có chắc muốn xóa sản phẩm đã chọn khỏi giỏ?" })
                   : t("remove_confirm", "Bạn có chắc muốn bỏ sản phẩm này khỏi giỏ?")}
               </p>
               <div className="flex gap-3">
@@ -262,7 +301,7 @@ const MiniCartDrawer = () => {
                       removeMultipleFromCart(selectedItems);
                       setIsEditMode(false);
                     } else {
-                      removeFromCart(itemToDelete.product._id, itemToDelete.color);
+                      removeFromCart(itemToDelete.product._id, itemToDelete.color, itemToDelete.addOns);
                     }
                     setItemToDelete(null);
                   }}
@@ -281,10 +320,10 @@ const MiniCartDrawer = () => {
             {isEditMode ? (
               <button 
                 onClick={() => setItemToDelete('multiple')}
-                disabled={selectedItems.length === 0}
+                disabled={validSelectedCount === 0}
                 className="w-full py-4 bg-red-500 cursor-pointer text-white rounded-full font-medium text-lg shadow-lg shadow-red-500/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all"
               >
-                {t("delete_selected", { count: selectedItems.length, defaultValue: "Xóa sản phẩm" })}
+                {t("delete_selected", { count: validSelectedCount, defaultValue: "Xóa sản phẩm" })}
               </button>
             ) : (
               <>
@@ -332,10 +371,10 @@ const MiniCartDrawer = () => {
                     setCartOpen(false);
                     navigate("/checkout");
                   }}
-                  disabled={selectedItems.length === 0}
+                  disabled={validSelectedCount === 0}
                   className="w-full py-4 bg-mkhe-primary cursor-pointer text-white rounded-full font-medium text-lg shadow-lg shadow-mkhe-primary/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all"
                 >
-                  {t("checkout", "Thanh toán ngay")} {selectedItems.length > 0 && `(${selectedItems.length})`}
+                  {t("checkout", "Thanh toán ngay")} {validSelectedCount > 0 && `(${validSelectedCount})`}
                 </button>
               </>
             )}

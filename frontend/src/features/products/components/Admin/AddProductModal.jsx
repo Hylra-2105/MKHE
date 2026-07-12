@@ -15,6 +15,7 @@ import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import B2BTiersInput from "./B2BTiersInput";
 import ProductColorsInput from "./ProductColorsInput";
+import ProductAddOnsInput from "./ProductAddOnsInput";
 import { getBlogsApi } from "@/api/blogApi";
 import { productApi } from "@/api/productApi";
 import Flatpickr from "react-flatpickr";
@@ -83,6 +84,7 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
     hasSale: false,
     b2bTiers: [],
     colors: [],
+    addOns: [],
   });
 
   const saleStartDateOptions = React.useMemo(() => {
@@ -497,10 +499,13 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
       const uploadPromises = [];
 
+      let galleryRes = null;
+
       if (imageFiles.length > 0) {
         const uploadData = new FormData();
         imageFiles.forEach((file) => uploadData.append("images", file));
-        uploadPromises.push(productApi.uploadProductGallery(newProductId, uploadData));
+        const p = productApi.uploadProductGallery(newProductId, uploadData).then(res => { galleryRes = res; return res; });
+        uploadPromises.push(p);
       }
 
       if (formData.hasDPP && file3D) {
@@ -515,6 +520,40 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
         } catch (error) {
           console.error("Upload error:", error);
           toast.error(t("modal.3d_file.error_upload_both"));
+        }
+      }
+
+      if (galleryRes && galleryRes.data && galleryRes.data.images) {
+        try {
+          let needsUpdate = false;
+          const newColors = [...formData.colors];
+          const newAddOns = [...formData.addOns];
+          const updatedImages = galleryRes.data.images;
+          const blobToUrlMap = {};
+          for(let i=0; i<imageFiles.length; i++) {
+             if (previewUrls[i] && previewUrls[i].url) {
+               blobToUrlMap[previewUrls[i].url] = updatedImages[i];
+             }
+          }
+
+          newColors.forEach(c => {
+             if (c.image && c.image.startsWith('blob:')) {
+                c.image = blobToUrlMap[c.image] || c.image;
+                needsUpdate = true;
+             }
+          });
+          newAddOns.forEach(a => {
+             if (a.image && a.image.startsWith('blob:')) {
+                a.image = blobToUrlMap[a.image] || a.image;
+                needsUpdate = true;
+             }
+          });
+
+          if (needsUpdate) {
+             await productApi.updateProduct(newProductId, { colors: newColors, addOns: newAddOns });
+          }
+        } catch (e) {
+          console.error("Failed to update blob images:", e);
         }
       }
 
@@ -711,6 +750,15 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                     onChange={(newColors) => setFormData(prev => ({ ...prev, colors: newColors }))}
                     galleryImages={previewUrls}
                     error={formErrors.colors}
+                  />
+                </div>
+
+                {/* KHỐI ADDONS */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductAddOnsInput
+                    addOns={formData.addOns}
+                    galleryImages={previewUrls}
+                    onChange={(newAddOns) => setFormData(prev => ({ ...prev, addOns: newAddOns }))}
                   />
                 </div>
 

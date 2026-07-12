@@ -65,8 +65,15 @@ export const syncCart = async (req, res) => {
         colorImage = colorVariant.image;
       }
 
+      const iAddOnsStr = (localItem.addOns || []).map(a => a.name).sort().join('|');
+
       const existingItemIndex = cart.items.findIndex(
-        (i) => i.product.toString() === productId.toString() && i.color === color
+        (i) => {
+          const sameProduct = i.product.toString() === productId.toString();
+          const sameColor = i.color === color;
+          const cartAddOnsStr = (i.addOns || []).map(a => a.name).sort().join('|');
+          return sameProduct && sameColor && iAddOnsStr === cartAddOnsStr;
+        }
       );
       
       if (existingItemIndex > -1) {
@@ -80,6 +87,7 @@ export const syncCart = async (req, res) => {
           quantity: Math.min(quantity, maxStock),
           color: color || undefined,
           colorImage: colorImage || undefined,
+          addOns: localItem.addOns || [],
         });
       }
     }
@@ -130,8 +138,15 @@ export const updateCartItem = async (req, res) => {
 
     const validQuantity = Math.max(1, Math.min(quantity, maxStock));
 
+    const iAddOnsStr = (req.body.addOns || []).map(a => a.name).sort().join('|');
+
     const existingItemIndex = cart.items.findIndex(
-      (i) => i.product.toString() === productId.toString() && i.color === color
+      (i) => {
+        const sameProduct = i.product.toString() === productId.toString();
+        const sameColor = i.color === color;
+        const cartAddOnsStr = (i.addOns || []).map(a => a.name).sort().join('|');
+        return sameProduct && sameColor && iAddOnsStr === cartAddOnsStr;
+      }
     );
     
     if (existingItemIndex > -1) {
@@ -142,6 +157,7 @@ export const updateCartItem = async (req, res) => {
         quantity: validQuantity,
         color: color || undefined,
         colorImage: colorImage || undefined,
+        addOns: req.body.addOns || [],
       });
     }
 
@@ -160,6 +176,7 @@ export const removeCartItem = async (req, res) => {
   try {
     const { productId } = req.params;
     const color = req.query.color || req.body.color; // Accept color from query or body
+    const addOns = req.body.addOns;
 
     const cart = await Cart.findOne({ user: req.user.id });
     if (!cart) {
@@ -169,7 +186,12 @@ export const removeCartItem = async (req, res) => {
     cart.items = cart.items.filter((i) => {
       if (i.product.toString() !== productId.toString()) return true;
       if (color && i.color !== color) return true;
-      return false; // Remove if productId matches and color matches (or no color specified)
+      if (addOns) {
+        const cartAddOnsStr = (i.addOns || []).map(a => a.name).sort().join('|');
+        const reqAddOnsStr = addOns.map(a => a.name).sort().join('|');
+        if (cartAddOnsStr !== reqAddOnsStr) return true;
+      }
+      return false; // Remove if everything matches
     });
     await cart.save();
 

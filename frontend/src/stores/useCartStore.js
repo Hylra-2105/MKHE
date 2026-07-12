@@ -7,6 +7,12 @@ import { useAuthStore } from "./useAuthStore";
 
 let updateQuantityTimeout = null;
 
+export const getCartItemId = (item) => {
+  const addOnsStr = (item.addOns || []).map(a => a.name).sort().join('|');
+  return `${item.product._id}-${item.color || ''}-${addOnsStr}`;
+};
+
+
 export const useCartStore = create(
   persist(
     (set, get) => ({
@@ -33,7 +39,7 @@ export const useCartStore = create(
       })),
 
       selectAllItems: (isSelected) => set((state) => ({
-        selectedItems: isSelected ? state.items.map((item) => item.product._id) : [],
+        selectedItems: isSelected ? state.items.map((item) => getCartItemId(item)) : [],
       })),
 
       toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
@@ -61,7 +67,7 @@ export const useCartStore = create(
       },
 
       addToCart: async (product, quantity = 1, options = {}) => {
-        const { silent = false, color, colorImage } = options;
+        const { silent = false, color, colorImage, addOns = [] } = options;
         const token = useAuthStore.getState().token;
         
         let maxStock = product.stock;
@@ -117,28 +123,28 @@ export const useCartStore = create(
           
           // Generate a unique ID for the frontend state if needed, but since we rely on product._id and color, it's fine.
           return {
-            items: [...state.items, { product, quantity: addQuantity, color, colorImage }],
-            selectedItems: state.selectedItems.includes(product._id) ? state.selectedItems : [...state.selectedItems, product._id],
+            items: [...state.items, { product, quantity: addQuantity, color, colorImage, addOns }],
+            selectedItems: state.selectedItems.includes(getCartItemId({product, color, addOns: []})) ? state.selectedItems : [...state.selectedItems, getCartItemId({product, color, addOns: []})],
             isCartOpen: !silent,
           };
         });
 
         if (shouldSync && token) {
           try {
-            await updateCartItemApi(product._id, finalQuantity, color);
+            await updateCartItemApi(product._id, finalQuantity, color, addOns);
           } catch (error) {
             console.error("Lỗi cập nhật giỏ hàng trên server:", error);
           }
         }
       },
 
-      removeFromCart: async (productId, color) => {
+      removeFromCart: async (productId, color, addOns = []) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
           get().setLoadingItem(productId, true);
           try {
-            await removeCartItemApi(productId, color);
+            await removeCartItemApi(productId, color, addOns);
           } catch (error) {
             console.error("Lỗi xóa sản phẩm:", error);
           } finally {
@@ -148,7 +154,7 @@ export const useCartStore = create(
 
         set((state) => ({
           items: state.items.filter((item) => !(item.product._id === productId && (item.color || undefined) === (color || undefined))),
-          selectedItems: state.selectedItems.filter((id) => state.items.find(i => i.product._id === id && !(i.product._id === productId && (i.color || undefined) === (color || undefined)))),
+          selectedItems: state.selectedItems.filter((id) => id !== getCartItemId({product: {_id: productId}, color, addOns: []})),
         }));
         toast.success(i18n.t("cart:toast.removed"));
       },
@@ -165,7 +171,7 @@ export const useCartStore = create(
         }
 
         set((state) => ({
-          items: state.items.filter((item) => !productIds.includes(item.product._id)),
+          items: state.items.filter((item) => !productIds.includes(getCartItemId(item))),
           selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
         }));
         if (!silent) {
@@ -173,11 +179,11 @@ export const useCartStore = create(
         }
       },
 
-      updateQuantity: (productId, quantity, color) => {
+      updateQuantity: (productId, quantity, color, addOns = []) => {
         const token = useAuthStore.getState().token;
         
         set((state) => {
-          const item = state.items.find((i) => i.product._id === productId && (i.color || undefined) === (color || undefined));
+          const item = state.items.find((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}));
           if (!item) return state;
 
           let maxStock = item.product.stock;
@@ -188,9 +194,7 @@ export const useCartStore = create(
           const validQuantity = Math.max(1, Math.min(quantity, maxStock));
 
           return {
-            items: state.items.map((i) =>
-              i.product._id === productId && (i.color || undefined) === (color || undefined) ? { ...i, quantity: validQuantity } : i
-            ),
+            items: state.items.map((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}) ? { ...i, quantity: validQuantity } : i),
           };
         });
 
@@ -202,9 +206,9 @@ export const useCartStore = create(
           
           updateQuantityTimeout = setTimeout(async () => {
             try {
-              const item = get().items.find((i) => i.product._id === productId && (i.color || undefined) === (color || undefined));
+              const item = get().items.find((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}));
               if (item) {
-                await updateCartItemApi(productId, item.quantity, color);
+                await updateCartItemApi(productId, item.quantity, color, addOns);
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);
@@ -219,7 +223,7 @@ export const useCartStore = create(
         const { items, selectedItems } = get();
         const now = new Date();
         return items
-          .filter((item) => selectedItems.includes(item.product._id))
+          .filter((item) => selectedItems.includes(getCartItemId(item)))
           .reduce((total, item) => {
             const product = item.product;
             const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 

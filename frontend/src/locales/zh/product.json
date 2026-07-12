@@ -286,7 +286,24 @@
       "remove_color": "删除此颜色",
       "picker_title": "为颜色选择图片",
       "picker_empty": "您尚未在图库中上传任何图片。",
-      "picker_empty_desc": "请先在左侧列上传图片。"
+      "picker_empty_desc": "请先在左侧列上传图片。",
+      "price_override": "自定义价格（可选）",
+      "price_override_placeholder": "例如：350000"
+    },
+    "addons": {
+      "title": "附加组件 / 配件",
+      "subtitle": "礼品盒、贺卡...",
+      "add_btn": "添加附件",
+      "remove_btn": "删除附件",
+      "name": "附件名称",
+      "name_placeholder": "例：高级礼品盒",
+      "price": "价格 (+)",
+      "price_placeholder": "例：50000",
+      "image": "图片",
+      "change_image": "更换图片",
+      "choose_image": "选择图片",
+      "empty": "该产品没有附加组件。",
+      "picker_title": "选择附加组件图片"
     }
   },
   "products": {

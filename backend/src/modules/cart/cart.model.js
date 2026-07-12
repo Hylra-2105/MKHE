@@ -6,6 +6,13 @@ const cartItemSchema = new mongoose.Schema(
     quantity: { type: Number, required: true, min: 1 },
     color: { type: String }, // Store the selected color name
     colorImage: { type: String }, // Store the image URL of the selected color
+    addOns: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true },
+        image: { type: String },
+      }
+    ],
   },
   { _id: false }
 );
