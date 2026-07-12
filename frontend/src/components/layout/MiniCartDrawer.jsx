@@ -48,8 +48,8 @@ const MiniCartDrawer = () => {
     };
   }, [isCartOpen]);
 
-  const handleRemove = (productId) => {
-    setItemToDelete(productId);
+  const handleRemove = (item) => {
+    setItemToDelete(item);
   };
 
   if (!isCartOpen) return null;
@@ -149,9 +149,9 @@ const MiniCartDrawer = () => {
                     </div>
 
                     <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative block">
-                      {item.product.images && item.product.images.length > 0 ? (
+                      {item.colorImage || (item.product.images && item.product.images.length > 0) ? (
                         <img
-                          src={getImageUrl(item.product.images[0])}
+                          src={getImageUrl(item.colorImage || item.product.images[0])}
                           alt={item.product.name}
                           className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
                           onError={(e) => {
@@ -170,11 +170,19 @@ const MiniCartDrawer = () => {
                   
                   <div className="flex-1 flex flex-col justify-between min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="font-sans font-medium text-base sm:text-lg text-mkhe-text line-clamp-2 leading-tight hover:text-mkhe-primary transition-colors">
-                        {item.product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
-                      </Link>
+                      <div>
+                        <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="font-sans font-medium text-base sm:text-lg text-mkhe-text line-clamp-2 leading-tight hover:text-mkhe-primary transition-colors">
+                          {item.product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
+                        </Link>
+                        {item.color && (
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <span className="text-xs text-mkhe-text/60">{t("color", "Màu sắc:")} </span>
+                            <span className="text-xs font-medium text-mkhe-text/80">{item.color}</span>
+                          </div>
+                        )}
+                      </div>
                       <button 
-                        onClick={() => handleRemove(item.product._id)}
+                        onClick={() => handleRemove(item)}
                         disabled={isLoading}
                         className="p-1.5 text-mkhe-primary/80 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded-full transition-colors shrink-0 cursor-pointer disabled:opacity-30"
                         title={t("remove_item", "Xóa sản phẩm")}
@@ -201,7 +209,7 @@ const MiniCartDrawer = () => {
                       
                       <div className="flex items-center gap-1 sm:gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10 self-start sm:self-auto">
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.color)}
                           disabled={item.quantity <= 1 || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
@@ -213,8 +221,8 @@ const MiniCartDrawer = () => {
                         </span>
                         
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                          disabled={item.quantity >= item.product.stock || isLoading}
+                          onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.color)}
+                          disabled={item.quantity >= (item.color && item.product.colors ? item.product.colors.find(c => c.name === item.color)?.stock : item.product.stock) || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -254,7 +262,7 @@ const MiniCartDrawer = () => {
                       removeMultipleFromCart(selectedItems);
                       setIsEditMode(false);
                     } else {
-                      removeFromCart(itemToDelete);
+                      removeFromCart(itemToDelete.product._id, itemToDelete.color);
                     }
                     setItemToDelete(null);
                   }}

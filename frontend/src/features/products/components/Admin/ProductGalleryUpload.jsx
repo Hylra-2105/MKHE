@@ -187,7 +187,7 @@ const ProductGalleryUpload = ({
             </p>
             <div className="text-[11px] text-[var(--color-mkhe-text)]/40 mt-6 text-center">
               <p>{t("profile.support_img")}</p>
-              <p>Max 10 images, 5MB each</p>
+              <p>{t("modal.support_img_limit", { defaultValue: "Tối đa 30 ảnh, mỗi ảnh 5MB", max: 30 })}</p>
             </div>
           </div>
 

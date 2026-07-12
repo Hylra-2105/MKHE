@@ -264,6 +264,23 @@
       "sendPushDesc": "Hệ thống sẽ tự động gửi thông báo đến TẤT CẢ người dùng khi phát hành",
       "ongoing": "Đang Sale",
       "upcoming": "Sắp Sale"
+    },
+    "colors": {
+      "title": "Màu sắc / Biến thể",
+      "subtitle": "Thiết lập màu sắc, ảnh đại diện và tồn kho riêng biệt",
+      "add_color": "Thêm Màu",
+      "color_name": "Tên màu",
+      "color_name_placeholder": "VD: Sọc Xanh Trắng",
+      "stock": "Tồn kho",
+      "stock_placeholder": "Số lượng...",
+      "image": "Ảnh đại diện",
+      "change_image": "Đổi ảnh",
+      "choose_image": "Chọn ảnh",
+      "no_colors": "Sản phẩm này chưa có biến thể màu sắc nào.",
+      "remove_color": "Xóa màu này",
+      "picker_title": "Chọn ảnh cho màu",
+      "picker_empty": "Bạn chưa tải lên ảnh nào trong Gallery.",
+      "picker_empty_desc": "Vui lòng tải ảnh lên ở cột bên trái trước."
     }
   },
   "products": {

@@ -212,7 +212,12 @@ export default function CheckoutPage() {
 
       const payload = {
         shippingInfo,
-        items: checkoutItems.map(i => ({ productId: i.product._id, quantity: i.quantity })),
+        items: checkoutItems.map(i => ({ 
+          productId: i.product._id, 
+          quantity: i.quantity,
+          color: i.color,
+          colorImage: i.colorImage
+        })),
         paymentMethod,
         otp: (paymentMethod === "COD" && !isTrustedDevice) ? finalOtp : undefined,
         voucherId: selectedVoucher?._id,

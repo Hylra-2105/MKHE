@@ -270,6 +270,23 @@
       "sendPushDesc": "发布时，系统将自动向所有用户发送通知",
       "ongoing": "促销中",
       "upcoming": "即将促销"
+    },
+    "colors": {
+      "title": "颜色 / 变体",
+      "subtitle": "配置颜色、头像和独立库存",
+      "add_color": "添加颜色",
+      "color_name": "颜色名称",
+      "color_name_placeholder": "例：蓝白条纹",
+      "stock": "库存",
+      "stock_placeholder": "数量...",
+      "image": "头像图片",
+      "change_image": "更换图片",
+      "choose_image": "选择图片",
+      "no_colors": "该产品还没有任何颜色变体。",
+      "remove_color": "删除此颜色",
+      "picker_title": "为颜色选择图片",
+      "picker_empty": "您尚未在图库中上传任何图片。",
+      "picker_empty_desc": "请先在左侧列上传图片。"
     }
   },
   "products": {

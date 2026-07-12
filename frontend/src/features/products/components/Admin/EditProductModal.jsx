@@ -31,6 +31,7 @@ import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import B2BTiersInput from "./B2BTiersInput";
+import ProductColorsInput from "./ProductColorsInput";
 import { getBlogsApi } from "@/api/blogApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -51,7 +52,7 @@ const formatFlatpickrDate = (dateObj) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 30;
 
 const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const { t } = useTranslation("product");
@@ -81,6 +82,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     isPublicEvent: false,
     hasSale: false,
     b2bTiers: [],
+    colors: [],
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -271,9 +273,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         isService: product?.isService || false,
         hasSale: !!product.salePrice || !!product.saleStartDate,
         b2bTiers: product.b2bTiers || [],
+        colors: product.colors || [],
       };
-      setFormData(initData);
-      setInitialFormData(initData);
+      const clonedInitData = JSON.parse(JSON.stringify(initData));
+      setFormData(clonedInitData);
+      setInitialFormData(clonedInitData);
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
       setDeletedImages([]);
@@ -546,7 +550,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         ...formData,
         price: Number(formData.price),
         salePrice: formData.hasSale && formData.salePrice ? Number(formData.salePrice) : 0,
-        stock: Number(formData.stock) || 0,
+        stock: formData.colors?.length > 0 
+          ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+          : (Number(formData.stock) || 0),
       };
 
       if (!updatePayload.hasSale) {
@@ -845,8 +851,30 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     <InputField type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} label={t("modal.price")} required error={formErrors.price ? formErrors.price : null} />
                   </div>
                   <div className="col-span-3">
-                    <InputField type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} label={t("modal.stock")} />
+                    <InputField 
+                      type="text" 
+                      name="stock" 
+                      value={formData.colors?.length > 0 
+                        ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+                        : formatNumber(formData.stock)} 
+                      onChange={(e) => updateField("stock", parseNumber(e.target.value))} 
+                      label={t("modal.stock")} 
+                      disabled={formData.colors?.length > 0} 
+                    />
                   </div>
+                </div>
+
+                {/* KHỐI MÀU SẮC */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductColorsInput
+                    colors={formData.colors}
+                    onChange={(newColors) => setFormData(prev => ({ ...prev, colors: newColors }))}
+                    galleryImages={[
+                      ...keptImages.map(img => typeof img === 'string' ? img : img.url), 
+                      ...newImagePreviews.map(p => p.url)
+                    ]}
+                    error={formErrors.colors}
+                  />
                 </div>
 
                 {/* KHỐI MỚI: CHƯƠNG TRÌNH SALE (VỚI TOGGLE) */}

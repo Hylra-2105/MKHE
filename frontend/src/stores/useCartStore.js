@@ -61,15 +61,28 @@ export const useCartStore = create(
       },
 
       addToCart: async (product, quantity = 1, options = {}) => {
-        const { silent = false } = options;
+        const { silent = false, color, colorImage } = options;
         const token = useAuthStore.getState().token;
-        const maxStock = product.stock;
+        
+        let maxStock = product.stock;
+        let colorVariant = null;
+
+        if (color && product.colors && product.colors.length > 0) {
+          colorVariant = product.colors.find(c => c.name === color);
+          if (colorVariant) {
+            maxStock = colorVariant.stock;
+          }
+        }
         
         let shouldSync = false;
         let finalQuantity = quantity;
 
         set((state) => {
-          const existingItem = state.items.find((item) => item.product._id === product._id);
+          // Identify cart item by productId AND color (if provided)
+          const existingItem = state.items.find((item) => 
+            item.product._id === product._id && 
+            (item.color || undefined) === (color || undefined)
+          );
 
           if (existingItem) {
             const newQuantity = Math.min(existingItem.quantity + quantity, maxStock);
@@ -84,7 +97,7 @@ export const useCartStore = create(
             shouldSync = true;
             return {
               items: state.items.map((item) =>
-                item.product._id === product._id
+                item.product._id === product._id && (item.color || undefined) === (color || undefined)
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
@@ -101,8 +114,10 @@ export const useCartStore = create(
 
           if (!silent) toast.success(i18n.t("cart:toast.added"));
           shouldSync = true;
+          
+          // Generate a unique ID for the frontend state if needed, but since we rely on product._id and color, it's fine.
           return {
-            items: [...state.items, { product, quantity: addQuantity }],
+            items: [...state.items, { product, quantity: addQuantity, color, colorImage }],
             selectedItems: state.selectedItems.includes(product._id) ? state.selectedItems : [...state.selectedItems, product._id],
             isCartOpen: !silent,
           };
@@ -110,20 +125,20 @@ export const useCartStore = create(
 
         if (shouldSync && token) {
           try {
-            await updateCartItemApi(product._id, finalQuantity);
+            await updateCartItemApi(product._id, finalQuantity, color);
           } catch (error) {
             console.error("Lỗi cập nhật giỏ hàng trên server:", error);
           }
         }
       },
 
-      removeFromCart: async (productId) => {
+      removeFromCart: async (productId, color) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
           get().setLoadingItem(productId, true);
           try {
-            await removeCartItemApi(productId);
+            await removeCartItemApi(productId, color);
           } catch (error) {
             console.error("Lỗi xóa sản phẩm:", error);
           } finally {
@@ -132,8 +147,8 @@ export const useCartStore = create(
         }
 
         set((state) => ({
-          items: state.items.filter((item) => item.product._id !== productId),
-          selectedItems: state.selectedItems.filter((id) => id !== productId),
+          items: state.items.filter((item) => !(item.product._id === productId && (item.color || undefined) === (color || undefined))),
+          selectedItems: state.selectedItems.filter((id) => state.items.find(i => i.product._id === id && !(i.product._id === productId && (i.color || undefined) === (color || undefined)))),
         }));
         toast.success(i18n.t("cart:toast.removed"));
       },
@@ -158,19 +173,23 @@ export const useCartStore = create(
         }
       },
 
-      updateQuantity: (productId, quantity) => {
+      updateQuantity: (productId, quantity, color) => {
         const token = useAuthStore.getState().token;
         
         set((state) => {
-          const item = state.items.find((i) => i.product._id === productId);
+          const item = state.items.find((i) => i.product._id === productId && (i.color || undefined) === (color || undefined));
           if (!item) return state;
 
-          const maxStock = item.product.stock;
+          let maxStock = item.product.stock;
+          if (color && item.product.colors) {
+            const colorVariant = item.product.colors.find(c => c.name === color);
+            if (colorVariant) maxStock = colorVariant.stock;
+          }
           const validQuantity = Math.max(1, Math.min(quantity, maxStock));
 
           return {
             items: state.items.map((i) =>
-              i.product._id === productId ? { ...i, quantity: validQuantity } : i
+              i.product._id === productId && (i.color || undefined) === (color || undefined) ? { ...i, quantity: validQuantity } : i
             ),
           };
         });
@@ -183,9 +202,9 @@ export const useCartStore = create(
           
           updateQuantityTimeout = setTimeout(async () => {
             try {
-              const item = get().items.find((i) => i.product._id === productId);
+              const item = get().items.find((i) => i.product._id === productId && (i.color || undefined) === (color || undefined));
               if (item) {
-                await updateCartItemApi(productId, item.quantity);
+                await updateCartItemApi(productId, item.quantity, color);
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);

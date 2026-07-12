@@ -17,9 +17,9 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
           {checkoutItems.map((item) => (
             <div key={item.product._id} className="flex gap-4">
               <div className="w-16 h-16 bg-mkhe-border/10 rounded-md overflow-hidden flex-shrink-0">
-                {item.product.images?.[0] ? (
+                {item.colorImage || item.product.images?.[0] ? (
                   <img 
-                    src={getImageUrl(item.product.images[0])} 
+                    src={getImageUrl(item.colorImage || item.product.images[0])} 
                     alt={item.product.name} 
                     className="w-full h-full object-cover" 
                     onError={(e) => {
@@ -37,6 +37,9 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
               </div>
               <div className="flex-1">
                 <h4 className="font-medium text-sm line-clamp-2 text-mkhe-text">{item.product.name}</h4>
+                {item.color && (
+                  <p className="text-xs text-mkhe-text/60 mt-0.5">{t("summary.color", "Màu sắc:")} {item.color}</p>
+                )}
                 <div className="flex justify-between items-center mt-1">
                   <span className="text-mkhe-text/60 text-sm">{t("summary.qty")}: {item.quantity}</span>
                   <span className="font-medium text-mkhe-primary">

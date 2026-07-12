@@ -78,30 +78,50 @@ export const checkout = async (req, res) => {
     try {
       for (const item of items) {
         // Atomic Operation: Chỉ update khi stock >= quantity
-        const product = await Product.findOneAndUpdate(
-          { _id: item.productId, stock: { $gte: item.quantity } },
-          { $inc: { stock: -item.quantity } },
-          { new: true }
-        );
+        let product;
+        if (item.color) {
+          product = await Product.findOneAndUpdate(
+            { 
+              _id: item.productId, 
+              "colors.name": item.color,
+              "colors.stock": { $gte: item.quantity }
+            },
+            { 
+              $inc: { 
+                "colors.$.stock": -item.quantity,
+                stock: -item.quantity 
+              } 
+            },
+            { new: true }
+          );
+        } else {
+          product = await Product.findOneAndUpdate(
+            { _id: item.productId, stock: { $gte: item.quantity } },
+            { $inc: { stock: -item.quantity } },
+            { new: true }
+          );
+        }
         
         if (!product) {
           // Check xem có phải do không đủ hàng hay do sản phẩm không tồn tại
           const existingProduct = await Product.findById(item.productId);
           if (!existingProduct) throw new Error(`PRODUCT_NOT_FOUND:${item.productId}`);
+          if (item.color) throw new Error(`INSUFFICIENT_STOCK:${existingProduct.name} - ${item.color}`);
           throw new Error(`INSUFFICIENT_STOCK:${existingProduct.name}`);
         }
 
         // Lưu vào ds đã trừ để Rollback nếu có lỗi phía sau
-        deductedStocks.push({ productId: product._id, quantity: item.quantity });
+        deductedStocks.push({ productId: product._id, quantity: item.quantity, color: item.color });
 
         subtotal += product.price * item.quantity;
         
         orderItems.push({
           product: product._id,
           name: product.name,
-          image: product.images?.[0] || "",
+          image: item.colorImage || product.images?.[0] || "",
           price: product.price,
           quantity: item.quantity,
+          color: item.color || undefined,
         });
 
         if (product.stock <= 10 && !product.lowStockAlerted) {
@@ -278,7 +298,14 @@ export const checkout = async (req, res) => {
       if (deductedStocks && deductedStocks.length > 0) {
         console.log("Rolling back stock for:", deductedStocks);
         for (const item of deductedStocks) {
-          await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity } });
+          if (item.color) {
+            await Product.findOneAndUpdate(
+              { _id: item.productId, "colors.name": item.color },
+              { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
+            );
+          } else {
+            await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity } });
+          }
         }
       }
       
@@ -412,7 +439,14 @@ export const cancelOrder = async (req, res) => {
 
     // ROLLBACK STOCK
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+      if (item.color) {
+        await Product.findOneAndUpdate(
+          { _id: item.product, "colors.name": item.color },
+          { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
+        );
+      } else {
+        await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+      }
       const product = await Product.findById(item.product);
       if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
         product.status = "PUBLISHED";
@@ -616,15 +650,30 @@ export const updateOrderStatus = async (req, res) => {
     if (previousStatus === "CANCELLED" && status !== "CANCELLED") {
       for (const item of order.items) {
         const product = await Product.findById(item.product);
-        if (!product || product.stock < item.quantity) {
-          return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product?.name || item.product}`);
+        if (!product) {
+           return errorResponse(res, 400, `PRODUCT_NOT_FOUND:${item.product}`);
+        }
+        if (item.color) {
+           const colorVar = product.colors?.find(c => c.name === item.color);
+           if (!colorVar || colorVar.stock < item.quantity) {
+             return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product.name} - ${item.color}`);
+           }
+        } else {
+           if (product.stock < item.quantity) {
+             return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product.name}`);
+           }
         }
       }
       // Thực sự trừ kho
       for (const item of order.items) {
-        const product = await Product.findById(item.product);
-        product.stock -= item.quantity;
-        await product.save();
+        if (item.color) {
+          await Product.findOneAndUpdate(
+            { _id: item.product, "colors.name": item.color },
+            { $inc: { "colors.$.stock": -item.quantity, stock: -item.quantity } }
+          );
+        } else {
+          await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+        }
       }
     }
 
@@ -633,7 +682,14 @@ export const updateOrderStatus = async (req, res) => {
     // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED      // ROLLBACK STOCK KHI ADMIN HỦY
       if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
         for (const item of order.items) {
-          await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+          if (item.color) {
+            await Product.findOneAndUpdate(
+              { _id: item.product, "colors.name": item.color },
+              { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
+            );
+          } else {
+            await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+          }
           const product = await Product.findById(item.product);
           if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
             product.status = "PUBLISHED";

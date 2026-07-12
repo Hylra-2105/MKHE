@@ -191,7 +191,14 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                         {item.image && (
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded border border-mkhe-border/30" />
                         )}
-                        <span className="line-clamp-2">{item.name}</span>
+                        <span className="line-clamp-2">
+                          {item.name}
+                          {item.color && (
+                            <span className="block text-xs text-mkhe-text/60 mt-0.5">
+                              {t("history:color", { defaultValue: "Màu sắc:" })} {item.color}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>

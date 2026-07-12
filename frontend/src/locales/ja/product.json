@@ -270,6 +270,23 @@
       "sendPushDesc": "リリース時に、システムは自動的にすべてのユーザーに通知を送信します",
       "ongoing": "セール中",
       "upcoming": "今後のセール"
+    },
+    "colors": {
+      "title": "色 / バリエーション",
+      "subtitle": "色、アバター画像、個別の在庫を設定します",
+      "add_color": "色を追加",
+      "color_name": "色名",
+      "color_name_placeholder": "例: 青白ストライプ",
+      "stock": "在庫",
+      "stock_placeholder": "数量...",
+      "image": "アバター画像",
+      "change_image": "画像を変更",
+      "choose_image": "画像を選択",
+      "no_colors": "この製品にはまだ色のバリエーションがありません。",
+      "remove_color": "この色を削除",
+      "picker_title": "色の画像を選択",
+      "picker_empty": "ギャラリーに画像がアップロードされていません。",
+      "picker_empty_desc": "先に左の列で画像をアップロードしてください。"
     }
   },
   "products": {

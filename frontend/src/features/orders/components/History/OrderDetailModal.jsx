@@ -288,6 +288,9 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-sm text-[var(--color-mkhe-text)] line-clamp-1">{item.name}</h4>
+                      {item.color && (
+                        <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">{t("history:color", { defaultValue: "Màu sắc:" })} {item.color}</p>
+                      )}
                       <p className="text-xs text-[var(--color-mkhe-text)]/50 mt-1">{t("history:quantity", { defaultValue: "Số lượng" })}: {item.quantity}</p>
                     </div>
                   </div>

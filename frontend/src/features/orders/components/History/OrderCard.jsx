@@ -73,6 +73,11 @@ const OrderCard = ({ order, onClick }) => {
               <h4 className="font-semibold text-[var(--color-mkhe-text)] line-clamp-1">
                 {firstItem.name}
               </h4>
+              {firstItem.color && (
+                <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">
+                  {t("history:color", { defaultValue: "Màu sắc:" })} {firstItem.color}
+                </p>
+              )}
               <p className="text-sm text-[var(--color-mkhe-text)]/70 mt-1">
                 x{firstItem.quantity}
               </p>

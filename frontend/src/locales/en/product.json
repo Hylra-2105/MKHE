@@ -265,6 +265,23 @@
       "sendPushDesc": "The system will automatically send notifications to ALL users upon release",
       "ongoing": "On Sale",
       "upcoming": "Upcoming Sale"
+    },
+    "colors": {
+      "title": "Colors / Variants",
+      "subtitle": "Configure colors, avatar images, and separate stock",
+      "add_color": "Add Color",
+      "color_name": "Color Name",
+      "color_name_placeholder": "Ex: Blue White Stripe",
+      "stock": "Stock",
+      "stock_placeholder": "Quantity...",
+      "image": "Avatar Image",
+      "change_image": "Change image",
+      "choose_image": "Choose image",
+      "no_colors": "This product does not have any color variants yet.",
+      "remove_color": "Remove this color",
+      "picker_title": "Select image for color",
+      "picker_empty": "You have not uploaded any images to the Gallery.",
+      "picker_empty_desc": "Please upload images in the left column first."
     }
   },
   "products": {
