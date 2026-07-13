@@ -487,7 +487,7 @@ export default function ShopDetailPage() {
                         {hasMore && (
                           <button
                             onClick={() => setIsColorsExpanded(!isColorsExpanded)}
-                            className="flex items-center justify-center px-3 py-1.5 border border-mkhe-primary/30 rounded-xl text-xs font-medium text-mkhe-primary hover:bg-mkhe-primary/5 transition-colors self-stretch"
+                            className="flex items-center justify-center px-4 py-2 border border-mkhe-primary/30 rounded-xl text-[11px] sm:text-xs font-medium text-mkhe-primary hover:bg-mkhe-primary/5 transition-colors cursor-pointer min-h-[50px] sm:min-h-[60px]"
                           >
                             {isColorsExpanded ? t("shop.detail.show_less", "Thu gọn") : `+${product.colors.length - 5} ${t("shop.detail.more_colors", "màu khác")}`}
                           </button>
@@ -601,7 +601,7 @@ export default function ShopDetailPage() {
               
               {product.colors?.length > 0 && !selectedColor && !isOutOfStock && (
                 <p className="text-sm text-amber-500 font-medium text-center md:text-left mt-2">
-                  Vui lòng chọn màu sắc trước khi thêm vào giỏ hàng
+                  {t("shop.detail.select_color_first", "Vui lòng chọn màu sắc trước khi thêm vào giỏ hàng")}
                 </p>
               )}
             </div>

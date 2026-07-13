@@ -247,15 +247,15 @@ export default function CheckoutPage() {
       };
 
       const res = await orderApi.checkout(payload);
-      if (res.success) {
-        if (paymentMethod === "COD" && !isTrustedDevice) {
-           localStorage.setItem("is_trusted_device", "true");
-        }
-        setIsSuccess(true);
-        if (!localBuyNowItem) {
-          await removeMultipleFromCart(checkoutItems.map(i => i.product._id), true);
-        }
-        useCartStore.getState().setSelectedVoucher(null);
+        if (res.success) {
+          if (paymentMethod === "COD" && !isTrustedDevice) {
+             localStorage.setItem("is_trusted_device", "true");
+          }
+          setIsSuccess(true);
+          if (!localBuyNowItem) {
+            await removeMultipleFromCart(checkoutItems.map(i => getCartItemId(i)), true);
+          }
+          useCartStore.getState().setSelectedVoucher(null);
         setShowOtpModal(false);
         const orderData = res.data.order || res.data;
         

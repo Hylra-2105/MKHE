@@ -185,7 +185,7 @@ export const removeCartItem = async (req, res) => {
 
     cart.items = cart.items.filter((i) => {
       if (i.product.toString() !== productId.toString()) return true;
-      if (color && i.color !== color) return true;
+      if ((color || '') !== (i.color || '')) return true;
       if (addOns) {
         const cartAddOnsStr = (i.addOns || []).map(a => a.name).sort().join('|');
         const reqAddOnsStr = addOns.map(a => a.name).sort().join('|');

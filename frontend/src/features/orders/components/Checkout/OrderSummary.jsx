@@ -14,8 +14,8 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
         <h2 className="text-xl font-medium mb-4 pb-2 border-b border-mkhe-border/10 text-mkhe-text">{t("summary.title")}</h2>
         
         <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
-          {checkoutItems.map((item) => (
-            <div key={item.product._id} className="flex gap-4">
+          {checkoutItems.map((item, idx) => (
+            <div key={`${item.product._id}-${idx}`} className="flex gap-4">
               <div className="w-16 h-16 bg-mkhe-border/10 rounded-md overflow-hidden flex-shrink-0">
                 {item.colorImage || item.product.images?.[0] ? (
                   <img 

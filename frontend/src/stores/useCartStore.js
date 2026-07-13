@@ -86,8 +86,7 @@ export const useCartStore = create(
         set((state) => {
           // Identify cart item by productId AND color (if provided)
           const existingItem = state.items.find((item) => 
-            item.product._id === product._id && 
-            (item.color || undefined) === (color || undefined)
+            getCartItemId(item) === getCartItemId({product, color, addOns})
           );
 
           if (existingItem) {
@@ -103,7 +102,7 @@ export const useCartStore = create(
             shouldSync = true;
             return {
               items: state.items.map((item) =>
-                item.product._id === product._id && (item.color || undefined) === (color || undefined)
+                getCartItemId(item) === getCartItemId({product, color, addOns})
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
@@ -124,7 +123,7 @@ export const useCartStore = create(
           // Generate a unique ID for the frontend state if needed, but since we rely on product._id and color, it's fine.
           return {
             items: [...state.items, { product, quantity: addQuantity, color, colorImage, addOns }],
-            selectedItems: state.selectedItems.includes(getCartItemId({product, color, addOns: []})) ? state.selectedItems : [...state.selectedItems, getCartItemId({product, color, addOns: []})],
+            selectedItems: state.selectedItems.includes(getCartItemId({product, color, addOns})) ? state.selectedItems : [...state.selectedItems, getCartItemId({product, color, addOns})],
             isCartOpen: !silent,
           };
         });
@@ -153,26 +152,29 @@ export const useCartStore = create(
         }
 
         set((state) => ({
-          items: state.items.filter((item) => !(item.product._id === productId && (item.color || undefined) === (color || undefined))),
-          selectedItems: state.selectedItems.filter((id) => id !== getCartItemId({product: {_id: productId}, color, addOns: []})),
+          items: state.items.filter((item) => getCartItemId(item) !== getCartItemId({product: {_id: productId}, color, addOns})),
+          selectedItems: state.selectedItems.filter((id) => id !== getCartItemId({product: {_id: productId}, color, addOns})),
         }));
         toast.success(i18n.t("cart:toast.removed"));
       },
 
-      removeMultipleFromCart: async (productIds, silent = false) => {
+      removeMultipleFromCart: async (cartItemIds, silent = false) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
           try {
-            await Promise.all(productIds.map(id => removeCartItemApi(id)));
+            const itemsToRemove = get().items.filter(i => cartItemIds.includes(getCartItemId(i)));
+            for (const item of itemsToRemove) {
+              await removeCartItemApi(item.product._id, item.color, item.addOns);
+            }
           } catch (error) {
             console.error("Lỗi xóa nhiều sản phẩm:", error);
           }
         }
 
         set((state) => ({
-          items: state.items.filter((item) => !productIds.includes(getCartItemId(item))),
-          selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
+          items: state.items.filter((item) => !cartItemIds.includes(getCartItemId(item))),
+          selectedItems: state.selectedItems.filter((id) => !cartItemIds.includes(id)),
         }));
         if (!silent) {
           toast.success(i18n.t("cart:toast.removed"));
