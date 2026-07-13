@@ -1,8 +1,8 @@
 {
   "hero": {
     "tag": "Mekong Culture",
-    "title_1": "Intersection of",
-    "title_2": "Heritage",
+    "title_1": "Cultural intersection",
+    "title_2": "and Heritage",
     "desc": "Where the quintessence of traditional crafts is awakened and reborn through the lens of contemporary art and technology."
   },
   "story": {
@@ -40,7 +40,7 @@
     "title": "Honor craft villages",
     "items": [
       {
-        "name": "Khmer Van Giao Silk",
+        "name": "Khmer Van Giao Brocade",
         "desc": "The softness of each strand of traditional Ikat silk is dyed in the color of grass and trees."
       },
       {
@@ -50,6 +50,10 @@
       {
         "name": "Dinh Yen sedge mat",
         "desc": "The simple breath of natural sedge threads weaves together the rustic features of the river countryside."
+      },
+      {
+        "name": "Long Khanh check scarf",
+        "desc": "A unique cultural intersection through simple black and white checkered stripes, imbued with the love of the Western land and people."
       }
     ]
   },

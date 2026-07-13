@@ -3,6 +3,10 @@ import useEffectsConfig from "@/hooks/useEffectsConfig";
 import { useTranslation } from 'react-i18next';
 import aboutUs1 from '@/assets/images/about-us-1.png';
 import aboutUs2 from '@/assets/images/about-us-2.png';
+import vanGiaoImg from '@/assets/images/VanGiao.png';
+import chauPhongImg from '@/assets/images/ChauPhong.png';
+import dinhYenImg from '@/assets/images/DinhYen.png';
+import longKhanhImg from '@/assets/images/LongKhanh.png';
 
 const AboutPage = () => {
   const { enableEffects } = useEffectsConfig();
@@ -181,9 +185,10 @@ const AboutPage = () => {
             
             <div className="space-y-20 md:space-y-32">
               {[
-                { name: t('heritage_villages.items.0.name'), desc: t('heritage_villages.items.0.desc') },
-                { name: t('heritage_villages.items.1.name'), desc: t('heritage_villages.items.1.desc') },
-                { name: t('heritage_villages.items.2.name'), desc: t('heritage_villages.items.2.desc') }
+                { name: t('heritage_villages.items.0.name'), desc: t('heritage_villages.items.0.desc'), image: vanGiaoImg },
+                { name: t('heritage_villages.items.1.name'), desc: t('heritage_villages.items.1.desc'), image: chauPhongImg },
+                { name: t('heritage_villages.items.2.name'), desc: t('heritage_villages.items.2.desc'), image: dinhYenImg },
+                { name: t('heritage_villages.items.3.name'), desc: t('heritage_villages.items.3.desc'), image: longKhanhImg }
               ].map((item, idx) => (
                 <motion.div 
                   key={idx} 
@@ -203,8 +208,13 @@ const AboutPage = () => {
                   </div>
 
                   <div className={`md:w-1/2 flex ${idx % 2 === 0 ? 'md:pl-16' : 'md:pr-16 md:justify-end'}`}>
-                    <div className="text-[80px] font-logo italic font-bold text-mkhe-text/20 leading-none select-none">
-                      0{idx + 1}
+                    <div className="relative w-full max-w-[350px] aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl group border border-mkhe-primary/20">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-70" />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/20 group-hover:bg-black/40 transition-colors duration-500">
+                        <div className="text-[120px] font-logo italic font-bold text-white/60 leading-none select-none drop-shadow-lg">
+                          0{idx + 1}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
