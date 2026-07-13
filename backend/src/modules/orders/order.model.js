@@ -10,6 +10,14 @@ const orderItemSchema = new mongoose.Schema({
   image: { type: String },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true, min: 1 },
+  color: { type: String }, // Store the selected color name
+  addOns: [
+    {
+      name: { type: String, required: true },
+      price: { type: Number, required: true },
+      image: { type: String },
+    }
+  ],
   isReviewed: { type: Boolean, default: false },
 });
 

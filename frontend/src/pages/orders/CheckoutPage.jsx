@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import orderApi from "@/api/orderApi";
 import { userApi } from "@/api/userApi";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useCartStore } from "@/stores/useCartStore";
+import { useCartStore, getCartItemId } from "@/stores/useCartStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { ChevronLeft } from "lucide-react";
 
@@ -66,14 +66,34 @@ export default function CheckoutPage() {
 
   const checkoutItems = localBuyNowItem 
     ? [localBuyNowItem] 
-    : items.filter((item) => selectedItems.includes(item.product._id));
+    : items.filter((item) => selectedItems.includes(getCartItemId(item)));
   const subtotal = checkoutItems.reduce((total, item) => {
     const product = item.product;
     const now = new Date();
+    
+    let basePrice = product.price;
+    if (item.color && product.colors) {
+      const colorVariant = product.colors.find(c => c.name === item.color);
+      if (colorVariant && colorVariant.priceOverride) {
+        basePrice = colorVariant.priceOverride;
+      }
+    }
+
     const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                         && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
-    const effectivePrice = isSaleValid ? product.salePrice : product.price;
-    return total + effectivePrice * item.quantity;
+    
+    let effectivePrice = basePrice;
+    if (isSaleValid) {
+      const salePercentage = (product.price - product.salePrice) / product.price;
+      effectivePrice = Math.round(basePrice * (1 - salePercentage));
+    }
+
+    let addOnsCost = 0;
+    if (item.addOns && item.addOns.length > 0) {
+      addOnsCost = item.addOns.reduce((sum, addOn) => sum + addOn.price, 0);
+    }
+
+    return total + (effectivePrice + addOnsCost) * item.quantity;
   }, 0);
   
   // Clear voucher if it becomes ineligible
@@ -212,7 +232,13 @@ export default function CheckoutPage() {
 
       const payload = {
         shippingInfo,
-        items: checkoutItems.map(i => ({ productId: i.product._id, quantity: i.quantity })),
+        items: checkoutItems.map(i => ({ 
+          productId: i.product._id, 
+          quantity: i.quantity,
+          color: i.color,
+          colorImage: i.colorImage,
+          addOns: i.addOns
+        })),
         paymentMethod,
         otp: (paymentMethod === "COD" && !isTrustedDevice) ? finalOtp : undefined,
         voucherId: selectedVoucher?._id,
@@ -221,15 +247,15 @@ export default function CheckoutPage() {
       };
 
       const res = await orderApi.checkout(payload);
-      if (res.success) {
-        if (paymentMethod === "COD" && !isTrustedDevice) {
-           localStorage.setItem("is_trusted_device", "true");
-        }
-        setIsSuccess(true);
-        if (!localBuyNowItem) {
-          await removeMultipleFromCart(checkoutItems.map(i => i.product._id), true);
-        }
-        useCartStore.getState().setSelectedVoucher(null);
+        if (res.success) {
+          if (paymentMethod === "COD" && !isTrustedDevice) {
+             localStorage.setItem("is_trusted_device", "true");
+          }
+          setIsSuccess(true);
+          if (!localBuyNowItem) {
+            await removeMultipleFromCart(checkoutItems.map(i => getCartItemId(i)), true);
+          }
+          useCartStore.getState().setSelectedVoucher(null);
         setShowOtpModal(false);
         const orderData = res.data.order || res.data;
         

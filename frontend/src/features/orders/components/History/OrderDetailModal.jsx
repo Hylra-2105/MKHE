@@ -288,6 +288,19 @@ const OrderDetailModal = ({ orderId, onClose, onOrderUpdated }) => {
                     </div>
                     <div className="flex-1">
                       <h4 className="font-semibold text-sm text-[var(--color-mkhe-text)] line-clamp-1">{item.name}</h4>
+                      {item.color && (
+                        <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">{t("history:color", { defaultValue: "Màu sắc:" })} {item.color}</p>
+                      )}
+                      {item.addOns && item.addOns.length > 0 && (
+                        <div className="mt-1 flex flex-col gap-0.5">
+                          {item.addOns.map((addOn, idx) => (
+                            <div key={idx} className="flex items-center gap-1.5">
+                              <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {formatMoney(addOn.price)}</span>
+                              <span className="text-xs text-[var(--color-mkhe-text)]/70 truncate">{addOn.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <p className="text-xs text-[var(--color-mkhe-text)]/50 mt-1">{t("history:quantity", { defaultValue: "Số lượng" })}: {item.quantity}</p>
                     </div>
                   </div>

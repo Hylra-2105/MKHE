@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { isVideoMedia } from "@/utils/validators";
 
 const ImageGalleryUploader = ({
-  maxImages = 10,
+  maxImages = 30,
   keptImages = [],
   newImagePreviews = [],
   deletedImages = [],

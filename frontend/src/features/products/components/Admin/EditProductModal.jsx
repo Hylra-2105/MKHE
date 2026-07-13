@@ -1,4 +1,5 @@
 import React from "react";
+import { useSocketStore } from "@/stores/useSocketStore";
 import {  useState, useRef, useEffect  } from "react";
 import toast from "react-hot-toast";
 import {
@@ -31,6 +32,8 @@ import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import B2BTiersInput from "./B2BTiersInput";
+import ProductColorsInput from "./ProductColorsInput";
+import ProductAddOnsInput from "./ProductAddOnsInput";
 import { getBlogsApi } from "@/api/blogApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -51,13 +54,35 @@ const formatFlatpickrDate = (dateObj) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 30;
 
 const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const { t } = useTranslation("product");
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState("info"); // "info" | "nfc"
+
+  const { socket } = useSocketStore();
+  
+  useEffect(() => {
+    if (!socket || !product?._id || !isOpen) return;
+
+    const handleProductUpdated = (updatedProduct) => {
+      if (updatedProduct._id === product._id) {
+        setFormData((prev) => ({
+          ...prev,
+          stock: updatedProduct.stock,
+          colors: updatedProduct.colors || prev.colors,
+        }));
+      }
+    };
+
+    socket.on("product_updated", handleProductUpdated);
+
+    return () => {
+      socket.off("product_updated", handleProductUpdated);
+    };
+  }, [socket, product, isOpen]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -81,6 +106,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     isPublicEvent: false,
     hasSale: false,
     b2bTiers: [],
+    colors: [],
+    addOns: [],
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -271,9 +298,12 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         isService: product?.isService || false,
         hasSale: !!product.salePrice || !!product.saleStartDate,
         b2bTiers: product.b2bTiers || [],
+        colors: product.colors || [],
+        addOns: product.addOns || [],
       };
-      setFormData(initData);
-      setInitialFormData(initData);
+      const clonedInitData = JSON.parse(JSON.stringify(initData));
+      setFormData(clonedInitData);
+      setInitialFormData(clonedInitData);
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
       setDeletedImages([]);
@@ -546,7 +576,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         ...formData,
         price: Number(formData.price),
         salePrice: formData.hasSale && formData.salePrice ? Number(formData.salePrice) : 0,
-        stock: Number(formData.stock) || 0,
+        stock: formData.colors?.length > 0 
+          ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+          : (Number(formData.stock) || 0),
       };
 
       if (!updatePayload.hasSale) {
@@ -577,10 +609,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       // 2. UPLOAD ẢNH & 3D MỚI NẾU CÓ
       const uploadPromises = [];
 
+      let galleryRes = null;
+
       if (newImageFiles.length > 0) {
         const uploadData = new FormData();
         newImageFiles.forEach((file) => uploadData.append("images", file));
-        uploadPromises.push(productApi.uploadProductGallery(product._id, uploadData));
+        const p = productApi.uploadProductGallery(product._id, uploadData).then(res => { galleryRes = res; return res; });
+        uploadPromises.push(p);
       }
 
       if (formData.hasDPP && file3D) {
@@ -592,9 +627,46 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       if (uploadPromises.length > 0) {
         try {
           await Promise.all(uploadPromises);
-        } catch (uploadError) {
-          console.error("[EditProduct] Upload error:", uploadError);
+        } catch (error) {
+          console.error("Upload error:", error);
           toast.error(t("modal.3d_file.error_upload_both"));
+        }
+      }
+
+      if (galleryRes && galleryRes.data && galleryRes.data.images) {
+        try {
+          let needsUpdate = false;
+          const newColors = [...formData.colors];
+          const newAddOns = [...formData.addOns];
+          const updatedImages = galleryRes.data.images;
+          
+          const newImagesStartIdx = updatedImages.length - newImageFiles.length;
+          
+          const blobToUrlMap = {};
+          for(let i=0; i<newImageFiles.length; i++) {
+             if (newImagePreviews[i] && newImagePreviews[i].url) {
+               blobToUrlMap[newImagePreviews[i].url] = updatedImages[newImagesStartIdx + i];
+             }
+          }
+
+          newColors.forEach(c => {
+             if (c.image && c.image.startsWith('blob:')) {
+                c.image = blobToUrlMap[c.image] || c.image;
+                needsUpdate = true;
+             }
+          });
+          newAddOns.forEach(a => {
+             if (a.image && a.image.startsWith('blob:')) {
+                a.image = blobToUrlMap[a.image] || a.image;
+                needsUpdate = true;
+             }
+          });
+
+          if (needsUpdate) {
+             await productApi.updateProduct(product._id, { colors: newColors, addOns: newAddOns });
+          }
+        } catch (e) {
+          console.error("Failed to update blob images:", e);
         }
       }
 
@@ -663,6 +735,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     setFile3D(null);
     onClose();
   };
+
+  const allGalleryImages = [
+    ...keptImages.map(img => typeof img === 'string' ? img : img.url), 
+    ...newImagePreviews.map(p => p.url)
+  ];
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
@@ -845,8 +922,36 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     <InputField type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} label={t("modal.price")} required error={formErrors.price ? formErrors.price : null} />
                   </div>
                   <div className="col-span-3">
-                    <InputField type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} label={t("modal.stock")} />
+                    <InputField 
+                      type="text" 
+                      name="stock" 
+                      value={formData.colors?.length > 0 
+                        ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+                        : formatNumber(formData.stock)} 
+                      onChange={(e) => updateField("stock", parseNumber(e.target.value))} 
+                      label={t("modal.stock")} 
+                      disabled={formData.colors?.length > 0} 
+                    />
                   </div>
+                </div>
+
+                {/* KHỐI MÀU SẮC */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductColorsInput
+                    colors={formData.colors}
+                    onChange={(newColors) => setFormData(prev => ({ ...prev, colors: newColors }))}
+                    galleryImages={allGalleryImages}
+                    error={formErrors.colors}
+                  />
+                </div>
+                
+                {/* KHỐI ADDONS */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductAddOnsInput
+                    addOns={formData.addOns}
+                    galleryImages={allGalleryImages}
+                    onChange={(newAddOns) => setFormData(prev => ({ ...prev, addOns: newAddOns }))}
+                  />
                 </div>
 
                 {/* KHỐI MỚI: CHƯƠNG TRÌNH SALE (VỚI TOGGLE) */}

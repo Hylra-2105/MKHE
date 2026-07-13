@@ -11,6 +11,7 @@ import { getIO } from "../../config/socket.js";
 import mongoose from "mongoose";
 import { errorResponse, successResponse } from "../../utils/response.js";
 import { sendCheckoutOtpEmail, sendInvoiceEmail, sendOrderStatusEmail } from "../../utils/email.js";
+import { clearProductCache } from "../../utils/cache.js";
 import { createVietnameseRegex } from "../../utils/helpers.js";
 
 const generateOrderCode = () => {
@@ -73,35 +74,87 @@ export const checkout = async (req, res) => {
     const orderItems = [];
     const lowStockAlerts = []; // To trigger after order is successfully created
     const deductedStocks = []; // To track for manual rollback
+    const updatedProducts = [];
     let usedUserVoucherId = null;
 
     try {
       for (const item of items) {
         // Atomic Operation: Chỉ update khi stock >= quantity
-        const product = await Product.findOneAndUpdate(
-          { _id: item.productId, stock: { $gte: item.quantity } },
-          { $inc: { stock: -item.quantity } },
-          { new: true }
-        );
+        let product;
+        if (item.color) {
+          product = await Product.findOneAndUpdate(
+            { 
+              _id: item.productId, 
+              colors: { 
+                $elemMatch: { 
+                  name: item.color, 
+                  stock: { $gte: item.quantity } 
+                } 
+              }
+            },
+            { 
+              $inc: { 
+                "colors.$.stock": -item.quantity,
+                stock: -item.quantity 
+              } 
+            },
+            { new: true }
+          );
+        } else {
+          product = await Product.findOneAndUpdate(
+            { _id: item.productId, stock: { $gte: item.quantity } },
+            { $inc: { stock: -item.quantity } },
+            { new: true }
+          );
+        }
         
         if (!product) {
           // Check xem có phải do không đủ hàng hay do sản phẩm không tồn tại
           const existingProduct = await Product.findById(item.productId);
           if (!existingProduct) throw new Error(`PRODUCT_NOT_FOUND:${item.productId}`);
+          if (item.color) throw new Error(`INSUFFICIENT_STOCK:${existingProduct.name} - ${item.color}`);
           throw new Error(`INSUFFICIENT_STOCK:${existingProduct.name}`);
         }
 
-        // Lưu vào ds đã trừ để Rollback nếu có lỗi phía sau
-        deductedStocks.push({ productId: product._id, quantity: item.quantity });
-
-        subtotal += product.price * item.quantity;
+        // Calculate effective price
+        let basePrice = product.price;
+        if (item.color && product.colors) {
+          const colorVariant = product.colors.find(c => c.name === item.color);
+          if (colorVariant && colorVariant.priceOverride) {
+            basePrice = colorVariant.priceOverride;
+          }
+        }
         
+        const now = new Date();
+        const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
+                            && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
+        
+        let effectivePrice = basePrice;
+        if (isSaleValid) {
+          const salePercentage = (product.price - product.salePrice) / product.price;
+          effectivePrice = Math.round(basePrice * (1 - salePercentage));
+        }
+        
+        let addOnsCost = 0;
+        if (item.addOns && item.addOns.length > 0) {
+          addOnsCost = item.addOns.reduce((sum, addOn) => sum + (addOn.price || 0), 0);
+        }
+        
+        const finalItemPrice = effectivePrice + addOnsCost;
+        subtotal += finalItemPrice * item.quantity;
+
+        // Lưu vào ds đã trừ để Rollback nếu có lỗi phía sau
+        deductedStocks.push({ productId: product._id, quantity: item.quantity, color: item.color });
+        updatedProducts.push(product);
+
         orderItems.push({
           product: product._id,
           name: product.name,
-          image: product.images?.[0] || "",
-          price: product.price,
+          image: item.colorImage || product.images?.[0] || "",
+          price: finalItemPrice,
           quantity: item.quantity,
+          color: item.color || undefined,
+          addOns: item.addOns || [],
         });
 
         if (product.stock <= 10 && !product.lowStockAlerted) {
@@ -190,8 +243,18 @@ export const checkout = async (req, res) => {
     // 5. Remove cart items
     const cart = await Cart.findOne({ user: user._id });
     if (cart) {
-      const checkedOutProductIds = items.map(i => i.productId.toString());
-      cart.items = cart.items.filter(i => !checkedOutProductIds.includes(i.product.toString()));
+      cart.items = cart.items.filter(i => {
+        return !items.some(checkedOutItem => {
+          let match = checkedOutItem.productId.toString() === i.product.toString();
+          if (match && (checkedOutItem.color || '') !== (i.color || '')) match = false;
+          if (match && checkedOutItem.addOns) {
+            const cartAddOnsStr = (i.addOns || []).map(a => a.name).sort().join('|');
+            const reqAddOnsStr = checkedOutItem.addOns.map(a => a.name).sort().join('|');
+            if (cartAddOnsStr !== reqAddOnsStr) match = false;
+          }
+          return match;
+        });
+      });
       await cart.save();
     }
 
@@ -216,6 +279,7 @@ export const checkout = async (req, res) => {
       const io = getIO();
       io.to(`user_${user._id}`).emit("new_notification", notif);
       io.emit("admin_order_updated");
+      io.emit("admin_product_updated");
       io.to(`user_${user._id}`).emit("user_order_updated", newOrder[0]);
 
       // Admin Notifications
@@ -270,6 +334,14 @@ export const checkout = async (req, res) => {
         console.error("PayOS Create Payment Link Error:", err);
       }
     }
+    
+    // Xóa cache của các sản phẩm đã được mua
+    if (updatedProducts && updatedProducts.length > 0) {
+      const uniqueProductIds = [...new Set(updatedProducts.map(p => p._id.toString()))];
+      for (const pid of uniqueProductIds) {
+        await clearProductCache(pid);
+      }
+    }
 
     return successResponse(res, 201, "ORDER_CREATED", payosData ? { order: newOrder[0], payosData } : newOrder[0]);
 
@@ -278,7 +350,14 @@ export const checkout = async (req, res) => {
       if (deductedStocks && deductedStocks.length > 0) {
         console.log("Rolling back stock for:", deductedStocks);
         for (const item of deductedStocks) {
-          await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity } });
+          if (item.color) {
+            await Product.findOneAndUpdate(
+              { _id: item.productId, "colors.name": item.color },
+              { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
+            );
+          } else {
+            await Product.findByIdAndUpdate(item.productId, { $inc: { stock: item.quantity } });
+          }
         }
       }
       
@@ -412,7 +491,14 @@ export const cancelOrder = async (req, res) => {
 
     // ROLLBACK STOCK
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+      if (item.color) {
+        await Product.findOneAndUpdate(
+          { _id: item.product, "colors.name": item.color },
+          { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
+        );
+      } else {
+        await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
+      }
       const product = await Product.findById(item.product);
       if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
         product.status = "PUBLISHED";
@@ -434,6 +520,7 @@ export const cancelOrder = async (req, res) => {
 
     const io = getIO();
     io.emit("admin_order_updated");
+    io.emit("admin_product_updated");
     io.to(`user_${req.user._id}`).emit("user_order_updated", order);
     return successResponse(res, 200, "ORDER_CANCELLED", order);
   } catch (error) {
@@ -465,6 +552,7 @@ export const receiveOrder = async (req, res) => {
 
     const io = getIO();
     io.emit("admin_order_updated");
+    io.emit("admin_product_updated");
     io.to(`user_${req.user._id}`).emit("user_order_updated", order);
 
     // Increment sold count if it just became PAID (for COD orders)
@@ -616,31 +704,38 @@ export const updateOrderStatus = async (req, res) => {
     if (previousStatus === "CANCELLED" && status !== "CANCELLED") {
       for (const item of order.items) {
         const product = await Product.findById(item.product);
-        if (!product || product.stock < item.quantity) {
-          return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product?.name || item.product}`);
+        if (!product) {
+           return errorResponse(res, 400, `PRODUCT_NOT_FOUND:${item.product}`);
+        }
+        if (item.color) {
+           const colorVar = product.colors?.find(c => c.name === item.color);
+           if (!colorVar || colorVar.stock < item.quantity) {
+             return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product.name} - ${item.color}`);
+           }
+        } else {
+           if (product.stock < item.quantity) {
+             return errorResponse(res, 400, `INSUFFICIENT_STOCK:${product.name}`);
+           }
         }
       }
       // Thực sự trừ kho
       for (const item of order.items) {
-        const product = await Product.findById(item.product);
-        product.stock -= item.quantity;
-        await product.save();
+        if (item.color) {
+          await Product.findOneAndUpdate(
+            { _id: item.product, "colors.name": item.color },
+            { $inc: { "colors.$.stock": -item.quantity, stock: -item.quantity } }
+          );
+        } else {
+          await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
+        }
+        await clearProductCache(item.product);
       }
     }
 
     order.orderStatus = status;
     
     // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED      // ROLLBACK STOCK KHI ADMIN HỦY
-      if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
-        for (const item of order.items) {
-          await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
-          const product = await Product.findById(item.product);
-          if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
-            product.status = "PUBLISHED";
-            await product.save();
-          }
-        }
-
+    if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
         // ROLLBACK VOUCHER
         if (order.voucherCode) {
           const voucher = await Voucher.findOne({ code: order.voucherCode });
@@ -755,6 +850,7 @@ export const updateOrderStatus = async (req, res) => {
 
     const ioMain = getIO();
     ioMain.emit("admin_order_updated");
+    ioMain.emit("admin_product_updated");
     ioMain.to(`user_${order.user}`).emit("user_order_updated", order);
 
     return successResponse(res, 200, "ORDER_STATUS_UPDATED", order);

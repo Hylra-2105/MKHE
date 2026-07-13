@@ -32,6 +32,7 @@ export const createProduct = async (req, res) => {
       status,
       isPublicEvent,
       b2bTiers,
+      colors,
     } = req.body;
 
     // Validate cơ bản 
@@ -74,6 +75,7 @@ export const createProduct = async (req, res) => {
       status: status || "DRAFT",
       isPublicEvent: isPublicEvent === "true" || isPublicEvent === true,
       b2bTiers: b2bTiers || [],
+      colors: colors || [],
     });
 
     await newProduct.save();

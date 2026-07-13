@@ -191,7 +191,24 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                         {item.image && (
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded border border-mkhe-border/30" />
                         )}
-                        <span className="line-clamp-2">{item.name}</span>
+                        <span className="line-clamp-2">
+                          {item.name}
+                          {item.color && (
+                            <span className="block text-xs text-mkhe-text/60 mt-0.5">
+                              {t("history:color", { defaultValue: "Màu sắc:" })} {item.color}
+                            </span>
+                          )}
+                          {item.addOns && item.addOns.length > 0 && (
+                            <div className="mt-1 flex flex-col gap-0.5">
+                              {item.addOns.map((addOn, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5">
+                                  <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {addOn.price.toLocaleString()}đ</span>
+                                  <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </span>
                       </div>
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>

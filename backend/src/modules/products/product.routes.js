@@ -41,7 +41,7 @@ router.post(
   "/:id/upload-gallery",
   verifyToken,
   checkRole(["Admin", "Staff"]),
-  uploadCloud.array("images", 10), 
+  uploadCloud.array("images", 30),
   uploadProductGallery,
 );
 

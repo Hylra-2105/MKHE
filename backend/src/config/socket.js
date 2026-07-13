@@ -12,22 +12,22 @@ export const initSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.info(`[Socket] Client connected: ${socket.id}`);
+    // console.info(`[Socket] Client connected: ${socket.id}`);
 
     // User joins their own private room to receive personal notifications
     socket.on("join_user_room", (userId) => {
       socket.join(`user_${userId}`);
-      console.info(`[Socket] User ${userId} joined their room.`);
+      // console.info(`[Socket] User ${userId} joined their room.`);
     });
 
     // Admin joins the admin room for global updates
     socket.on("join_admin_room", () => {
       socket.join("admin_room");
-      console.info(`[Socket] An admin joined admin_room.`);
+      // console.info(`[Socket] An admin joined admin_room.`);
     });
 
     socket.on("disconnect", () => {
-      console.info(`[Socket] Client disconnected: ${socket.id}`);
+      // console.info(`[Socket] Client disconnected: ${socket.id}`);
     });
   });
 

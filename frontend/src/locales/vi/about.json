@@ -1,8 +1,8 @@
 {
   "hero": {
     "tag": "Mekong Culture",
-    "title_1": "Giao lộ của",
-    "title_2": "Di sản",
+    "title_1": "Giao thoa văn hóa",
+    "title_2": "và Di sản",
     "desc": "Nơi những tinh hoa thủ công truyền thống được đánh thức và tái sinh qua lăng kính của nghệ thuật đương đại và công nghệ."
   },
   "story": {
@@ -40,7 +40,7 @@
     "title": "Tôn vinh làng nghề",
     "items": [
       {
-        "name": "Lụa Khmer Văn Giáo",
+        "name": "Thổ cẩm Khmer Văn Giáo",
         "desc": "Sự mềm mại của từng sợi tơ Ikat truyền thống nhuộm màu cỏ cây."
       },
       {
@@ -50,6 +50,10 @@
       {
         "name": "Chiếu cói Định Yên",
         "desc": "Hơi thở bình dị của những sợi cói tự nhiên đan dệt nên nét mộc mạc của vùng quê sông nước."
+      },
+      {
+        "name": "Khăn rằn Long Khánh",
+        "desc": "Nét giao thoa văn hóa đặc sắc qua những sọc caro đen trắng giản dị, thấm đượm tình đất tình người miền Tây."
       }
     ]
   },

@@ -85,6 +85,21 @@ const productSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    colors: [
+      {
+        name: { type: String, required: true },
+        image: { type: String }, // Links to a gallery image
+        stock: { type: Number, default: 0, min: 0 },
+        priceOverride: { type: Number, min: 0 }, // Optional specific price for this color
+      },
+    ],
+    addOns: [
+      {
+        name: { type: String, required: true },
+        price: { type: Number, required: true, min: 0 },
+        image: { type: String }, // Optional image for the add-on
+      }
+    ],
     status: {
       type: String,
       enum: ["DRAFT", "PUBLISHED", "OUT_OF_STOCK", "HIDDEN"],
@@ -147,6 +162,10 @@ const productSchema = new mongoose.Schema(
 // Middleware (Hook) xử lý logic tự động trước khi save
 productSchema.pre("save", async function () {
   // 1. Logic tồn kho
+  if (this.colors && this.colors.length > 0) {
+    this.stock = this.colors.reduce((total, color) => total + color.stock, 0);
+  }
+  
   if (this.stock === 0 && this.status === "PUBLISHED") {
     this.status = "OUT_OF_STOCK";
   }
