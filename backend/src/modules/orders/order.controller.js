@@ -334,6 +334,14 @@ export const checkout = async (req, res) => {
         console.error("PayOS Create Payment Link Error:", err);
       }
     }
+    
+    // Xóa cache của các sản phẩm đã được mua
+    if (updatedProducts && updatedProducts.length > 0) {
+      const uniqueProductIds = [...new Set(updatedProducts.map(p => p._id.toString()))];
+      for (const pid of uniqueProductIds) {
+        await clearProductCache(pid);
+      }
+    }
 
     return successResponse(res, 201, "ORDER_CREATED", payosData ? { order: newOrder[0], payosData } : newOrder[0]);
 
@@ -720,30 +728,14 @@ export const updateOrderStatus = async (req, res) => {
         } else {
           await Product.findByIdAndUpdate(item.product, { $inc: { stock: -item.quantity } });
         }
+        await clearProductCache(item.product);
       }
     }
 
     order.orderStatus = status;
     
     // Nếu chuyển sang CANCELLED và trước đó không phải CANCELLED      // ROLLBACK STOCK KHI ADMIN HỦY
-      const updatedProducts = [];
     if (status === "CANCELLED" && previousStatus !== "CANCELLED") {
-        for (const item of order.items) {
-          if (item.color) {
-            await Product.findOneAndUpdate(
-              { _id: item.product, "colors.name": item.color },
-              { $inc: { "colors.$.stock": item.quantity, stock: item.quantity } }
-            );
-          } else {
-            await Product.findByIdAndUpdate(item.product, { $inc: { stock: item.quantity } });
-          }
-          const product = await Product.findById(item.product);
-          if (product && product.status === "OUT_OF_STOCK" && product.stock > 0) {
-            product.status = "PUBLISHED";
-            await product.save();
-          }
-        }
-
         // ROLLBACK VOUCHER
         if (order.voucherCode) {
           const voucher = await Voucher.findOne({ code: order.voucherCode });

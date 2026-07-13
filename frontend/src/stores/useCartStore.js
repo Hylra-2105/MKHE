@@ -228,10 +228,31 @@ export const useCartStore = create(
           .filter((item) => selectedItems.includes(getCartItemId(item)))
           .reduce((total, item) => {
             const product = item.product;
+            let basePrice = product.price;
+            
+            // Check for color-specific price override
+            if (item.color && product.colors) {
+              const colorVariant = product.colors.find(c => c.name === item.color);
+              if (colorVariant && colorVariant.priceOverride) {
+                basePrice = colorVariant.priceOverride;
+              }
+            }
+
             const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                                 && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
-            const effectivePrice = isSaleValid ? product.salePrice : product.price;
-            return total + effectivePrice * item.quantity;
+            
+            let effectivePrice = basePrice;
+            if (isSaleValid) {
+              const salePercentage = (product.price - product.salePrice) / product.price;
+              effectivePrice = Math.round(basePrice * (1 - salePercentage));
+            }
+
+            let addOnsCost = 0;
+            if (item.addOns && item.addOns.length > 0) {
+              addOnsCost = item.addOns.reduce((sum, addOn) => sum + (addOn.price || 0), 0);
+            }
+
+            return total + (effectivePrice + addOnsCost) * item.quantity;
           }, 0);
       },
 
