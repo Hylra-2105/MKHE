@@ -391,45 +391,49 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
           <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
           <div className="flex gap-3">
             {!lockOnly && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
+                className="!bg-rose-500/10 !text-rose-500 hover:!bg-rose-500/20"
               >
                 <Trash2 className="w-4 h-4 transition-colors" />{" "}
                 {t("common.delete_account")}
-              </button>
+              </Button>
             )}
             {editForm.isBlocked ? (
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-lg font-bold text-sm hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
+                className="!bg-emerald-500/10 !text-emerald-600 hover:!bg-emerald-500/20"
               >
                 <Unlock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.unlock_account")}
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-500/20 transition-all cursor-pointer disabled:opacity-50"
+                className="!bg-orange-500/10 !text-orange-500 hover:!bg-orange-500/20"
               >
                 <Lock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.lock_account")}
-              </button>
+              </Button>
             )}
           </div>
           {!lockOnly && (
             <div className="flex gap-3">
               {isEditing ? (
                 <>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleCancel}
                     disabled={isSaving}
-                    className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+                    className="!bg-[var(--color-mkhe-border)]/40 hover:!bg-[var(--color-mkhe-border)]/50 !text-[var(--color-mkhe-text)]"
                   >
                     {t("common.cancel", { defaultValue: "Hủy" })}
-                  </button>
+                  </Button>
                   <Button
                     onClick={handleSave}
                     disabled={isSaving || !hasChanges}

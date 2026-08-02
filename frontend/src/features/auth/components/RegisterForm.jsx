@@ -182,13 +182,14 @@ export default function RegisterForm() {
             required
             error={errors.password ? t(errors.password) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             }
           />
         </div>
@@ -207,19 +208,20 @@ export default function RegisterForm() {
             required
             error={errors.confirmPassword ? t(errors.confirmPassword) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             }
           />
         </div>
       </div>
 
-      <Button type="submit" disabled={isLoading || isSubmitting}>
+      <Button type="submit" disabled={isLoading || isSubmitting} className="w-full">
         {isLoading || isSubmitting ? t("btn_processing") : t("btn_submit")}
       </Button>
 
@@ -231,21 +233,18 @@ export default function RegisterForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        className="w-full"
         onClick={handleGoogleLogin}
         disabled={isLoading || isSubmitting || isGoogleLoading}
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        isLoading={isGoogleLoading}
       >
-        {isGoogleLoading ? (
-          <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
-        ) : (
-          <GoogleIcon />
-        )}
+        {!isGoogleLoading && <GoogleIcon />}
         <span className="text-sm font-semibold text-mkhe-text">
           {isGoogleLoading ? t("btn_processing") : t("google", { ns: "login" })}
         </span>
-      </button>
+      </Button>
 
       <div className="text-center text-sm mt-3">
         <span className="text-mkhe-text/60">{t("have_account")} </span>

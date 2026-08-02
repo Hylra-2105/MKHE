@@ -170,7 +170,7 @@ export default function ForgotPasswordForm() {
                 error={error ? t(error) : null}
               />
             </div>
-            <Button type="submit" disabled={isLoading || isProcessing}>
+            <Button type="submit" disabled={isLoading || isProcessing} className="w-full">
               {isLoading || isProcessing ? t("btn_sending") : t("btn_send_otp")}
             </Button>
           </form>
@@ -202,6 +202,7 @@ export default function ForgotPasswordForm() {
             <Button
               type="submit"
               disabled={isLoading || isProcessing || otp.join("").length < 6}
+              className="w-full"
             >
               {(isLoading && !isResending) || isProcessing
                 ? t("btn_verifying")
@@ -210,18 +211,18 @@ export default function ForgotPasswordForm() {
 
             <div className="text-center text-sm mt-6">
               <span className="text-mkhe-text/60">{t("not_received")} </span>
-              <button
-                type="button"
+              <Button
+                variant="link"
                 onClick={handleResendOTP}
                 disabled={countdown > 0 || isResending}
-                className={`font-bold ml-1 transition-colors ${
+                className={`ml-1 ${
                   countdown > 0 || isResending
-                    ? "text-mkhe-text/40 cursor-not-allowed"
-                    : "text-mkhe-primary hover:underline cursor-pointer"
+                    ? "!text-mkhe-text/40 !cursor-not-allowed !no-underline"
+                    : ""
                 }`}
               >
                 {isResending ? t("btn_sending") : t("resend")}
-              </button>
+              </Button>
 
               {countdown > 0 && (
                 <span className="text-mkhe-text/60 ml-1">({countdown}s)</span>
