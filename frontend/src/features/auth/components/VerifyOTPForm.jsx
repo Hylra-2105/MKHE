@@ -207,13 +207,13 @@ export default function VerifyOTPForm() {
         {isLoading ? t("btn_verifying") : t("btn_submit")}
       </Button>
 
-      <div className="text-center text-sm mt-6">
-        <span className="text-mkhe-text/60">{t("not_received")} </span>
+      <div className="flex items-center justify-center text-sm mt-6 flex-wrap gap-1">
+        <span className="text-mkhe-text/60">{t("not_received")}</span>
         <Button
           variant="link"
           onClick={handleResendOTP}
           disabled={countdown > 0 || isResending}
-          className={`ml-1 ${
+          className={`!p-0 !min-w-0 !h-auto ${
             countdown > 0 || isResending
               ? "!text-mkhe-text/40 !cursor-not-allowed !no-underline"
               : ""
@@ -223,7 +223,7 @@ export default function VerifyOTPForm() {
         </Button>
 
         {countdown > 0 && (
-          <span className="text-mkhe-text/60 ml-1">({countdown}s)</span>
+          <span className="text-mkhe-text/60">({countdown}s)</span>
         )}
       </div>
 

@@ -92,7 +92,7 @@ export default function LoginForm() {
     e.preventDefault();
     setErrors({});
     const newErrors = {};
-    if (!email) newErrors.email = "err_empty_email";
+    if (!email) newErrors.email = "Vui lòng nhập Email hoặc Username";
     if (!password) newErrors.password = "err_empty_password";
 
     if (Object.keys(newErrors).length > 0) {
@@ -125,7 +125,7 @@ export default function LoginForm() {
         setErrors({ password: "err_wrong_password" });
       else if (msg === "ACCOUNT_NOT_VERIFIED") {
         setErrors({ email: "err_account_not_verified" });
-        setTimeout(() => navigate("/verify-otp", { state: { email } }), 1500);
+        setTimeout(() => navigate("/verify-otp", { state: { email: result.data?.email || email } }), 1500);
       } else if (msg === "ACCOUNT_BLOCKED") {
         setErrors({ email: "err_account_blocked" });
       } else {
@@ -146,14 +146,16 @@ export default function LoginForm() {
       <div className="space-y-4 mb-6">
         <div>
           <InputField
-            type="email"
-            label={t("email_placeholder")}
-            placeholder={t("email_placeholder")}
+            type="text"
+            label={t("email_or_username")}
+            placeholder={t("ph_email_or_username")}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
+            }}
             required
-            error={errors.email ? t(errors.email) : null}
+            error={errors.email ? (t(errors.email) !== errors.email ? t(errors.email) : errors.email) : null}
           />
         </div>
         

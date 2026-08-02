@@ -25,5 +25,7 @@
   "LOGIN_SUCCESS": "ログイン成功しました！",
   "ACCOUNT_BLOCKED": "アカウントは管理者によってロックされています。サポートにお問い合わせください。",
   "err_empty_email": "メールアドレスを入力してください。",
-  "error_social_login": "ソーシャルログインに失敗しました!もう一度試してください。"
+  "error_social_login": "ソーシャルログインに失敗しました!もう一度試してください。",
+  "email_or_username": "メールアドレスまたはユーザー名",
+  "ph_email_or_username": "メールアドレスまたはユーザー名を入力してください"
 }

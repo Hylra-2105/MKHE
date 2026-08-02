@@ -200,6 +200,14 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
                 {user.email}
               </p>
             </div>
+            <div>
+              <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
+                {t("users.username_readonly", "Username (Chỉ đọc)")}
+              </label>
+              <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70">
+                {user.username}
+              </p>
+            </div>
           </div>
         </div>
 

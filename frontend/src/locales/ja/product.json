@@ -2,7 +2,7 @@
   "page": {
     "title": "製品管理",
     "subtitle": "商用カタログを構築し、B2B/B2C マトリックスを管理する",
-    "add_btn": "+ 製品を追加",
+    "add_btn": "製品を追加",
     "tab_general": "一般情報",
     "tab_nfc": "デジタルパスポート（NFC）",
     "gallery_label": "製品画像/動画",

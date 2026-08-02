@@ -43,5 +43,7 @@
   "err_pass_uppercase": "비밀번호에는 대문자(A-Z)가 1개 이상 포함되어야 합니다.",
   "err_pass_number": "비밀번호는 최소 1자리 숫자(0-9)를 포함해야 합니다.",
   "err_pass_special": "비밀번호에는 특수 문자(!@#...)가 1개 이상 포함되어야 합니다.",
-  "err_empty_password": "비밀번호를 입력해주세요."
+  "err_empty_password": "비밀번호를 입력해주세요.",
+  "USERNAME_ALREADY_EXISTS": "이 사용자 이름이 등록되었습니다!",
+  "PHONE_ALREADY_EXISTS": "등록된 전화번호입니다!"
 }

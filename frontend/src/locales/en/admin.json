@@ -21,7 +21,7 @@
   "users": {
     "title": "User Management",
     "subtitle": "View list, search, and assign system permissions",
-    "add_member": "+ Add Member",
+    "add_member": "Add Member",
     "add_new": "Add New Member",
     "detail_title": "User Profile",
     "basic_info": "Basic Information",
@@ -59,7 +59,8 @@
       "email_required": "Please enter email",
       "pass_required": "Please enter password",
       "pass_short": "Password must be at least 6 characters"
-    }
+    },
+    "username_readonly": "Username (Read-only)"
   },
   "pagination": {
     "showing_page": "Showing page",

@@ -2,7 +2,7 @@
   "page": {
     "title": "제품 관리",
     "subtitle": "상업용 카탈로그 구축 및 B2B/B2C 매트릭스 관리",
-    "add_btn": "+ 제품 추가",
+    "add_btn": "제품 추가",
     "tab_general": "일반 정보",
     "tab_nfc": "디지털 여권(NFC)",
     "gallery_label": "제품 이미지/비디오",

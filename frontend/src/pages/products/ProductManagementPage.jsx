@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { productApi } from "@/api/productApi";
@@ -156,7 +156,9 @@ const ProductManagementPage = () => {
 
           <Button
             onClick={() => setIsAddModalOpen(true)}
+            className="!w-auto"
           >
+            <Plus className="w-5 h-5" />
             {t("page.add_btn")}
           </Button>
         </div>
