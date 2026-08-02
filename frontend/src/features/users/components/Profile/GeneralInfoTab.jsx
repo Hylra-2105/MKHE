@@ -7,6 +7,7 @@ import { userApi } from "@/api/userApi";
 import { isValidPhoneInput } from "@/utils/validators";
 import EditableField from "@/features/users/components/Admin/EditableField";
 import AddressMap from "@/features/orders/components/Checkout/AddressMap";
+import Button from "@/components/ui/Button";
 
 const GeneralInfoTab = ({ user, isAdminView = false }) => {
   const { t } = useTranslation(["admin", "user"]);
@@ -305,30 +306,27 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
         <div className="flex gap-3">
           {isEditing ? (
             <>
-              <button
+              <Button
                 onClick={handleCancel}
                 disabled={isSaving}
-                className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+                variant="outline"
               >
                 {t("common.cancel")}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleSave}
-                disabled={isSaving || !hasChanges}
-                className="px-8 py-2.5 bg-mkhe-primary text-white font-bold rounded-xl hover:bg-mkhe-primary/90 transition-all cursor-pointer disabled:opacity-50 text-sm"
+                disabled={!hasChanges}
+                isLoading={isSaving}
               >
-                {isSaving
-                  ? t("common.saving")
-                  : t("common.save_info")}
-              </button>
+                {t("common.save_info")}
+              </Button>
             </>
           ) : (
-            <button
+            <Button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-8 py-2.5 bg-[var(--color-mkhe-primary)] text-white font-bold rounded-lg shadow-lg hover:shadow-[var(--color-mkhe-primary)]/30 transition-all cursor-pointer"
             >
               <Edit2 className="w-4 h-4" /> {t("common.edit")}
-            </button>
+            </Button>
           )}
         </div>
       </div>

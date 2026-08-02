@@ -1010,9 +1010,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* FOOTER BUTTONS */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-end items-center gap-3 bg-[var(--color-mkhe-border)]/10 shrink-0 rounded-b-2xl z-20">
-          <button type="button" onClick={handleCancel} disabled={loading} className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm">
+          <Button type="button" onClick={handleCancel} disabled={loading} variant="outline" className="px-6 py-2.5 text-sm">
             {t("modal.cancel")}
-          </button>
+          </Button>
           <Button type="submit" form="add-product-form" disabled={loading} className="!w-auto px-8 py-2.5 rounded-xl text-sm">
             {loading ? t("modal.processing") : t("modal.create")}
           </Button>

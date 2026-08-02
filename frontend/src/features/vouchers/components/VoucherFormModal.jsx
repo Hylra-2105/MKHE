@@ -660,16 +660,17 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
         {/* Footer */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-end items-center gap-3 bg-[var(--color-mkhe-border)]/10 shrink-0 z-20">
-          <button 
+          <Button 
             type="button"
             onClick={() => {
               localStorage.removeItem("mkhe_voucher_draft");
               onClose();
             }}
-            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+            variant="outline"
+            className="px-6 py-2.5 text-sm"
           >
             {t("common.cancel", { defaultValue: "Hủy" })}
-          </button>
+          </Button>
           {!editData ? (
             <Button 
               type="button"
@@ -681,14 +682,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
             </Button>
           ) : formData.status === "DRAFT" ? (
             <div className="flex items-center gap-2">
-              <button 
+              <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 disabled={loading}
-                className="px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                variant="outline"
+                className="px-6 py-2.5 text-sm"
               >
                 {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
-              </button>
+              </Button>
               <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "PUBLISHED")}
@@ -701,14 +703,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           ) : (
             <div className="flex items-center gap-2">
               {isScheduled && (
-                <button 
+                <Button 
                   type="button"
                   onClick={(e) => handleSubmit(e, "DRAFT")}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-transparent border border-rose-500/50 text-rose-500 rounded-xl hover:bg-rose-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                  variant="outline"
+                  className="px-6 py-2.5 text-sm border-rose-500/50 text-rose-500 hover:bg-rose-500/10"
                 >
                   {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
-                </button>
+                </Button>
               )}
               <Button 
                 type="button"

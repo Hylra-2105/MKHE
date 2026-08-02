@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, X, ShieldCheck, Mail, RefreshCw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Button from "@/components/ui/Button";
 
 export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, handleCheckout, handleSendOtp, isSubmitting, otpSending, lastOtpTime }) {
   const { t } = useTranslation("checkout");
@@ -109,7 +110,7 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
           {t("otp.instruction")}
         </p>
 
-        <div className="flex justify-center gap-2 mb-8">
+        <div className="flex justify-center gap-2, mb-8">
           {otpArray.map((digit, index) => (
             <input
               key={index}
@@ -126,31 +127,34 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
         </div>
 
         <div className="flex gap-4 mb-4">
-          <button
+          <Button
+            variant="outline"
             onClick={() => setShowOtpModal(false)}
             disabled={isSubmitting}
-            className="flex-1 py-3 bg-mkhe-border/10 text-mkhe-text rounded-md hover:bg-mkhe-border/20 transition-colors cursor-pointer"
+            className="flex-1 py-3"
           >
             {t("otp.cancel")}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={(e) => handleCheckout(e, otpArray.join(""))}
             disabled={otpArray.join("").length !== 6 || isSubmitting}
-            className="flex-1 py-3 bg-mkhe-primary text-white rounded-md hover:bg-mkhe-primary/90 transition-colors disabled:opacity-50 flex justify-center items-center cursor-pointer"
+            isLoading={isSubmitting}
+            className="flex-1 py-3"
           >
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : t("otp.confirm")}
-          </button>
+            {t("otp.confirm")}
+          </Button>
         </div>
 
         <div className="mt-6 text-sm text-mkhe-text/60">
           {t("otp.not_received")}
-          <button
+          <Button
             onClick={onResend}
             disabled={countdown > 0 || otpSending}
-            className="ml-2 text-mkhe-primary font-medium hover:underline disabled:opacity-50 cursor-pointer"
+            variant="ghost"
+            className="ml-2 h-auto py-1 px-2"
           >
             {otpSending ? t("otp.sending") : countdown > 0 ? `${t("otp.resend")} (${countdown}s)` : t("otp.resend")}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

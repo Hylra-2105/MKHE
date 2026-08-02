@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import useEffectsConfig from "@/hooks/useEffectsConfig";
 import InputField from '@/components/ui/InputField';
 import TextAreaField from '@/components/ui/TextAreaField';
+import Button from "@/components/ui/Button";
 import { contactService } from '@/features/contact/contact.service';
 
 const ContactPage = () => {
@@ -427,19 +428,15 @@ const ContactPage = () => {
                 </div>
 
                 <div className="pt-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent overflow-hidden w-full md:w-auto cursor-pointer active:scale-[0.98] transition-transform"
+                    isLoading={isSubmitting}
+                    className="w-full md:w-auto px-12 py-4"
                   >
-                    <div className="absolute inset-0 w-full h-full border border-mkhe-primary transition-all duration-500 group-hover:bg-mkhe-primary"></div>
-                    <span className="relative z-10 text-mkhe-primary group-hover:text-mkhe-bg font-bold tracking-[0.2em] uppercase text-xs transition-colors duration-500">
-                      {isSubmitting ? t("contact:submitting") : t("contact:submit")}
-                    </span>
-                    {!isSubmitting && (
-                      <Send className="w-4 h-4 relative z-10 text-mkhe-primary group-hover:text-mkhe-bg transform group-hover:translate-x-2 transition-all duration-500" />
-                    )}
-                  </button>
+                    {t("contact:submit")}
+                    {!isSubmitting && <Send className="w-4 h-4 ml-2" />}
+                  </Button>
                 </div>
               </form>
             </div>

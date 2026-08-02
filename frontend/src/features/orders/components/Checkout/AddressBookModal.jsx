@@ -7,6 +7,7 @@ import { userApi } from "@/api/userApi";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useTranslation } from "react-i18next";
+import Button from "@/components/ui/Button";
 
 export default function AddressBookModal({ isOpen, onClose, user, onAddressSelected, onAddressAdded, currentAddressId }) {
   const { t } = useTranslation("checkout");
@@ -175,12 +176,13 @@ export default function AddressBookModal({ isOpen, onClose, user, onAddressSelec
                 <div className="text-center py-8 text-mkhe-text/60">{t("address_book.empty")}</div>
               )}
               
-              <button 
+              <Button 
                 onClick={() => setShowAddForm(true)}
-                className="w-full py-3 mt-4 border border-mkhe-primary/50 border-dashed rounded-lg text-mkhe-primary hover:bg-mkhe-primary/5 flex items-center justify-center font-medium transition-colors cursor-pointer"
+                variant="outline"
+                className="w-full py-3 mt-4 border-dashed"
               >
                 + {t("address_book.add_new")}
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -242,13 +244,13 @@ export default function AddressBookModal({ isOpen, onClose, user, onAddressSelec
         <div className="p-4 border-t border-mkhe-border/10 flex justify-end gap-3 bg-mkhe-border/5">
           {showAddForm ? (
             <>
-              <button onClick={() => setShowAddForm(false)} className="px-6 py-2 border border-mkhe-border/30 rounded-md text-mkhe-text hover:bg-mkhe-border/10 cursor-pointer transition-colors">{t("actions.back")}</button>
-              <button onClick={handleAddNewAddress} disabled={isSubmitting} className="px-6 py-2 bg-mkhe-primary text-white rounded-md hover:bg-mkhe-primary/90 disabled:opacity-50 cursor-pointer transition-colors">{t("otp.confirm")}</button>
+              <Button onClick={() => setShowAddForm(false)} variant="outline">{t("actions.back")}</Button>
+              <Button onClick={handleAddNewAddress} disabled={isSubmitting} isLoading={isSubmitting}>{t("otp.confirm")}</Button>
             </>
           ) : (
             <>
-              <button onClick={onClose} className="px-6 py-2 border border-mkhe-border/30 rounded-md text-mkhe-text hover:bg-mkhe-border/10 cursor-pointer transition-colors">{t("otp.cancel")}</button>
-              <button onClick={handleConfirmSelection} disabled={!selectedAddressId} className="px-6 py-2 bg-mkhe-primary text-white rounded-md hover:bg-mkhe-primary/90 disabled:opacity-50 cursor-pointer transition-colors">{t("otp.confirm")}</button>
+              <Button onClick={onClose} variant="outline">{t("otp.cancel")}</Button>
+              <Button onClick={handleConfirmSelection} disabled={!selectedAddressId}>{t("otp.confirm")}</Button>
             </>
           )}
         </div>

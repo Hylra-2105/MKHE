@@ -1,6 +1,7 @@
-import { Loader2, Ticket } from "lucide-react";
+import { Loader2, Ticket, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
+import Button from "@/components/ui/Button";
 
 export default function OrderSummary({ checkoutItems, subtotal, shippingFee, discountAmount, totalAmount, handleCheckout, isSubmitting, otpSending, selectedVoucher, onOpenVoucherDrawer }) {
   const { t } = useTranslation("checkout");
@@ -118,15 +119,15 @@ export default function OrderSummary({ checkoutItems, subtotal, shippingFee, dis
           </div>
         </div>
 
-        <button
+        <Button
           onClick={handleCheckout}
           disabled={isSubmitting || otpSending}
-          className="w-full mt-6 bg-mkhe-primary text-white py-4 rounded-md hover:brightness-90 transition-colors uppercase tracking-wider font-medium flex items-center justify-center disabled:opacity-70 cursor-pointer"
+          isLoading={isSubmitting || otpSending}
+          className="w-full mt-6 py-4 uppercase tracking-wider font-medium"
         >
-          {otpSending ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> {t("summary.sending_otp")}</> :
-           isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin mr-2" /> {t("summary.processing")}</> :
-           t("summary.confirm_btn")}
-        </button>
+          {t("summary.confirm_btn")}
+          <ArrowRight className="w-5 h-5 ml-2" />
+        </Button>
       </div>
     </div>
   );
