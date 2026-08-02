@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import {  useEffect, useState  } from "react";
 import { X, ShoppingCart, Plus, Minus, Trash2, Loader2, Ticket, Check } from "lucide-react";
-import { useCartStore } from "@/stores/useCartStore";
+import { useCartStore, getCartItemId } from "@/stores/useCartStore";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
 import { useVoucherStore } from "@/stores/useVoucherStore";
+import { checkVoucherEligibility } from "@/utils/voucherHelpers";
 
 const MiniCartDrawer = () => {
   const { items, isCartOpen, setCartOpen, updateQuantity, removeFromCart, getCartTotal, getDiscountedTotal, loadingItems, selectedItems, toggleSelectItem, selectAllItems, removeMultipleFromCart, selectedVoucher, setSelectedVoucher } = useCartStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(["cart"]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -23,59 +25,48 @@ const MiniCartDrawer = () => {
   }, [isCartOpen, fetchWalletVouchers]);
 
   useEffect(() => {
-    if (selectedVoucher && !isLoadingWallet) {
-      const isValid = walletVouchers.some(uv => uv.voucher._id === selectedVoucher._id && uv.status === "AVAILABLE");
-      if (!isValid) {
+    if (selectedVoucher) {
+      const eligibility = checkVoucherEligibility(selectedVoucher, items.filter((item) => selectedItems.includes(getCartItemId(item))), getCartTotal());
+      if (!eligibility.isEligible) {
         setSelectedVoucher(null);
       }
     }
-  }, [walletVouchers, selectedVoucher, isLoadingWallet, setSelectedVoucher]);
+  }, [selectedVoucher, items, selectedItems, getCartTotal, setSelectedVoucher]);
 
   useEffect(() => {
-    if (selectedItems.length === 0 && selectedVoucher) {
-      setSelectedVoucher(null);
-    }
-  }, [selectedItems, selectedVoucher, setSelectedVoucher]);
-
-  useEffect(() => {
-    if (isCartOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+    if (!isCartOpen) {
       setIsEditMode(false);
       setItemToDelete(null);
-      if (selectedItems.length === 0) {
-        setSelectedVoucher(null);
+      document.body.style.overflow = '';
+    } else {
+      if (window.innerWidth < 640) {
+        document.body.style.overflow = 'hidden';
       }
     }
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = '';
     };
   }, [isCartOpen]);
 
-  if (!isCartOpen) return null;
-
-  const handleRemove = (productId) => {
-    setItemToDelete(productId);
+  const handleRemove = (item) => {
+    setItemToDelete(item);
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] flex justify-end font-sans">
-      {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={() => setCartOpen(false)}
-      ></div>
+  const validSelectedCount = items.filter(item => selectedItems.includes(getCartItemId(item))).length;
 
-      {/* Drawer */}
-      <div className="relative w-full max-w-md bg-mkhe-bg h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+  if (!isCartOpen) return null;
+
+  return (
+    <>
+      {/* Dropdown / Modal */}
+      <div className="mini-cart-drawer fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[460px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] z-[110] bg-mkhe-bg text-mkhe-text border-0 sm:border border-mkhe-border sm:rounded-xl shadow-2xl flex flex-col animate-in fade-in sm:zoom-in-95 duration-200 overflow-hidden origin-top-right font-sans text-left">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-mkhe-border/10">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-mkhe-border/10">
           <div className="flex items-center gap-3">
             <ShoppingCart className="w-6 h-6 text-mkhe-primary" />
-            <h2 className="font-serif text-2xl text-mkhe-text">{t("title", "Giỏ hàng")}</h2>
-            <span className="bg-mkhe-primary text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+            <h3 className="font-bold text-2xl text-mkhe-text">{t("title", "Giỏ hàng")}</h3>
+            <span className="bg-mkhe-primary text-[#1a110a] text-xs font-bold px-2.5 py-0.5 rounded-full">
               {items.length}
             </span>
           </div>
@@ -101,7 +92,7 @@ const MiniCartDrawer = () => {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6 custom-scrollbar overflow-x-hidden">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center opacity-60">
               <ShoppingCart className="w-16 h-16 mb-4 text-mkhe-text/40" />
@@ -120,12 +111,12 @@ const MiniCartDrawer = () => {
                   <div className="relative flex items-center">
                     <input
                       type="checkbox"
-                      checked={items.length > 0 && selectedItems.length === items.length}
+                      checked={items.length > 0 && validSelectedCount === items.length}
                       onChange={(e) => selectAllItems(e.target.checked)}
                       className="peer sr-only"
                     />
                     <div className="w-5 h-5 rounded border-2 border-mkhe-text/40 bg-mkhe-bg peer-checked:bg-mkhe-primary peer-checked:border-mkhe-primary flex items-center justify-center transition-colors">
-                      {items.length > 0 && selectedItems.length === items.length && (
+                      {items.length > 0 && validSelectedCount === items.length && (
                         <Check className="w-3.5 h-3.5 text-[#1a110a]" strokeWidth={4} />
                       )}
                     </div>
@@ -138,17 +129,48 @@ const MiniCartDrawer = () => {
               
               {items.map((item) => {
                 const isLoading = loadingItems.includes(item.product._id);
-                const isSelected = selectedItems.includes(item.product._id);
+                const isSelected = selectedItems.includes(getCartItemId(item));
+                
+                // --- BẮT ĐẦU TÍNH GIÁ CHÍNH XÁC ---
+                let basePrice = item.product.price;
+                if (item.color && item.product.colors) {
+                  const colorVariant = item.product.colors.find(c => c.name === item.color);
+                  if (colorVariant && colorVariant.priceOverride) {
+                    basePrice = colorVariant.priceOverride;
+                  }
+                }
+                
+                let actualPrice = basePrice;
+                const now = new Date();
+                const isSaleValid = item.product.salePrice > 0 && 
+                                    item.product.saleStartDate && 
+                                    item.product.saleEndDate && 
+                                    new Date(item.product.saleStartDate) <= now && 
+                                    new Date(item.product.saleEndDate) >= now;
+                                    
+                if (isSaleValid) {
+                  const salePercentage = (item.product.price - item.product.salePrice) / item.product.price;
+                  actualPrice = Math.round(basePrice * (1 - salePercentage));
+                }
+                
+                let addOnsCost = 0;
+                if (item.addOns && item.addOns.length > 0) {
+                  addOnsCost = item.addOns.reduce((sum, addOn) => sum + addOn.price, 0);
+                }
+                
+                const finalItemPrice = actualPrice + addOnsCost;
+                const finalOriginalPrice = basePrice + addOnsCost;
+                // --- KẾT THÚC TÍNH GIÁ ---
                 
                 return (
-                  <div key={item.product._id} className={`flex gap-4 p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
+                  <div key={getCartItemId(item)} className={`flex gap-3 sm:gap-4 p-3 sm:p-4 bg-mkhe-card rounded-2xl border transition-all ${isSelected ? 'border-mkhe-primary/50 bg-mkhe-primary/5' : 'border-mkhe-border/10'} ${isLoading ? "opacity-80" : ""}`}>
                     {/* Checkbox */}
                     <div className="flex items-center shrink-0">
                       <label className="relative flex items-center cursor-pointer">
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          onChange={() => toggleSelectItem(item.product._id)}
+                          onChange={() => toggleSelectItem(getCartItemId(item))}
                           className="peer sr-only"
                         />
                         <div className="w-5 h-5 rounded border-2 border-mkhe-text/40 bg-mkhe-bg peer-checked:bg-mkhe-primary peer-checked:border-mkhe-primary flex items-center justify-center transition-colors group-hover:border-mkhe-primary/70">
@@ -159,12 +181,12 @@ const MiniCartDrawer = () => {
                       </label>
                     </div>
 
-                    <div className="w-24 h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative">
-                      {item.product.images && item.product.images.length > 0 ? (
+                    <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-mkhe-border/5 shrink-0 relative block">
+                      {item.colorImage || (item.product.images && item.product.images.length > 0) ? (
                         <img
-                          src={getImageUrl(item.product.images[0])}
+                          src={getImageUrl(item.colorImage || item.product.images[0])}
                           alt={item.product.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform hover:scale-105 duration-300"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = DEFAULT_FALLBACK_IMAGE;
@@ -174,18 +196,36 @@ const MiniCartDrawer = () => {
                         <img
                           src={DEFAULT_FALLBACK_IMAGE}
                           alt={item.product.name}
-                          className="w-full h-full object-cover opacity-80"
+                          className="w-full h-full object-cover opacity-80 transition-transform hover:scale-105 duration-300"
                         />
                       )}
-                    </div>
+                    </Link>
                   
-                  <div className="flex-1 flex flex-col justify-between">
+                  <div className="flex-1 flex flex-col justify-between min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-sans font-medium text-lg text-mkhe-text line-clamp-2 leading-tight">
-                        {item.product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
-                      </h3>
+                      <div>
+                        <Link to={`/shop/${item.product._id}`} onClick={() => setCartOpen(false)} className="font-sans font-medium text-base sm:text-lg text-mkhe-text line-clamp-2 leading-tight hover:text-mkhe-primary transition-colors">
+                          {item.product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
+                        </Link>
+                        {item.color && (
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <span className="text-xs text-mkhe-text/60">{t("color", "Màu sắc:")} </span>
+                            <span className="text-xs font-medium text-mkhe-text/80">{item.color}</span>
+                          </div>
+                        )}
+                        {item.addOns && item.addOns.length > 0 && (
+                          <div className="mt-1 flex flex-col gap-0.5">
+                            {item.addOns.map((addOn, idx) => (
+                              <div key={idx} className="flex items-center gap-1.5">
+                                <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {formatNumber(addOn.price)}đ</span>
+                                <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       <button 
-                        onClick={() => handleRemove(item.product._id)}
+                        onClick={() => handleRemove(item)}
                         disabled={isLoading}
                         className="p-1.5 text-mkhe-primary/80 hover:text-mkhe-primary hover:bg-mkhe-primary/10 rounded-full transition-colors shrink-0 cursor-pointer disabled:opacity-30"
                         title={t("remove_item", "Xóa sản phẩm")}
@@ -194,25 +234,21 @@ const MiniCartDrawer = () => {
                       </button>
                     </div>
                     
-                    <div className="flex items-end justify-between mt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-2 gap-2 sm:gap-0">
                       <div className="flex flex-col">
-                        <p className="text-mkhe-primary font-medium">
-                          {formatNumber(
-                            item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date()
-                            ? item.product.salePrice 
-                            : item.product.price
-                          )} đ
+                        <p className="text-mkhe-primary font-medium whitespace-nowrap text-sm sm:text-base">
+                          {formatNumber(finalItemPrice)} đ
                         </p>
-                        {item.product.salePrice > 0 && item.product.saleStartDate && item.product.saleEndDate && new Date(item.product.saleStartDate) <= new Date() && new Date(item.product.saleEndDate) >= new Date() && (
-                          <p className="text-xs text-mkhe-text/50 line-through">
-                            {formatNumber(item.product.price)} đ
+                        {isSaleValid && (
+                          <p className="text-xs text-mkhe-text/50 line-through whitespace-nowrap">
+                            {formatNumber(finalOriginalPrice)} đ
                           </p>
                         )}
                       </div>
                       
-                      <div className="flex items-center gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10">
+                      <div className="flex items-center gap-1 sm:gap-3 bg-mkhe-bg rounded-full p-1 border border-mkhe-border/10 self-start sm:self-auto">
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.product._id, item.quantity - 1, item.color, item.addOns)}
                           disabled={item.quantity <= 1 || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
@@ -224,8 +260,8 @@ const MiniCartDrawer = () => {
                         </span>
                         
                         <button 
-                          onClick={() => updateQuantity(item.product._id, item.quantity + 1)}
-                          disabled={item.quantity >= item.product.stock || isLoading}
+                          onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.color, item.addOns)}
+                          disabled={item.quantity >= (item.color && item.product.colors ? item.product.colors.find(c => c.name === item.color)?.stock : item.product.stock) || isLoading}
                           className="p-1 rounded-full text-mkhe-text/60 cursor-pointer hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 transition-colors"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -242,14 +278,14 @@ const MiniCartDrawer = () => {
 
         {/* Custom Confirm Modal */}
         {itemToDelete && (
-          <div className="absolute inset-0 z-50 bg-black/40 backdrop-blur-[2px] flex items-center justify-center p-6 animate-in fade-in duration-200">
+          <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-6 animate-in fade-in duration-200">
             <div className="bg-mkhe-bg w-full max-w-sm rounded-2xl p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-mkhe-border/10">
               <h3 className="text-xl font-serif text-mkhe-text mb-2 text-center">
                 {t("delete", "Xóa")}
               </h3>
               <p className="text-mkhe-text/80 mb-6 text-center text-sm">
                 {itemToDelete === 'multiple' 
-                  ? t("remove_multiple_confirm", { count: selectedItems.length, defaultValue: "Bạn có chắc muốn xóa sản phẩm đã chọn khỏi giỏ?" })
+                  ? t("remove_multiple_confirm", { count: validSelectedCount, defaultValue: "Bạn có chắc muốn xóa sản phẩm đã chọn khỏi giỏ?" })
                   : t("remove_confirm", "Bạn có chắc muốn bỏ sản phẩm này khỏi giỏ?")}
               </p>
               <div className="flex gap-3">
@@ -265,7 +301,7 @@ const MiniCartDrawer = () => {
                       removeMultipleFromCart(selectedItems);
                       setIsEditMode(false);
                     } else {
-                      removeFromCart(itemToDelete);
+                      removeFromCart(itemToDelete.product._id, itemToDelete.color, itemToDelete.addOns);
                     }
                     setItemToDelete(null);
                   }}
@@ -284,10 +320,10 @@ const MiniCartDrawer = () => {
             {isEditMode ? (
               <button 
                 onClick={() => setItemToDelete('multiple')}
-                disabled={selectedItems.length === 0}
+                disabled={validSelectedCount === 0}
                 className="w-full py-4 bg-red-500 cursor-pointer text-white rounded-full font-medium text-lg shadow-lg shadow-red-500/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all"
               >
-                {t("delete_selected", { count: selectedItems.length, defaultValue: "Xóa sản phẩm" })}
+                {t("delete_selected", { count: validSelectedCount, defaultValue: "Xóa sản phẩm" })}
               </button>
             ) : (
               <>
@@ -335,10 +371,10 @@ const MiniCartDrawer = () => {
                     setCartOpen(false);
                     navigate("/checkout");
                   }}
-                  disabled={selectedItems.length === 0}
+                  disabled={validSelectedCount === 0}
                   className="w-full py-4 bg-mkhe-primary cursor-pointer text-white rounded-full font-medium text-lg shadow-lg shadow-mkhe-primary/30 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all"
                 >
-                  {t("checkout", "Thanh toán ngay")} {selectedItems.length > 0 && `(${selectedItems.length})`}
+                  {t("checkout", "Thanh toán ngay")} {validSelectedCount > 0 && `(${validSelectedCount})`}
                 </button>
               </>
             )}
@@ -352,9 +388,13 @@ const MiniCartDrawer = () => {
         cartItems={items.filter(i => selectedItems.includes(i.product._id))}
         cartTotal={getCartTotal()}
         selectedVoucherId={selectedVoucher?._id}
-        onSelectVoucher={setSelectedVoucher}
+        onSelectVoucher={(voucher) => {
+          setSelectedVoucher(voucher);
+          setIsVoucherSelectorOpen(false); // Đóng ngăn chọn mã sau khi chọn
+        }}
+        displayMode="dropdown"
       />
-    </div>
+    </>
   );
 };
 

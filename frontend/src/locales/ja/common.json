@@ -17,5 +17,31 @@
   "back": "戻る",
   "search": "検索",
   "actions": "操作",
-  "view_details": "詳細を見る"
+  "view_details": "詳細を見る",
+  "B2B_ACCOUNT_CREATED": "ビジネス アカウントが作成され、アクティベーション電子メールが正常に送信されました。",
+  "ACCOUNT_ACTIVATED_SUCCESS": "アカウントをアクティブ化し、パスワードを正常に設定しました。",
+  "COMPANY_REQUIRED_FOR_B2B": "ビジネスアカウント開設リクエストの場合は、ビジネス名と納税者番号を入力してください。",
+  "CONTACT_CREATED_SUCCESSFULLY": "連絡先リクエストが正常に送信されました。できるだけ早く対応させていただきます。",
+  "INVALID_OR_EXPIRED_TOKEN": "アクティベーション リンクが無効か、有効期限が切れています。",
+  "MISSING_REQUIRED_FIELDS": "必要な情報をすべて入力してください。",
+  "user_menu": {
+    "staff_area": "スタッフエリア",
+    "admin_area": "管理者エリア",
+    "profile": "マイプロフィール",
+    "manage_users": "ユーザー管理",
+    "manage_contacts": "連絡先管理",
+    "manage_orders": "注文管理",
+    "manage_products": "製品管理",
+    "manage_vouchers": "バウチャー管理",
+    "manage_blogs": "ブログ管理",
+    "manage_reviews": "レビュー管理",
+    "analytics": "分析とレポート",
+    "logout": "ログアウト",
+    "b2b_dashboard": "B2B ダッシュボード"
+  },
+  "err_pass_min_length": "パスワードは 8 文字以上である必要があります。",
+  "err_pass_uppercase": "パスワードには少なくとも 1 つの大文字 (A ～ Z) が含まれている必要があります。",
+  "err_pass_number": "パスワードには少なくとも 1 桁の数字 (0 ～ 9) が含まれている必要があります。",
+  "err_pass_special": "パスワードには少なくとも 1 つの特殊文字 (!@#...) が含まれている必要があります。",
+  "err_empty_password": "パスワードを入力してください。"
 }

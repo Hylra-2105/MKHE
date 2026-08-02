@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import {  useState  } from "react";
 import { Plus, Trash2, Info, AlertCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import InputField from '@/components/ui/InputField';
 
 const B2BTiersInput = ({ tiers = [], onChange, error }) => {
   const { t } = useTranslation(['product']);
@@ -63,7 +64,7 @@ const B2BTiersInput = ({ tiers = [], onChange, error }) => {
       </div>
 
       {error && (
-        <div className="flex items-start gap-1.5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500">
+        <div className="flex items-start gap-1.5 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-500">
           <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
           <p className="text-xs font-medium leading-relaxed">{error}</p>
         </div>
@@ -77,33 +78,31 @@ const B2BTiersInput = ({ tiers = [], onChange, error }) => {
         <div className="space-y-3">
           {tiers.map((tier, index) => (
             <div key={index} className="flex items-center gap-3 p-3 bg-mkhe-border/5 rounded-xl border border-mkhe-border/10">
-              <div className="flex-1 space-y-1">
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t('product:products.b2b.min_quantity')}</label>
-                <input
+              <div className="flex-1 -mb-4">
+                <InputField
                   type="number"
                   min="1"
                   value={tier.minQuantity}
                   onChange={(e) => updateTier(index, 'minQuantity', e.target.value)}
-                  className="w-full p-2.5 bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary text-mkhe-text rounded-lg focus:outline-none transition-colors text-sm"
+                  label={t('product:products.b2b.min_quantity')}
                   placeholder={t('product:products.b2b.min_quantity_placeholder')}
                 />
               </div>
-              <div className="flex-1 space-y-1">
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t('product:products.b2b.discount_percent')}</label>
-                <input
+              <div className="flex-1 -mb-4">
+                <InputField
                   type="number"
                   min="0"
                   max="100"
                   value={tier.discountPercent}
                   onChange={(e) => updateTier(index, 'discountPercent', e.target.value)}
-                  className="w-full p-2.5 bg-transparent border border-mkhe-border/50 focus:border-mkhe-primary text-mkhe-text rounded-lg focus:outline-none transition-colors text-sm"
+                  label={t('product:products.b2b.discount_percent')}
                   placeholder={t('product:products.b2b.discount_placeholder')}
                 />
               </div>
               <button
                 type="button"
                 onClick={() => handleRemoveClick(index)}
-                className="p-2.5 mt-5 cursor-pointer text-mkhe-text/40 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="p-2.5 mt-5 cursor-pointer text-mkhe-text/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg transition-colors"
                 title={t('product:products.b2b.remove_tier')}
               >
                 <Trash2 className="w-4 h-4" />

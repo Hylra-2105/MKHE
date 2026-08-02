@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Edit2, Trash2, Dna, Package } from "lucide-react";
 import { isVideoMedia } from "@/utils/validators";
@@ -55,10 +54,10 @@ const ProductGrid = ({ products, loading, onEdit }) => {
               <span
                 className={`px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm border ${
                   product.status === "PUBLISHED"
-                    ? "bg-green-500/90 text-white border-green-500/30"
+                    ? "bg-emerald-500/90 text-white border-emerald-500/30"
                     : product.status === "DRAFT"
                       ? "bg-gray-500/90 text-white border-gray-500/30"
-                      : "bg-red-500/90 text-white border-red-500/30"
+                      : "bg-rose-500/90 text-white border-rose-500/30"
                 } backdrop-blur-sm`}
               >
                 {t(`statuses.${product.status}`, product.status)}
@@ -117,7 +116,7 @@ const ProductGrid = ({ products, loading, onEdit }) => {
               </div>
               <div className="text-right">
                 <p className="text-xs text-mkhe-text/50 uppercase tracking-widest font-medium mb-1">{t("table.stock")}</p>
-                <p className={`text-base font-bold ${product.stock > 0 ? "text-mkhe-text" : "text-red-500"}`}>
+                <p className={`text-base font-bold ${product.stock > 0 ? "text-mkhe-text" : "text-rose-500"}`}>
                   {product.stock || 0}
                 </p>
               </div>

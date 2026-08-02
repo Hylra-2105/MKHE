@@ -40,6 +40,8 @@ export const useNotificationStore = create((set, get) => ({
         endpoint += `&unreadOnly=true`;
       } else if (tab === "system") {
         endpoint = `/notifications/admin?page=${page}&limit=${limit}`;
+      } else if (tab === "system_unread") {
+        endpoint = `/notifications/admin?page=${page}&limit=${limit}&unreadOnly=true`;
       }
 
       const res = await axiosInstance.get(endpoint);
@@ -54,7 +56,7 @@ export const useNotificationStore = create((set, get) => ({
 
         set((state) => ({
           notifications: page === 1 ? newNotifications : [...state.notifications, ...newNotifications],
-          ...(tab === "system" ? { systemUnreadCount: currentUnreadCount } : { unreadCount: currentUnreadCount }),
+          ...(tab === "system" || tab === "system_unread" ? { systemUnreadCount: currentUnreadCount } : { unreadCount: currentUnreadCount }),
           page,
           hasMore: page < totalPages,
           loading: false,
@@ -75,10 +77,14 @@ export const useNotificationStore = create((set, get) => ({
           let updatedList = state.notifications.map((n) =>
             n._id === id ? { ...n, isRead: true } : n
           );
-          if (state.tab === "system") {
+          if (state.tab === "system" || state.tab === "system_unread") {
              // Admin notification
+             let systemList = updatedList;
+             if (state.tab === "system_unread") {
+               systemList = systemList.filter(n => n._id !== id || !n.isRead);
+             }
              return {
-               notifications: updatedList,
+               notifications: systemList,
                systemUnreadCount: Math.max(0, state.systemUnreadCount - 1),
              };
           }

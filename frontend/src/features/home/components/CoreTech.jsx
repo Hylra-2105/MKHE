@@ -1,26 +1,27 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { Nfc, ShieldCheck, Gem } from "lucide-react";
+import { Nfc, ShieldCheck, Gem, Wifi } from "lucide-react";
 import { motion } from "framer-motion";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 
 const CoreTech = () => {
+  const { enableEffects } = useEffectsConfig();
   const { t } = useTranslation("home");
 
   const features = [
     {
       icon: <Nfc className="w-5 h-5 text-mkhe-primary" />,
-      title: "Hộ chiếu Văn hóa Số",
-      desc: "Chạm NFC để truy xuất nguồn gốc, kỹ thuật chế tác và câu chuyện nghệ nhân đằng sau mỗi tác phẩm.",
+      title: t("core_tech.features.0.title"),
+      desc: t("core_tech.features.0.desc"),
     },
     {
       icon: <Gem className="w-5 h-5 text-mkhe-primary" />,
-      title: "Độc bản & Giới hạn",
-      desc: "Mỗi thiết kế là duy nhất, được cấp chứng nhận tính xác thực vĩnh viễn trên nền tảng Blockchain.",
+      title: t("core_tech.features.1.title"),
+      desc: t("core_tech.features.1.desc"),
     },
     {
       icon: <ShieldCheck className="w-5 h-5 text-mkhe-primary" />,
-      title: "Bảo tồn Di sản",
-      desc: "Cam kết trích xuất doanh thu tái đầu tư vào việc duy trì sự sống của các làng nghề truyền thống.",
+      title: t("core_tech.features.2.title"),
+      desc: t("core_tech.features.2.desc"),
     },
   ];
 
@@ -34,8 +35,8 @@ const CoreTech = () => {
         
         {/* LÊN: ILLUSTRATION (Đảo lên trái cho phá cách) */}
         <motion.div 
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={enableEffects ? { opacity: 0, x: -50 } : { opacity: 1, x: 0 }}
+          whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined}
           transition={{ duration: 1, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.3 }}
           className="lg:col-span-5 relative flex justify-center lg:justify-start"
@@ -43,16 +44,16 @@ const CoreTech = () => {
           {/* Abstract 3D NFC Card */}
           <div className="relative w-72 h-96 lg:w-96 lg:h-[500px] rounded-2xl bg-mkhe-primary/5 border border-mkhe-border backdrop-blur-md shadow-2xl flex items-center justify-center group overflow-hidden">
             {/* Glowing inner orb */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-mkhe-primary)_0%,_transparent_70%)] opacity-30 group-hover:opacity-50 transition-opacity duration-700 animate-pulse mix-blend-screen"></div>
+            <div className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--color-mkhe-primary)_0%,_transparent_70%)] opacity-30 group-hover:opacity-50 transition-opacity duration-700 animate-pulse mix-blend-screen`}></div>
             
             {/* Animated Scanning Line */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-mkhe-primary/80 shadow-[0_0_15px_var(--color-mkhe-primary)] animate-[scan_3s_ease-in-out_infinite]"></div>
+            <div className={`absolute top-0 left-0 right-0 h-[2px] bg-mkhe-primary/80 shadow-[0_0_15px_var(--color-mkhe-primary)] animate-[scan_3s_ease-in-out_infinite]`}></div>
             
             <div className="relative z-10 flex flex-col items-center">
               <Nfc className="w-20 h-20 lg:w-24 lg:h-24 text-mkhe-text/80 group-hover:text-mkhe-text transition-colors duration-500 mb-6 drop-shadow-lg" />
               <div className="text-center">
-                <p className="text-xs font-logo uppercase tracking-[0.2em] text-mkhe-primary font-bold mb-2">HỘ CHIẾU VĂN HÓA SỐ</p>
-                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">CHẠM ĐỂ XÁC THỰC</p>
+                <p className="text-xs font-logo uppercase tracking-[0.2em] text-mkhe-primary font-bold mb-2">{t("core_tech.card_title")}</p>
+                <p className="text-[10px] uppercase tracking-widest text-mkhe-text/50">{t("core_tech.card_subtitle")}</p>
               </div>
             </div>
           </div>
@@ -71,8 +72,8 @@ const CoreTech = () => {
 
         {/* PHẢI: EDITORIAL CONTENT */}
         <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={enableEffects ? { opacity: 0, x: 50 } : { opacity: 1, x: 0 }}
+          whileInView={enableEffects ? { opacity: 1, x: 0 } : undefined}
           transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
           viewport={{ once: true, amount: 0.3 }}
           className="lg:col-span-7"
@@ -80,11 +81,11 @@ const CoreTech = () => {
           <div className="mb-16">
             <h2 className="text-sm font-bold text-mkhe-primary mb-4 tracking-[0.3em] uppercase flex items-center gap-4">
               <span className="w-8 h-[1px] bg-mkhe-primary"></span>
-              Core Technology
+              {t("core_tech.tag")}
             </h2>
             <h3 className="text-4xl md:text-6xl font-logo font-light text-mkhe-text leading-tight">
-              Đánh thức Di sản bằng <br/>
-              <span className="text-mkhe-primary italic">Công nghệ Đương đại</span>
+              {t("core_tech.title_1")} <br/>
+              <span className="text-mkhe-primary italic">{t("core_tech.title_2")}</span>
             </h3>
           </div>
 

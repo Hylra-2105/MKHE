@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {  useState  } from "react";
 import { formatNumber, getImageUrl, DEFAULT_FALLBACK_IMAGE } from "@/utils/formatters";
 import { Fingerprint, Star, ArrowUpRight, PlayCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -117,17 +117,17 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
                   </div>
                 )}
                 {isSaleValid && (
-                  <div className="bg-red-600/90 text-white px-2.5 py-1 rounded-xl shadow-lg backdrop-blur-md border border-red-500/50">
+                  <div className="bg-rose-600/90 text-white px-2.5 py-1 rounded-xl shadow-lg backdrop-blur-md border border-rose-500/50">
                     <span className="text-[11px] font-bold tracking-wider">-{Math.round((1 - product.salePrice / product.price) * 100)}%</span>
                   </div>
                 )}
               </div>
 
               {/* Vendor & Category TOP RIGHT */}
-              <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex flex-col items-end gap-2 max-w-[55%]">
                 {product.vendor && (
-                  <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
-                    <span className="text-[10px] font-bold text-white tracking-[0.1em]">{product.vendor}</span>
+                  <div className="px-2 py-1 sm:px-3 sm:py-1.5 bg-black/40 backdrop-blur-md rounded-xl sm:rounded-full border border-white/20 w-full text-right">
+                    <span className="text-[9px] sm:text-[10px] font-bold text-white tracking-widest line-clamp-2 leading-tight">{product.vendor}</span>
                   </div>
                 )}
               </div>

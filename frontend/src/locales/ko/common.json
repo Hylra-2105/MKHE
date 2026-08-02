@@ -17,5 +17,31 @@
   "back": "뒤로",
   "search": "검색",
   "actions": "작업",
-  "view_details": "세부정보 보기"
+  "view_details": "세부정보 보기",
+  "B2B_ACCOUNT_CREATED": "비즈니스 계정이 생성되었으며 활성화 이메일이 성공적으로 전송되었습니다.",
+  "ACCOUNT_ACTIVATED_SUCCESS": "계정을 활성화하고 비밀번호를 설정했습니다.",
+  "COMPANY_REQUIRED_FOR_B2B": "비즈니스 계좌 개설 요청을 위해 업체 이름과 세금 ID를 입력하세요.",
+  "CONTACT_CREATED_SUCCESSFULLY": "연락처 요청이 성공적으로 전송되었습니다! 우리는 가능한 한 빨리 응답할 것입니다.",
+  "INVALID_OR_EXPIRED_TOKEN": "활성화 링크가 유효하지 않거나 만료되었습니다.",
+  "MISSING_REQUIRED_FIELDS": "필수 정보를 모두 입력해 주세요.",
+  "user_menu": {
+    "staff_area": "직원 영역",
+    "admin_area": "관리자 영역",
+    "profile": "내 프로필",
+    "manage_users": "사용자 관리",
+    "manage_contacts": "연락처 관리",
+    "manage_orders": "주문 관리",
+    "manage_products": "제품 관리",
+    "manage_vouchers": "바우처 관리",
+    "manage_blogs": "블로그 관리",
+    "manage_reviews": "리뷰 관리",
+    "analytics": "분석 및 보고서",
+    "logout": "로그아웃",
+    "b2b_dashboard": "B2B 대시보드"
+  },
+  "err_pass_min_length": "비밀번호는 8자 이상이어야 합니다.",
+  "err_pass_uppercase": "비밀번호에는 대문자(A-Z)가 1개 이상 포함되어야 합니다.",
+  "err_pass_number": "비밀번호는 최소 1자리 숫자(0-9)를 포함해야 합니다.",
+  "err_pass_special": "비밀번호에는 특수 문자(!@#...)가 1개 이상 포함되어야 합니다.",
+  "err_empty_password": "비밀번호를 입력해주세요."
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import {  useState, useRef  } from "react";
 import {
   X,
   UploadCloud,
@@ -187,7 +187,7 @@ const ProductGalleryUpload = ({
             </p>
             <div className="text-[11px] text-[var(--color-mkhe-text)]/40 mt-6 text-center">
               <p>{t("profile.support_img")}</p>
-              <p>Max 10 images, 5MB each</p>
+              <p>{t("modal.support_img_limit", { defaultValue: "Tối đa 30 ảnh, mỗi ảnh 5MB", max: 30 })}</p>
             </div>
           </div>
 
@@ -223,7 +223,7 @@ const ProductGalleryUpload = ({
                   type="button"
                   onClick={() => removeImage(index)}
                   disabled={isUploading}
-                  className="absolute top-1 right-1 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 cursor-pointer"
+                  className="absolute top-1 right-1 p-1.5 bg-rose-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-30 cursor-pointer"
                 >
                   <X className="w-3 h-3" />
                 </button>

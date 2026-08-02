@@ -10,14 +10,16 @@
     "pass_mismatch": "パスワードが一致しません",
     "invalid_file_type": "有効な画像またはビデオ ファイルを選択してください。",
     "video_too_large": "ビデオのアップロードは 10MB を超えてはなりません。",
-    "image_too_large": "画像のアップロードは 5MB を超えてはなりません。"
+    "image_too_large": "画像のアップロードは 5MB を超えてはなりません。",
+    "name_required": "氏名を入力してください",
+    "phone_required": "電話番号を入力してください"
   },
   "messages": {
     "update_success": "アップデートが成功しました！",
     "change_pass_success": "パスワードが正常に更新されました。",
     "otp_sent_success": "OTP が正常に送信されました。",
     "otp_send_error": "OTP 送信エラー",
-    "delete_success": "Đã xóa tài khoản thành công!"
+    "delete_success": "アカウントが正常に削除されました!"
   },
   "auth": {
     "new_password": "新しいパスワード",
@@ -26,6 +28,8 @@
   "profile": {
     "title": "個人プロフィール",
     "general_info": "一般情報",
+    "transactions": "取引履歴",
+    "vouchers": "マイバウチャー",
     "change_password": "パスワードを変更する",
     "update_avatar": "アバターを更新する",
     "drag_drop": "ここに画像/ビデオをドラッグ アンド ドロップします",
@@ -58,5 +62,13 @@
   "INVALID_OR_EXPIRED_OTP": "OTP コードが無効または期限切れです。",
   "PASSWORD_MUST_BE_DIFFERENT": "新しいパスワードは現在のパスワードとは異なる必要があります。",
   "USER_NOT_FOUND": "ユーザーアカウントが見つかりません。",
-  "SERVER_ERROR": "予期しないエラーが発生しました。後でもう一度試してください。"
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "利用可能",
+    "status_used": "使用済み",
+    "status_expired": "期限切れ",
+    "discount": "割引",
+    "expiry": "有効期限",
+    "no_vouchers": "まだバウチャーがありません"
+  }
 }

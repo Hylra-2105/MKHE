@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import {  useState, useEffect  } from "react";
 import "@google/model-viewer"; 
 import { Box, Smartphone, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";

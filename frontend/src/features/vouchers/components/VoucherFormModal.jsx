@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
+import {  useState, useEffect, useMemo  } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Save, AlertCircle } from "lucide-react";
 import { getVoucherOptionsApi, createVoucherApi, updateVoucherApi } from "@/api/voucherApi";
 import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";
+import InputField from "@/components/ui/InputField";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -14,6 +16,7 @@ const flatpickrOptions = {
   enableTime: true,
   dateFormat: "Y-m-d H:i",
   time_24hr: true,
+  clickOpens: false,
 };
 
 const formatFlatpickrDate = (dateObj) => {
@@ -90,6 +93,8 @@ const MultiSelectDropdown = ({ options, value, onChange, placeholder, t }) => {
 
 const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
   const { t } = useTranslation(["admin"]);
+  const startDateRef = React.useRef(null);
+  const endDateRef = React.useRef(null);
   const [formData, setFormData] = useState({
     code: "",
     type: "PERCENTAGE",
@@ -422,27 +427,23 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               <h3 className="font-semibold text-lg border-b pb-2 border-[var(--color-mkhe-border)]/20 text-gradient-gold">{t("voucher.basic_info")}</h3>
               
               <div>
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.voucher_code_label")} <span className="text-red-500">*</span></label>
-                <input 
+                <InputField 
                   type="text" 
                   name="code"
+                  label={t("voucher.voucher_code_label")}
                   placeholder={t("voucher.voucher_code_placeholder")}
                   value={formData.code}
                   onChange={handleChange}
                   disabled={isPublished}
-                  className={`w-full p-3.5 bg-transparent border ${formErrors.code ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  required
+                  error={formErrors.code ? formErrors.code : null}
+                  className={`uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                 />
-                {formErrors.code && (
-                  <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                    <p className="text-xs font-medium">{formErrors.code}</p>
-                  </div>
-                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.discount_type_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.discount_type_label")} <span className="text-rose-500">*</span></label>
                   <Dropdown 
                     value={formData.type} 
                     options={voucherTypes} 
@@ -454,63 +455,51 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.discount_amount_label")} <span className="text-red-500">*</span></label>
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      name="discountValue"
-                      placeholder={formData.type === "PERCENTAGE" ? t("voucher.discount_percentage_placeholder") : t("voucher.discount_fixed_placeholder")}
-                      value={formatMoney(formData.discountValue)}
-                      onChange={handleMoneyChange}
-                      disabled={isPublished}
-                      className={`w-full p-3.5 pr-10 bg-transparent border ${formErrors.discountValue ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">
-                      {formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}
-                    </span>
-                  </div>
-                  {formErrors.discountValue && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                      <p className="text-xs font-medium">{formErrors.discountValue}</p>
-                    </div>
-                  )}
+                  <InputField 
+                    type="text" 
+                    name="discountValue"
+                    label={t("voucher.discount_amount_label")}
+                    placeholder={formData.type === "PERCENTAGE" ? t("voucher.discount_percentage_placeholder") : t("voucher.discount_fixed_placeholder")}
+                    value={formatMoney(formData.discountValue)}
+                    onChange={handleMoneyChange}
+                    disabled={isPublished}
+                    required
+                    error={formErrors.discountValue ? formErrors.discountValue : null}
+                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    rightElement={<span className="font-medium">{formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}</span>}
+                  />
                 </div>
               </div>
 
               {formData.type === "PERCENTAGE" && (
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.max_discount_label")}</label>
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      name="maxDiscount"
-                      placeholder={t("voucher.not_required")}
-                      value={formatMoney(formData.maxDiscount)}
-                      onChange={handleMoneyChange}
-                      disabled={isPublished}
-                      className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">{t("voucher.currency_symbol")}</span>
-                  </div>
-                  <p className="text-xs text-mkhe-text/50 mt-1.5 ml-1">{t("voucher.leave_empty_max_discount")}</p>
+                  <InputField 
+                    type="text" 
+                    name="maxDiscount"
+                    label={t("voucher.max_discount_label")}
+                    placeholder={t("voucher.not_required")}
+                    value={formatMoney(formData.maxDiscount)}
+                    onChange={handleMoneyChange}
+                    disabled={isPublished}
+                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
+                  />
+                  <p className="text-xs text-mkhe-text/50 mt-[-10px] ml-1 mb-4">{t("voucher.leave_empty_max_discount")}</p>
                 </div>
               )}
 
               <div>
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.min_order")}</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    name="minOrderValue"
-                    placeholder={t("voucher.min_order_placeholder")}
-                    value={formatMoney(formData.minOrderValue)}
-                    onChange={handleMoneyChange}
-                    disabled={isPublished}
-                    className={`w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-medium">{t("voucher.currency_symbol")}</span>
-                </div>
+                <InputField 
+                  type="text" 
+                  name="minOrderValue"
+                  label={t("voucher.min_order")}
+                  placeholder={t("voucher.min_order_placeholder")}
+                  value={formatMoney(formData.minOrderValue)}
+                  onChange={handleMoneyChange}
+                  disabled={isPublished}
+                  className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
+                />
               </div>
             </div>
 
@@ -520,9 +509,12 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="startDate" className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.start_date_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.start_date_label")} <span className="text-rose-500">*</span></label>
                   <Flatpickr
-                    id="startDate"
+                    ref={startDateRef}
+                    onClick={() => {
+                      if (!isPublished) startDateRef.current?.flatpickr?.toggle();
+                    }}
                     value={formatFlatpickrDate(formData.startDate)}
                     onChange={([date]) => {
                       if (!isPublished) {
@@ -532,31 +524,34 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     }}
                     options={startDateOptions}
                     disabled={isPublished}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
                   {formErrors.startDate && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                       <p className="text-xs font-medium">{formErrors.startDate}</p>
                     </div>
                   )}
                 </div>
                 <div>
-                  <label htmlFor="endDate" className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.end_date_label")} <span className="text-red-500">*</span></label>
+                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.end_date_label")} <span className="text-rose-500">*</span></label>
                   <Flatpickr
-                    id="endDate"
+                    ref={endDateRef}
+                    onClick={() => {
+                      endDateRef.current?.flatpickr?.toggle();
+                    }}
                     value={formatFlatpickrDate(formData.endDate)}
                     onChange={([date]) => {
                       setFormData(prev => ({...prev, endDate: date}));
                       if (formErrors.endDate) setFormErrors(prev => ({ ...prev, endDate: null }));
                     }}
                     options={endDateOptions}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-red-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
                     placeholder={t("voucher.end_date_placeholder")}
                   />
                   {formErrors.endDate && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                       <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                       <p className="text-xs font-medium">{formErrors.endDate}</p>
                     </div>
@@ -566,33 +561,30 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.usage_limit_label")}</label>
-                  <input 
+                  <InputField 
                     type="number" 
                     name="usageLimit"
                     min="1"
+                    label={t("voucher.usage_limit_label")}
                     placeholder={t("voucher.leave_empty_for_unlimited")}
                     value={formData.usageLimit}
                     onChange={handleChange}
-                    className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block mb-1">{t("voucher.gacha_drop_rate")}</label>
-                  <div className="relative">
-                    <input 
-                      type="number" 
-                      name="dropRate"
-                      min="0"
-                      max="100"
-                      placeholder={t("voucher.drop_rate_placeholder")}
-                      value={formData.dropRate}
-                      onChange={handleChange}
-                      className="w-full p-3.5 pr-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 font-bold">%</span>
-                  </div>
+                  <InputField 
+                    type="number" 
+                    name="dropRate"
+                    min="0"
+                    max="100"
+                    label={t("voucher.gacha_drop_rate")}
+                    placeholder={t("voucher.drop_rate_placeholder")}
+                    value={formData.dropRate}
+                    onChange={handleChange}
+                    className="pr-10"
+                    rightElement={<span className="font-bold">%</span>}
+                  />
                 </div>
               </div>
             </div>
@@ -713,7 +705,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   type="button"
                   onClick={(e) => handleSubmit(e, "DRAFT")}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-transparent border border-red-500/50 text-red-500 rounded-xl hover:bg-red-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                  className="px-6 py-2.5 bg-transparent border border-rose-500/50 text-rose-500 rounded-xl hover:bg-rose-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
                 >
                   {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
                 </button>

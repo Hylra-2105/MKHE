@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import {  useState, useRef, useEffect  } from "react";
 import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
 import { FaFacebook } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
@@ -159,7 +159,7 @@ const Chatbot = () => {
           <MessageCircle size={28} />
           {/* Unread Dot Indicator */}
           {hasUnread && !isMinimized && (
-            <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-red-500 border-2 border-white dark:border-mkhe-bg rounded-full animate-pulse"></span>
+            <span className="absolute top-1 right-1 w-3.5 h-3.5 bg-rose-500 border-2 border-white dark:border-mkhe-bg rounded-full animate-pulse"></span>
           )}
         </button>
       </div>

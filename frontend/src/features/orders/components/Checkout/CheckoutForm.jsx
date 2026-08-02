@@ -1,5 +1,5 @@
 import React from "react";
-import { CreditCard, Banknote, Mail, User, Phone, MapPin } from "lucide-react";
+import { CreditCard, Banknote, Mail, User, Phone, MapPin, Edit2 } from "lucide-react";
 import InputField from "@/components/ui/InputField";
 import AddressMap from "./AddressMap";
 import AddressBookModal from "./AddressBookModal";
@@ -164,12 +164,6 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
               <h3 className="font-medium text-mkhe-text">{t("shipping_info.address_title")}</h3>
               <div className="flex gap-4">
                 <button 
-                  onClick={startEditing}
-                  className="text-sm font-medium text-mkhe-text/60 hover:text-mkhe-primary hover:underline cursor-pointer"
-                >
-                  Chỉnh sửa
-                </button>
-                <button 
                   onClick={() => setIsModalOpen(true)}
                   className="text-sm font-medium text-mkhe-primary hover:underline cursor-pointer"
                 >
@@ -178,19 +172,29 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
               </div>
             </div>
             <div className="p-4 border border-mkhe-primary/30 rounded-lg bg-mkhe-primary/5">
-              <div className="flex items-start">
-                <div className="mt-1 mr-3 text-mkhe-primary">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="font-medium text-mkhe-text flex items-center gap-2">
-                    {shippingInfo.name} <span className="text-mkhe-text/40">|</span> {shippingInfo.phone}
-                    {shippingInfo.isDefault && (
-                      <span className="text-[10px] px-2 py-0.5 bg-mkhe-primary text-white rounded-full">{t("address_book.default")}</span>
-                    )}
+              <div className="flex items-start justify-between">
+                <div className="flex items-start">
+                  <div className="mt-1 mr-3 text-mkhe-primary">
+                    <MapPin className="w-5 h-5" />
                   </div>
-                  <p className="text-mkhe-text/80 text-sm mt-1">{shippingInfo.address}</p>
+                  <div>
+                    <div className="font-medium text-mkhe-text flex items-center gap-2">
+                      {shippingInfo.name} <span className="text-mkhe-text/40">|</span> {shippingInfo.phone}
+                      {shippingInfo.isDefault && (
+                        <span className="text-[10px] px-2 py-0.5 bg-mkhe-primary text-white rounded-full">{t("address_book.default")}</span>
+                      )}
+                    </div>
+                    <p className="text-mkhe-text/80 text-sm mt-1">{shippingInfo.address}</p>
+                  </div>
                 </div>
+                
+                <button 
+                  onClick={startEditing}
+                  className="text-xs font-medium text-mkhe-primary/80 hover:text-mkhe-primary hover:underline flex items-center gap-1 cursor-pointer shrink-0 ml-4 mt-0.5"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  {t("shipping_info.edit_btn", "Chỉnh sửa")}
+                </button>
               </div>
             </div>
           </div>
@@ -306,6 +310,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         user={user}
+        currentAddressId={shippingInfo._id}
         onAddressSelected={(addr) => {
           setShippingInfo({
             name: addr.receiverName,
@@ -336,7 +341,7 @@ export default function CheckoutForm({ shippingInfo, setShippingInfo, paymentMet
                 <Banknote className="w-6 h-6 text-mkhe-text/40 mx-3" />
                 <span className="font-medium">{t("payment_method.cod")}</span>
               </label>
-              <div className="absolute top-full left-0 mt-1 hidden group-hover:block w-full z-10 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-xs p-2 rounded shadow-sm border border-red-100 dark:border-red-900/50">
+              <div className="absolute top-full left-0 mt-1 hidden group-hover:block w-full z-10 bg-red-50 dark:bg-red-950/30 text-rose-600 dark:text-red-400 text-xs p-2 rounded shadow-sm border border-red-100 dark:border-red-900/50">
                 {t("payment_method.cod_banned", { rate: (orderStats.cancelRate * 100).toFixed(0) })}
               </div>
             </div>

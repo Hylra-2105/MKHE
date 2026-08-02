@@ -1,0 +1,93 @@
+{
+  "hero": {
+    "tag": "Mekong Culture",
+    "title_1": "Cultural intersection",
+    "title_2": "and Heritage",
+    "desc": "Where the quintessence of traditional crafts is awakened and reborn through the lens of contemporary art and technology."
+  },
+  "story": {
+    "tag": "01 — About us",
+    "p1_1": "Mekong Culture is not just a brand, but a journey of inspiration and appreciation",
+    "p1_bold": "genetic code heritage",
+    "p1_2": "of the Southwest region.",
+    "p2_1": "We are proud to offer the model",
+    "p2_bold": "\"Dual-Project Ecosystem\"",
+    "p2_2": "unique. By distilling the essence from the three ethnic communities Kinh - Cham - Khmer, Mekong Culture creates artistic interior spaces and highly applicable collections, helping to extend the life of heritage in the modern flow.",
+    "box_1": "Conservation and",
+    "box_2": "Commercialization"
+  },
+  "vision": {
+    "title_1": "Range",
+    "title_2": "look",
+    "desc": "Becoming a pioneering Phygital touchpoint, where technology awakens and connects the young generation with the flow of Mekong cultural heritage."
+  },
+  "mission": {
+    "title_1": "Porcelain",
+    "title_2": "par",
+    "desc": "Digitizing craft village stories, honoring indigenous artisans and bringing unique handicrafts beyond geographical borders."
+  },
+  "core_values": {
+    "title_1": "Value",
+    "title_2": "core",
+    "items": [
+      "Unique in Crafting",
+      "Pioneer in Technology",
+      "Sustainable with Heritage"
+    ]
+  },
+  "heritage_villages": {
+    "tag": "02 — Living treasure",
+    "title": "Honor craft villages",
+    "items": [
+      {
+        "name": "Khmer Van Giao Brocade",
+        "desc": "The softness of each strand of traditional Ikat silk is dyed in the color of grass and trees."
+      },
+      {
+        "name": "Chau Phong Cham brocade",
+        "desc": "The sophisticated beauty of hand-woven art preserves the vibrant patterns and natural colors imbued with Cham identity."
+      },
+      {
+        "name": "Dinh Yen sedge mat",
+        "desc": "The simple breath of natural sedge threads weaves together the rustic features of the river countryside."
+      },
+      {
+        "name": "Long Khanh check scarf",
+        "desc": "A unique cultural intersection through simple black and white checkered stripes, imbued with the love of the Western land and people."
+      }
+    ]
+  },
+  "team": {
+    "tag": "03 — Humans",
+    "title": "Creative team",
+    "subtitle": "Combining sharp thinking and groundbreaking technological power.",
+    "members": [
+      {
+        "name": "Mr. Bao",
+        "role": "Founder & Business Lead"
+      },
+      {
+        "name": "Nhat Anh",
+        "role": "Operations Lead"
+      },
+      {
+        "name": "Huu Trong",
+        "role": "Marketing Lead"
+      },
+      {
+        "name": "Thanh Loi",
+        "role": "Tech & Web Lead"
+      },
+      {
+        "name": "Ba Hung",
+        "role": "3D & Game Lead"
+      },
+      {
+        "name": "Duy Phuong",
+        "role": "UI/UX & Design Lead"
+      }
+    ],
+    "mentor_tag": "Professional sponsorship",
+    "mentor_name": "Dr. Nguyen Trong Luan & Mentor Vo Thien An"
+  }
+}

@@ -16,6 +16,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   const [editForm, setEditForm] = useState({});
   const [originalEditForm, setOriginalEditForm] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // States for Address Autocomplete
   const [addressInput, setAddressInput] = useState("");
@@ -97,6 +98,21 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
   };
 
   const handleSave = async () => {
+    setErrors({});
+    let newErrors = {};
+
+    if (!editForm.name || !editForm.name.trim()) {
+      newErrors.name = t("errors.name_required", { ns: "user", defaultValue: "Vui lòng nhập họ và tên" });
+    }
+    if (!editForm.phone || !editForm.phone.trim()) {
+      newErrors.phone = t("errors.phone_required", { ns: "user", defaultValue: "Vui lòng nhập số điện thoại" });
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     let dataToSave = { 
       ...editForm,
       addressText: addressInput,
@@ -136,14 +152,31 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
     setIsEditing(false);
     setIsUserTyping(false);
     setSuggestions([]);
+    setErrors({});
   };
 
   const defaultAddress = user?.addresses?.find(a => a.isDefault);
 
+  const hasChanges = 
+    editForm.name !== originalEditForm.name ||
+    editForm.phone !== originalEditForm.phone ||
+    editForm.bio !== originalEditForm.bio ||
+    addressInput !== (defaultAddress?.addressText || "") ||
+    coordinates?.lat !== defaultAddress?.coordinates?.lat ||
+    coordinates?.lng !== defaultAddress?.coordinates?.lng;
+
   return (
     <>
-      <div className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
-
+      <div className="flex-1 p-8 space-y-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gradient-gold flex items-center gap-3">
+            <User className="w-7 h-7 text-mkhe-primary" />
+            {t("profile.general_info", { ns: "user" })}
+          </h2>
+          <p className="text-[var(--color-mkhe-text)]/60 mt-2">
+            {t("profile.general_info_desc", { ns: "user", defaultValue: "Quản lý thông tin cá nhân và địa chỉ giao hàng của bạn" })}
+          </p>
+        </div>
         <div>
           <h4 className="text-sm font-bold text-mkhe-primary uppercase tracking-widest mb-4 flex items-center gap-2">
             <User className="w-4 h-4" />{" "}
@@ -156,6 +189,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               value={editForm.name}
               isEditing={isEditing}
               onChange={handleInputChange}
+              error={errors.name}
             />
             <div>
               <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
@@ -181,6 +215,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               isEditing={isEditing}
               onChange={handleInputChange}
               placeholder={t("users.phone_placeholder")}
+              error={errors.phone}
             />
           </div>
 
@@ -279,7 +314,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               </button>
               <button
                 onClick={handleSave}
-                disabled={isSaving}
+                disabled={isSaving || !hasChanges}
                 className="px-8 py-2.5 bg-mkhe-primary text-white font-bold rounded-xl hover:bg-mkhe-primary/90 transition-all cursor-pointer disabled:opacity-50 text-sm"
               >
                 {isSaving

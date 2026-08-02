@@ -1,0 +1,71 @@
+{
+  "title": "B2B 仪表板",
+  "request_title": "创建新的 B2B 请求",
+  "subtitle": "填写您的需求信息，我们将尽快与您联系",
+  "admin_title": "企业对企业管理",
+  "status": {
+    "PENDING_QUOTE": "等待报价",
+    "NEGOTIATING": "谈判",
+    "CONFIRMED": "关闭",
+    "PRODUCING": "生产中",
+    "DELIVERING": "送货",
+    "COMPLETED": "完全的",
+    "CANCELLED": "取消"
+  },
+  "download_quote": "下载报价/合同",
+  "confirm_order": "订单关闭确认",
+  "chat_placeholder": "输入您的留言...",
+  "send": "发送",
+  "upload_quote": "上传 PDF",
+  "update_status": "更新",
+  "no_orders": "目前还没有合同。",
+  "confirm_msg": "您确定要关闭此订单吗？",
+  "pdf_required": "请附上 PDF 文件。",
+  "select_status": "选择状态",
+  "consultingPackage": "按需咨询和产品设计包",
+  "companyInfo": {
+    "title": "商业资讯",
+    "desc1": "我们将使用这些信息来制作合同和发票",
+    "company": "公司",
+    "taxCode": "MST",
+    "notUpdated": "尚未更新",
+    "note": "您可以在个人页面再次更新"
+  },
+  "fields": {
+    "product": "服务包/产品",
+    "productPlaceholder": "选择您感兴趣的服务/产品",
+    "quantity": "预计数量",
+    "budget": "预计预算（越南盾）",
+    "budgetPlaceholder": "例如：50,000,000",
+    "deliveryDate": "预计交货日期",
+    "deliveryDatePlaceholder": "选择日期...",
+    "packaging": "包装规格",
+    "packagingPlaceholder": "选择包装",
+    "packagingOptions": {
+      "STANDARD_BOX": "MKHE标准盒",
+      "NO_PACKAGING": "无需盒子"
+    },
+    "note": "附加说明",
+    "notePlaceholder": "对材料、气味、尺寸的特殊要求...",
+    "designFiles": "附件（设计/详细要求）",
+    "dragDrop": "将文件拖放到此处或单击选择",
+    "fileHint": "支持.pdf、.ai、.png、.jpg 格式（最多 5 个文件）",
+    "fileNote": "最多 5 个文件"
+  },
+  "validation": {
+    "productRequired": "请选择产品/服务",
+    "quantityRequired": "请输入数量",
+    "deliveryDateRequired": "请选择交货日期"
+  },
+  "messages": {
+    "fetchProductsError": "无法加载产品列表",
+    "maxFiles": "您最多只能上传 5 个文件",
+    "success": "B2B 请求发送成功！我们将尽快与您联系以获取报价。",
+    "error": "发生错误，请稍后重试"
+  },
+  "buttons": {
+    "back": "返回仪表板",
+    "submit": "发送请求",
+    "submitting": "正在发送..."
+  }
+}

@@ -73,7 +73,8 @@
       "Ký sự": "ストーリー",
       "Sự kiện": "イベント",
       "Cẩm nang": "ハンドブック"
-    }
+    },
+    "delete_success": "投稿は正常に削除されました"
   },
   "public": {
     "page_title_story": "遺産の物語",
@@ -86,22 +87,28 @@
       "back": "戻る",
       "related_products": "関連記事",
       "view_detail": "詳細を見る",
-      "add_to_cart": "カートに追加"
+      "add_to_cart": "カートに追加",
+      "not_found_title": "記事が見つかりませんでした",
+      "not_found_desc": "この記事は削除されたか、一時的に閲覧できなくなった可能性があります。記事一覧へお戻りください。"
     }
   },
-  "fetch_list_error": "Không thể tải danh sách bài viết",
-  "fetch_detail_error": "Không thể tải bài viết",
+  "fetch_list_error": "記事リストを読み込めません",
+  "fetch_detail_error": "記事を読み込めません",
   "editor": {
-    "draft_restored": "Đã khôi phục bản nháp tự động lưu",
-    "not_found": "Không tìm thấy bài viết",
-    "upload_success": "Tải ảnh lên thành công",
-    "upload_error": "Lỗi khi tải ảnh",
-    "invalid_image": "Vui lòng chọn file hình ảnh hợp lệ",
-    "upload_to_content_error": "Lỗi khi tải ảnh vào bài viết",
-    "title_required": "Vui lòng nhập tiêu đề bài viết",
-    "content_required": "Vui lòng nhập nội dung bài viết",
-    "update_success": "Cập nhật bài viết thành công",
-    "create_success": "Tạo bài viết thành công",
-    "save_error": "Lỗi khi lưu bài viết"
+    "draft_restored": "自動保存の下書きが復元されました",
+    "not_found": "記事が見つかりませんでした",
+    "upload_success": "写真が正常にアップロードされました",
+    "upload_error": "画像の読み込みエラー",
+    "invalid_image": "有効な画像ファイルを選択してください",
+    "upload_to_content_error": "投稿に画像をアップロードする際のエラー",
+    "title_required": "記事タイトルを入力してください",
+    "content_required": "記事の内容を入力してください",
+    "update_success": "投稿が正常に更新されました",
+    "create_success": "成功した投稿を作成しました",
+    "save_error": "投稿の保存中にエラーが発生しました",
+    "uploading_image": "画像を処理してアップロード中...",
+    "youtube_modal_title": "YouTubeビデオを追加",
+    "youtube_modal_desc": "YouTubeの動画リンクを下のボックスに貼り付けて、記事に挿入します。",
+    "btn_add": "ビデオを挿入"
   }
 }

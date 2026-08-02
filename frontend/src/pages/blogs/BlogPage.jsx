@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getBlogsApi } from "@/api/blogApi";
 import { Calendar, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const BlogPage = () => {
   const { t, i18n } = useTranslation("blog");
   const location = useLocation();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { socket } = useSocketStore();
 
   // Mặc định Ký sự nếu vào /storytelling
   const isStorytelling = location.pathname.includes("storytelling");
@@ -33,7 +35,14 @@ const BlogPage = () => {
       }
     };
     fetchBlogs();
-  }, [isStorytelling, t]);
+
+    if (socket) {
+      socket.on("blogs_updated", fetchBlogs);
+      return () => {
+        socket.off("blogs_updated", fetchBlogs);
+      };
+    }
+  }, [isStorytelling, t, socket]);
 
   return (
     <div className="min-h-screen bg-mkhe-bg py-12">

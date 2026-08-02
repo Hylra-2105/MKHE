@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
+import useEffectsConfig from "@/hooks/useEffectsConfig";
 import { applyTheme } from "@/utils/theme";
 import { isVideoMedia } from "@/utils/validators";
 import toast from "react-hot-toast";
 import logo from "@/assets/images/logo-mkhe.png";
 import NotificationDropdown from "./NotificationDropdown";
+import MiniCartDrawer from "./MiniCartDrawer";
 import { useTranslation } from "react-i18next";
 import {
   Search,
@@ -14,6 +16,7 @@ import {
   Globe,
   Moon,
   Sun,
+  Wand2,
   Check,
   ChevronRight,
   ChevronLeft,
@@ -28,6 +31,14 @@ import {
   Menu,
   Star,
   X,
+  Mail,
+  LayoutGrid,
+  Gift,
+  CreditCard,
+  Briefcase,
+  UserCheck,
+  Newspaper,
+  Building2
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -39,12 +50,13 @@ const LANGUAGES = [
 ];
 
 export default function Header() {
-  const { t, i18n } = useTranslation(["header", "history"]);
+  const { t, i18n } = useTranslation(["header", "history", "user"]);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
   const logoutAction = useAuthStore((state) => state.logoutAction);
   const { items, toggleCart } = useCartStore();
+  const { enableEffects, toggleEffects } = useEffectsConfig();
 
   // Check if user is admin or staff
   const isAdmin = user?.role === "Admin";
@@ -75,6 +87,7 @@ export default function Header() {
   const guestLangRef = useRef(null);
   const searchRef = useRef(null);
   const searchToggleRef = useRef(null);
+  const cartRef = useRef(null);
 
   const [isDark, setIsDark] = useState(() => {
     // Init từ localStorage
@@ -101,6 +114,14 @@ export default function Header() {
   }, [isDark]);
 
   useEffect(() => {
+    if (enableEffects) {
+      document.body.classList.remove("pause-animations");
+    } else {
+      document.body.classList.add("pause-animations");
+    }
+  }, [enableEffects]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
@@ -119,6 +140,14 @@ export default function Header() {
         !searchToggleRef.current.contains(event.target)
       ) {
         setIsSearchOpen(false);
+      }
+      if (
+        cartRef.current &&
+        !cartRef.current.contains(event.target) &&
+        !event.target.closest('.voucher-selector-drawer') &&
+        useCartStore.getState().isCartOpen
+      ) {
+        useCartStore.getState().setCartOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -154,7 +183,7 @@ export default function Header() {
   };
 
   const navLinks = [
-    { key: "home", path: "/home" },
+    { key: "home", path: "/" },
     { key: "about", path: "/about" },
     { key: "shop", path: "/shop" },
     { key: "storytelling", path: "/storytelling" },
@@ -165,14 +194,14 @@ export default function Header() {
   const currentLang =
     LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
-  const isHomePage = location.pathname === "/home" || location.pathname === "/";
+  const isHomePage = location.pathname === "/";
   const headerClasses = isHomePage && !isScrolled
     ? "bg-transparent border-transparent text-white drop-shadow-md" 
     : "bg-mkhe-bg border-mkhe-border text-current";
 
   const isActive = (path) => {
-    if (path === "/home" && (location.pathname === "/" || location.pathname === "/home")) return true;
-    if (path !== "/home" && location.pathname.startsWith(path)) return true;
+    if (path === "/" && location.pathname === "/") return true;
+    if (path !== "/" && location.pathname.startsWith(path)) return true;
     return false;
   };
 
@@ -189,7 +218,7 @@ export default function Header() {
         </button>
 
         <Link
-          to="/home"
+          to="/"
           className="flex items-center gap-3 select-none cursor-pointer"
         >
           <img
@@ -197,7 +226,7 @@ export default function Header() {
             alt="MKHE Logo"
             className="h-9 w-auto object-contain"
           />
-          <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold">
+          <span className="text-3xl font-logo font-bold tracking-wider text-gradient-gold hidden sm:block">
             MKHE
           </span>
         </Link>
@@ -230,7 +259,7 @@ export default function Header() {
       </nav>
 
       {/* CỤM CHỨC NĂNG BÊN PHẢI */}
-      <div className="flex-shrink-0 lg:w-1/4 flex items-center justify-end gap-3 md:gap-5">
+      <div className="flex-shrink-0 lg:w-1/4 flex items-center justify-end gap-2 sm:gap-3 md:gap-5">
         {/* ẨN KÍNH LÚP VÀ GIỎ HÀNG KHI LÀ ADMIN HOẶC STAFF */}
         {!isAdminOrStaff && (
           <>
@@ -241,17 +270,20 @@ export default function Header() {
             >
               <Search className="w-5 h-5" />
             </button>
-            <button 
-              onClick={toggleCart}
-              className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              {items.length > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-[3px] bg-mkhe-primary text-[#1a110a] text-[10px] leading-none font-bold rounded-full flex items-center justify-center pt-[1px]">
-                  {items.length}
-                </span>
-              )}
-            </button>
+            <div className="relative flex items-center justify-center" ref={cartRef}>
+              <button 
+                onClick={toggleCart}
+                className="opacity-80 hover:opacity-100 cursor-pointer hover:text-mkhe-primary transition-colors relative"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {items.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-[16px] px-[3px] bg-mkhe-primary text-[#1a110a] text-[10px] leading-none font-bold rounded-full flex items-center justify-center pt-[1px]">
+                    {items.length}
+                  </span>
+                )}
+              </button>
+              <MiniCartDrawer />
+            </div>
           </>
         )}
 
@@ -297,7 +329,7 @@ export default function Header() {
                       to="/profile"
                       onClick={() => setIsDropdownOpen(false)}
                       className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                        location.pathname.startsWith("/profile") && !location.search.includes("tab=orders")
+                        location.pathname.startsWith("/profile") && !location.search.includes("tab=")
                           ? "text-mkhe-primary hover:bg-mkhe-primary/10"
                           : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
                       }`}
@@ -305,6 +337,22 @@ export default function Header() {
                       <User className="w-4 h-4" />
                       {t("user_menu.profile")}
                     </Link>
+
+                    {/* Ví Voucher */}
+                    <Link
+                      to="/profile?tab=vouchers"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=vouchers")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <Ticket className="w-4 h-4" />
+                      {t("user:profile.vouchers", { defaultValue: "Ví Voucher" })}
+                    </Link>
+
+                    <div className="h-px bg-mkhe-border/50 my-1.5 mx-4"></div>
 
                     {/* Lịch sử đơn hàng */}
                     <Link
@@ -320,113 +368,108 @@ export default function Header() {
                       {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
                     </Link>
 
-                    {/* VÙNG CHỨC NĂNG DÀNH CHO ADMIN VÀ STAFF */}
+                    {/* Lịch sử giao dịch */}
+                    <Link
+                      to="/profile?tab=transactions"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=transactions")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4" />
+                      {t("user:profile.transactions", { defaultValue: "Lịch sử giao dịch" })}
+                    </Link>
+
+                    {/* Lịch sử Đổi/Trả */}
+                    <Link
+                      to="/profile?tab=returns"
+                      onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 mt-1 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                        location.search.includes("tab=returns")
+                          ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                          : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                      }`}
+                    >
+                      <Gift className="w-4 h-4" />
+                      {t("history:returns_tab", { defaultValue: "Đổi / Trả" })}
+                    </Link>
+
+                    {/* VÙNG DÀNH CHO KHÁCH HÀNG DOANH NGHIỆP (B2B) */}
+                    {user.role === "Enterprise" && (
+                      <>
+                        <div className="h-px bg-mkhe-border/50 my-1.5 mx-4"></div>
+                        <Link
+                          to="/b2b/dashboard"
+                          onClick={() => setIsDropdownOpen(false)}
+                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
+                            location.pathname.startsWith("/b2b/dashboard")
+                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
+                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
+                          }`}
+                        >
+                          <LayoutGrid className="w-4 h-4" />
+                          {t("user_menu.b2b_dashboard", { defaultValue: "Dashboard B2B" })}
+                        </Link>
+                      </>
+                    )}
+
+                    {/* ADMIN/STAFF: Grouped submenu buttons */}
                     {(user.role === "Admin" || user.role === "Staff") && (
-                      <div className="py-1">
+                      <>
                         <div className="h-px bg-mkhe-border/50 my-1 mx-4"></div>
 
-                        {/* Chỉ Admin mới thấy Quản lý Người dùng */}
+                        {/* Vận hành */}
+                        <button
+                          onClick={() => setActiveMenu("admin_core")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Briefcase className="w-4 h-4" />
+                            {t("user_menu.section_core", { defaultValue: "Vận hành" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Khách hàng & Ưu đãi */}
+                        <button
+                          onClick={() => setActiveMenu("admin_customers")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <UserCheck className="w-4 h-4" />
+                            {t("user_menu.section_customers", { defaultValue: "Khách hàng & Ưu đãi" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Nội dung & Hỗ trợ */}
+                        <button
+                          onClick={() => setActiveMenu("admin_content")}
+                          className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Newspaper className="w-4 h-4" />
+                            {t("user_menu.section_content", { defaultValue: "Nội dung & Hỗ trợ" })}
+                          </div>
+                          <ChevronRight className="w-4 h-4 opacity-50" />
+                        </button>
+
+                        {/* Doanh nghiệp (B2B) */}
                         {user.role === "Admin" && (
-                          <Link
-                            to="/admin/users"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/users")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
+                          <button
+                            onClick={() => setActiveMenu("admin_b2b")}
+                            className="w-[calc(100%-16px)] mx-2 text-left px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors"
                           >
-                            <Users className="w-4 h-4" />
-                            {t("user_menu.manage_users")}
-                          </Link>
+                            <div className="flex items-center gap-3">
+                              <Building2 className="w-4 h-4" />
+                              {t("user_menu.section_b2b", { defaultValue: "Doanh nghiệp" })}
+                            </div>
+                            <ChevronRight className="w-4 h-4 opacity-50" />
+                          </button>
                         )}
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Đơn hàng */}
-                        <Link
-                          to="/admin/orders"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/orders")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <ShoppingBag className="w-4 h-4" />
-                          {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Sản phẩm */}
-                        <Link
-                          to="/admin/products"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/products")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Package className="w-4 h-4" />
-                          {t("user_menu.manage_products")}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Voucher */}
-                        <Link
-                          to="/admin/vouchers"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/vouchers")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Ticket className="w-4 h-4" />
-                          {t("user_menu.manage_vouchers")}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Bài viết */}
-                        <Link
-                          to="/admin/blogs"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/blogs")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <FileText className="w-4 h-4" />
-                          {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
-                        </Link>
-
-                        {/* Cả Admin và Staff đều thấy Quản lý Đánh giá */}
-                        <Link
-                          to="/admin/reviews"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                            location.pathname.startsWith("/admin/reviews")
-                              ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                              : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                          }`}
-                        >
-                          <Star className="w-4 h-4" />
-                          {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
-                        </Link>
-
-                        {/* Chỉ Admin mới thấy Thống kê - Phân tích */}
-                        {user.role === "Admin" && (
-                          <Link
-                            to="/admin/analysis"
-                            onClick={() => setIsDropdownOpen(false)}
-                            className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${
-                              location.pathname.startsWith("/admin/analysis")
-                                ? "text-mkhe-primary hover:bg-mkhe-primary/10"
-                                : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"
-                            }`}
-                          >
-                            <BarChart className="w-4 h-4" />
-                            {t("user_menu.analytics")}
-                          </Link>
-                        )}
-                      </div>
+                      </>
                     )}
 
                     <div className="h-px bg-mkhe-border/30 my-2 mx-4"></div>
@@ -463,6 +506,23 @@ export default function Header() {
                       >
                         <div
                           className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${isDark ? "translate-x-4" : "translate-x-0"}`}
+                        />
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={toggleEffects}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 rounded-md text-sm opacity-80 flex justify-between items-center cursor-pointer hover:opacity-100 hover:bg-mkhe-primary/10 transition-colors border-none bg-transparent text-current font-inherit"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Wand2 className="w-4 h-4" />
+                        {t("settings.effects")}
+                      </div>
+                      <div
+                        className={`w-10 h-5.5 rounded-full flex items-center px-1 transition-colors duration-300 ${enableEffects ? "bg-mkhe-primary" : "bg-gray-500"}`}
+                      >
+                        <div
+                          className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform duration-300 ${enableEffects ? "translate-x-4" : "translate-x-0"}`}
                         />
                       </div>
                     </button>
@@ -511,6 +571,101 @@ export default function Header() {
                         )}
                       </button>
                     ))}
+                  </div>
+                )}
+
+                {/* ADMIN SUBMENUS */}
+                {activeMenu === "admin_core" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/analysis" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/analysis") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <BarChart className="w-4 h-4" /> {t("user_menu.analytics")}
+                      </Link>
+                    )}
+                    <Link to="/admin/orders" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/orders") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <ShoppingBag className="w-4 h-4" /> {t("user_menu.manage_orders", { defaultValue: "Quản lý Đơn hàng" })}
+                    </Link>
+                    <Link to="/admin/returns" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/returns") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Gift className="w-4 h-4" /> {t("user_menu.manage_returns", { defaultValue: "Quản lý Đổi/Trả" })}
+                    </Link>
+                    <Link to="/admin/products" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/products") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Package className="w-4 h-4" /> {t("user_menu.manage_products")}
+                    </Link>
+                  </div>
+                )}
+
+                {activeMenu === "admin_customers" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/users" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/users") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <Users className="w-4 h-4" /> {t("user_menu.manage_users")}
+                      </Link>
+                    )}
+                    <Link to="/admin/vouchers" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/vouchers") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Ticket className="w-4 h-4" /> {t("user_menu.manage_vouchers")}
+                    </Link>
+                    {user?.role === "Admin" && (
+                      <Link to="/admin/reviews" onClick={() => setIsDropdownOpen(false)}
+                        className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/reviews") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                        <Star className="w-4 h-4" /> {t("user_menu.manage_reviews", { defaultValue: "Quản lý Đánh giá" })}
+                      </Link>
+                    )}
+                  </div>
+                )}
+
+                {activeMenu === "admin_content" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    <Link to="/admin/blogs" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/blogs") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <FileText className="w-4 h-4" /> {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
+                    </Link>
+                    <Link to="/admin/contacts" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/contacts") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <Mail className="w-4 h-4" /> {t("user_menu.manage_contacts", { defaultValue: "Quản lý Liên hệ" })}
+                    </Link>
+                  </div>
+                )}
+
+                {activeMenu === "admin_b2b" && (
+                  <div>
+                    <button
+                      onClick={() => setActiveMenu("main")}
+                      className="w-[calc(100%-16px)] mx-2 px-3 py-2 flex items-center gap-2 rounded-md text-sm font-semibold opacity-80 mb-1 cursor-pointer hover:opacity-100 hover:text-mkhe-primary hover:bg-mkhe-primary/10 transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" /> {t("settings.back")}
+                    </button>
+
+                    <Link to="/admin/b2b-orders" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/b2b-orders") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <LayoutGrid className="w-4 h-4" /> {t("user_menu.b2b_orders", { defaultValue: "Đơn hàng B2B" })}
+                    </Link>
                   </div>
                 )}
               </div>

@@ -294,7 +294,7 @@ const DashboardFeature = () => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-green-500/20 flex shrink-0 items-center justify-center text-green-500">
+          <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex shrink-0 items-center justify-center text-emerald-500">
             <Coins className="w-6 h-6" />
           </div>
           <div className="min-w-0">
@@ -324,14 +324,14 @@ const DashboardFeature = () => {
         </div>
 
         <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm flex items-center gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/10 rounded-bl-full -z-0"></div>
-          <div className="w-12 h-12 rounded-full bg-red-500/20 flex shrink-0 items-center justify-center text-red-500 z-10">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/10 rounded-bl-full -z-0"></div>
+          <div className="w-12 h-12 rounded-full bg-rose-500/20 flex shrink-0 items-center justify-center text-rose-500 z-10">
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div className="z-10 min-w-0">
-            <p className="text-xs text-red-500/80 font-medium truncate">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
-            <h3 className="text-lg font-bold text-red-500 mt-1 truncate">
-              {lowStockProducts.length} <span className="text-xs font-normal text-red-500/70">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
+            <p className="text-xs text-rose-500/80 font-medium truncate">{t("dashboard.low_stock_alert", { defaultValue: "Cảnh báo hết hàng" })}</p>
+            <h3 className="text-lg font-bold text-rose-500 mt-1 truncate">
+              {lowStockProducts.length} <span className="text-xs font-normal text-rose-500/70">{t("dashboard.products", { defaultValue: "sản phẩm" })}</span>
             </h3>
           </div>
         </div>
@@ -413,7 +413,7 @@ const DashboardFeature = () => {
 
         {/* Low Stock Alerts */}
         <div className="bg-mkhe-input/50 backdrop-blur-md rounded-2xl p-6 border border-mkhe-border/50 shadow-sm">
-          <h2 className="text-lg font-bold text-red-500 mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-rose-500 mb-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             {t("dashboard.low_stock_list", { defaultValue: "Cần nhập hàng khẩn cấp (< 10)" })}
           </h2>
@@ -431,7 +431,7 @@ const DashboardFeature = () => {
                   <p className="text-xs text-mkhe-text/50">SKU: {product.sku}</p>
                 </div>
                 <div className="text-right">
-                  <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-red-500/10 text-red-500 text-xs font-bold border border-red-500/20 shadow-sm">
+                  <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20 shadow-sm">
                     {t("dashboard.stock", { defaultValue: "Tồn:" })} {product.stock}
                   </div>
                 </div>
@@ -439,7 +439,7 @@ const DashboardFeature = () => {
             ))}
             
             {lowStockProducts.length === 0 && (
-              <div className="text-center py-8 text-red-500/50 text-sm h-full flex items-center justify-center">
+              <div className="text-center py-8 text-rose-500/50 text-sm h-full flex items-center justify-center">
                 {t("dashboard.no_data", { defaultValue: "Chưa có dữ liệu" })}
               </div>
             )}
@@ -578,7 +578,7 @@ const DashboardFeature = () => {
                     {t("dashboard.revenue")}: <span className="font-semibold text-mkhe-text">{formatCurrency(voucher.revenueGenerated)}</span>
                   </span>
                   <span className="text-mkhe-text/60">
-                    {t("dashboard.discount_cost")}: <span className="font-semibold text-red-500">-{formatCurrency(voucher.totalDiscount)}</span>
+                    {t("dashboard.discount_cost")}: <span className="font-semibold text-rose-500">-{formatCurrency(voucher.totalDiscount)}</span>
                   </span>
                 </div>
               </div>

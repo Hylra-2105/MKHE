@@ -1,7 +1,10 @@
 {
-  "title": "My Orders",
+  "title": "Order History",
   "desc": "Track and manage your orders",
-  "fetch_orders_error": "Failed to load order history",
+  "tx_title": "Transaction History",
+  "tx_desc": "Manage your payment cash flow",
+  "completed": "Completed",
+  "fetch_orders_error": "Failed to fetch order history",
   "no_orders": "You don't have any orders yet.",
   "fetch_order_error": "Failed to load order details",
   "confirm_cancel": "Are you sure you want to cancel this order?",
@@ -41,5 +44,42 @@
   "write_review": "Write a Review",
   "already_reviewed": "Reviewed",
   "receive_success": "Order received successfully!",
-  "receive_error": "Failed to confirm receipt"
+  "receive_error": "Failed to confirm receipt",
+  "request_return": "Request Return",
+  "returns": {
+    "title": "Exchange/Return History",
+    "desc": "Track and manage your product return requests",
+    "status": {
+      "PENDING": "Waiting for processing",
+      "APPROVED": "Approved",
+      "REJECTED": "Refuse"
+    },
+    "order_code": "Single code:",
+    "fetch_error": "Error loading return history",
+    "fetch_detail_error": "Error loading return details",
+    "no_returns": "You have not requested any exchange/return yet.",
+    "return_quantity": "Quantity required",
+    "detail_title": "Exchange/Return details",
+    "detail_status": "Status",
+    "reason_label": "Reason for return",
+    "admin_note": "Feedback from the customer service department",
+    "items_title": "Products require exchange/return",
+    "create": {
+      "title": "Request Exchange/Return",
+      "desc": "Please select the product and quantity you want to exchange/return",
+      "reason_placeholder": "Enter reason for exchange/return (eg: Defective goods, wrong design...)",
+      "upload_proof": "Download proof photos",
+      "upload_desc": "Drag and drop or click to upload up to 3 photos/videos",
+      "submit_btn": "Send request",
+      "cancel_btn": "Cancel",
+      "item_qty": "Quantity paid",
+      "error_select_item": "Please select at least one product to return",
+      "error_reason": "Please enter reason for return",
+      "error_qty": "The return quantity must be greater than 0",
+      "error_upload": "Error uploading photo",
+      "success": "The exchange/return request has been sent successfully!"
+    },
+    "updated_toast": "Update return order {{orderCode}}: {{status}}"
+  },
+  "returns_tab": "Exchange / Return"
 }

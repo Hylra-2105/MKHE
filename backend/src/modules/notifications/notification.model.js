@@ -27,7 +27,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["ORDER_STATUS_UPDATE", "SYSTEM", "MARKETING"],
+      enum: ["ORDER_STATUS_UPDATE", "SYSTEM", "MARKETING", "CONTACT"],
       default: "ORDER_STATUS_UPDATE",
     },
     orderId: {
@@ -40,6 +40,10 @@ const notificationSchema = new mongoose.Schema(
     productId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
+    },
+    contactId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contact",
     },
     status: {
       type: String, // e.g. "CONFIRMED", "DELIVERING"

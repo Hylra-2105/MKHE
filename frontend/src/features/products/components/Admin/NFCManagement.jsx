@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import toast from "react-hot-toast";
 import { Copy, Plus, Cpu, AlertCircle } from "lucide-react";
 import { nfcApi } from "@/api/nfcApi";
@@ -165,7 +165,7 @@ const NFCManagement = ({ productId }) => {
                           {t("nfc.pending", "PENDING")}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-500/20 text-green-600 dark:text-green-400">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
                            {t("nfc.active", "ACTIVE")}
                         </span>
                       )}
@@ -193,7 +193,7 @@ const NFCManagement = ({ productId }) => {
                         <button
                           type="button"
                           onClick={() => handleActivate(tag.uid)}
-                          className="text-[11px] font-bold text-white cursor-pointer bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded shadow transition-colors"
+                          className="text-[11px] font-bold text-white cursor-pointer bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded shadow transition-colors"
                         >
                           {t("nfc.confirm_written")}
                         </button>

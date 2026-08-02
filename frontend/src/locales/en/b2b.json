@@ -1,0 +1,71 @@
+{
+  "title": "B2B Dashboard",
+  "request_title": "Create B2B Request",
+  "subtitle": "Fill in your requirements, we will contact you soon",
+  "admin_title": "B2B Management",
+  "status": {
+    "PENDING_QUOTE": "Waiting for quote",
+    "NEGOTIATING": "Negotiating",
+    "CONFIRMED": "Closed",
+    "PRODUCING": "In production",
+    "DELIVERING": "Delivery",
+    "COMPLETED": "Complete",
+    "CANCELLED": "Canceled"
+  },
+  "download_quote": "Download Quote / Contract",
+  "confirm_order": "Confirmation of order closing",
+  "chat_placeholder": "Enter your message...",
+  "send": "Send",
+  "upload_quote": "Upload PDF",
+  "update_status": "Update",
+  "no_orders": "There are no contracts yet.",
+  "confirm_msg": "Are you sure you want to close this order?",
+  "pdf_required": "Please attach PDF file.",
+  "select_status": "Select status",
+  "consultingPackage": "Consulting & Product Design Packages on Demand",
+  "companyInfo": {
+    "title": "Company Information",
+    "desc1": "We will use this information for Contracts & Invoicing",
+    "company": "Company",
+    "taxCode": "Tax Code",
+    "notUpdated": "Not updated",
+    "note": "You can update this in your Profile"
+  },
+  "fields": {
+    "product": "Product / Service",
+    "productPlaceholder": "Select product or service",
+    "quantity": "Estimated Quantity",
+    "budget": "Estimated Budget (VND)",
+    "budgetPlaceholder": "Example: 50,000,000",
+    "deliveryDate": "Expected Delivery Date",
+    "deliveryDatePlaceholder": "Select date...",
+    "packaging": "Packaging Requirements",
+    "packagingPlaceholder": "Select packaging option",
+    "packagingOptions": {
+      "STANDARD_BOX": "MKHE Standard Box",
+      "NO_PACKAGING": "No Packaging"
+    },
+    "note": "Additional Notes",
+    "notePlaceholder": "Special requests for materials, scent, dimensions...",
+    "designFiles": "Attachments (Designs / Detailed Requests)",
+    "dragDrop": "Drag and drop files here or click to select",
+    "fileHint": "Supports .pdf, .ai, .png, .jpg (Max 5 files)",
+    "fileNote": "Maximum 5 files"
+  },
+  "validation": {
+    "productRequired": "Please select product/service",
+    "quantityRequired": "Please enter quantity",
+    "deliveryDateRequired": "Please select a delivery date"
+  },
+  "messages": {
+    "fetchProductsError": "Unable to load product list",
+    "maxFiles": "You can only upload a maximum of 5 files",
+    "success": "B2B request sent successfully! We will contact you soon for a quote.",
+    "error": "An error occurred, please try again later"
+  },
+  "buttons": {
+    "back": "Back to Dashboard",
+    "submit": "Submit Request",
+    "submitting": "Submitting..."
+  }
+}

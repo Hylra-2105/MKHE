@@ -48,6 +48,7 @@
   "shipping_info": {
     "title": "送货信息",
     "address_title": "送货地址",
+    "edit_btn": "编辑",
     "change_btn": "更改",
     "add_info_btn": "添加送货信息",
     "full_name": "全名",
@@ -100,5 +101,5 @@
     "back": "返回地址簿",
     "default": "默认"
   },
-  "copied_success": "Đã sao chép {{label}}"
+  "copied_success": "已复制 {{label}}"
 }

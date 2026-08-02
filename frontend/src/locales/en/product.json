@@ -37,6 +37,7 @@
     "craft_village": "Craft Village",
     "craft_village_placeholder": "e.g., Chau Phong weaving village...",
     "material": "Material",
+    "select_material": "Select material",
     "story": "Product Story",
     "story_placeholder": "Enter the detailed product story (supports bold, italic, formatting...)",
     "name": "Product Name",
@@ -109,6 +110,11 @@
       "click_upload_new": "Drag & drop or click to upload new file",
       "auto_compress": "System automatically optimizes Mesh & Texture. Supports huge files up to 150MB!",
       "delete": "Delete"
+    },
+    "isService": {
+      "title": "B2B Service Package",
+      "desc": "Enable this feature if this is a Service Package (Consulting, outsourcing...).",
+      "note": "Note: The service package will be completely hidden from the Store page."
     }
   },
   "statuses": {
@@ -164,9 +170,9 @@
     "optimizing_3d": "Optimizing 3D file ({{size}}MB)... This uses your CPU, please do not close the page!",
     "optimize_3d_success": "3D optimization successful! Size reduced to: {{size}}MB",
     "optimize_3d_error": "3D optimization failed: {{error}}. Original file will be used.",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "gallery_upload_success": "New media added successfully",
+    "gallery_delete_success": "Photo deleted successfully",
+    "draft_restore_success": "Restored unfinished data",
     "public_stock_error": "Cannot publish when stock is 0.",
     "invalid_quantity": "Valid quantity is 1 to 100",
     "restore_failed": "❌ Failed to restore: {{errorMsg}}"
@@ -237,6 +243,11 @@
       "show_less": "Show Less",
       "read_more": "Read More",
       "in_stock": "{{count}} items in stock",
+      "color": "Color:",
+      "more_colors": "other colors",
+      "addons": "Add-ons (Optional):",
+      "select_color_first": "Please select a color before adding to cart",
+      "out_of_stock_short": "Out",
       "sold_out": "Sold Out",
       "sku": "SKU",
       "back": "Go Back",
@@ -259,6 +270,40 @@
       "sendPushDesc": "The system will automatically send notifications to ALL users upon release",
       "ongoing": "On Sale",
       "upcoming": "Upcoming Sale"
+    },
+    "colors": {
+      "title": "Colors / Variants",
+      "subtitle": "Configure colors, avatar images, and separate stock",
+      "add_color": "Add Color",
+      "color_name": "Color Name",
+      "color_name_placeholder": "Ex: Blue White Stripe",
+      "stock": "Stock",
+      "stock_placeholder": "Quantity...",
+      "image": "Avatar Image",
+      "change_image": "Change image",
+      "choose_image": "Choose image",
+      "no_colors": "This product does not have any color variants yet.",
+      "remove_color": "Remove this color",
+      "picker_title": "Select image for color",
+      "picker_empty": "You have not uploaded any images to the Gallery.",
+      "picker_empty_desc": "Please upload images in the left column first.",
+      "price_override": "Custom Price (Optional)",
+      "price_override_placeholder": "Ex: 350000"
+    },
+    "addons": {
+      "title": "Add-ons / Accessories",
+      "subtitle": "Gift boxes, greeting cards...",
+      "add_btn": "Add Add-on",
+      "remove_btn": "Remove Add-on",
+      "name": "Add-on Name",
+      "name_placeholder": "Ex: Premium Gift Box",
+      "price": "Price (+)",
+      "price_placeholder": "Ex: 50000",
+      "image": "Image",
+      "change_image": "Change Image",
+      "choose_image": "Choose Image",
+      "empty": "This product has no add-ons.",
+      "picker_title": "Select Image for Add-on"
     }
   },
   "products": {

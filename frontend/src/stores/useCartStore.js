@@ -7,6 +7,12 @@ import { useAuthStore } from "./useAuthStore";
 
 let updateQuantityTimeout = null;
 
+export const getCartItemId = (item) => {
+  const addOnsStr = (item.addOns || []).map(a => a.name).sort().join('|');
+  return `${item.product._id}-${item.color || ''}-${addOnsStr}`;
+};
+
+
 export const useCartStore = create(
   persist(
     (set, get) => ({
@@ -33,7 +39,7 @@ export const useCartStore = create(
       })),
 
       selectAllItems: (isSelected) => set((state) => ({
-        selectedItems: isSelected ? state.items.map((item) => item.product._id) : [],
+        selectedItems: isSelected ? state.items.map((item) => getCartItemId(item)) : [],
       })),
 
       toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
@@ -61,15 +67,27 @@ export const useCartStore = create(
       },
 
       addToCart: async (product, quantity = 1, options = {}) => {
-        const { silent = false } = options;
+        const { silent = false, color, colorImage, addOns = [] } = options;
         const token = useAuthStore.getState().token;
-        const maxStock = product.stock;
+        
+        let maxStock = product.stock;
+        let colorVariant = null;
+
+        if (color && product.colors && product.colors.length > 0) {
+          colorVariant = product.colors.find(c => c.name === color);
+          if (colorVariant) {
+            maxStock = colorVariant.stock;
+          }
+        }
         
         let shouldSync = false;
         let finalQuantity = quantity;
 
         set((state) => {
-          const existingItem = state.items.find((item) => item.product._id === product._id);
+          // Identify cart item by productId AND color (if provided)
+          const existingItem = state.items.find((item) => 
+            getCartItemId(item) === getCartItemId({product, color, addOns})
+          );
 
           if (existingItem) {
             const newQuantity = Math.min(existingItem.quantity + quantity, maxStock);
@@ -84,7 +102,7 @@ export const useCartStore = create(
             shouldSync = true;
             return {
               items: state.items.map((item) =>
-                item.product._id === product._id
+                getCartItemId(item) === getCartItemId({product, color, addOns})
                   ? { ...item, quantity: newQuantity }
                   : item
               ),
@@ -101,29 +119,31 @@ export const useCartStore = create(
 
           if (!silent) toast.success(i18n.t("cart:toast.added"));
           shouldSync = true;
+          
+          // Generate a unique ID for the frontend state if needed, but since we rely on product._id and color, it's fine.
           return {
-            items: [...state.items, { product, quantity: addQuantity }],
-            selectedItems: state.selectedItems.includes(product._id) ? state.selectedItems : [...state.selectedItems, product._id],
+            items: [...state.items, { product, quantity: addQuantity, color, colorImage, addOns }],
+            selectedItems: state.selectedItems.includes(getCartItemId({product, color, addOns})) ? state.selectedItems : [...state.selectedItems, getCartItemId({product, color, addOns})],
             isCartOpen: !silent,
           };
         });
 
         if (shouldSync && token) {
           try {
-            await updateCartItemApi(product._id, finalQuantity);
+            await updateCartItemApi(product._id, finalQuantity, color, addOns);
           } catch (error) {
             console.error("Lỗi cập nhật giỏ hàng trên server:", error);
           }
         }
       },
 
-      removeFromCart: async (productId) => {
+      removeFromCart: async (productId, color, addOns = []) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
           get().setLoadingItem(productId, true);
           try {
-            await removeCartItemApi(productId);
+            await removeCartItemApi(productId, color, addOns);
           } catch (error) {
             console.error("Lỗi xóa sản phẩm:", error);
           } finally {
@@ -132,51 +152,55 @@ export const useCartStore = create(
         }
 
         set((state) => ({
-          items: state.items.filter((item) => item.product._id !== productId),
-          selectedItems: state.selectedItems.filter((id) => id !== productId),
+          items: state.items.filter((item) => getCartItemId(item) !== getCartItemId({product: {_id: productId}, color, addOns})),
+          selectedItems: state.selectedItems.filter((id) => id !== getCartItemId({product: {_id: productId}, color, addOns})),
         }));
         toast.success(i18n.t("cart:toast.removed"));
       },
 
-      removeMultipleFromCart: async (productIds, silent = false) => {
+      removeMultipleFromCart: async (cartItemIds, silent = false) => {
         const token = useAuthStore.getState().token;
         
         if (token) {
           try {
-            await Promise.all(productIds.map(id => removeCartItemApi(id)));
+            const itemsToRemove = get().items.filter(i => cartItemIds.includes(getCartItemId(i)));
+            for (const item of itemsToRemove) {
+              await removeCartItemApi(item.product._id, item.color, item.addOns);
+            }
           } catch (error) {
             console.error("Lỗi xóa nhiều sản phẩm:", error);
           }
         }
 
         set((state) => ({
-          items: state.items.filter((item) => !productIds.includes(item.product._id)),
-          selectedItems: state.selectedItems.filter((id) => !productIds.includes(id)),
+          items: state.items.filter((item) => !cartItemIds.includes(getCartItemId(item))),
+          selectedItems: state.selectedItems.filter((id) => !cartItemIds.includes(id)),
         }));
         if (!silent) {
           toast.success(i18n.t("cart:toast.removed"));
         }
       },
 
-      updateQuantity: (productId, quantity) => {
+      updateQuantity: (productId, quantity, color, addOns = []) => {
         const token = useAuthStore.getState().token;
         
         set((state) => {
-          const item = state.items.find((i) => i.product._id === productId);
+          const item = state.items.find((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}));
           if (!item) return state;
 
-          const maxStock = item.product.stock;
+          let maxStock = item.product.stock;
+          if (color && item.product.colors) {
+            const colorVariant = item.product.colors.find(c => c.name === color);
+            if (colorVariant) maxStock = colorVariant.stock;
+          }
           const validQuantity = Math.max(1, Math.min(quantity, maxStock));
 
           return {
-            items: state.items.map((i) =>
-              i.product._id === productId ? { ...i, quantity: validQuantity } : i
-            ),
+            items: state.items.map((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}) ? { ...i, quantity: validQuantity } : i),
           };
         });
 
         if (token) {
-          get().setLoadingItem(productId, true);
           
           if (updateQuantityTimeout) {
             clearTimeout(updateQuantityTimeout);
@@ -184,15 +208,12 @@ export const useCartStore = create(
           
           updateQuantityTimeout = setTimeout(async () => {
             try {
-              const item = get().items.find((i) => i.product._id === productId);
+              const item = get().items.find((i) => getCartItemId(i) === getCartItemId({product: {_id: productId}, color, addOns}));
               if (item) {
-                await updateCartItemApi(productId, item.quantity);
-                toast.success(i18n.t("cart:toast.update_success"));
+                await updateCartItemApi(productId, item.quantity, color, addOns);
               }
             } catch (error) {
               console.error("Lỗi cập nhật số lượng:", error);
-            } finally {
-              get().setLoadingItem(productId, false);
             }
           }, 500);
         }
@@ -204,13 +225,34 @@ export const useCartStore = create(
         const { items, selectedItems } = get();
         const now = new Date();
         return items
-          .filter((item) => selectedItems.includes(item.product._id))
+          .filter((item) => selectedItems.includes(getCartItemId(item)))
           .reduce((total, item) => {
             const product = item.product;
+            let basePrice = product.price;
+            
+            // Check for color-specific price override
+            if (item.color && product.colors) {
+              const colorVariant = product.colors.find(c => c.name === item.color);
+              if (colorVariant && colorVariant.priceOverride) {
+                basePrice = colorVariant.priceOverride;
+              }
+            }
+
             const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                                 && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
-            const effectivePrice = isSaleValid ? product.salePrice : product.price;
-            return total + effectivePrice * item.quantity;
+            
+            let effectivePrice = basePrice;
+            if (isSaleValid) {
+              const salePercentage = (product.price - product.salePrice) / product.price;
+              effectivePrice = Math.round(basePrice * (1 - salePercentage));
+            }
+
+            let addOnsCost = 0;
+            if (item.addOns && item.addOns.length > 0) {
+              addOnsCost = item.addOns.reduce((sum, addOn) => sum + (addOn.price || 0), 0);
+            }
+
+            return total + (effectivePrice + addOnsCost) * item.quantity;
           }, 0);
       },
 

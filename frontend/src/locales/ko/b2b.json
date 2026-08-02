@@ -1,0 +1,71 @@
+{
+  "title": "B2B 대시보드",
+  "request_title": "새 B2B 요청 생성",
+  "subtitle": "요청 정보를 작성해 주시면 최대한 빨리 연락드리겠습니다.",
+  "admin_title": "B2B 관리",
+  "status": {
+    "PENDING_QUOTE": "견적을 기다리는 중",
+    "NEGOTIATING": "협상 중",
+    "CONFIRMED": "닫은",
+    "PRODUCING": "생산 중",
+    "DELIVERING": "배달",
+    "COMPLETED": "완벽한",
+    "CANCELLED": "취소"
+  },
+  "download_quote": "견적/계약서 다운로드",
+  "confirm_order": "주문 마감 확인",
+  "chat_placeholder": "메시지를 입력하세요...",
+  "send": "보내다",
+  "upload_quote": "PDF 업로드",
+  "update_status": "업데이트",
+  "no_orders": "아직 계약이 없습니다.",
+  "confirm_msg": "정말로 이 주문을 종료하시겠습니까?",
+  "pdf_required": "PDF 파일을 첨부해주세요.",
+  "select_status": "상태 선택",
+  "consultingPackage": "주문형 컨설팅 및 제품 설계 패키지",
+  "companyInfo": {
+    "title": "사업정보",
+    "desc1": "우리는 이 정보를 사용하여 계약서 및 송장을 작성합니다.",
+    "company": "회사",
+    "taxCode": "MST",
+    "notUpdated": "아직 업데이트되지 않았습니다.",
+    "note": "개인 페이지에서 다시 업데이트할 수 있습니다."
+  },
+  "fields": {
+    "product": "서비스 패키지/제품",
+    "productPlaceholder": "관심 있는 서비스/제품을 선택하세요.",
+    "quantity": "예상 수량",
+    "budget": "예상 예산(VND)",
+    "budgetPlaceholder": "예: 50,000,000",
+    "deliveryDate": "예상 배송일",
+    "deliveryDatePlaceholder": "날짜 선택...",
+    "packaging": "포장 사양",
+    "packagingPlaceholder": "포장을 선택하세요",
+    "packagingOptions": {
+      "STANDARD_BOX": "MKHE 표준 상자",
+      "NO_PACKAGING": "상자가 필요하지 않습니다."
+    },
+    "note": "추가 참고사항",
+    "notePlaceholder": "재료, 향, 크기에 대한 특별 요구사항...",
+    "designFiles": "첨부파일(설계/상세요구사항)",
+    "dragDrop": "여기에 파일을 끌어다 놓거나 클릭하여 선택하세요.",
+    "fileHint": ".pdf, .ai, .png, .jpg 형식 지원(최대 5개 파일)",
+    "fileNote": "최대 5개 파일"
+  },
+  "validation": {
+    "productRequired": "제품/서비스를 선택해주세요",
+    "quantityRequired": "수량을 입력해주세요",
+    "deliveryDateRequired": "배송일을 선택해주세요"
+  },
+  "messages": {
+    "fetchProductsError": "제품 목록을 로드할 수 없습니다.",
+    "maxFiles": "최대 5개의 파일만 업로드할 수 있습니다.",
+    "success": "B2B 요청이 성공적으로 전송되었습니다! 견적을 위해 곧 연락드리겠습니다.",
+    "error": "오류가 발생했습니다. 나중에 다시 시도해 주세요."
+  },
+  "buttons": {
+    "back": "대시보드로 돌아가기",
+    "submit": "요청 보내기",
+    "submitting": "배상..."
+  }
+}

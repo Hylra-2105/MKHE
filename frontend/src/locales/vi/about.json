@@ -1,0 +1,93 @@
+{
+  "hero": {
+    "tag": "Mekong Culture",
+    "title_1": "Giao thoa văn hóa",
+    "title_2": "và Di sản",
+    "desc": "Nơi những tinh hoa thủ công truyền thống được đánh thức và tái sinh qua lăng kính của nghệ thuật đương đại và công nghệ."
+  },
+  "story": {
+    "tag": "01 — Về chúng tôi",
+    "p1_1": "Mekong Culture không chỉ là một thương hiệu, mà là một hành trình khơi dậy và trân trọng ",
+    "p1_bold": "mã gen di sản",
+    "p1_2": " của vùng đất Tây Nam Bộ.",
+    "p2_1": "Chúng tôi tự hào mang đến mô hình ",
+    "p2_bold": "\"Hệ sinh thái Đôi\" (Dual-Project Ecosystem)",
+    "p2_2": " độc bản. Bằng việc chắt lọc tinh hoa từ ba cộng đồng dân tộc Kinh – Chăm – Khmer, Mekong Culture kiến tạo nên những không gian nội thất nghệ thuật và các bộ sưu tập mang tính ứng dụng cao, giúp nối dài mạch sống của di sản trong dòng chảy hiện đại.",
+    "box_1": "Bảo tồn và",
+    "box_2": "Thương mại hóa"
+  },
+  "vision": {
+    "title_1": "Tầm",
+    "title_2": "nhìn",
+    "desc": "Trở thành điểm chạm Phygital tiên phong, nơi công nghệ đánh thức và kết nối thế hệ trẻ với dòng chảy di sản văn hóa Mekong."
+  },
+  "mission": {
+    "title_1": "Sứ",
+    "title_2": "mệnh",
+    "desc": "Số hóa câu chuyện làng nghề, tôn vinh nghệ nhân bản địa và đưa các tác phẩm thủ công độc bản vươn xa khỏi biên giới địa lý."
+  },
+  "core_values": {
+    "title_1": "Giá trị",
+    "title_2": "cốt lõi",
+    "items": [
+      "Độc bản trong Chế tác",
+      "Tiên phong trong Công nghệ",
+      "Bền vững với Di sản"
+    ]
+  },
+  "heritage_villages": {
+    "tag": "02 — Báu vật sống",
+    "title": "Tôn vinh làng nghề",
+    "items": [
+      {
+        "name": "Thổ cẩm Khmer Văn Giáo",
+        "desc": "Sự mềm mại của từng sợi tơ Ikat truyền thống nhuộm màu cỏ cây."
+      },
+      {
+        "name": "Thổ cẩm Chăm Châu Phong",
+        "desc": "Vẻ đẹp tinh xảo của nghệ thuật dệt tay lưu giữ hoa văn rực rỡ và sắc màu tự nhiên mang đậm bản sắc Chăm."
+      },
+      {
+        "name": "Chiếu cói Định Yên",
+        "desc": "Hơi thở bình dị của những sợi cói tự nhiên đan dệt nên nét mộc mạc của vùng quê sông nước."
+      },
+      {
+        "name": "Khăn rằn Long Khánh",
+        "desc": "Nét giao thoa văn hóa đặc sắc qua những sọc caro đen trắng giản dị, thấm đượm tình đất tình người miền Tây."
+      }
+    ]
+  },
+  "team": {
+    "tag": "03 — Con người",
+    "title": "Đội ngũ sáng tạo",
+    "subtitle": "Kết hợp tư duy nhạy bén và sức mạnh công nghệ đột phá.",
+    "members": [
+      {
+        "name": "Anh Bảo",
+        "role": "Người Sáng Lập & Trưởng Dự Án"
+      },
+      {
+        "name": "Nhật Anh",
+        "role": "Trưởng Nhóm Vận Hành"
+      },
+      {
+        "name": "Hữu Trọng",
+        "role": "Trưởng Nhóm Marketing"
+      },
+      {
+        "name": "Thành Lợi",
+        "role": "Trưởng Nhóm Công Nghệ & Web"
+      },
+      {
+        "name": "Bá Hưng",
+        "role": "Trưởng Nhóm 3D & Game"
+      },
+      {
+        "name": "Duy Phương",
+        "role": "Trưởng Nhóm UI/UX & Thiết Kế"
+      }
+    ],
+    "mentor_tag": "Bảo trợ chuyên môn",
+    "mentor_name": "TS. Nguyễn Trọng Luân & Mentor Võ Thiên Ân"
+  }
+}

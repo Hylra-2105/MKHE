@@ -42,6 +42,7 @@
     "craft_village": "공예 마을",
     "craft_village_placeholder": "예: 차우퐁 직조 마을...",
     "material": "재료",
+    "select_material": "재료 선택",
     "name": "제품명",
     "name_placeholder": "예: 줄무늬 브로케이드 토트백",
     "sku": "SKU",
@@ -114,7 +115,12 @@
       "delete": "삭제"
     },
     "story": "제품 스토리",
-    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)"
+    "story_placeholder": "자세한 제품 스토리를 입력하세요 (굵게, 기울임꼴 등 지원)",
+    "isService": {
+      "title": "B2B 서비스 패키지",
+      "desc": "서비스 패키지(컨설팅, 아웃소싱...)인 경우 이 기능을 활성화하십시오.",
+      "note": "참고: 서비스 패키지는 스토어 페이지에서 완전히 숨겨집니다."
+    }
   },
   "statuses": {
     "DRAFT": "초안",
@@ -169,9 +175,9 @@
     "optimizing_3d": "3D 파일({{size}}MB)을 최적화하는 중... CPU를 사용합니다. 페이지를 닫지 마세요!",
     "optimize_3d_success": "3D 최적화 성공! 크기가 축소되었습니다: {{size}}MB",
     "optimize_3d_error": "3D 최적화 실패: {{error}}. 원본 파일이 사용됩니다.",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
+    "gallery_upload_success": "새 미디어가 추가되었습니다.",
+    "gallery_delete_success": "사진이 삭제되었습니다.",
+    "draft_restore_success": "미완성 데이터 복원",
     "public_stock_error": "재고가 0일 때 공개로 설정할 수 없습니다.",
     "invalid_quantity": "수량은 1에서 100 사이여야 합니다",
     "restore_failed": "❌ 복구 실패: {{errorMsg}}"
@@ -242,6 +248,11 @@
       "show_less": "간략히 보기",
       "read_more": "더 읽기",
       "in_stock": "{{count}}개의 상품이 준비되어 있습니다",
+      "color": "색상:",
+      "more_colors": "색상 더 보기",
+      "addons": "추가 액세서리 (선택):",
+      "select_color_first": "장바구니에 추가하기 전에 색상을 선택해주세요",
+      "out_of_stock_short": "품절",
       "sold_out": "품절되었습니다",
       "sku": "SKU 코드",
       "back": "돌아가기",
@@ -264,6 +275,40 @@
       "sendPushDesc": "릴리스 시 시스템이 모든 사용자에게 알림을 자동으로 보냅니다",
       "ongoing": "세일 중",
       "upcoming": "다가오는 세일"
+    },
+    "colors": {
+      "title": "색상 / 변형",
+      "subtitle": "색상, 대표 이미지 및 별도 재고 설정",
+      "add_color": "색상 추가",
+      "color_name": "색상 이름",
+      "color_name_placeholder": "예: 블루 화이트 스트라이프",
+      "stock": "재고",
+      "stock_placeholder": "수량...",
+      "image": "대표 이미지",
+      "change_image": "이미지 변경",
+      "choose_image": "이미지 선택",
+      "no_colors": "이 제품에는 아직 색상 변형이 없습니다.",
+      "remove_color": "이 색상 제거",
+      "picker_title": "색상용 이미지 선택",
+      "picker_empty": "갤러리에 업로드된 이미지가 없습니다.",
+      "picker_empty_desc": "먼저 왼쪽 열에서 이미지를 업로드하세요.",
+      "price_override": "개별 가격 (선택)",
+      "price_override_placeholder": "예: 350000"
+    },
+    "addons": {
+      "title": "추가 상품 / 액세서리",
+      "subtitle": "선물 상자, 축하 카드...",
+      "add_btn": "추가 상품 추가",
+      "remove_btn": "추가 상품 삭제",
+      "name": "추가 상품 이름",
+      "name_placeholder": "예: 프리미엄 선물 상자",
+      "price": "가격 (+)",
+      "price_placeholder": "예: 50000",
+      "image": "이미지",
+      "change_image": "이미지 변경",
+      "choose_image": "이미지 선택",
+      "empty": "이 제품에는 추가 상품이 없습니다.",
+      "picker_title": "추가 상품 이미지 선택"
     }
   },
   "products": {

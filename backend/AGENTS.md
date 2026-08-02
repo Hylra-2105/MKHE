@@ -392,3 +392,19 @@ npm start      # Start with node (production)
 
 4. Add any new env vars to .env + document in AGENTS.md
 ```
+
+---
+
+## 🚀 Redis & Caching
+
+Dự án này sử dụng **Redis** qua Docker làm hệ thống lưu trữ in-memory cache chính.
+Client: `ioredis` (được cấu hình tại `src/config/redis.js`).
+
+**Quy tắc sử dụng Redis:**
+1. **Tuyệt đối KHÔNG LƯU** các token tạm thời (OTP, Refresh Token, Reset Password Token) vào MongoDB. Tất cả phải được lưu trên Redis bằng các key prefix rõ ràng:
+   - `otp:VERIFY_EMAIL:<email>`
+   - `otp:RESET_PASSWORD:<email>`
+   - `refresh_token:<userId>`
+   - `reset_token:<email>`
+2. **Luôn set TTL (Time-To-Live)** khi `set` dữ liệu vào Redis để tránh tràn RAM (dùng lệnh `redisClient.setex(key, seconds, value)`).
+3. Sử dụng Redis cho **Rate Limiting** (đã cấu hình sẵn trong `src/middlewares/rateLimiter.js` dùng thư viện `rate-limit-redis`).

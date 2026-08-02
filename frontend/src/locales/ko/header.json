@@ -19,7 +19,18 @@
     "manage_vouchers": "바우처 관리",
     "manage_orders": "주문 관리",
     "manage_blogs": "블로그 관리",
-    "manage_reviews": "리뷰 관리"
+    "manage_reviews": "리뷰 관리",
+    "manage_contacts": "연락처 관리",
+    "b2b_dashboard": "B2B 대시보드",
+    "manage_returns": "교환/반품 관리",
+    "section_account": "계정 관리",
+    "section_activities": "거래 및 활동",
+    "section_core": "작동하다",
+    "section_customers": "고객 및 제안",
+    "section_content": "콘텐츠 및 지원",
+    "section_b2b": "기업",
+    "b2b_orders": "B2B 주문",
+    "back_to_site": "홈페이지로 돌아가기"
   },
   "guest_menu": {
     "login": "로그인"
@@ -32,7 +43,8 @@
     "theme": "테마",
     "light": "라이트",
     "dark": "다크",
-    "back": "뒤로"
+    "back": "뒤로",
+    "effects": "효과"
   },
   "languages": {
     "vi": "베트남어",
@@ -56,7 +68,16 @@
       "admin_order_new": "새로운 주문",
       "admin_order_paid": "결제 완료 주문",
       "admin_order_completed": "주문 완료",
-      "admin_stock_alert": "재고 부족 경고"
+      "admin_stock_alert": "재고 부족 경고",
+      "admin_contact_new": "새로운 연락처 요청",
+      "USER_RETURN_CREATED": "교환/반품 요청 성공",
+      "USER_RETURN_UPDATED": "교환/반품 업데이트",
+      "USER_RETURN_UPDATED_APPROVED": "교환/반품이 허용됩니다",
+      "USER_RETURN_UPDATED_REJECTED": "교환/반품이 거부되었습니다",
+      "ADMIN_RETURN_NEW": "신규 교환/반품 요청",
+      "return_updated_toast": "주문 {{orderCode}} 반품 업데이트: {{status}}",
+      "return_status_approved": "승인됨",
+      "return_status_rejected": "거절됨"
     },
     "message": {
       "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
@@ -72,7 +93,13 @@
       "admin_order_new": "새로운 주문 #{{orderCode}} 이(가) 성공적으로 생성되었습니다 (COD).",
       "admin_order_paid": "주문 #{{orderCode}} 이(가) 성공적으로 결제되었습니다 (온라인).",
       "admin_order_completed": "고객이 주문 #{{orderCode}} 의 수령 및 결제를 확인했습니다.",
-      "admin_stock_alert": "제품 {{productName}} 의 재고가 부족합니다 ({{currentStock}} 개 남음)."
+      "admin_stock_alert": "제품 {{productName}} 의 재고가 부족합니다 ({{currentStock}} 개 남음).",
+      "admin_contact_new": "고객 {{name}}님이 요청을 보냈습니다: {{interest}}",
+      "USER_RETURN_CREATED": "{{orderCode}} 주문에 대한 반품 요청이 제출되었으며 보류 중입니다.",
+      "USER_RETURN_UPDATED": "{{orderCode}} 주문에 대한 반품 요청이 업데이트되었습니다.",
+      "USER_RETURN_UPDATED_APPROVED": "{{orderCode}} 주문에 대한 반품 요청이 승인되었습니다.",
+      "USER_RETURN_UPDATED_REJECTED": "{{orderCode}} 주문에 대한 반품 요청이 거부되었습니다.",
+      "ADMIN_RETURN_NEW": "고객이 방금 {{orderCode}} 주문에 대한 교환/반품 요청을 보냈습니다."
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",
@@ -86,6 +113,7 @@
     "recent": "이전",
     "load_more": "이전 알림 보기",
     "deleted_success": "알림이 삭제되었습니다",
-    "undo": "실행 취소"
+    "undo": "실행 취소",
+    "tab_system_unread": "시스템 (읽지 않음)"
   }
 }

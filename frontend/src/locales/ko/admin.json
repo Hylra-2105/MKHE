@@ -69,7 +69,7 @@
   "errors": {
     "FORBIDDEN_ACCESS": "이 기능에 액세스할 수 있는 권한이 없습니다!",
     "fetch_failed": "사용자 목록을 가져오는 중 오류가 발생했습니다!",
-    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
+    "error_3d_format": "3D 모델 형식(.glb, .gltf)만 허용됩니다."
   },
   "table": {
     "avatar": "화신",
@@ -83,14 +83,22 @@
     "loading": "데이터 로드 중...",
     "no_user": "일치하는 사용자가 없습니다.",
     "view": "보다",
-    "block": "차단하다"
+    "block": "차단하다",
+    "status_pending": "활성화를 기다리세요"
   },
   "filter": {
     "placeholder": "이름이나 이메일로 검색하세요...",
     "search": "찾다",
     "all_status": "모든 상태",
     "active": "활동적인",
-    "blocked": "차단됨"
+    "blocked": "차단됨",
+    "pending": "활성화 대기 중",
+    "status": {
+      "active": "활동적인",
+      "inactive": "비활성",
+      "hidden": "숨겨진"
+    },
+    "manage_menu": "메뉴 관리"
   },
   "roles": {
     "all": "모든 역할",
@@ -122,7 +130,8 @@
     "unlock_success": "사용자 계정이 잠금 해제되어 성공적으로 재활성화되었습니다!",
     "confirm_unlock_title": "계정을 잠금 해제하시겠습니까?",
     "confirm_unlock_desc": "이 계정을 다시 활성화하시겠습니까? 사용자는 다시 정상적으로 로그인할 수 있습니다.",
-    "delete_success": "계정이 삭제되었습니다!"
+    "delete_success": "계정이 삭제되었습니다!",
+    "no_requests": "Không có yêu cầu liên hệ nào"
   },
   "reasons": {
     "spam_comments": "스팸성 댓글 / 가짜 제품 리뷰",
@@ -241,9 +250,9 @@
     "scan_at_counter": "카운터에서 스캔",
     "use_online": "온라인 사용",
     "min_order_card": "최소 주문 {{value}} VND",
-    "percentage": "Phần trăm (%)",
-    "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển",
+    "percentage": "퍼센트(%)",
+    "fixed_amount": "금액(VND)",
+    "free_ship": "무료 배송",
     "errors": {
       "MISSING_REQUIRED_FIELDS": "필수 항목을 모두 입력해주세요",
       "INVALID_PERCENTAGE": "유효하지 않은 비율",
@@ -389,5 +398,80 @@
       "sale_start_past": "시작 시간은 과거일 수 없습니다"
     },
     "no_linked_story": "-- 연결된 스토리 없음 --"
+  },
+  "contacts": {
+    "title": "연락처 및 B2B 관리",
+    "subtitle": "지원 요청 및 B2B 계정 등록 목록",
+    "status_all": "모든 상태",
+    "status_pending": "대기 중",
+    "status_contacted": "연락됨",
+    "status_resolved": "해결됨",
+    "interest_all": "모든 관심사",
+    "search_placeholder": "이름이나 이메일로 검색...",
+    "customer": "고객",
+    "contact": "연락처",
+    "interest": "관심사",
+    "date": "제출일",
+    "status": "상태",
+    "actions": "작업",
+    "delete": "삭제",
+    "detail_title": "연락처 세부 정보",
+    "name": "고객 이름",
+    "email": "이메일",
+    "phone": "전화번호",
+    "company": "회사 이름",
+    "tax_code": "사업자 등록번호",
+    "none": "없음",
+    "update_status": "상태 업데이트",
+    "content": "메시지 내용",
+    "no_content": "내용 없음",
+    "delete_request": "요청 삭제",
+    "create_account": "계정 생성",
+    "cancel": "취소",
+    "saving": "저장 중...",
+    "save": "변경 사항 저장",
+    "loading": "데이터 로드 중...",
+    "confirm_delete_title": "연락처를 삭제하시겠습니까?",
+    "confirm_delete_desc": "이 연락처를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+    "delete_success": "연락처가 성공적으로 삭제되었습니다!",
+    "no_requests": "연락처 요청 없음",
+    "view_detail": "세부 정보 보기",
+    "interest_b2b": "기업 (B2B 포털)",
+    "interest_gifts": "기업 선물",
+    "interest_franchise": "프랜차이즈 및 대리점",
+    "interest_other": "기타",
+    "delete_success_msg": "연락처 요청이 성공적으로 삭제되었습니다",
+    "interest_support": "주문 및 제품 지원",
+    "interest_design": "공간 디자인 컨설팅",
+    "interest_boardgame": "보드 게임 문의"
+  },
+  "returns": {
+    "title": "교환/반품 요청 관리",
+    "desc": "고객의 제품 반품 요청 처리",
+    "search_placeholder": "주문 코드, 이메일로 검색...",
+    "all_status": "모든 상태",
+    "status": {
+      "PENDING": "처리를 기다리는 중",
+      "APPROVED": "승인됨",
+      "REJECTED": "거절하다"
+    },
+    "fetch_error": "교환/반품 목록을 로드하는 중에 오류가 발생했습니다.",
+    "no_results": "반품 요청을 찾을 수 없습니다.",
+    "order_code": "주문코드",
+    "customer": "고객",
+    "reason_label": "이유",
+    "date": "요청 날짜",
+    "detail_title": "교환/반품 신청 내용",
+    "items_title": "필요한 제품",
+    "return_quantity": "수량",
+    "proof_images": "사진/영상 증명",
+    "admin_note": "메모/거부 사유(고객에게 전송)",
+    "admin_note_placeholder": "고객에게 보내는 이유나 메시지를 입력하세요.",
+    "update_success": "상태가 성공적으로 업데이트되었습니다!",
+    "error_empty_note": "메모(거절 이유 또는 메시지)를 입력해 주세요.",
+    "approve_btn": "요청 찾아보기",
+    "reject_btn": "거절하다",
+    "close_btn": "닫다",
+    "new_return_toast": "새로운 반품 요청이 있습니다!"
   }
 }

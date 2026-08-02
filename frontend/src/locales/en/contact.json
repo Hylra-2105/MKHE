@@ -1,0 +1,46 @@
+{
+  "title": "Connect & Collaborate",
+  "subtitle": "Where ideas soar and heritage values are continued. Let's build spaces and artworks with MKHE that carry the indigenous mark.",
+  "formTitle": "Send Us a Request",
+  "formSubtitle": "Whether you are an individual customer or a business looking for cooperation opportunities, our team of experts is always ready to listen and accompany you.",
+  "infoTitle": "Contact Information",
+  "address": "Address",
+  "phoneTitle": "Phone",
+  "emailTitle": "E-mail",
+  "fields": {
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "email": "E-mail",
+    "company": "Company Name / Tax ID",
+    "interest": "-- Select Interest --",
+    "message": "Detailed Message",
+    "companyName": "Company Name",
+    "taxCode": "Tax Code"
+  },
+  "interests": {
+    "support": "Order & Product Support (For Individual Customers)",
+    "b2b": "Request Enterprise Account (B2B Portal)",
+    "vip": "VIP Corporate Gift Solutions Consulting",
+    "design": "Space & Uniform Design Consulting (Resort/Hotel)",
+    "boardgame": "Explore / Collaborate on \"Heritage Intersection\" Board Game",
+    "other": "Other Requests / Feedback"
+  },
+  "submit": "Send Request",
+  "submitting": "Sending...",
+  "successMessage": "Thank you! Your request has been sent to us.",
+  "errorMessage": "An error occurred. Please try again later.",
+  "companyRequired": "Please enter Company Name / Tax ID for Enterprise Account request",
+  "errors": {
+    "emptyName": "Please enter your full name.",
+    "emptyPhone": "Please enter your phone number.",
+    "emptyEmail": "Please enter your email address.",
+    "invalidEmail": "Invalid email format.",
+    "emptyMessage": "Please enter a detailed message.",
+    "emptyInterest": "Please select an interest.",
+    "invalidPhone": "Invalid phone number (at least 10 digits).",
+    "emptyCompanyName": "Please enter your Company Name.",
+    "emptyTaxCode": "Please enter your Tax Code.",
+    "invalidTaxCode": "Invalid Tax Code (10 or 13 digits)."
+  },
+  "tag": "Mekong Culture"
+}

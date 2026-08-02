@@ -1,0 +1,46 @@
+{
+  "title": "연락 및 협력",
+  "subtitle": "아이디어가 날아오르고 유산의 가치가 이어지는 곳. MKHE와 함께 토착의 흔적을 담은 공간과 예술 작품을 만들어 보세요.",
+  "formTitle": "요청 보내기",
+  "formSubtitle": "개인 고객이든 협력 기회를 찾는 기업이든, 우리 전문가 팀은 항상 귀하의 의견을 경청하고 동행할 준비가 되어 있습니다.",
+  "infoTitle": "연락처 정보",
+  "address": "주소",
+  "phoneTitle": "전화",
+  "emailTitle": "이메일",
+  "fields": {
+    "name": "성명",
+    "phone": "전화번호",
+    "email": "이메일",
+    "company": "회사명 / 사업자등록번호",
+    "interest": "-- 관심 분야 선택 --",
+    "message": "상세 메시지",
+    "companyName": "회사명",
+    "taxCode": "사업자 등록번호"
+  },
+  "interests": {
+    "support": "주문 및 제품 지원 (개인 고객용)",
+    "b2b": "기업 계정 요청 (B2B 포털)",
+    "vip": "VIP 기업 선물 솔루션 컨설팅",
+    "design": "공간 및 유니폼 디자인 컨설팅 (리조트/호텔)",
+    "boardgame": "\"유산 교차로\" 보드게임 탐구 / 협력",
+    "other": "기타 요청 / 의견"
+  },
+  "submit": "요청 보내기",
+  "submitting": "전송 중...",
+  "successMessage": "감사합니다! 요청이 성공적으로 전송되었습니다.",
+  "errorMessage": "오류가 발생했습니다. 나중에 다시 시도해 주세요.",
+  "companyRequired": "기업 계정 요청을 위해 회사명 / 사업자등록번호를 입력해 주세요.",
+  "errors": {
+    "emptyName": "성명을 입력해 주세요.",
+    "emptyPhone": "전화번호를 입력해 주세요.",
+    "emptyEmail": "이메일 주소를 입력해 주세요.",
+    "invalidEmail": "유효하지 않은 이메일 형식입니다.",
+    "emptyMessage": "상세 메시지를 입력해 주세요.",
+    "emptyInterest": "관심 분야를 선택해 주세요.",
+    "invalidPhone": "잘못된 전화번호입니다 (10자리 이상).",
+    "emptyCompanyName": "회사명을 입력해주세요.",
+    "emptyTaxCode": "사업자 등록번호를 입력해주세요.",
+    "invalidTaxCode": "잘못된 사업자 등록번호입니다 (10자리 또는 13자리)."
+  },
+  "tag": "메콩강 문화"
+}

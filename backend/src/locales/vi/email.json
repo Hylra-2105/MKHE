@@ -67,5 +67,24 @@
     "greeting": "Chào mừng Quý đối tác,",
     "instruction": "Tài khoản Doanh nghiệp của bạn trên hệ thống MKHE đã được tạo thành công. Vui lòng click vào nút bên dưới để thiết lập mật khẩu và kích hoạt tài khoản.",
     "buttonText": "Truy cập Cổng Doanh Nghiệp MKHE"
+  },
+  "contactConfirmation": {
+    "subject": "Xác nhận yêu cầu liên hệ tới MKHE",
+    "greeting": "Xin chào {name},",
+    "instruction": "Chúng tôi đã nhận được yêu cầu liên hệ của bạn. Đội ngũ của chúng tôi sẽ xem xét và phản hồi trong thời gian sớm nhất.",
+    "footer": "Gửi lúc: {time}\nCảm ơn bạn đã quan tâm đến MKHE Heritage."
+  },
+  "adminContactNotification": {
+    "subject": "Yêu cầu liên hệ mới từ {name}",
+    "greeting": "Thông báo liên hệ mới",
+    "instruction": "Có một yêu cầu liên hệ mới trên hệ thống:",
+    "details": "Chi tiết liên hệ",
+    "name": "Họ tên:",
+    "email": "Email:",
+    "phone": "Số điện thoại:",
+    "company": "Công ty / MST:",
+    "interest": "Nhu cầu:",
+    "message": "Nội dung:",
+    "footer": "Gửi lúc: {time}\nVui lòng liên hệ với khách hàng sớm nhất có thể."
   }
 }

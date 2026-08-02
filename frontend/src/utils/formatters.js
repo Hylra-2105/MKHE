@@ -9,6 +9,14 @@ export const formatNumber = (val) => {
   return number.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
+export const formatCurrency = (amount) => {
+  if (amount === undefined || amount === null) return "";
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
 /**
  * Chuyển đổi ngược lại từ chuỗi "100.000" về số 100000
  */
@@ -30,4 +38,22 @@ export const getImageUrl = (url) => {
   const BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api").replace("/api", "");
   if (url.startsWith("/")) return `${BASE_URL}${url}`;
   return `${BASE_URL}/${url}`;
+};
+
+/**
+ * Chuẩn hóa URL YouTube thành định dạng embed chuẩn
+ */
+export const normalizeYoutubeUrl = (url) => {
+  if (!url) return null;
+  const cleanUrl = url.trim();
+  let finalUrl = cleanUrl;
+  const ytRegex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([a-zA-Z0-9_-]{11})/i;
+  const match = cleanUrl.match(ytRegex) || cleanUrl.match(/[?&]v=([a-zA-Z0-9_-]{11})/i);
+  
+  if (match && match[1]) {
+      finalUrl = `https://www.youtube.com/embed/${match[1]}`;
+  } else if (/^[a-zA-Z0-9_-]{11}$/.test(cleanUrl)) {
+      finalUrl = `https://www.youtube.com/embed/${cleanUrl}`;
+  }
+  return finalUrl;
 };

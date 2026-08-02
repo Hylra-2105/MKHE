@@ -69,12 +69,12 @@
   "errors": {
     "FORBIDDEN_ACCESS": "You do not have permission to access this feature!",
     "fetch_failed": "Error occurred while fetching user list!",
-    "error_3d_format": "Chỉ chấp nhận định dạng mô hình 3D (.glb, .gltf)"
+    "error_3d_format": "Only accept 3D model formats (.glb, .gltf)"
   },
   "table": {
     "avatar": "Avatar",
     "name": "Full Name",
-    "email": "Email",
+    "email": "E-mail",
     "role": "Role",
     "status": "Status",
     "status_active": "Active",
@@ -83,14 +83,22 @@
     "loading": "Loading data...",
     "no_user": "No matching user found.",
     "view": "View",
-    "block": "Block"
+    "block": "Block",
+    "status_pending": "Wait for activation"
   },
   "filter": {
     "placeholder": "Search by name or email...",
     "search": "Search",
     "all_status": "All Statuses",
     "active": "Active",
-    "blocked": "Blocked"
+    "blocked": "Blocked",
+    "pending": "Pending Activation",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "hidden": "Hidden"
+    },
+    "manage_menu": "Menu Management"
   },
   "roles": {
     "all": "All Roles",
@@ -122,7 +130,8 @@
     "unlock_success": "User account has been unlocked and reactivated successfully!",
     "confirm_unlock_title": "Unlock Account?",
     "confirm_unlock_desc": "Are you sure you want to reactivate this account? The user will be able to sign in normally again.",
-    "delete_success": "Account deleted successfully!"
+    "delete_success": "Account deleted successfully!",
+    "no_requests": "Không có yêu cầu liên hệ nào"
   },
   "reasons": {
     "spam_comments": "Spamming comments / Fake product reviews",
@@ -241,9 +250,9 @@
     "scan_at_counter": "Scan at counter",
     "use_online": "Use Online",
     "min_order_card": "Min order {{value}} VND",
-    "percentage": "Phần trăm (%)",
-    "fixed_amount": "Số tiền (VNĐ)",
-    "free_ship": "Miễn phí vận chuyển",
+    "percentage": "Percent (%)",
+    "fixed_amount": "Amount (VND)",
+    "free_ship": "Free shipping",
     "errors": {
       "MISSING_REQUIRED_FIELDS": "Please fill all required fields",
       "INVALID_PERCENTAGE": "Invalid percentage",
@@ -389,5 +398,80 @@
       "sale_start_past": "Start time cannot be in the past"
     },
     "no_linked_story": "-- No linked story --"
+  },
+  "contacts": {
+    "title": "Contact & B2B Management",
+    "subtitle": "List of support requests and B2B account registrations",
+    "status_all": "All Status",
+    "status_pending": "Pending",
+    "status_contacted": "Contacted",
+    "status_resolved": "Resolved",
+    "interest_all": "All Interests",
+    "search_placeholder": "Search by name or email...",
+    "customer": "CUSTOMER",
+    "contact": "CONTACT",
+    "interest": "INTEREST",
+    "date": "DATE",
+    "status": "STATUS",
+    "actions": "ACTIONS",
+    "delete": "Delete",
+    "detail_title": "Contact Details",
+    "name": "Customer Name",
+    "email": "E-mail",
+    "phone": "Phone Number",
+    "company": "Company Name",
+    "tax_code": "Tax Code",
+    "none": "None",
+    "update_status": "Update Status",
+    "content": "Message Content",
+    "no_content": "No content provided",
+    "delete_request": "Delete Request",
+    "create_account": "Create Account",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save Changes",
+    "loading": "Loading data...",
+    "confirm_delete_title": "Delete Contact?",
+    "confirm_delete_desc": "Are you sure you want to delete this contact? This action cannot be undone.",
+    "delete_success": "Contact deleted successfully!",
+    "no_requests": "No contact requests",
+    "view_detail": "View Details",
+    "interest_b2b": "Corporate (B2B Portal)",
+    "interest_gifts": "Corporate Gifts",
+    "interest_franchise": "Franchise & Agency",
+    "interest_other": "Other",
+    "delete_success_msg": "Contact request deleted successfully",
+    "interest_support": "Order & Product Support",
+    "interest_design": "Space Design Consulting",
+    "interest_boardgame": "Board Game Inquiry"
+  },
+  "returns": {
+    "title": "Manage Exchange/Return Requests",
+    "desc": "Handle product return requests from customers",
+    "search_placeholder": "Search by order code, email...",
+    "all_status": "All status",
+    "status": {
+      "PENDING": "Waiting for processing",
+      "APPROVED": "Approved",
+      "REJECTED": "Refuse"
+    },
+    "fetch_error": "Error loading exchange/return list",
+    "no_results": "No return requests found",
+    "order_code": "Order code",
+    "customer": "Client",
+    "reason_label": "Reason",
+    "date": "Request date",
+    "detail_title": "Details of Exchange/Return Request",
+    "items_title": "Product required",
+    "return_quantity": "Quantity",
+    "proof_images": "Photo/Video proof",
+    "admin_note": "Notes/Reason for rejection (Sent to customers)",
+    "admin_note_placeholder": "Enter a reason or message for the customer...",
+    "update_success": "Status updated successfully!",
+    "error_empty_note": "Please enter a note (reason for refusal or message).",
+    "approve_btn": "Browse requests",
+    "reject_btn": "Refuse",
+    "close_btn": "Close",
+    "new_return_toast": "There is a new return request!"
   }
 }

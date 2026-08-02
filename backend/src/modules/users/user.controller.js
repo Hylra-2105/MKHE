@@ -1,7 +1,9 @@
 import User from "./user.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
+import { getIO } from "../../config/socket.js";
 import { createVietnameseRegex, isValidEmail } from "../../utils/helpers.js";
 import { sendBlockAccountEmail } from "../../utils/email.js";
+import redisClient from "../../config/redis.js";
 
 // admin lấy danh sách users
 export const getAllUsers = async (req, res) => {
@@ -26,8 +28,11 @@ export const getAllUsers = async (req, res) => {
     if (roleFilter) query.role = roleFilter;
     if (statusFilter === "active") {
       query.isBlocked = { $ne: true };
+      query.isVerified = { $ne: false };
     } else if (statusFilter === "blocked") {
       query.isBlocked = true;
+    } else if (statusFilter === "pending") {
+      query.isVerified = false;
     }
 
     const totalUsers = await User.countDocuments(query);
@@ -40,8 +45,7 @@ export const getAllUsers = async (req, res) => {
 
     const totalPages = Math.ceil(totalUsers / limit);
 
-    return res.status(200).json({
-      success: true,
+    return successResponse(res, 200, "GET_ALL_USERS_SUCCESS", {
       pagination: {
         totalItems: totalUsers,
         totalPages,
@@ -69,11 +73,6 @@ export const updateUser = async (req, res) => {
       updateData.isBlocked = isBlocked;
       // Chỉ lưu lý do nếu đang thực hiện KHÓA (isBlocked = true)
       updateData.blockReason = isBlocked ? blockReason : "";
-      
-      // Nếu khóa user, lập tức xóa hết refresh token để ép đăng xuất
-      if (isBlocked === true) {
-        updateData.refreshTokens = [];
-      }
     }
 
     // các trường không được update
@@ -105,11 +104,19 @@ export const updateUser = async (req, res) => {
       );
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "USER_UPDATE_SUCCESS",
-      data: updatedUser,
-    });
+    try {
+      const io = getIO();
+      if (io) {
+        io.emit("user_updated");
+        if (isBlocked === true) {
+          io.to(`user_${id}`).emit("force_logout", { reason: blockReason });
+        }
+      }
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
+
+    return successResponse(res, 200, "USER_UPDATE_SUCCESS", updatedUser);
   } catch (error) {
     console.error("Update User Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -124,10 +131,14 @@ export const deleteUser = async (req, res) => {
 
     if (!deletedUser) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    return res.status(200).json({
-      success: true,
-      message: "USER_DELETE_SUCCESS",
-    });
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
+
+    return successResponse(res, 200, "USER_DELETE_SUCCESS");
   } catch (error) {
     console.error("Delete User Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -183,9 +194,6 @@ export const updateMyProfile = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.resetPasswordToken;
-    delete userData.resetPasswordExpires;
-    delete userData.refreshToken;
 
     // Trả về đúng chuẩn Helper
     return successResponse(res, 200, "PROFILE_UPDATED_SUCCESS", userData);
@@ -215,9 +223,6 @@ export const uploadAvatar = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.resetPasswordToken;
-    delete userData.resetPasswordExpires;
-    delete userData.refreshToken;
 
     return successResponse(res, 200, "AVATAR_UPLOAD_SUCCESS", userData);
   } catch (error) {
@@ -234,34 +239,26 @@ export const createUser = async (req, res) => {
 
     // 2. Kiểm tra các trường bắt buộc
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "MISSING_FIELDS" });
+      return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     // Chuẩn hóa dữ liệu
     name = name.trim();
 
-    // Kiểm tra độ dài mật khẩu
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ success: false, message: "PASSWORD_TOO_SHORT" });
+    // Kiểm tra độ dài và độ mạnh mật khẩu
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password)) {
+      return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
     }
 
     // Kiểm tra định dạng email hợp lệ
     if (!isValidEmail(email)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "INVALID_EMAIL_FORMAT" });
+      return errorResponse(res, 400, "INVALID_EMAIL_FORMAT");
     }
 
     // Kiểm tra email đã tồn tại chưa
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "EMAIL_ALREADY_EXISTS" });
+      return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
     // Tạo tài khoản mới
@@ -280,14 +277,17 @@ export const createUser = async (req, res) => {
     const userData = newUser.toObject();
     delete userData.password;
 
-    return res.status(201).json({
-      success: true,
-      message: "USER_CREATED_SUCCESS",
-      user: userData,
-    });
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
+
+    return successResponse(res, 201, "USER_CREATED_SUCCESS", userData);
   } catch (error) {
     console.error("Error in [ADMIN] createUser:", error);
-    return res.status(500).json({ success: false, message: "SERVER_ERROR" });
+    return errorResponse(res, 500, "SERVER_ERROR");
   }
 };
 
@@ -328,7 +328,6 @@ export const addAddress = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.refreshToken;
 
     return successResponse(res, 201, "ADDRESS_ADDED_SUCCESS", userData);
   } catch (error) {
@@ -366,7 +365,6 @@ export const setDefaultAddress = async (req, res) => {
     
     const userData = user.toObject();
     delete userData.password;
-    delete userData.refreshToken;
 
     return successResponse(res, 200, "SET_DEFAULT_ADDRESS_SUCCESS", userData);
   } catch (error) {
@@ -411,7 +409,6 @@ export const updateAddress = async (req, res) => {
     
     const userData = user.toObject();
     delete userData.password;
-    delete userData.refreshToken;
 
     return successResponse(res, 200, "ADDRESS_UPDATED_SUCCESS", userData);
   } catch (error) {
@@ -447,7 +444,6 @@ export const createB2BAccount = async (req, res) => {
 
     // Generate activation token
     const activationToken = crypto.randomBytes(20).toString("hex");
-    const activationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
 
     // Generate random dummy password, user will reset it anyway
     const dummyPassword = crypto.randomBytes(8).toString("hex");
@@ -459,13 +455,13 @@ export const createB2BAccount = async (req, res) => {
       role: "Enterprise",
       companyName,
       taxCode,
-      isVerified: true,
+      isVerified: false,
       provider: "local",
-      resetPasswordToken: activationToken,
-      resetPasswordExpires: activationExpires
     });
 
     await newUser.save();
+
+    await redisClient.setex(`activate_b2b_token:${activationToken}`, 86400, email);
 
     // Send email
     const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
@@ -473,14 +469,15 @@ export const createB2BAccount = async (req, res) => {
 
     const userData = newUser.toObject();
     delete userData.password;
-    delete userData.resetPasswordToken;
-    delete userData.resetPasswordExpires;
 
-    return res.status(201).json({
-      success: true,
-      message: "B2B_ACCOUNT_CREATED",
-      user: userData,
-    });
+    try {
+      const io = getIO();
+      if (io) io.emit("user_updated");
+    } catch (socketErr) {
+      console.error("[Socket] Failed to emit user_updated:", socketErr);
+    }
+
+    return successResponse(res, 201, "B2B_ACCOUNT_CREATED", userData);
   } catch (error) {
     console.error("Error in createB2BAccount:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

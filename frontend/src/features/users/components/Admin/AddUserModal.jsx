@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
+import {  useState  } from "react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { X, UserPlus, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { X, UserPlus, Eye, EyeOff } from "lucide-react";
 import Button from "@/components/ui/Button";
+import InputField from "@/components/ui/InputField";
 import Dropdown from "@/components/ui/Dropdown";
 import { userApi } from "@/api/userApi";
+import { getPasswordErrorKey } from "@/utils/validators";
 
-const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
+const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
   const { t } = useTranslation("admin");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -20,6 +23,28 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
     taxCode: "",
   });
   const [formErrors, setFormErrors] = useState({});
+
+  React.useEffect(() => {
+    if (isOpen && initialData) {
+      setFormData({
+        name: initialData.name || "",
+        email: initialData.email || "",
+        password: "",
+        role: initialData.role || "Customer",
+        companyName: initialData.companyName || initialData.company || "",
+        taxCode: initialData.taxCode || "",
+      });
+    } else if (isOpen) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "Customer",
+        companyName: "",
+        taxCode: "",
+      });
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -38,7 +63,10 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
     
     if (formData.role !== "Enterprise") {
       if (!formData.password) errors.password = t("users.errors.pass_required", "Vui lòng điền mật khẩu");
-      else if (formData.password.length < 6) errors.password = t("users.errors.pass_short", "Mật khẩu phải có ít nhất 6 ký tự.");
+      else {
+        const passError = getPasswordErrorKey(formData.password);
+        if (passError) errors.password = t(`common:${passError}`);
+      }
     } else {
       if (!formData.companyName) errors.companyName = t("users.errors.company_required", "Vui lòng điền tên công ty");
       if (!formData.taxCode) {
@@ -71,9 +99,13 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
       }
     } catch (error) {
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      toast.error(
-        t(`messages.${errorMsg}`, "Có lỗi xảy ra, vui lòng thử lại!"),
-      );
+      if (errorMsg === "EMAIL_ALREADY_EXISTS") {
+        setFormErrors({ email: t("messages.EMAIL_ALREADY_EXISTS", "Email này đã được đăng ký trên hệ thống!") });
+      } else {
+        toast.error(
+          t(`messages.${errorMsg}`, "Có lỗi xảy ra, vui lòng thử lại!"),
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -104,134 +136,91 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
         {/* BODY FORM */}
         <div className="p-8">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Tên */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                {t("users.fullname", "Họ và tên")}{" "}
-                <span className="ml-1 text-red-500">*</span>
-              </label>
-              <input
+            <div>
+              <InputField
                 type="text"
                 name="name"
+                label={t("users.fullname", "Họ và tên")}
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                 placeholder={t(
                   "users.fullname_placeholder",
                   "VD: Nguyễn Văn A",
                 )}
+                required
+                error={formErrors.name ? formErrors.name : null}
               />
-              {formErrors.name && (
-                <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                  <p className="text-xs font-medium">{formErrors.name}</p>
-                </div>
-              )}
             </div>
 
-            {/* Email */}
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                {t("users.email", "Địa chỉ Email")}{" "}
-                <span className="ml-1 text-red-500">*</span>
-              </label>
-              <input
+            <div>
+              <InputField
                 type="email"
                 name="email"
+                label={t("users.email", "Địa chỉ Email")}
                 value={formData.email}
                 onChange={handleChange}
-                className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.email ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                 placeholder={t("users.email_placeholder", "example@gmail.com")}
+                required
+                error={formErrors.email ? formErrors.email : null}
               />
-              {formErrors.email && (
-                <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                  <p className="text-xs font-medium">{formErrors.email}</p>
-                </div>
-              )}
             </div>
 
             {/* Mật khẩu (Ẩn nếu là Enterprise) */}
             {formData.role !== "Enterprise" && (
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                  {t("users.password", "Mật khẩu")}{" "}
-                  <span className="ml-1 text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPass ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm pr-12 ${formErrors.password ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
-                    // 🔥 ĐÃ FIX: Bọc i18n cho các dấu chấm mật khẩu (Tùy chọn, nhưng chuẩn thì cứ bọc)
-                    placeholder={t("users.password_placeholder", "••••••••")}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPass(!showPass)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-mkhe-text/50 hover:text-mkhe-primary cursor-pointer transition-colors flex items-center justify-center"
-                  >
-                    {showPass ? (
-                      <EyeOff className="w-5 h-5" />
-                    ) : (
-                      <Eye className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-                {formErrors.password && (
-                  <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                    <p className="text-xs font-medium">{formErrors.password}</p>
-                  </div>
-                )}
+              <div>
+                <InputField
+                  type={showPass ? "text" : "password"}
+                  name="password"
+                  label={t("users.password", "Mật khẩu")}
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder={t("users.password_placeholder", "••••••••")}
+                  required
+                  error={formErrors.password ? formErrors.password : null}
+                  rightElement={
+                    <button
+                      type="button"
+                      onClick={() => setShowPass(!showPass)}
+                      className="cursor-pointer flex items-center justify-center p-1"
+                    >
+                      {showPass ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  }
+                />
               </div>
             )}
             
             {/* Các trường cho Enterprise */}
             {formData.role === "Enterprise" && (
               <>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("users.companyName", "Tên Doanh Nghiệp")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <input
+                <div>
+                  <InputField
                     type="text"
                     name="companyName"
+                    label={t("users.companyName", "Tên Doanh Nghiệp")}
                     value={formData.companyName}
                     onChange={handleChange}
-                    className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.companyName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     placeholder={t("users.company_placeholder", "Nhập tên doanh nghiệp")}
+                    required
+                    error={formErrors.companyName ? formErrors.companyName : null}
                   />
-                  {formErrors.companyName && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                      <p className="text-xs font-medium">{formErrors.companyName}</p>
-                    </div>
-                  )}
                 </div>
                 
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("users.taxCode", "Mã Số Thuế")}{" "}
-                    <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <input
+                <div>
+                  <InputField
                     type="text"
                     name="taxCode"
+                    label={t("users.taxCode", "Mã Số Thuế")}
                     value={formData.taxCode}
                     onChange={handleChange}
-                    className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.taxCode ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`}
                     placeholder={t("users.taxCode_placeholder", "Nhập mã số thuế")}
+                    required
+                    error={formErrors.taxCode ? formErrors.taxCode : null}
                   />
-                  {formErrors.taxCode && (
-                    <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                      <p className="text-xs font-medium">{formErrors.taxCode}</p>
-                    </div>
-                  )}
                 </div>
               </>
             )}
@@ -240,7 +229,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh }) => {
             <div className="space-y-2 pt-1">
               <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
                 {t("users.role", "Vai trò (Phân quyền)")}{" "}
-                <span className="ml-1 text-red-500">*</span>
+                <span className="ml-1 text-rose-500">*</span>
               </label>
               <Dropdown
                 value={formData.role}

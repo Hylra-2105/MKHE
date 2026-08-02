@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import {  useState, useEffect, useRef  } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { productApi } from "@/api/productApi";
@@ -9,6 +9,7 @@ import { ChevronLeft, ShoppingCart, Info, Plus, Minus, ShieldCheck, MapPin, Laye
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, EffectFade } from "swiper/modules";
 import ReviewList from "@/features/reviews/components/ReviewList";
+import DOMPurify from "dompurify";
 
 // Swiper styles
 import "swiper/css";
@@ -31,12 +32,16 @@ export default function ShopDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [mainSwiper, setMainSwiper] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedAddOns, setSelectedAddOns] = useState([]);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   
   const [isStoryExpanded, setIsStoryExpanded] = useState(false);
   const [showExpandButton, setShowExpandButton] = useState(false);
+  const [isColorsExpanded, setIsColorsExpanded] = useState(false);
   
   const { socket } = useSocketStore();
   const storyRef = useRef(null);
@@ -76,6 +81,13 @@ export default function ShopDetailPage() {
       const handleProductUpdate = (updatedProduct) => {
         if (updatedProduct._id === product._id) {
           setProduct(updatedProduct);
+          setSelectedColor((prevSelected) => {
+            if (prevSelected) {
+              const updatedColor = updatedProduct.colors?.find(c => c.name === prevSelected.name);
+              return updatedColor || prevSelected;
+            }
+            return prevSelected;
+          });
         }
       };
       
@@ -88,14 +100,38 @@ export default function ShopDetailPage() {
 
   const handleAddToCart = () => {
     if (!product || product.stock === 0) return;
-    addToCart(product, quantity);
+    if (product.colors?.length > 0 && !selectedColor) {
+      // Need a toast here but simple validation is fine
+      return;
+    }
+    
+    // Check if selected color is out of stock
+    if (selectedColor && selectedColor.stock <= 0) return;
+    
+    addToCart(product, quantity, { 
+      color: selectedColor?.name, 
+      colorImage: selectedColor?.image,
+      addOns: selectedAddOns
+    });
   };
 
   const handleBuyNow = () => {
     if (!product || product.stock === 0) return;
+    if (product.colors?.length > 0 && !selectedColor) {
+      return;
+    }
+    
+    if (selectedColor && selectedColor.stock <= 0) return;
+
     navigate("/checkout", { 
       state: { 
-        buyNowItem: { product, quantity } 
+        buyNowItem: { 
+          product, 
+          quantity, 
+          color: selectedColor?.name, 
+          colorImage: selectedColor?.image,
+          addOns: selectedAddOns
+        } 
       } 
     });
   };
@@ -122,7 +158,7 @@ export default function ShopDetailPage() {
     );
   }
 
-  const isOutOfStock = product.stock === 0;
+  const isOutOfStock = product.stock === 0 || (selectedColor ? selectedColor.stock === 0 : false);
 
   const now = new Date();
   const isSaleValid = product && product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
@@ -152,10 +188,27 @@ export default function ShopDetailPage() {
     }
   }
 
-  const basePrice = isSaleValid ? product.salePrice : product.price;
-  const finalPrice = (isEnterprise && hasB2BTiers) 
-    ? basePrice * (1 - currentDiscountPercent / 100) 
-    : basePrice;
+  // Pricing Logic
+  let productBasePrice = product.price;
+  if (selectedColor && selectedColor.priceOverride) {
+    productBasePrice = selectedColor.priceOverride;
+  }
+
+  let finalBasePrice = productBasePrice;
+  if (isSaleValid) {
+    const salePercentage = (product.price - product.salePrice) / product.price;
+    finalBasePrice = Math.round(productBasePrice * (1 - salePercentage));
+  }
+
+  // Calculate Add-ons cost
+  let addOnsCost = 0;
+  if (selectedAddOns.length > 0) {
+    addOnsCost = selectedAddOns.reduce((sum, item) => sum + item.price, 0);
+  }
+
+  const finalPrice = ((isEnterprise && hasB2BTiers) 
+    ? finalBasePrice * (1 - currentDiscountPercent / 100) 
+    : finalBasePrice) + addOnsCost;
 
   return (
     <div className="min-h-screen bg-mkhe-bg font-sans pb-24">
@@ -185,6 +238,7 @@ export default function ShopDetailPage() {
                 </div>
               ) : (
                 <Swiper
+                  onSwiper={setMainSwiper}
                   modules={[Pagination, Thumbs, EffectFade]}
                 effect="fade"
                 pagination={{ clickable: true }}
@@ -217,17 +271,20 @@ export default function ShopDetailPage() {
 
             {/* Thumbnail Slider */}
             {product.images?.length > 1 && (
-              <div className="h-24">
+              <div className="mt-2">
                 <Swiper
                   onSwiper={setThumbsSwiper}
-                  spaceBetween={16}
-                  slidesPerView={5}
+                  spaceBetween={12}
+                  slidesPerView={4}
+                  breakpoints={{
+                    640: { slidesPerView: 5, spaceBetween: 16 }
+                  }}
                   watchSlidesProgress
-                  className="h-full"
+                  className="w-full"
                 >
                   {product.images?.map((img, index) => (
                     <SwiperSlide key={index} className="cursor-pointer opacity-50 [&.swiper-slide-thumb-active]:opacity-100 transition-opacity">
-                      <div className="w-full h-full rounded-xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10">
+                      <div className="w-full aspect-square rounded-xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10">
                         <img 
                           src={getImageUrl(img)} 
                           alt={`Thumbnail ${index + 1}`}
@@ -248,35 +305,35 @@ export default function ShopDetailPage() {
           {/* CỘT PHẢI: Thông tin Sản phẩm */}
           <div className="flex flex-col">
             <div className="mb-8">
-              <h1 className="text-3xl md:text-5xl font-sans text-mkhe-text font-light leading-tight mb-4">
+              <h1 className="text-3xl md:text-5xl font-sans text-mkhe-text font-light leading-tight mb-3">
                 {product.name?.normalize('NFC').replace(/Trắ[\s´́]*c/gi, 'Trắc')}
               </h1>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-end gap-3">
-                  <p className="text-2xl text-mkhe-primary font-medium tracking-wide">
-                    {formatNumber(finalPrice)} đ
-                  </p>
-                  {(isSaleValid || currentDiscountPercent > 0) && (
-                    <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
-                      {formatNumber(product.price)} đ
-                    </p>
-                  )}
-                  {isSaleValid && currentDiscountPercent === 0 && (
-                    <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
-                      -{Math.round((1 - product.salePrice / product.price) * 100)}%
-                    </div>
-                  )}
-                  {currentDiscountPercent > 0 && (
-                    <div className="bg-mkhe-primary text-white px-2 py-0.5 rounded-lg shadow-lg border border-mkhe-primary/50 text-sm font-bold mb-0.5">
-                      Sỉ -{currentDiscountPercent}%
-                    </div>
-                  )}
+              
+              {product.ratingCount > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 w-fit text-amber-600 rounded-full text-sm font-bold mb-4">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>{product.ratingAverage}</span>
+                  <span className="text-mkhe-text/40 font-normal ml-1">({product.ratingCount} {t("reviews:customer_reviews", { defaultValue: "Đánh giá" })})</span>
                 </div>
-                {product.ratingCount > 0 && (
-                  <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full text-sm font-bold">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span>{product.ratingAverage}</span>
-                    <span className="text-mkhe-text/40 font-normal ml-1">({product.ratingCount} {t("reviews:customer_reviews", { defaultValue: "Đánh giá" })})</span>
+              )}
+
+              <div className="flex flex-wrap items-end gap-3 mb-4">
+                <p className="text-2xl md:text-3xl text-mkhe-primary font-medium tracking-wide">
+                  {formatNumber(finalPrice)} đ
+                </p>
+                {(isSaleValid || currentDiscountPercent > 0) && (
+                  <p className="text-lg text-mkhe-text/50 line-through mb-0.5">
+                    {formatNumber(product.price)} đ
+                  </p>
+                )}
+                {isSaleValid && currentDiscountPercent === 0 && (
+                  <div className="bg-red-600/90 text-white px-2 py-0.5 rounded-lg shadow-lg border border-red-500/50 text-sm font-bold mb-0.5">
+                    -{Math.round((1 - product.salePrice / product.price) * 100)}%
+                  </div>
+                )}
+                {currentDiscountPercent > 0 && (
+                  <div className="bg-mkhe-primary text-white px-2 py-0.5 rounded-lg shadow-lg border border-mkhe-primary/50 text-sm font-bold mb-0.5">
+                    Sỉ -{currentDiscountPercent}%
                   </div>
                 )}
               </div>
@@ -366,6 +423,122 @@ export default function ShopDetailPage() {
               )}
             </div>
 
+            {/* Màu sắc */}
+            {product.colors && product.colors.length > 0 && (
+              <div className="mb-6">
+                <span className="text-mkhe-text/80 font-medium mb-3 block">{t("shop.detail.color", "Màu sắc:")}</span>
+                <div className="flex flex-wrap gap-3">
+                  {(() => {
+                    const visibleColors = isColorsExpanded ? product.colors : product.colors.slice(0, 5);
+                    const hasMore = product.colors.length > 5;
+                    return (
+                      <>
+                        {visibleColors.map((color, idx) => {
+                          const isSelected = selectedColor?.name === color.name;
+                          const isColorOutOfStock = color.stock <= 0;
+                          return (
+                            <button
+                              key={idx}
+                              onClick={() => {
+                                if (!isColorOutOfStock) {
+                                  setSelectedColor(color);
+                                  // Cập nhật quantity nếu lớn hơn stock của màu
+                                  if (quantity > color.stock) {
+                                    setQuantity(color.stock);
+                                  }
+                                  
+                                  // Đổi ảnh chính (nếu có swiper và color có ảnh)
+                                  if (color.image) {
+                                    const imgIndex = product.images?.findIndex(img => getImageUrl(img) === getImageUrl(color.image));
+                                    if (imgIndex !== -1 && mainSwiper && !mainSwiper.destroyed) {
+                                      mainSwiper.slideTo(imgIndex);
+                                    }
+                                  }
+                                }
+                              }}
+                              disabled={isColorOutOfStock}
+                              className={`relative flex flex-col items-center gap-1 p-1.5 sm:p-2 border rounded-xl transition-all ${
+                                isSelected ? "border-mkhe-primary bg-mkhe-primary/5 shadow-md" : "border-transparent hover:border-mkhe-border bg-mkhe-border/5"
+                              } ${isColorOutOfStock ? "opacity-50 cursor-not-allowed" : "cursor-pointer"} min-w-[50px] sm:min-w-[60px]`}
+                            >
+                              <div className="flex items-center gap-1 sm:gap-2">
+                                {color.image ? (
+                                  <img src={getImageUrl(color.image)} alt={color.name} className="w-5 h-5 sm:w-6 sm:h-6 rounded-full object-cover border border-mkhe-border/30 shadow-sm" />
+                                ) : (
+                                  <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-mkhe-border/30 shadow-sm bg-mkhe-border/10 flex items-center justify-center text-[10px] text-mkhe-text/40 font-bold uppercase">{color.name.charAt(0)}</span>
+                                )}
+                                <div className="flex flex-col">
+                                  <span className="text-xs sm:text-sm font-medium text-mkhe-text">{t(`colors.${color.name.toLowerCase().replace(/\s+/g, '_')}`, color.name)}</span>
+                                  {color.priceOverride > 0 && (
+                                    <span className="text-[10px] sm:text-xs text-mkhe-primary font-bold">
+                                      {formatNumber(
+                                        isSaleValid 
+                                          ? Math.round(color.priceOverride * (1 - ((product.price - product.salePrice) / product.price))) 
+                                          : color.priceOverride
+                                      )}đ
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              <span className="text-[9px] sm:text-[10px] text-mkhe-text/60">{isColorOutOfStock ? t("shop.detail.out_of_stock_short", "Hết") : `${color.stock} sẵn`}</span>
+                            </button>
+                          )
+                        })}
+                        {hasMore && (
+                          <button
+                            onClick={() => setIsColorsExpanded(!isColorsExpanded)}
+                            className="flex items-center justify-center px-4 py-2 border border-mkhe-primary/30 rounded-xl text-[11px] sm:text-xs font-medium text-mkhe-primary hover:bg-mkhe-primary/5 transition-colors cursor-pointer min-h-[50px] sm:min-h-[60px]"
+                          >
+                            {isColorsExpanded ? t("shop.detail.show_less", "Thu gọn") : `+${product.colors.length - 5} ${t("shop.detail.more_colors", "màu khác")}`}
+                          </button>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Phụ kiện mua kèm (Add-ons) */}
+            {product.addOns && product.addOns.length > 0 && (
+              <div className="mb-6 p-4 rounded-2xl bg-mkhe-border/5 border border-mkhe-border/10">
+                <span className="text-mkhe-text/80 font-medium mb-3 block">{t("shop.detail.addons", "Phụ kiện mua kèm (Tùy chọn):")}</span>
+                <div className="flex flex-col gap-3">
+                  {product.addOns.map((addOn, idx) => {
+                    const isSelected = selectedAddOns.some(a => a.name === addOn.name);
+                    return (
+                      <label 
+                        key={idx} 
+                        className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all cursor-pointer select-none ${
+                          isSelected ? "border-mkhe-primary bg-mkhe-primary/5" : "border-transparent hover:border-mkhe-border bg-mkhe-bg"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="checkbox" 
+                            className="w-5 h-5 rounded border-mkhe-border text-mkhe-primary focus:ring-mkhe-primary cursor-pointer accent-mkhe-primary"
+                            checked={isSelected}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedAddOns(prev => [...prev, addOn]);
+                              } else {
+                                setSelectedAddOns(prev => prev.filter(a => a.name !== addOn.name));
+                              }
+                            }}
+                          />
+                          {addOn.image && (
+                            <img src={getImageUrl(addOn.image)} alt={addOn.name} className="w-10 h-10 rounded-lg object-cover border border-mkhe-border/20" />
+                          )}
+                          <span className="font-medium text-sm text-mkhe-text">{t(`addons.${addOn.name.toLowerCase().replace(/\s+/g, '_')}`, addOn.name)}</span>
+                        </div>
+                        <span className="text-sm font-bold text-mkhe-primary">+{formatNumber(addOn.price)}đ</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Nút hành động */}
             <div className="space-y-6 mb-12">
               {/* Quantity selector */}
@@ -383,15 +556,18 @@ export default function ShopDetailPage() {
                     {quantity}
                   </span>
                   <button 
-                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                    disabled={quantity >= product.stock || isOutOfStock}
+                    onClick={() => setQuantity(Math.min(selectedColor ? selectedColor.stock : product.stock, quantity + 1))}
+                    disabled={quantity >= (selectedColor ? selectedColor.stock : product.stock) || isOutOfStock}
                     className="p-2 rounded-full text-mkhe-text/60 hover:text-mkhe-text hover:bg-mkhe-border/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
                 <span className="text-sm text-mkhe-text/50 ml-2">
-                  {product.stock > 0 ? t("shop.detail.in_stock", { count: product.stock, defaultValue: `${product.stock} sản phẩm có sẵn` }) : t("shop.detail.sold_out", { defaultValue: "Đã bán hết" })}
+                  {selectedColor 
+                    ? (selectedColor.stock > 0 ? t("shop.detail.in_stock", { count: selectedColor.stock, defaultValue: `${selectedColor.stock} sản phẩm có sẵn` }) : t("shop.detail.sold_out", { defaultValue: "Đã bán hết" }))
+                    : (product.stock > 0 ? t("shop.detail.in_stock", { count: product.stock, defaultValue: `${product.stock} sản phẩm có sẵn` }) : t("shop.detail.sold_out", { defaultValue: "Đã bán hết" }))
+                  }
                 </span>
               </div>
 
@@ -422,6 +598,12 @@ export default function ShopDetailPage() {
                   <span>{isOutOfStock ? t("shop.detail.sold_out", { defaultValue: "Tạm hết" }) : t("shop.detail.buy_now", { defaultValue: "Mua ngay" })}</span>
                 </button>
               </div>
+              
+              {product.colors?.length > 0 && !selectedColor && !isOutOfStock && (
+                <p className="text-sm text-amber-500 font-medium text-center md:text-left mt-2">
+                  {t("shop.detail.select_color_first", "Vui lòng chọn màu sắc trước khi thêm vào giỏ hàng")}
+                </p>
+              )}
             </div>
 
             {/* Mô tả chi tiết */}
@@ -436,7 +618,7 @@ export default function ShopDetailPage() {
                   <div 
                     ref={storyRef}
                     className={`prose prose-sm md:prose-base max-w-none prose-p:text-mkhe-text/80 prose-headings:text-mkhe-text prose-a:text-mkhe-primary prose-strong:text-mkhe-text prose-li:text-mkhe-text/80 prose-ul:text-mkhe-text/80 prose-ol:text-mkhe-text/80 marker:text-mkhe-primary/50 prose-blockquote:text-mkhe-text/80 prose-blockquote:border-mkhe-primary overflow-hidden transition-all duration-700 ease-in-out ${isStoryExpanded ? 'max-h-[5000px]' : 'max-h-[200px]'}`}
-                    dangerouslySetInnerHTML={{ __html: product.story || product.description }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.story || product.description) }}
                   />
                   
                   {/* Gradient Fade */}

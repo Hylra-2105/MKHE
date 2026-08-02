@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState  } from "react";
 import { Bell, Check, Package, X, Gift, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNotificationStore } from "@/stores/useNotificationStore";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -34,7 +34,16 @@ const translateNotificationTitle = (title, t) => {
     "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
     "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
     "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
-    "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
+    "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert",
+    "ADMIN_CONTACT_NEW": "notifications.title.admin_contact_new",
+    "USER_RETURN_CREATED": "notifications.title.USER_RETURN_CREATED",
+    "USER_RETURN_UPDATED": "notifications.title.USER_RETURN_UPDATED",
+    "USER_RETURN_UPDATED_APPROVED": "notifications.title.USER_RETURN_UPDATED_APPROVED",
+    "USER_RETURN_UPDATED_REJECTED": "notifications.title.USER_RETURN_UPDATED_REJECTED",
+    "ADMIN_RETURN_NEW": "notifications.title.ADMIN_RETURN_NEW",
+    "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
+    "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED",
+    "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
@@ -100,8 +109,26 @@ const translateNotificationMessage = (message, title, t) => {
     "ORDER_CANCELLED": "notifications.message.order_cancelled",
     "ADMIN_ORDER_NEW": "notifications.message.admin_order_new",
     "ADMIN_ORDER_PAID": "notifications.message.admin_order_paid",
-    "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed"
+    "ADMIN_ORDER_COMPLETED": "notifications.message.admin_order_completed",
+    "USER_RETURN_CREATED": "notifications.message.USER_RETURN_CREATED",
+    "USER_RETURN_UPDATED": "notifications.message.USER_RETURN_UPDATED",
+    "USER_RETURN_UPDATED_APPROVED": "notifications.message.USER_RETURN_UPDATED_APPROVED",
+    "USER_RETURN_UPDATED_REJECTED": "notifications.message.USER_RETURN_UPDATED_REJECTED",
+    "ADMIN_RETURN_NEW": "notifications.message.ADMIN_RETURN_NEW",
+    "Yêu cầu Đổi/Trả thành công": "notifications.message.USER_RETURN_CREATED",
+    "Cập nhật trạng thái Đổi/Trả": "notifications.message.USER_RETURN_UPDATED",
+    "Yêu cầu Đổi/Trả mới": "notifications.message.ADMIN_RETURN_NEW"
   };
+
+  if (title === "ADMIN_CONTACT_NEW" || message.startsWith("ADMIN_CONTACT_NEW_MESSAGE::")) {
+    const parts = message.split("::");
+    if (parts.length >= 3) {
+      const name = parts[1];
+      const interestKey = parts[2];
+      const translatedInterest = t(`admin:contacts.interest_${interestKey}`, { defaultValue: interestKey });
+      return t("notifications.message.admin_contact_new", { name, interest: translatedInterest, defaultValue: `Khách hàng ${name} đã gửi một yêu cầu: ${translatedInterest}` });
+    }
+  }
 
   if (map[title]) {
     let resolvedOrderCode = orderCode;
@@ -115,18 +142,37 @@ const translateNotificationMessage = (message, title, t) => {
 };
 
 export default function NotificationDropdown() {
-  const { t, i18n } = useTranslation("header");
+  const { t, i18n } = useTranslation(["header", "admin"]);
   const { notifications, unreadCount, systemUnreadCount, fetchUnreadCounts, fetchNotifications, markAsRead, markAllAsRead, deleteNotification, optimisticDelete, undoDelete, page, hasMore, loading, tab, setTab } = useNotificationStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const globalMenuRef = useRef(null);
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [showGlobalMenu, setShowGlobalMenu] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchUnreadCounts();
+    }
+  }, [user, fetchUnreadCounts]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      document.body.style.overflow = '';
+    } else {
+      if (window.innerWidth < 640) {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (user) {
       if ((user.role === "Admin" || user.role === "Staff") && tab === "all") {
         useNotificationStore.setState({ tab: "system" });
       }
@@ -152,6 +198,13 @@ export default function NotificationDropdown() {
         setIsOpen(false);
         setActiveMenuId(null);
         setShowGlobalMenu(false);
+      } else {
+        if (!event.target.closest('.global-menu-container')) {
+          setShowGlobalMenu(false);
+        }
+        if (!event.target.closest('.item-menu-container')) {
+          setActiveMenuId(null);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -181,6 +234,9 @@ export default function NotificationDropdown() {
         navigate(notif.link, { state: { openOrderId: notif.orderId } });
       } else if (notif.isAdmin && notif.productId && notif.link.includes("/admin/products")) {
         navigate(notif.link, { state: { openProductId: notif.productId } });
+      } else if (notif.isAdmin && (notif.contactId || notif.type === "CONTACT") && notif.link.includes("/admin/contacts")) {
+        // Hỗ trợ cả thông báo cũ chưa có contactId (nếu có thể parse từ message hoặc để page tự parse)
+        navigate(notif.link, { state: { openContactId: notif.contactId } });
       } else {
         navigate(notif.link);
       }
@@ -248,34 +304,42 @@ export default function NotificationDropdown() {
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute top-full right-0 mt-4 w-[360px] sm:w-[400px] bg-mkhe-bg border border-mkhe-border rounded-xl shadow-2xl z-50 overflow-visible origin-top-right animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 sm:inset-auto sm:absolute sm:top-full sm:right-0 sm:left-auto sm:mt-4 w-full sm:w-[400px] h-[100dvh] sm:h-auto sm:max-h-[calc(100vh-100px)] bg-mkhe-bg text-mkhe-text sm:border sm:border-mkhe-border sm:rounded-xl shadow-2xl z-[70] flex flex-col overflow-hidden origin-top-right animate-in fade-in sm:zoom-in-95 duration-200">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center justify-between px-4 py-3 shrink-0">
             <h3 className="font-bold text-2xl text-mkhe-text">{t("notifications.header_title", "Thông báo")}</h3>
-            <div className="relative">
+            <div className="flex items-center gap-1">
+              <div className="relative global-menu-container" ref={globalMenuRef}>
+                <button
+                  onClick={(e) => { e.stopPropagation(); setShowGlobalMenu(!showGlobalMenu); setActiveMenuId(null); }}
+                  className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer"
+                >
+                  <MoreHorizontal className="w-5 h-5 text-mkhe-text" />
+                </button>
+                {/* Global Menu */}
+                {showGlobalMenu && (
+                  <div className="absolute right-0 top-full mt-1 w-max min-w-[200px] bg-mkhe-bg border border-mkhe-border rounded-lg shadow-lg p-1 z-[60]" onClick={(e) => e.stopPropagation()}>
+                    <button 
+                      onClick={() => { markAllAsRead(); setShowGlobalMenu(false); }}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-mkhe-border/30 text-mkhe-text flex items-center gap-3 cursor-pointer rounded-md transition-colors whitespace-nowrap"
+                    >
+                      <Check className="w-4 h-4 flex-shrink-0" />
+                      <span>{t("notifications.mark_all_read", "Đánh dấu tất cả là đã đọc")}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
               <button
-                onClick={(e) => { e.stopPropagation(); setShowGlobalMenu(!showGlobalMenu); setActiveMenuId(null); }}
-                className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer"
+                onClick={handleToggle}
+                className="p-2 hover:bg-mkhe-border/30 rounded-full transition-colors cursor-pointer sm:hidden"
               >
-                <MoreHorizontal className="w-5 h-5 text-mkhe-text" />
+                <X className="w-5 h-5 text-mkhe-text" />
               </button>
-              {/* Global Menu */}
-              {showGlobalMenu && (
-                <div className="absolute right-0 top-full mt-1 w-max min-w-[200px] bg-mkhe-bg border border-mkhe-border rounded-lg shadow-lg p-1 z-[60]" onClick={(e) => e.stopPropagation()}>
-                  <button 
-                    onClick={() => { markAllAsRead(); setShowGlobalMenu(false); }}
-                    className="w-full text-left px-3 py-2 text-sm hover:bg-mkhe-border/30 text-mkhe-text flex items-center gap-3 cursor-pointer rounded-md transition-colors whitespace-nowrap"
-                  >
-                    <Check className="w-4 h-4 flex-shrink-0" />
-                    <span>{t("notifications.mark_all_read", "Đánh dấu tất cả là đã đọc")}</span>
-                  </button>
-                </div>
-              )}
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-2 px-4 pb-2 border-b border-mkhe-border/50 overflow-x-auto no-scrollbar whitespace-nowrap">
+          <div className="flex gap-2 px-4 pb-2 border-b border-mkhe-border/50 overflow-x-auto no-scrollbar whitespace-nowrap shrink-0">
             {(user.role === "Admin" || user.role === "Staff") && (
               <button 
                 onClick={() => setTab("system")}
@@ -284,7 +348,7 @@ export default function NotificationDropdown() {
                 {t("notifications.tab_system", "Hệ thống")}
                 {systemUnreadCount > 0 && (
                   <span className="bg-mkhe-primary text-[#1a110a] text-[10px] px-1.5 py-0.5 rounded-full">
-                    {systemUnreadCount}
+                    {systemUnreadCount > 99 ? "99+" : systemUnreadCount}
                   </span>
                 )}
               </button>
@@ -294,22 +358,28 @@ export default function NotificationDropdown() {
               className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer flex items-center gap-2 ${tab === "all" ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
             >
               {t("notifications.tab_all", "Tất cả")}
-              {unreadCount > 0 && tab !== "system" && (
+              {unreadCount > 0 && tab !== "system" && tab !== "system_unread" && (
                 <span className="bg-mkhe-primary text-[#1a110a] text-[10px] px-1.5 py-0.5 rounded-full">
                   {unreadCount}
                 </span>
               )}
             </button>
             <button 
-              onClick={() => setTab("unread")}
-              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer ${tab === "unread" ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
+              onClick={() => {
+                if (user.role === "Admin" || user.role === "Staff") {
+                  setTab("system_unread");
+                } else {
+                  setTab("unread");
+                }
+              }}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors cursor-pointer ${(tab === "unread" || tab === "system_unread") ? "bg-mkhe-primary/20 text-mkhe-primary" : "hover:bg-mkhe-border/30 text-mkhe-text"}`}
             >
               {t("notifications.tab_unread", "Chưa đọc")}
             </button>
           </div>
 
           {/* Notifications List */}
-          <div className="max-h-[450px] overflow-y-auto pb-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto pb-4 custom-scrollbar">
             {loading && page === 1 ? (
               <div className="py-10 text-center text-mkhe-text/60 flex flex-col items-center justify-center">
                 <div className="w-6 h-6 border-2 border-mkhe-primary border-t-transparent rounded-full animate-spin mb-3"></div>

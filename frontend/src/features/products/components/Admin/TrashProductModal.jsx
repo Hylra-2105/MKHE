@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition } from "react";
+import {  useState, useEffect, useTransition  } from "react";
 import toast from "react-hot-toast";
 import { X, Trash2, RefreshCw } from "lucide-react";
 import { productApi } from "@/api/productApi";
@@ -174,7 +174,7 @@ const TrashProductModal = ({ isOpen, onClose, onSuccess }) => {
                             onClick={() =>
                               handleRestoreClick(prod._id, prod.name)
                             }
-                            className="px-4 py-1.5 border border-green-500 text-green-600 font-semibold rounded-lg hover:bg-green-500 hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1 mx-auto"
+                            className="px-4 py-1.5 border border-emerald-500 text-emerald-600 font-semibold rounded-lg hover:bg-emerald-500 hover:text-white transition-colors cursor-pointer text-xs flex items-center gap-1 mx-auto"
                           >
                             <RefreshCw className="w-3 h-3" />
                             {t("modal.restore")}

@@ -9,7 +9,6 @@ import { useAuthStore } from "@/stores/useAuthStore";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
 export default function LoginForm() {
@@ -56,18 +55,9 @@ export default function LoginForm() {
       if (res && res.success) {
         toast.success(t("msg_login_success"), { duration: 3000 });
         if (redirectPath) {
-          navigate(redirectPath);
+          navigate(redirectPath, { state: location.state });
         } else {
-          const userRole = useAuthStore.getState().user?.role;
-          if (userRole === "Admin") {
-            navigate("/admin/users");
-          } else if (userRole === "Staff") {
-            navigate("/admin/products");
-          } else if (userRole === "Enterprise") {
-            navigate("/b2b/dashboard");
-          } else {
-            navigate("/home");
-          }
+          navigate("/");
         }
       } else {
         const msg = res?.message || "";
@@ -123,18 +113,9 @@ export default function LoginForm() {
       });
       
       if (redirectPath) {
-        navigate(redirectPath);
+        navigate(redirectPath, { state: location.state });
       } else {
-        const userRole = useAuthStore.getState().user?.role;
-        if (userRole === "Admin") {
-          navigate("/admin/users");
-        } else if (userRole === "Staff") {
-          navigate("/admin/products");
-        } else if (userRole === "Enterprise") {
-          navigate("/b2b/dashboard");
-        } else {
-          navigate("/home");
-        }
+        navigate("/");
       }
     } else {
       const msg = result.message || "";
@@ -166,34 +147,35 @@ export default function LoginForm() {
         <div>
           <InputField
             type="email"
+            label={t("email_placeholder")}
             placeholder={t("email_placeholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            required
+            error={errors.email ? t(errors.email) : null}
           />
-          <ErrorText error={errors.email} t={t} />
         </div>
+        
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label={t("password_placeholder")}
             placeholder={t("password_placeholder")}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            error={errors.password ? t(errors.password) : null}
             rightElement={
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="cursor-pointer p-1"
               >
-                {showPassword ? (
-                  <EyeOff className="w-5 h-5" />
-                ) : (
-                  <Eye className="w-5 h-5" />
-                )}
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
             }
           />
-          <ErrorText error={errors.password} t={t} />
         </div>
       </div>
 

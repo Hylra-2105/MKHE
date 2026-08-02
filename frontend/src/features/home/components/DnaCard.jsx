@@ -108,57 +108,64 @@ const DnaCard = ({
               );
             })()}
 
-            {/* MINI POPUP PANEL (CHỈ HIỆN KHI HOVER) */}
-            <div 
-              className={`absolute inset-0 flex flex-col justify-end p-4 z-20 transition-all duration-500
-                ${isHoveredCard ? 'bg-gradient-to-t from-black/95 via-black/60 to-transparent opacity-100 translate-y-0' : 'bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 translate-y-4 pointer-events-none'}
-              `}
-            >
-              <div className="flex flex-col gap-2 transform transition-all duration-500 delay-100">
-                {/* Rating */}
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => {
-                    const rating = item.ratingAverage || 0;
-                    return (
-                      <Star 
-                        key={i} 
-                        className={`w-3.5 h-3.5 text-mkhe-primary ${i < Math.round(rating) ? "fill-mkhe-primary" : "fill-transparent"}`} 
-                      />
-                    );
-                  })}
-                  <span className="text-[10px] text-white/70 ml-1">({item.ratingCount || 0})</span>
-                </div>
+            {/* MINI POPUP PANEL (CHỈ HIỆN KHI HOVER TRÊN DESKTOP) */}
+            {!isMobile && (
+              <div 
+                className={`absolute inset-0 flex flex-col justify-end p-4 z-20 transition-all duration-500
+                  ${isHoveredCard ? 'bg-gradient-to-t from-black/95 via-black/60 to-transparent opacity-100 translate-y-0' : 'bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 translate-y-4 pointer-events-none'}
+                `}
+              >
+                <div className="flex flex-col gap-2 transform transition-all duration-500 delay-100">
+                  {/* Rating */}
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => {
+                      const rating = item.ratingAverage || 0;
+                      return (
+                        <Star 
+                          key={i} 
+                          className={`w-3.5 h-3.5 text-mkhe-primary ${i < Math.round(rating) ? "fill-mkhe-primary" : "fill-transparent"}`} 
+                        />
+                      );
+                    })}
+                    <span className="text-[10px] text-white/70 ml-1">({item.ratingCount || 0})</span>
+                  </div>
 
-                {/* Tên & Giá bên trong Popup */}
-                <h4 className="font-bold text-white text-sm line-clamp-2">
-                  {item.name}
-                </h4>
-                <p className="text-mkhe-primary font-bold text-base drop-shadow-md">
-                  {item.price?.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {i18n.language === 'vi' ? 'đ' : 'VND'}
-                </p>
+                  {/* Tên & Giá bên trong Popup */}
+                  <h4 className="font-bold text-white text-sm line-clamp-2">
+                    {item.name}
+                  </h4>
+                  <p className="text-mkhe-primary font-bold text-base drop-shadow-md">
+                    {item.price?.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {i18n.language === 'vi' ? 'đ' : 'VND'}
+                  </p>
 
-                {/* Nút Mua Ngay */}
-                <div className="flex items-center mt-2 w-full">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }} 
-                    className="w-full bg-mkhe-primary hover:bg-[#C38D64] text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    {t("dna.buy_now")}
-                  </button>
+                  {/* Nút Xem Chi Tiết */}
+                  <div className="flex items-center mt-2 w-full">
+                    <button 
+                      onClick={() => navigate(`/shop/${item._id}`)}
+                      className="w-full bg-mkhe-primary hover:bg-[#C38D64] text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                      {t("dna.view_details", "Xem chi tiết")}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             
           </div>
         </div>
 
-        {/* CÁI TÊN Ở DƯỚI SẢN PHẨM ĐÃ ĐƯỢC GIỮ LẠI VÀ CHUYỂN MÀU KHI HOVER */}
-        <h4 className="mt-2 text-center font-bold text-mkhe-text text-xs italic line-clamp-2 transition-colors duration-300 group-hover:text-mkhe-primary h-7">
-          {item.name}
-        </h4>
+        {/* THÔNG TIN SẢN PHẨM BÊN DƯỚI */}
+        <div className="flex flex-col items-center mt-2">
+          <h4 className="text-center font-bold text-mkhe-text text-xs italic line-clamp-2 transition-colors duration-300 group-hover:text-mkhe-primary h-7">
+            {item.name}
+          </h4>
+          {isMobile && (
+            <p className="text-mkhe-primary font-bold text-sm mt-0.5">
+              {item.price?.toLocaleString(i18n.language === 'vi' ? 'vi-VN' : 'en-US')} {i18n.language === 'vi' ? 'đ' : 'VND'}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

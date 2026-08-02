@@ -22,6 +22,9 @@ import historyVI from "./locales/vi/history.json";
 import blogVI from "./locales/vi/blog.json";
 import reviewsVI from "./locales/vi/reviews.json";
 import chatbotVI from "./locales/vi/chatbot.json";
+import contactVI from "./locales/vi/contact.json";
+import b2bVI from "./locales/vi/b2b.json";
+import aboutVI from "./locales/vi/about.json";
 
 // EN
 
@@ -43,6 +46,9 @@ import historyEN from "./locales/en/history.json";
 import blogEN from "./locales/en/blog.json";
 import reviewsEN from "./locales/en/reviews.json";
 import chatbotEN from "./locales/en/chatbot.json";
+import contactEN from "./locales/en/contact.json";
+import b2bEN from "./locales/en/b2b.json";
+import aboutEN from "./locales/en/about.json";
 
 // ZH
 
@@ -64,6 +70,9 @@ import historyZH from "./locales/zh/history.json";
 import blogZH from "./locales/zh/blog.json";
 import reviewsZH from "./locales/zh/reviews.json";
 import chatbotZH from "./locales/zh/chatbot.json";
+import contactZH from "./locales/zh/contact.json";
+import b2bZH from "./locales/zh/b2b.json";
+import aboutZH from "./locales/zh/about.json";
 
 // KO
 
@@ -85,6 +94,9 @@ import historyKO from "./locales/ko/history.json";
 import blogKO from "./locales/ko/blog.json";
 import reviewsKO from "./locales/ko/reviews.json";
 import chatbotKO from "./locales/ko/chatbot.json";
+import contactKO from "./locales/ko/contact.json";
+import b2bKO from "./locales/ko/b2b.json";
+import aboutKO from "./locales/ko/about.json";
 
 // JA
 
@@ -106,6 +118,9 @@ import historyJA from "./locales/ja/history.json";
 import blogJA from "./locales/ja/blog.json";
 import reviewsJA from "./locales/ja/reviews.json";
 import chatbotJA from "./locales/ja/chatbot.json";
+import contactJA from "./locales/ja/contact.json";
+import b2bJA from "./locales/ja/b2b.json";
+import aboutJA from "./locales/ja/about.json";
 
 
 const resources = {
@@ -128,6 +143,9 @@ const resources = {
     blog: blogVI,
     reviews: reviewsVI,
     chatbot: chatbotVI,
+    contact: contactVI,
+    b2b: b2bVI,
+    about: aboutVI,
   },
   en: {
     login: loginEN,
@@ -148,6 +166,9 @@ const resources = {
     blog: blogEN,
     reviews: reviewsEN,
     chatbot: chatbotEN,
+    contact: contactEN,
+    b2b: b2bEN,
+    about: aboutEN,
   },
   zh: {
     login: loginZH,
@@ -168,6 +189,9 @@ const resources = {
     blog: blogZH,
     reviews: reviewsZH,
     chatbot: chatbotZH,
+    contact: contactZH,
+    b2b: b2bZH,
+    about: aboutZH,
   },
   ko: {
     login: loginKO,
@@ -188,6 +212,9 @@ const resources = {
     blog: blogKO,
     reviews: reviewsKO,
     chatbot: chatbotKO,
+    contact: contactKO,
+    b2b: b2bKO,
+    about: aboutKO,
   },
   ja: {
     login: loginJA,
@@ -208,6 +235,9 @@ const resources = {
     blog: blogJA,
     reviews: reviewsJA,
     chatbot: chatbotJA,
+    contact: contactJA,
+    b2b: b2bJA,
+    about: aboutJA,
   },
 };
 
@@ -234,7 +264,10 @@ i18n
       "checkout",
       "history",
       "blog",
-      "reviews"
+      "reviews",
+      "contact",
+      "b2b",
+      "about"
     ],
     defaultNS: "user",
     interpolation: {

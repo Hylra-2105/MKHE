@@ -9,6 +9,15 @@ export const getLastNameInitial = (name) => {
   return lastWord.charAt(0).toUpperCase();
 };
 
+export const getPasswordErrorKey = (password) => {
+  if (!password) return "err_empty_password";
+  if (password.length < 8) return "err_pass_min_length";
+  if (!/[A-Z]/.test(password)) return "err_pass_uppercase";
+  if (!/\d/.test(password)) return "err_pass_number";
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return "err_pass_special";
+  return null;
+};
+
 export const validateRegistration = (
   name,
   email,
@@ -33,10 +42,9 @@ export const validateRegistration = (
   }
 
   // Kiểm tra Mật khẩu
-  if (!password) {
-    errors.password = "err_empty_password";
-  } else if (password.length < 6) {
-    errors.password = "err_password_length";
+  const passError = getPasswordErrorKey(password);
+  if (passError) {
+    errors.password = passError;
   }
 
   // Kiểm tra Nhập lại mật khẩu

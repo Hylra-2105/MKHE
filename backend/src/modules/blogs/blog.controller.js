@@ -1,6 +1,7 @@
 import Blog from "./blog.model.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
-import { cloudinary } from "../../config/cloudinary.js";
+import { getIO } from "../../config/socket.js";
+import { createVietnameseRegex } from "../../utils/helpers.js";
 
 // Lấy danh sách blog (lọc, phân trang)
 export const getBlogs = async (req, res) => {
@@ -20,7 +21,8 @@ export const getBlogs = async (req, res) => {
     if (productTag) filter.tags = productTag;
     
     if (search) {
-      filter.title = { $regex: search, $options: "i" };
+      const searchRegex = createVietnameseRegex(search);
+      filter.title = { $regex: searchRegex, $options: "i" };
     }
 
     const blogs = await Blog.find(filter)
@@ -96,6 +98,7 @@ export const createBlog = async (req, res) => {
     });
 
     await newBlog.save();
+    try { getIO().emit("blogs_updated"); } catch(e) { console.error("Socket emit error", e); }
     return successResponse(res, 201, "Tạo bài viết thành công", newBlog);
   } catch (error) {
     console.error("[createBlog] Error:", error);
@@ -124,6 +127,7 @@ export const updateBlog = async (req, res) => {
     if (tags) blog.tags = tags;
 
     await blog.save();
+    try { getIO().emit("blogs_updated"); } catch(e) { console.error("Socket emit error", e); }
     return successResponse(res, 200, "Cập nhật bài viết thành công", blog);
   } catch (error) {
     console.error("[updateBlog] Error:", error);
@@ -139,6 +143,7 @@ export const deleteBlog = async (req, res) => {
     if (!blog) return errorResponse(res, 404, "Không tìm thấy bài viết");
 
     await Blog.findByIdAndDelete(id);
+    try { getIO().emit("blogs_updated"); } catch(e) { console.error("Socket emit error", e); }
     return successResponse(res, 200, "Xóa bài viết thành công");
   } catch (error) {
     console.error("[deleteBlog] Error:", error);

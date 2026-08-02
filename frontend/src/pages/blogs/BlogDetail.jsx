@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getBlogBySlugApi } from "@/api/blogApi";
-import { Calendar, User, ChevronLeft, ChevronRight, Tag, ShoppingCart } from "lucide-react";
+import { Calendar, User, ChevronLeft, ChevronRight, Tag, ShoppingCart, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useCartStore } from "@/stores/useCartStore";
+import DOMPurify from "dompurify";
 
 const BlogDetail = () => {
   const { slug } = useParams();
@@ -45,10 +46,24 @@ const BlogDetail = () => {
 
   if (!blog) {
     return (
-      <div className="min-h-screen bg-mkhe-bg flex flex-col justify-center items-center">
-        <h2 className="text-2xl font-bold text-mkhe-text mb-4">Không tìm thấy bài viết</h2>
-        <Link to="/storytelling" className="text-mkhe-primary hover:underline flex items-center gap-2">
-          <ChevronLeft className="w-5 h-5" /> {t("public.detail.back", { defaultValue: "Quay lại danh sách" })}
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center bg-mkhe-bg transition-colors duration-300">
+        <div className="flex justify-center mb-6 relative">
+          <AlertCircle className="w-16 h-16 text-mkhe-primary opacity-60" strokeWidth={1.5} />
+        </div>
+        
+        <h2 className="text-2xl font-bold text-mkhe-text/90 tracking-wider mb-2 py-1">
+          {t("public.detail.not_found_title", { defaultValue: "Không tìm thấy bài viết" })}
+        </h2>
+        
+        <p className="text-mkhe-text/60 mb-8 text-sm leading-relaxed max-w-sm mx-auto">
+          {t("public.detail.not_found_desc", { defaultValue: "Bài viết này có thể đã bị xóa hoặc tạm thời không khả dụng. Vui lòng quay lại danh sách bài viết." })}
+        </p>
+
+        <Link 
+          to="/storytelling" 
+          className="inline-flex items-center justify-center bg-mkhe-primary text-white px-8 py-3 rounded-md hover:opacity-90 transition-opacity font-semibold tracking-wider text-xs md:text-sm uppercase shadow-lg cursor-pointer gap-2"
+        >
+          <ChevronLeft className="w-4 h-4" /> {t("public.detail.back", { defaultValue: "Quay lại danh sách" })}
         </Link>
       </div>
     );
@@ -90,21 +105,12 @@ const BlogDetail = () => {
           </div>
         </header>
 
-        {/* Thumbnail chính */}
-        {blog.thumbnail && (
-          <div className="mb-12 rounded-3xl overflow-hidden border border-mkhe-border/30 shadow-2xl">
-            <img 
-              src={blog.thumbnail} 
-              alt={blog.title} 
-              className="w-full h-auto max-h-[60vh] object-cover"
-            />
-          </div>
-        )}
+
 
         {/* Nội dung bài viết */}
         <div 
           className="prose dark:prose-invert prose-lg max-w-none text-mkhe-text/90 marker:text-mkhe-primary prose-a:text-mkhe-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:border prose-img:border-mkhe-border/30 dark:[&_[style]]:!text-mkhe-text dark:[&_a]:!text-mkhe-primary"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
         />
 
         {/* Sản phẩm liên kết (Call to Action Mua Hàng) */}

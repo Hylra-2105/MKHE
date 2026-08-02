@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
 import orderApi from "@/api/orderApi";
 import { toast } from "react-hot-toast";
@@ -198,7 +198,7 @@ const OrderManagementPage = () => {
                     <div className="font-medium">{order.shippingInfo.name}</div>
                     <div className="text-sm text-mkhe-text/60">{order.shippingInfo.phone}</div>
                     {isHighRisk(order) && (
-                      <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-xs font-bold bg-red-500/10 text-red-600 border border-red-500/30">
+                      <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded text-xs font-bold bg-rose-500/10 text-rose-600 border border-rose-500/30">
                         <FiAlertTriangle /> {t("admin:orders.high_risk", { defaultValue: "RỦI RO CAO" })}
                       </div>
                     )}
@@ -206,9 +206,9 @@ const OrderManagementPage = () => {
                   <td className="px-4 py-2.5 font-medium">{order.totalAmount.toLocaleString()}đ</td>
                   <td className="px-4 py-2.5 text-center">
                     <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                      order.paymentStatus === "PAID" ? "bg-green-500/10 text-green-500" :
+                      order.paymentStatus === "PAID" ? "bg-emerald-500/10 text-emerald-600" :
                       order.paymentStatus === "REFUNDED" ? "bg-yellow-500/10 text-yellow-500" :
-                      "bg-red-500/10 text-red-500"
+                      "bg-rose-500/10 text-rose-600"
                     }`}>
                       {order.paymentStatus === "PAID" ? t("admin:orders.payment.paid", { defaultValue: "Đã thanh toán" }) :
                        order.paymentStatus === "REFUNDED" ? t("admin:orders.payment.refunded", { defaultValue: "Hoàn tiền" }) :
@@ -237,7 +237,7 @@ const OrderManagementPage = () => {
                       {user?.role === "Admin" && order.user && (
                         <button 
                           onClick={() => { setSelectedUser(order.user); setIsUserModalOpen(true); }}
-                          className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${order.user.isBlocked ? "text-green-500 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
+                          className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${order.user.isBlocked ? "text-emerald-500 hover:bg-emerald-500/20 bg-emerald-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
                           title={order.user.isBlocked ? t("common.unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("admin:orders.lock_account", { defaultValue: "Khóa Tài Khoản" })}
                         >
                           <FiLock size={18} />

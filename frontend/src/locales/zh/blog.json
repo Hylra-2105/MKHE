@@ -73,7 +73,8 @@
       "Ký sự": "故事",
       "Sự kiện": "活动",
       "Cẩm nang": "手册"
-    }
+    },
+    "delete_success": "帖子删除成功"
   },
   "public": {
     "page_title_story": "遗产故事",
@@ -86,22 +87,28 @@
       "back": "返回",
       "related_products": "相关产品",
       "view_detail": "查看详情",
-      "add_to_cart": "加入购物车"
+      "add_to_cart": "加入购物车",
+      "not_found_title": "没有找到文章",
+      "not_found_desc": "这篇文章可能已被删除或暂时不可用。请返回文章列表。"
     }
   },
-  "fetch_list_error": "Không thể tải danh sách bài viết",
-  "fetch_detail_error": "Không thể tải bài viết",
+  "fetch_list_error": "无法加载文章列表",
+  "fetch_detail_error": "无法加载文章",
   "editor": {
-    "draft_restored": "Đã khôi phục bản nháp tự động lưu",
-    "not_found": "Không tìm thấy bài viết",
-    "upload_success": "Tải ảnh lên thành công",
-    "upload_error": "Lỗi khi tải ảnh",
-    "invalid_image": "Vui lòng chọn file hình ảnh hợp lệ",
-    "upload_to_content_error": "Lỗi khi tải ảnh vào bài viết",
-    "title_required": "Vui lòng nhập tiêu đề bài viết",
-    "content_required": "Vui lòng nhập nội dung bài viết",
-    "update_success": "Cập nhật bài viết thành công",
-    "create_success": "Tạo bài viết thành công",
-    "save_error": "Lỗi khi lưu bài viết"
+    "draft_restored": "自动保存草稿已恢复",
+    "not_found": "没有找到文章",
+    "upload_success": "照片上传成功",
+    "upload_error": "加载图像时出错",
+    "invalid_image": "请选择有效的图像文件",
+    "upload_to_content_error": "将图片上传到帖子时出错",
+    "title_required": "请输入文章标题",
+    "content_required": "请输入文章内容",
+    "update_success": "帖子更新成功",
+    "create_success": "创建成功的帖子",
+    "save_error": "保存帖子时出错",
+    "uploading_image": "正在处理并上传图片...",
+    "youtube_modal_title": "添加 YouTube 视频",
+    "youtube_modal_desc": "将 YouTube 视频链接粘贴到下方的框中，即可插入到文章中。",
+    "btn_add": "插入视频"
   }
 }

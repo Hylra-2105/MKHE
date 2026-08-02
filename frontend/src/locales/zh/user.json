@@ -10,14 +10,16 @@
     "pass_mismatch": "密码不匹配",
     "invalid_file_type": "请选择有效的图像或视频文件！",
     "video_too_large": "视频上传不得超过10MB！",
-    "image_too_large": "图片上传不得超过5MB！"
+    "image_too_large": "图片上传不得超过5MB！",
+    "name_required": "请输入您的全名",
+    "phone_required": "请输入您的电话号码"
   },
   "messages": {
     "update_success": "更新成功！",
     "change_pass_success": "密码更新成功！",
     "otp_sent_success": "OTP 发送成功！",
     "otp_send_error": "发送 OTP 时出错",
-    "delete_success": "Đã xóa tài khoản thành công!"
+    "delete_success": "帐号删除成功！"
   },
   "auth": {
     "new_password": "新密码",
@@ -26,6 +28,8 @@
   "profile": {
     "title": "个人简介",
     "general_info": "一般信息",
+    "transactions": "交易记录",
+    "vouchers": "我的代金券",
     "change_password": "更改密码",
     "update_avatar": "更新头像",
     "drag_drop": "将图像/视频拖放到此处",
@@ -58,5 +62,13 @@
   "INVALID_OR_EXPIRED_OTP": "OTP 代码无效或过期。",
   "PASSWORD_MUST_BE_DIFFERENT": "新密码必须与当前密码不同。",
   "USER_NOT_FOUND": "未找到用户帐户。",
-  "SERVER_ERROR": "发生意外错误。请稍后重试。"
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "可用",
+    "status_used": "已使用",
+    "status_expired": "已过期",
+    "discount": "折扣",
+    "expiry": "有效期至",
+    "no_vouchers": "您还没有任何优惠券"
+  }
 }

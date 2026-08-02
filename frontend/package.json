@@ -29,6 +29,7 @@
     "axios": "^1.16.1",
     "browser-image-compression": "^2.0.2",
     "dayjs": "^1.11.21",
+    "dompurify": "^3.4.11",
     "draco3d": "^1.5.7",
     "firebase": "^12.13.0",
     "flatpickr": "^4.6.13",

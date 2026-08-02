@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import orderApi from "@/api/orderApi";
 import { userApi } from "@/api/userApi";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useCartStore } from "@/stores/useCartStore";
+import { useCartStore, getCartItemId } from "@/stores/useCartStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { ChevronLeft } from "lucide-react";
 
@@ -13,6 +13,7 @@ import CheckoutForm from "@/features/orders/components/Checkout/CheckoutForm";
 import OrderSummary from "@/features/orders/components/Checkout/OrderSummary";
 import OtpModal from "@/features/orders/components/Checkout/OtpModal";
 import VoucherSelectorDrawer from "@/features/vouchers/components/VoucherSelectorDrawer";
+import { checkVoucherEligibility } from "@/utils/voucherHelpers";
 
 export default function CheckoutPage() {
   const { t } = useTranslation("checkout");
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
   const [isVoucherDrawerOpen, setIsVoucherDrawerOpen] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpSending, setOtpSending] = useState(false);
+  const [lastOtpTime, setLastOtpTime] = useState(0);
 
   // Listen to product updates
   useEffect(() => {
@@ -64,15 +66,45 @@ export default function CheckoutPage() {
 
   const checkoutItems = localBuyNowItem 
     ? [localBuyNowItem] 
-    : items.filter((item) => selectedItems.includes(item.product._id));
+    : items.filter((item) => selectedItems.includes(getCartItemId(item)));
   const subtotal = checkoutItems.reduce((total, item) => {
     const product = item.product;
     const now = new Date();
+    
+    let basePrice = product.price;
+    if (item.color && product.colors) {
+      const colorVariant = product.colors.find(c => c.name === item.color);
+      if (colorVariant && colorVariant.priceOverride) {
+        basePrice = colorVariant.priceOverride;
+      }
+    }
+
     const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                         && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
-    const effectivePrice = isSaleValid ? product.salePrice : product.price;
-    return total + effectivePrice * item.quantity;
+    
+    let effectivePrice = basePrice;
+    if (isSaleValid) {
+      const salePercentage = (product.price - product.salePrice) / product.price;
+      effectivePrice = Math.round(basePrice * (1 - salePercentage));
+    }
+
+    let addOnsCost = 0;
+    if (item.addOns && item.addOns.length > 0) {
+      addOnsCost = item.addOns.reduce((sum, addOn) => sum + addOn.price, 0);
+    }
+
+    return total + (effectivePrice + addOnsCost) * item.quantity;
   }, 0);
+  
+  // Clear voucher if it becomes ineligible
+  useEffect(() => {
+    if (selectedVoucher) {
+      const eligibility = checkVoucherEligibility(selectedVoucher, checkoutItems, subtotal);
+      if (!eligibility.isEligible) {
+        useCartStore.getState().setSelectedVoucher(null);
+      }
+    }
+  }, [selectedVoucher, checkoutItems, subtotal]);
   
   // Calculate discount logic again to display
   let discountAmount = 0;
@@ -115,7 +147,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!localBuyNowItem && checkoutItems.length === 0 && !isSuccess) {
       toast.error(t("errors.no_items"));
-      navigate("/cart"); // Or shop
+      navigate("/shop");
     }
   }, [checkoutItems.length, navigate, isSuccess, localBuyNowItem, t]);
 
@@ -135,6 +167,7 @@ export default function CheckoutPage() {
     try {
       const res = await orderApi.sendCheckoutOtp({ paymentMethod });
       if (res.success) {
+        setLastOtpTime(Date.now());
         toast.success(t("success.otp_sent"));
         setShowOtpModal(true);
       }
@@ -165,6 +198,10 @@ export default function CheckoutPage() {
     const isTrustedDevice = localStorage.getItem("is_trusted_device") === "true";
 
     if (paymentMethod === "COD" && !isTrustedDevice && !showOtpModal) {
+      if (Date.now() - lastOtpTime < 60000) {
+        setShowOtpModal(true);
+        return;
+      }
       handleSendOtp();
       return;
     }
@@ -195,7 +232,13 @@ export default function CheckoutPage() {
 
       const payload = {
         shippingInfo,
-        items: checkoutItems.map(i => ({ productId: i.product._id, quantity: i.quantity })),
+        items: checkoutItems.map(i => ({ 
+          productId: i.product._id, 
+          quantity: i.quantity,
+          color: i.color,
+          colorImage: i.colorImage,
+          addOns: i.addOns
+        })),
         paymentMethod,
         otp: (paymentMethod === "COD" && !isTrustedDevice) ? finalOtp : undefined,
         voucherId: selectedVoucher?._id,
@@ -204,15 +247,15 @@ export default function CheckoutPage() {
       };
 
       const res = await orderApi.checkout(payload);
-      if (res.success) {
-        if (paymentMethod === "COD" && !isTrustedDevice) {
-           localStorage.setItem("is_trusted_device", "true");
-        }
-        setIsSuccess(true);
-        if (!localBuyNowItem) {
-          await removeMultipleFromCart(checkoutItems.map(i => i.product._id), true);
-        }
-        useCartStore.getState().setSelectedVoucher(null);
+        if (res.success) {
+          if (paymentMethod === "COD" && !isTrustedDevice) {
+             localStorage.setItem("is_trusted_device", "true");
+          }
+          setIsSuccess(true);
+          if (!localBuyNowItem) {
+            await removeMultipleFromCart(checkoutItems.map(i => getCartItemId(i)), true);
+          }
+          useCartStore.getState().setSelectedVoucher(null);
         setShowOtpModal(false);
         const orderData = res.data.order || res.data;
         
@@ -284,7 +327,10 @@ export default function CheckoutPage() {
         cartItems={checkoutItems}
         cartTotal={subtotal}
         selectedVoucherId={selectedVoucher?._id}
-        onSelectVoucher={useCartStore.getState().setSelectedVoucher}
+        onSelectVoucher={(voucher) => {
+          useCartStore.getState().setSelectedVoucher(voucher);
+          setIsVoucherDrawerOpen(false);
+        }}
       />
 
       <OtpModal 
@@ -296,6 +342,7 @@ export default function CheckoutPage() {
         handleSendOtp={handleSendOtp}
         isSubmitting={isSubmitting}
         otpSending={otpSending}
+        lastOtpTime={lastOtpTime}
       />
     </div>
   );

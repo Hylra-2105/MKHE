@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/useAuthStore";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { getPasswordErrorKey } from "@/utils/validators";
 
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
-import ErrorText from "@/components/ui/ErrorText";
 
 export default function ResetPasswordForm() {
   const { t } = useTranslation(["forgot_password", "common"]);
@@ -38,7 +38,8 @@ export default function ResetPasswordForm() {
     setError({});
 
     if (!password) return setError({ password: "err_empty_pass" });
-    if (password.length < 6) return setError({ password: "err_short_pass" });
+    const passError = getPasswordErrorKey(password);
+    if (passError) return setError({ password: passError });
     if (password !== confirmPassword)
       return setError({ confirmPassword: "err_not_match" });
 
@@ -82,12 +83,15 @@ export default function ResetPasswordForm() {
         <div>
           <InputField
             type={showPassword ? "text" : "password"}
+            label={t("pass_placeholder")}
             placeholder={t("pass_placeholder")}
             value={password}
             onChange={(e) => {
-              setPassword(e.target.value);
               if (error.password) setError({ ...error, password: null });
+              setPassword(e.target.value);
             }}
+            required
+            error={error.password ? t(`common:${error.password}`) : null}
             rightElement={
               <button
                 type="button"
@@ -102,12 +106,12 @@ export default function ResetPasswordForm() {
               </button>
             }
           />
-          <ErrorText error={error.password} t={t} />
         </div>
 
         <div>
           <InputField
             type={showConfirmPassword ? "text" : "password"}
+            label={t("confirm_placeholder")}
             placeholder={t("confirm_placeholder")}
             value={confirmPassword}
             onChange={(e) => {
@@ -115,6 +119,8 @@ export default function ResetPasswordForm() {
               if (error.confirmPassword)
                 setError({ ...error, confirmPassword: null });
             }}
+            required
+            error={error.confirmPassword ? t(error.confirmPassword) : null}
             rightElement={
               <button
                 type="button"
@@ -129,7 +135,6 @@ export default function ResetPasswordForm() {
               </button>
             }
           />
-          <ErrorText error={error.confirmPassword} t={t} />
         </div>
       </div>
 

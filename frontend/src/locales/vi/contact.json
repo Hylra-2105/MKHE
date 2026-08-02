@@ -1,0 +1,45 @@
+{
+  "tag": "Mekong Culture",
+  "title": "Kết nối & Hợp tác",
+  "subtitle": "Nơi những ý tưởng thăng hoa và những giá trị di sản được tiếp nối. Hãy cùng MKHE kiến tạo nên những không gian và tác phẩm mang đậm dấu ấn bản địa.",
+  "formTitle": "Gửi Yêu Cầu Cho Chúng Tôi",
+  "formSubtitle": "Bất kể bạn là khách hàng cá nhân hay doanh nghiệp đang tìm kiếm cơ hội hợp tác, đội ngũ chuyên gia của chúng tôi luôn sẵn sàng lắng nghe và đồng hành cùng bạn.",
+  "infoTitle": "Thông tin Liên hệ",
+  "address": "Địa chỉ",
+  "phoneTitle": "Điện thoại",
+  "emailTitle": "Email",
+  "fields": {
+    "name": "Họ và Tên",
+    "phone": "Số điện thoại",
+    "email": "Email",
+    "companyName": "Tên Doanh nghiệp",
+    "taxCode": "Mã số thuế",
+    "interest": "-- Chọn Nhu cầu quan tâm --",
+    "message": "Nội dung chi tiết"
+  },
+  "interests": {
+    "support": "Hỗ trợ đơn hàng & Sản phẩm (Dành cho Khách cá nhân)",
+    "b2b": "Yêu cầu mở Tài khoản Doanh nghiệp (B2B Portal)",
+    "vip": "Tư vấn giải pháp Quà tặng Doanh nghiệp VIP",
+    "design": "Tư vấn thiết kế Không gian & Đồng phục (Resort/Khách sạn)",
+    "boardgame": "Tìm hiểu / Hợp tác mảng Board Game \"Giao lộ Di sản\"",
+    "other": "Yêu cầu khác / Góp ý"
+  },
+  "submit": "Gửi yêu cầu",
+  "submitting": "Đang gửi...",
+  "successMessage": "Cảm ơn bạn! Yêu cầu đã được gửi đến chúng tôi.",
+  "errorMessage": "Đã có lỗi xảy ra. Vui lòng thử lại sau.",
+  "companyRequired": "Vui lòng nhập Tên Doanh nghiệp và Mã số thuế cho yêu cầu mở Tài khoản Doanh nghiệp",
+  "errors": {
+    "emptyName": "Vui lòng nhập họ và tên.",
+    "emptyPhone": "Vui lòng nhập số điện thoại.",
+    "emptyEmail": "Vui lòng nhập địa chỉ email.",
+    "invalidEmail": "Định dạng email không hợp lệ.",
+    "invalidPhone": "Số điện thoại không hợp lệ (từ 10 số).",
+    "emptyMessage": "Vui lòng nhập nội dung chi tiết.",
+    "emptyInterest": "Vui lòng chọn nhu cầu quan tâm.",
+    "emptyCompanyName": "Vui lòng nhập Tên Doanh nghiệp.",
+    "emptyTaxCode": "Vui lòng nhập Mã số thuế.",
+    "invalidTaxCode": "Mã số thuế không hợp lệ (10 hoặc 13 số)."
+  }
+}

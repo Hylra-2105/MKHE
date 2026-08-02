@@ -9,10 +9,12 @@ const getStatusConfig = (status, t) => {
       return { color: "text-blue-500", bg: "bg-blue-500/10", label: t("history:status_confirmed", { defaultValue: "Đã xác nhận" }) };
     case "DELIVERING":
       return { color: "text-indigo-500", bg: "bg-indigo-500/10", label: t("history:status_delivering", { defaultValue: "Đang giao" }) };
+    case "DELIVERED":
+      return { color: "text-emerald-500", bg: "bg-emerald-500/10", label: t("history:status_delivered", { defaultValue: "Đã giao" }) };
     case "COMPLETED":
-      return { color: "text-green-500", bg: "bg-green-500/10", label: t("history:status_completed", { defaultValue: "Hoàn thành" }) };
+      return { color: "text-emerald-500", bg: "bg-emerald-500/10", label: t("history:status_completed", { defaultValue: "Hoàn thành" }) };
     case "CANCELLED":
-      return { color: "text-red-500", bg: "bg-red-500/10", label: t("history:status_cancelled_label", { defaultValue: "Đã hủy" }) };
+      return { color: "text-rose-500", bg: "bg-rose-500/10", label: t("history:status_cancelled_label", { defaultValue: "Đã hủy" }) };
     default:
       return { color: "text-gray-500", bg: "bg-gray-500/10", label: status };
   }
@@ -38,7 +40,7 @@ const OrderCard = ({ order, onClick }) => {
   return (
     <div 
       onClick={onClick}
-      className="bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-border)]/20 rounded-2xl p-5 mb-4 shadow-sm hover:shadow-md hover:border-mkhe-primary/40 cursor-pointer transition-all group"
+      className="bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-primary)]/30 rounded-2xl p-5 mb-4 shadow-sm hover:shadow-md hover:border-mkhe-primary/60 cursor-pointer transition-all group"
     >
       <div className="flex justify-between items-center mb-4 border-b border-[var(--color-mkhe-border)]/10 pb-3">
         <div className="flex items-center gap-2">
@@ -71,6 +73,11 @@ const OrderCard = ({ order, onClick }) => {
               <h4 className="font-semibold text-[var(--color-mkhe-text)] line-clamp-1">
                 {firstItem.name}
               </h4>
+              {firstItem.color && (
+                <p className="text-xs text-[var(--color-mkhe-text)]/60 mt-0.5">
+                  {t("history:color", { defaultValue: "Màu sắc:" })} {firstItem.color}
+                </p>
+              )}
               <p className="text-sm text-[var(--color-mkhe-text)]/70 mt-1">
                 x{firstItem.quantity}
               </p>

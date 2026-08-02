@@ -42,6 +42,7 @@
     "craft_village": "工芸村",
     "craft_village_placeholder": "例：チャウポン織物村...",
     "material": "材料",
+    "select_material": "素材を選択",
     "name": "製品名",
     "name_placeholder": "例：ストライプブロケードトートバッグ",
     "sku": "SKU",
@@ -114,7 +115,12 @@
       "delete": "削除"
     },
     "story": "製品ストーリー",
-    "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）"
+    "story_placeholder": "詳細な製品ストーリーを入力してください（太字、斜体などをサポート）",
+    "isService": {
+      "title": "B2Bサービスパッケージ",
+      "desc": "これがサービス パッケージ (コンサルティング、アウトソーシングなど) の場合、この機能を有効にします。",
+      "note": "注: サービス パッケージはストア ページでは完全に非表示になります。"
+    }
   },
   "statuses": {
     "DRAFT": "ドラフト",
@@ -169,12 +175,12 @@
     "optimizing_3d": "3D ファイル（{{size}}MB）を最適化しています... これには CPU が使用されます。ページを閉じないでください！",
     "optimize_3d_success": "3D 最適化が成功しました！サイズが縮小されました：{{size}}MB",
     "optimize_3d_error": "3D 最適化に失敗しました：{{error}}。元のファイルが使用されます。",
-    "gallery_upload_success": "Đã thêm media mới thành công",
-    "gallery_delete_success": "Đã xoá ảnh thành công",
-    "draft_restore_success": "Đã khôi phục dữ liệu đang nhập dở",
-    "public_stock_error": "Không thể đặt trạng thái Công khai khi số lượng tồn kho bằng 0.",
-    "invalid_quantity": "Số lượng hợp lệ từ 1 đến 100",
-    "restore_failed": "❌ Lỗi khôi phục: {{errorMsg}}"
+    "gallery_upload_success": "新しいメディアが正常に追加されました",
+    "gallery_delete_success": "写真は正常に削除されました",
+    "draft_restore_success": "未完成のデータを復元しました",
+    "public_stock_error": "在庫が0の場合は公開ステータスを設定できません。",
+    "invalid_quantity": "有効な数値は 1 ～ 100 です。",
+    "restore_failed": "❌ リカバリエラー: {{errorMsg}}"
   },
   "nfc": {
     "management_title": "NFCタグ管理",
@@ -241,7 +247,12 @@
       "story": "遺産の物語",
       "show_less": "一部を表示",
       "read_more": "続きを読む",
-      "in_stock": "在庫あり：{{count}}点",
+      "in_stock": "在庫数: {{count}} 個",
+      "color": "色：",
+      "more_colors": "他の色",
+      "addons": "追加アクセサリー（オプション）：",
+      "select_color_first": "カートに入れる前に色を選択してください",
+      "out_of_stock_short": "品切れ",
       "sold_out": "売り切れ",
       "sku": "SKUコード",
       "back": "戻る",
@@ -264,6 +275,40 @@
       "sendPushDesc": "リリース時に、システムは自動的にすべてのユーザーに通知を送信します",
       "ongoing": "セール中",
       "upcoming": "今後のセール"
+    },
+    "colors": {
+      "title": "色 / バリエーション",
+      "subtitle": "色、アバター画像、個別の在庫を設定します",
+      "add_color": "色を追加",
+      "color_name": "色名",
+      "color_name_placeholder": "例: 青白ストライプ",
+      "stock": "在庫",
+      "stock_placeholder": "数量...",
+      "image": "アバター画像",
+      "change_image": "画像を変更",
+      "choose_image": "画像を選択",
+      "no_colors": "この製品にはまだ色のバリエーションがありません。",
+      "remove_color": "この色を削除",
+      "picker_title": "色の画像を選択",
+      "picker_empty": "ギャラリーに画像がアップロードされていません。",
+      "picker_empty_desc": "先に左の列で画像をアップロードしてください。",
+      "price_override": "カスタム価格 (任意)",
+      "price_override_placeholder": "例: 350000"
+    },
+    "addons": {
+      "title": "アドオン / アクセサリー",
+      "subtitle": "ギフトボックス、グリーティングカード...",
+      "add_btn": "アドオンを追加",
+      "remove_btn": "アドオンを削除",
+      "name": "アドオン名",
+      "name_placeholder": "例：プレミアムギフトボックス",
+      "price": "価格 (+)",
+      "price_placeholder": "例：50000",
+      "image": "画像",
+      "change_image": "画像を変更",
+      "choose_image": "画像を選択",
+      "empty": "この製品にはアドオンがありません。",
+      "picker_title": "アドオンの画像を選択"
     }
   },
   "products": {

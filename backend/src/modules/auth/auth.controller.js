@@ -1,5 +1,5 @@
 import User from "../users/user.model.js";
-import OTP from "./otp.model.js";
+import redisClient from "../../config/redis.js";
 import { successResponse, errorResponse } from "../../utils/response.js";
 import {
   sendVerificationEmail,
@@ -8,6 +8,26 @@ import {
 } from "../../utils/email.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+
+// Helper function to generate tokens
+const generateTokens = async (user) => {
+  const token = jwt.sign(
+    { id: user._id, email: user.email, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  // Lưu refresh token vào Redis (hết hạn sau 7 ngày)
+  await redisClient.setex(`refresh_token:${user._id}:${refreshToken}`, 7 * 24 * 60 * 60, "active");
+
+  return { token, refreshToken };
+};
 
 // HÀM ĐĂNG KÝ
 export const registerUser = async (req, res) => {
@@ -23,7 +43,8 @@ export const registerUser = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
-    const userLang = language || "vi";
+    const requestedLang = (language || "").toLowerCase();
+    const userLang = requestedLang.startsWith("en") ? "en" : "vi";
 
     const user = await User.create({
       name: name.trim(),
@@ -33,9 +54,10 @@ export const registerUser = async (req, res) => {
     });
 
     if (user) {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otp = crypto.randomInt(100000, 1000000).toString();
 
-      await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
+      // Lưu OTP vào Redis (15 phút TTL)
+      await redisClient.setex(`otp:VERIFY_EMAIL:${user.email}`, 900, otp);
 
       try {
         await sendVerificationEmail(user.email, otp, userLang);
@@ -43,6 +65,9 @@ export const registerUser = async (req, res) => {
         console.error("[Email Error]", err.message);
         return errorResponse(res, 500, "FAILED_TO_SEND_EMAIL");
       }
+
+      const { getIO } = await import("../../config/socket.js");
+      getIO().emit("user_created", user);
 
       return successResponse(res, 201, "REGISTER_SUCCESS", { email: user.email });
     } else {
@@ -73,15 +98,18 @@ export const verifyEmail = async (req, res) => {
       return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
-    const validOtp = await OTP.findOne({ email, otp, purpose: "VERIFY_EMAIL" });
-    if (!validOtp) {
+    const storedOtp = await redisClient.get(`otp:VERIFY_EMAIL:${email}`);
+    if (storedOtp !== otp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
     user.isVerified = true;
     await user.save();
 
-    await OTP.deleteOne({ _id: validOtp._id });
+    await redisClient.del(`otp:VERIFY_EMAIL:${email}`);
+
+    const { getIO } = await import("../../config/socket.js");
+    getIO().emit("user_updated", user);
 
     return successResponse(res, 200, "VERIFY_SUCCESS");
   } catch (error) {
@@ -125,24 +153,11 @@ export const loginUser = async (req, res) => {
       throw new Error("Missing JWT_SECRET in environment variables");
     }
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    user.refreshTokens.push(refreshToken);
-    await user.save();
+    const { token, refreshToken } = await generateTokens(user);
 
     return successResponse(res, 200, "LOGIN_SUCCESS", {
-      token: token,
-      refreshToken: refreshToken,
+      token,
+      refreshToken,
       user: {
         _id: user._id,
         email: user.email,
@@ -181,10 +196,9 @@ export const resendOTP = async (req, res) => {
       return errorResponse(res, 400, "ACCOUNT_ALREADY_VERIFIED");
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
 
-    await OTP.deleteMany({ email: user.email, purpose: "VERIFY_EMAIL" });
-    await OTP.create({ email: user.email, otp, purpose: "VERIFY_EMAIL" });
+    await redisClient.setex(`otp:VERIFY_EMAIL:${user.email}`, 900, otp);
 
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
     try {
@@ -213,8 +227,10 @@ export const socialLogin = async (req, res) => {
     const providerName = providerId ? providerId.split(".")[0] : "google";
 
     let user = await User.findOne({ email });
+    let isNewUser = false;
 
     if (!user) {
+      isNewUser = true;
       const randomPassword = crypto.randomBytes(16).toString("hex");
 
       user = await User.create({
@@ -245,24 +261,16 @@ export const socialLogin = async (req, res) => {
       throw new Error("Missing JWT_SECRET in environment variables");
     }
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
+    const { token, refreshToken } = await generateTokens(user);
 
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    user.refreshTokens.push(refreshToken);
-    await user.save();
+    if (isNewUser) {
+      const { getIO } = await import("../../config/socket.js");
+      getIO().emit("user_created", user);
+    }
 
     return successResponse(res, 200, "LOGIN_SUCCESS", {
-      token: token,
-      refreshToken: refreshToken,
+      token,
+      refreshToken,
       user: {
         _id: user._id,
         email: user.email,
@@ -295,10 +303,9 @@ export const forgotPassword = async (req, res) => {
       return errorResponse(res, 400, "USE_SOCIAL_LOGIN");
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = crypto.randomInt(100000, 1000000).toString();
 
-    await OTP.deleteMany({ email: user.email, purpose: "RESET_PASSWORD" });
-    await OTP.create({ email: user.email, otp, purpose: "RESET_PASSWORD" });
+    await redisClient.setex(`otp:RESET_PASSWORD:${user.email}`, 900, otp);
 
     const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
     try {
@@ -324,18 +331,15 @@ export const verifyResetOtp = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
 
-    const validOtp = await OTP.findOne({ email, otp, purpose: "RESET_PASSWORD" });
-    if (!validOtp) {
+    const storedOtp = await redisClient.get(`otp:RESET_PASSWORD:${email}`);
+    if (storedOtp !== otp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
 
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // Reset token valid for 15 minutes
-    await user.save({ validateBeforeSave: false });
-
-    await OTP.deleteOne({ _id: validOtp._id });
+    await redisClient.setex(`reset_token:${email}`, 900, resetToken);
+    await redisClient.del(`otp:RESET_PASSWORD:${email}`);
 
     return successResponse(res, 200, "OTP_VERIFIED", { resetToken });
   } catch (error) {
@@ -350,13 +354,13 @@ export const resetPassword = async (req, res) => {
     const { email, resetToken, newPassword } = req.body;
     if (!email || !resetToken || !newPassword) return errorResponse(res, 400, "MISSING_FIELDS");
 
-    const user = await User.findOne({
-      email,
-      resetPasswordToken: resetToken,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
+    const storedToken = await redisClient.get(`reset_token:${email}`);
+    if (storedToken !== resetToken) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_SESSION");
+    }
 
-    if (!user) return errorResponse(res, 400, "INVALID_OR_EXPIRED_SESSION");
+    const user = await User.findOne({ email });
+    if (!user) return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
 
     const isSameAsOldPassword = await user.matchPassword(newPassword);
     if (isSameAsOldPassword) {
@@ -364,9 +368,9 @@ export const resetPassword = async (req, res) => {
     }
 
     user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
     await user.save();
+
+    await redisClient.del(`reset_token:${email}`);
 
     return successResponse(res, 200, "PASSWORD_RESET_SUCCESS");
   } catch (error) {
@@ -381,12 +385,11 @@ export const logoutUser = async (req, res) => {
     const userId = req.user.id;
     const { refreshToken } = req.body;
     
-    if (refreshToken) {
-      await User.findByIdAndUpdate(userId, { 
-        $pull: { refreshTokens: refreshToken } 
-      });
+    if (!refreshToken) {
+      return errorResponse(res, 400, "MISSING_REFRESH_TOKEN");
     }
 
+    await redisClient.del(`refresh_token:${userId}:${refreshToken}`);
     return successResponse(res, 200, "LOGOUT_SUCCESS");
   } catch (error) {
     console.error("Logout Error:", error);
@@ -402,33 +405,21 @@ export const refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET);
     
-    const user = await User.findById(decoded.id);
-    if (!user || !user.refreshTokens.includes(refreshToken)) {
+    const storedTokenStatus = await redisClient.get(`refresh_token:${decoded.id}:${refreshToken}`);
+    if (!storedTokenStatus) {
       return errorResponse(res, 403, "INVALID_REFRESH_TOKEN");
     }
 
-    // Xóa token cũ
-    user.refreshTokens = user.refreshTokens.filter(t => t !== refreshToken);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return errorResponse(res, 403, "INVALID_REFRESH_TOKEN");
+    }
 
-    // Cấp token mới
-    const newAccessToken = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "15m" }
-    );
-    
-    const newRefreshToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    user.refreshTokens.push(newRefreshToken);
-    await user.save({ validateBeforeSave: false });
+    const tokens = await generateTokens(user);
 
     return successResponse(res, 200, "REFRESH_SUCCESS", {
-      token: newAccessToken,
-      refreshToken: newRefreshToken
+      token: tokens.token,
+      refreshToken: tokens.refreshToken
     });
   } catch (error) {
     console.error("Refresh token error:", error);
@@ -441,16 +432,14 @@ export const sendChangePasswordOtp = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
+    const otp = crypto.randomInt(100000, 1000000).toString();
+
+    await redisClient.setex(`otp:CHANGE_PASSWORD:${user.email}`, 900, otp);
+
     const requestedLang = req.body?.language;
     const lang = ["en", "vi"].includes(requestedLang) ? requestedLang : user.language || "vi";
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await OTP.deleteMany({ email: user.email, purpose: "CHANGE_PASSWORD" });
-    await OTP.create({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
-
-    const userLang = req.body.language || req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || user.language || "vi";
-    sendChangePasswordEmail(user.email, otp, userLang).catch((err) => {
+    sendChangePasswordEmail(user.email, otp, lang).catch((err) => {
       console.error("[Email Error] Gửi OTP thất bại:", err.message);
     });
 
@@ -468,8 +457,8 @@ export const verifyChangePasswordOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    const validOtp = await OTP.findOne({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
-    if (!validOtp) {
+    const storedOtp = await redisClient.get(`otp:CHANGE_PASSWORD:${user.email}`);
+    if (storedOtp !== otp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
@@ -487,8 +476,8 @@ export const changePasswordWithOtp = async (req, res) => {
 
     if (!user) return errorResponse(res, 404, "USER_NOT_FOUND");
 
-    const validOtp = await OTP.findOne({ email: user.email, otp, purpose: "CHANGE_PASSWORD" });
-    if (!validOtp) {
+    const storedOtp = await redisClient.get(`otp:CHANGE_PASSWORD:${user.email}`);
+    if (storedOtp !== otp) {
       return errorResponse(res, 400, "INVALID_OR_EXPIRED_OTP");
     }
 
@@ -500,7 +489,7 @@ export const changePasswordWithOtp = async (req, res) => {
     user.password = newPassword;
     await user.save();
 
-    await OTP.deleteOne({ _id: validOtp._id });
+    await redisClient.del(`otp:CHANGE_PASSWORD:${user.email}`);
 
     return successResponse(res, 200, "PASSWORD_CHANGED_SUCCESS");
   } catch (error) {
@@ -523,9 +512,7 @@ export const getMe = async (req, res) => {
 
     const userData = user.toObject();
     delete userData.password;
-    delete userData.resetPasswordToken;
-    delete userData.resetPasswordExpires;
-    delete userData.refreshTokens;
+    // Đã xóa resetPasswordToken, resetPasswordExpires, refreshTokens ở Schema
 
     return successResponse(res, 200, "GET_ME_SUCCESS", userData);
   } catch (error) {
@@ -537,33 +524,44 @@ export const getMe = async (req, res) => {
 export const activateB2BAccount = async (req, res) => {
   try {
     const { token, password } = req.body;
+    const { getIO } = await import("../../config/socket.js");
 
     if (!token || !password) {
       return errorResponse(res, 400, "MISSING_FIELDS");
     }
     
-    if (password.length < 6) {
+    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password)) {
       return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
     }
 
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
-      role: "Enterprise"
-    });
-
-    if (!user) {
-      return errorResponse(res, 400, "INVALID_OR_EXPIRED_TOKEN");
+    const email = await redisClient.get(`activate_b2b_token:${token}`);
+    if (!email) {
+      return errorResponse(res, 400, "INVALID_OR_EXPIRED_SESSION");
     }
 
-    // Hash is handled by the pre("save") hook in user.model.js
+    const user = await User.findOne({ email });
+    if (!user) {
+      return errorResponse(res, 404, "USER_NOT_FOUND");
+    }
+
     user.password = password;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    
+    user.isVerified = true;
     await user.save();
 
-    return successResponse(res, 200, "ACCOUNT_ACTIVATED_SUCCESS");
+    await redisClient.del(`activate_b2b_token:${token}`);
+
+    getIO().emit("user_updated", user);
+
+    const { sendB2BAccountCreatedEmail } = await import("../../utils/email.js");
+    try {
+      const userLang = req.headers["accept-language"]?.split(",")[0]?.split("-")[0] || "vi";
+      await sendB2BAccountCreatedEmail(user.email, user.name, password, userLang);
+    } catch (err) {
+      console.error("Failed to send B2B created email:", err);
+    }
+
+    return successResponse(res, 200, "B2B_ACTIVATED_SUCCESS");
+
   } catch (error) {
     console.error("Activate B2B Error:", error);
     return errorResponse(res, 500, "SERVER_ERROR");

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { Search, Plus, Edit2, Trash2, Eye, LayoutGrid, List as ListIcon, Calendar } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { getBlogsApi, deleteBlogApi } from "@/api/blogApi";
 import Button from "@/components/ui/Button";
@@ -8,9 +8,11 @@ import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
 import Pagination from "@/components/ui/Pagination";
 import { useTranslation } from "react-i18next";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const BlogList = () => {
   const { t } = useTranslation("blog");
+  const { socket } = useSocketStore();
   const navigate = useNavigate();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +22,15 @@ const BlogList = () => {
     category: "",
     status: "",
   });
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
+  const setPage = (newPage) => {
+    setSearchParams(prev => {
+      if (newPage === 1) prev.delete("page");
+      else prev.set("page", newPage);
+      return prev;
+    }, { replace: true });
+  };
   const [totalPages, setTotalPages] = useState(1);
   
   // Xóa blog
@@ -45,7 +55,14 @@ const BlogList = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [filter.category, filter.status, page]);
+    
+    if (socket) {
+      socket.on("blogs_updated", fetchBlogs);
+      return () => {
+        socket.off("blogs_updated", fetchBlogs);
+      };
+    }
+  }, [filter.category, filter.status, page, socket]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -197,7 +214,7 @@ const BlogList = () => {
                   </div>
                 )}
                 <div className="absolute top-3 right-3 flex gap-2">
-                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${blog.status === "PUBLISHED" ? "bg-green-500/80 text-white" : "bg-mkhe-border/80 text-mkhe-text"}`}>
+                  <span className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase tracking-wider backdrop-blur-md ${blog.status === "PUBLISHED" ? "bg-emerald-500/80 text-white" : "bg-mkhe-border/80 text-mkhe-text"}`}>
                     {blog.status === "PUBLISHED" ? t("admin.status.PUBLISHED") : t("admin.status.DRAFT")}
                   </span>
                 </div>
@@ -228,7 +245,7 @@ const BlogList = () => {
                         <Eye className="w-4 h-4" />
                       </button>
                     )}
-                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.delete")}>
+                    <button onClick={() => setDeleteId(blog._id)} className="p-1.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-full transition-colors cursor-pointer" title={t("admin.actions.delete")}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -266,7 +283,7 @@ const BlogList = () => {
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-green-500/10 text-green-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${blog.status === "PUBLISHED" ? "bg-emerald-500/10 text-emerald-500" : "bg-mkhe-border/30 text-mkhe-text/70"}`}>
                       {blog.status === "PUBLISHED" ? t("admin.status.PUBLISHED") : t("admin.status.DRAFT")}
                     </span>
                   </td>
@@ -283,7 +300,7 @@ const BlogList = () => {
                           <Eye className="w-4 h-4" />
                         </button>
                       )}
-                      <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
+                      <button onClick={() => setDeleteId(blog._id)} className="p-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-full transition-all duration-300 cursor-pointer" title={t("admin.actions.delete")}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>

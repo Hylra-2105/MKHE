@@ -1,20 +1,23 @@
-import React, { useEffect } from "react";
+import {  useEffect, useState, useRef  } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
 import Youtube from "@tiptap/extension-youtube";
+import { normalizeYoutubeUrl } from "@/utils/formatters";
 import { useTranslation } from "react-i18next";
 import { 
   Bold, Italic, Heading2, Heading3, 
   List, ListOrdered, Quote,
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  Undo, Redo, Image as ImageIcon, Video as YoutubeIcon
+  Undo, Redo, Image as ImageIcon, Video as YoutubeIcon, X
 } from "lucide-react";
 
 const MenuBar = ({ editor, onImageUpload }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["common", "blog"]);
+  const [showYoutubeModal, setShowYoutubeModal] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   
   if (!editor) return null;
 
@@ -184,28 +187,97 @@ const MenuBar = ({ editor, onImageUpload }) => {
 
       <button
         type="button"
-        onClick={() => {
-          const url = prompt(t("editor.youtube_url", "Enter YouTube URL:"));
-          if (url) {
-            editor.chain().focus().setYoutubeVideo({
-              src: url,
-              width: Math.max(320, parseInt(editor.view.dom.clientWidth, 10)) || 640,
-              height: Math.max(180, parseInt(editor.view.dom.clientWidth, 10) * 9 / 16) || 360,
-            }).insertContent('<p></p>').run();
-          }
-        }}
+        onClick={() => setShowYoutubeModal(true)}
         className={btnClass()}
-        title={t("editor.add_youtube", "Add YouTube Video")}
+        title={t("blog:editor.add_youtube", "Add YouTube Video")}
       >
         <YoutubeIcon className="w-4 h-4" />
       </button>
+
+      {/* Youtube Modal Overlay */}
+      {showYoutubeModal && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+          <div className="bg-mkhe-bg w-full max-w-md p-6 rounded-2xl shadow-2xl border border-mkhe-border/30 relative animate-in zoom-in-95 duration-200">
+            <button
+              type="button"
+              onClick={() => {
+                setShowYoutubeModal(false);
+                setYoutubeUrl("");
+              }}
+              className="absolute top-4 right-4 p-1.5 text-mkhe-text/50 hover:text-mkhe-text hover:bg-mkhe-border/20 rounded-full transition-all cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="w-12 h-12 bg-mkhe-primary/10 text-mkhe-primary rounded-full flex items-center justify-center mb-4">
+              <YoutubeIcon className="w-6 h-6" />
+            </div>
+            
+            <h3 className="text-xl font-bold text-mkhe-text mb-2">
+              {t("blog:editor.youtube_modal_title", "Thêm Video YouTube")}
+            </h3>
+            <p className="text-sm text-mkhe-text/60 mb-6 leading-relaxed">
+              {t("blog:editor.youtube_modal_desc", "Dán đường dẫn (link) của video YouTube vào ô bên dưới để chèn vào bài viết.")}
+            </p>
+            
+            <input
+              type="text"
+              placeholder="https://www.youtube.com/watch?v=..."
+              value={youtubeUrl}
+              onChange={(e) => setYoutubeUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && youtubeUrl.trim()) {
+                  e.preventDefault();
+                  const finalUrl = normalizeYoutubeUrl(youtubeUrl);
+                  if (finalUrl) {
+                    editor.chain().focus().setYoutubeVideo({ src: finalUrl }).run();
+                    setShowYoutubeModal(false);
+                    setYoutubeUrl("");
+                  }
+                }
+              }}
+              className="w-full px-4 py-3 bg-mkhe-input/50 border border-mkhe-border rounded-xl text-mkhe-text focus:outline-none focus:border-mkhe-primary focus:ring-1 focus:ring-mkhe-primary transition-all mb-6"
+              autoFocus
+            />
+            
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowYoutubeModal(false);
+                  setYoutubeUrl("");
+                }}
+                className="px-5 py-2.5 bg-mkhe-border/40 text-mkhe-text font-bold rounded-xl hover:bg-mkhe-border/60 transition-all cursor-pointer"
+              >
+                {t("common:cancel", "Hủy")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const finalUrl = normalizeYoutubeUrl(youtubeUrl);
+                  if (finalUrl) {
+                    editor.chain().focus().setYoutubeVideo({ src: finalUrl }).run();
+                    setShowYoutubeModal(false);
+                    setYoutubeUrl("");
+                  }
+                }}
+                disabled={!youtubeUrl.trim()}
+                className="px-5 py-2.5 bg-mkhe-primary text-white font-bold rounded-xl hover:bg-mkhe-primary/90 shadow-lg shadow-mkhe-primary/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {t("blog:editor.btn_add", "Chèn Video")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
 };
 
 const RichTextEditor = ({ value, onChange, placeholder, onImageUpload }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation(["common", "blog"]);
+  const editorRef = useRef(null);
   
   const editor = useEditor({
     extensions: [
@@ -240,11 +312,87 @@ const RichTextEditor = ({ value, onChange, placeholder, onImageUpload }) => {
           "[&_blockquote]:border-l-4 [&_blockquote]:border-mkhe-primary/50 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-mkhe-text/80 [&_blockquote]:my-4 " +
           "[&_.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.is-editor-empty:first-child::before]:text-mkhe-text/40 [&_.is-editor-empty:first-child::before]:float-left [&_.is-editor-empty:first-child::before]:h-0 [&_.is-editor-empty:first-child::before]:pointer-events-none",
       },
+      handleDrop: function(view, event, slice, moved) {
+        if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
+          const file = event.dataTransfer.files[0];
+          if (file.type.startsWith('image/') && onImageUpload) {
+            event.preventDefault();
+            
+            const tempUrl = URL.createObjectURL(file);
+            const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+            
+            if (editorRef.current) {
+              if (coordinates) {
+                editorRef.current.chain().focus().insertContentAt(coordinates.pos, { type: 'image', attrs: { src: tempUrl } }).run();
+              } else {
+                editorRef.current.chain().focus().setImage({ src: tempUrl }).insertContent('<p></p>').run();
+              }
+            }
+            
+            onImageUpload(file).then(realUrl => {
+              if (realUrl && editorRef.current) {
+                const { state, view: editorView } = editorRef.current;
+                editorView.state.doc.descendants((node, pos) => {
+                  if (node.type.name === 'image' && node.attrs.src === tempUrl) {
+                    editorView.dispatch(
+                      editorView.state.tr.setNodeMarkup(pos, null, { ...node.attrs, src: realUrl })
+                    );
+                  }
+                });
+              }
+              URL.revokeObjectURL(tempUrl);
+            }).catch(err => {
+              console.error("Image drop error:", err);
+              URL.revokeObjectURL(tempUrl);
+            });
+            
+            return true;
+          }
+        }
+        return false;
+      },
+      handlePaste: function(view, event, slice) {
+        if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
+          const file = event.clipboardData.files[0];
+          if (file.type.startsWith('image/') && onImageUpload) {
+            event.preventDefault();
+            
+            const tempUrl = URL.createObjectURL(file);
+            if (editorRef.current) {
+              editorRef.current.chain().focus().setImage({ src: tempUrl }).insertContent('<p></p>').run();
+            }
+            
+            onImageUpload(file).then(realUrl => {
+              if (realUrl && editorRef.current) {
+                const { state, view: editorView } = editorRef.current;
+                editorView.state.doc.descendants((node, pos) => {
+                  if (node.type.name === 'image' && node.attrs.src === tempUrl) {
+                    editorView.dispatch(
+                      editorView.state.tr.setNodeMarkup(pos, null, { ...node.attrs, src: realUrl })
+                    );
+                  }
+                });
+              }
+              URL.revokeObjectURL(tempUrl);
+            }).catch(err => {
+              console.error("Image paste error:", err);
+              URL.revokeObjectURL(tempUrl);
+            });
+            
+            return true;
+          }
+        }
+        return false;
+      }
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
+
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   // Update editor content when value from props changes (e.g., loaded from API)
   useEffect(() => {

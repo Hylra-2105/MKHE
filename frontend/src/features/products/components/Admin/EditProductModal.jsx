@@ -1,4 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
+import { useSocketStore } from "@/stores/useSocketStore";
+import {  useState, useRef, useEffect  } from "react";
 import toast from "react-hot-toast";
 import {
   X,
@@ -12,9 +14,11 @@ import {
   RotateCcw,
   Box,
   ExternalLink,
-  Cpu
+  Cpu,
+  Briefcase
 } from "lucide-react";
 import Button from "@/components/ui/Button";
+import InputField from "@/components/ui/InputField";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import Dropdown from "@/components/ui/Dropdown";
 import NFCManagement from "./NFCManagement";
@@ -28,6 +32,8 @@ import { compressImage } from "@/utils/imageCompressor";
 import ImageGalleryUploader from "./ImageGalleryUploader";
 import Model3DUploader from "./Model3DUploader";
 import B2BTiersInput from "./B2BTiersInput";
+import ProductColorsInput from "./ProductColorsInput";
+import ProductAddOnsInput from "./ProductAddOnsInput";
 import { getBlogsApi } from "@/api/blogApi";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
@@ -48,13 +54,35 @@ const formatFlatpickrDate = (dateObj) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 30;
 
 const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const { t } = useTranslation("product");
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState("info"); // "info" | "nfc"
+
+  const { socket } = useSocketStore();
+  
+  useEffect(() => {
+    if (!socket || !product?._id || !isOpen) return;
+
+    const handleProductUpdated = (updatedProduct) => {
+      if (updatedProduct._id === product._id) {
+        setFormData((prev) => ({
+          ...prev,
+          stock: updatedProduct.stock,
+          colors: updatedProduct.colors || prev.colors,
+        }));
+      }
+    };
+
+    socket.on("product_updated", handleProductUpdated);
+
+    return () => {
+      socket.off("product_updated", handleProductUpdated);
+    };
+  }, [socket, product, isOpen]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -78,6 +106,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     isPublicEvent: false,
     hasSale: false,
     b2bTiers: [],
+    colors: [],
+    addOns: [],
   });
 
   // --- DEBOUNCE CHO BẢN ĐỒ ---
@@ -170,6 +200,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
   const fileInputRef = useRef(null);
   const fileInput3DRef = useRef(null);
 
+  const [initialFormData, setInitialFormData] = useState(null);
+
   const [keptImages, setKeptImages] = useState([]); // Ảnh cũ giữ lại
   const [deletedImages, setDeletedImages] = useState([]); // Ảnh cũ đánh dấu xóa
   const [newImageFiles, setNewImageFiles] = useState([]); // Ảnh mới từ máy (File)
@@ -243,7 +275,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
   useEffect(() => {
     if (product && isOpen) {
-      setFormData({
+      const initData = {
         name: product.name || "",
         sku: product.sku || "",
         vendor: product.vendor || "",
@@ -263,9 +295,15 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         gpsLocation: product?.gpsLocation || "",
         storyBlogId: product?.storyBlogId || "",
         isPublicEvent: product?.isPublicEvent || false,
+        isService: product?.isService || false,
         hasSale: !!product.salePrice || !!product.saleStartDate,
         b2bTiers: product.b2bTiers || [],
-      });
+        colors: product.colors || [],
+        addOns: product.addOns || [],
+      };
+      const clonedInitData = JSON.parse(JSON.stringify(initData));
+      setFormData(clonedInitData);
+      setInitialFormData(clonedInitData);
       // Load ảnh có sẵn
       setKeptImages(product.images || []);
       setDeletedImages([]);
@@ -278,6 +316,18 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       setFormErrors({});
     }
   }, [product, isOpen]);
+
+  const hasChanges = React.useMemo(() => {
+    if (!initialFormData) return false;
+    
+    const isFormChanged = JSON.stringify(formData) !== JSON.stringify(initialFormData);
+    const hasNewImages = newImageFiles.length > 0;
+    const hasDeletedImgs = deletedImages.length > 0;
+    const hasNew3D = file3D !== null;
+    const hasDel3D = isDeleted3D;
+
+    return isFormChanged || hasNewImages || hasDeletedImgs || hasNew3D || hasDel3D;
+  }, [formData, initialFormData, newImageFiles, deletedImages, file3D, isDeleted3D]);
 
   if (!isOpen || !product) return null;
 
@@ -436,7 +486,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     if (!formData.name) errors.name = t("products.errors.name_required", "Vui lòng điền tên sản phẩm");
     if (!formData.sku) errors.sku = t("products.errors.sku_required", "Vui lòng điền mã SKU");
     if (!formData.vendor) errors.vendor = t("products.errors.vendor_required", "Vui lòng chọn nhà cung cấp");
-    if (!formData.price) errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    if (!formData.isService && (!formData.price || Number(formData.price) <= 0)) {
+      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    } else if (formData.isService && (formData.price === "" || formData.price === null || formData.price === undefined)) {
+      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+    }
 
     if (formData.hasDPP) {
       if (!formData.artisanName) errors.artisanName = t("products.errors.artisan_required", "Vui lòng điền tên nghệ nhân");
@@ -474,7 +528,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       }
     }
 
-    if (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") {
+    if (!formData.isService && (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard")) {
       if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
         errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
       } else {
@@ -522,7 +576,9 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
         ...formData,
         price: Number(formData.price),
         salePrice: formData.hasSale && formData.salePrice ? Number(formData.salePrice) : 0,
-        stock: Number(formData.stock) || 0,
+        stock: formData.colors?.length > 0 
+          ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+          : (Number(formData.stock) || 0),
       };
 
       if (!updatePayload.hasSale) {
@@ -553,10 +609,13 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       // 2. UPLOAD ẢNH & 3D MỚI NẾU CÓ
       const uploadPromises = [];
 
+      let galleryRes = null;
+
       if (newImageFiles.length > 0) {
         const uploadData = new FormData();
         newImageFiles.forEach((file) => uploadData.append("images", file));
-        uploadPromises.push(productApi.uploadProductGallery(product._id, uploadData));
+        const p = productApi.uploadProductGallery(product._id, uploadData).then(res => { galleryRes = res; return res; });
+        uploadPromises.push(p);
       }
 
       if (formData.hasDPP && file3D) {
@@ -568,9 +627,46 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
       if (uploadPromises.length > 0) {
         try {
           await Promise.all(uploadPromises);
-        } catch (uploadError) {
-          console.error("[EditProduct] Upload error:", uploadError);
+        } catch (error) {
+          console.error("Upload error:", error);
           toast.error(t("modal.3d_file.error_upload_both"));
+        }
+      }
+
+      if (galleryRes && galleryRes.data && galleryRes.data.images) {
+        try {
+          let needsUpdate = false;
+          const newColors = [...formData.colors];
+          const newAddOns = [...formData.addOns];
+          const updatedImages = galleryRes.data.images;
+          
+          const newImagesStartIdx = updatedImages.length - newImageFiles.length;
+          
+          const blobToUrlMap = {};
+          for(let i=0; i<newImageFiles.length; i++) {
+             if (newImagePreviews[i] && newImagePreviews[i].url) {
+               blobToUrlMap[newImagePreviews[i].url] = updatedImages[newImagesStartIdx + i];
+             }
+          }
+
+          newColors.forEach(c => {
+             if (c.image && c.image.startsWith('blob:')) {
+                c.image = blobToUrlMap[c.image] || c.image;
+                needsUpdate = true;
+             }
+          });
+          newAddOns.forEach(a => {
+             if (a.image && a.image.startsWith('blob:')) {
+                a.image = blobToUrlMap[a.image] || a.image;
+                needsUpdate = true;
+             }
+          });
+
+          if (needsUpdate) {
+             await productApi.updateProduct(product._id, { colors: newColors, addOns: newAddOns });
+          }
+        } catch (e) {
+          console.error("Failed to update blob images:", e);
         }
       }
 
@@ -639,6 +735,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     setFile3D(null);
     onClose();
   };
+
+  const allGalleryImages = [
+    ...keptImages.map(img => typeof img === 'string' ? img : img.url), 
+    ...newImagePreviews.map(p => p.url)
+  ];
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
@@ -729,36 +830,22 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 
                 {/* DÒNG 1: TÊN SẢN PHẨM & SKU */}
                 <div className="grid grid-cols-12 gap-4">
-                  <div className="space-y-1 col-span-8">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.name")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.name ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
-                    {formErrors.name && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.name}</p>
-                      </div>
-                    )}
+                  <div className="col-span-8">
+                    <InputField type="text" name="name" value={formData.name} onChange={handleChange} label={t("modal.name")} required error={formErrors.name ? formErrors.name : null} />
                   </div>
-                  <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.sku")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="sku" value={formData.sku} disabled className="w-full p-3.5 bg-mkhe-text/5 border border-mkhe-border/50 text-mkhe-text/50 rounded-xl focus:outline-none transition-colors text-sm uppercase cursor-not-allowed" />
-                    {formErrors.sku && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.sku}</p>
-                      </div>
-                    )}
+                  <div className="col-span-4">
+                    <InputField type="text" name="sku" value={formData.sku} disabled label={t("modal.sku")} required error={formErrors.sku ? formErrors.sku : null} className="uppercase cursor-not-allowed opacity-50 bg-mkhe-text/5" />
                   </div>
                 </div>
 
                 {/* DÒNG 2: PHÂN LOẠI, MÃ GEN & TRẠNG THÁI */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.category")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.categoryMatrix} options={categories} onChange={(val) => handleChange({ target: { name: "categoryMatrix", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-4">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-red-500">*</span></label>
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.cultural_dna", "Mã gen")} <span className="text-rose-500">*</span></label>
                     <Dropdown value={formData.culturalDNA} options={culturalDNAs} onChange={(val) => handleChange({ target: { name: "culturalDNA", value: val } })} className="w-full" triggerClassName="p-3.5 rounded-xl text-sm" optionClassName="text-sm truncate" />
                   </div>
                   <div className="space-y-1 col-span-4">
@@ -770,18 +857,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                 {/* DÒNG 3: NHÀ CUNG CẤP & LÀNG NGHỀ */}
                 <div className="grid grid-cols-12 gap-4">
                   <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-red-500">*</span></label>
-                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-red-500" : ""}`} optionClassName="text-sm truncate" />
+                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.vendor")} <span className="text-rose-500">*</span></label>
+                    <Dropdown value={formData.vendor} options={vendors} onChange={(val) => { updateField("vendor", val); }} placeholder={t("modal.select_vendor")} className="w-full" triggerClassName={`p-3.5 rounded-xl text-sm ${formErrors.vendor ? "border-rose-500" : ""}`} optionClassName="text-sm truncate" />
                     {formErrors.vendor && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                         <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                         <p className="text-xs font-medium">{formErrors.vendor}</p>
                       </div>
                     )}
                   </div>
-                  <div className="space-y-1 col-span-6">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.craft_village", "Làng nghề")}</label>
-                    <input type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
+                  <div className="col-span-6">
+                    <InputField type="text" name="craftVillage" value={formData.craftVillage} onChange={handleChange} label={t("modal.craft_village", "Làng nghề")} placeholder={t("modal.craft_village_placeholder", "VD: Làng dệt Châu Phong...")} />
                   </div>
                 </div>
 
@@ -797,8 +883,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       >
                         <span className="truncate">
                           {formData.material?.length > 0
-                            ? formData.material.join(", ")
-                            : "Chọn chất liệu"}
+                            ? formData.material.map(val => predefinedMaterials.find(m => m.value === val)?.label || val).join(", ")
+                            : t("modal.select_material", "Chọn chất liệu")}
                         </span>
                         <ChevronDown className={`w-4 h-4 transition-transform duration-300 shrink-0 ${isMaterialDropdownOpen ? "rotate-180" : ""}`} />
                       </button>
@@ -832,20 +918,40 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                       )}
                     </div>
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.price")} <span className="text-red-500">*</span></label>
-                    <input type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.price ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} />
-                    {formErrors.price && (
-                      <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                        <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                        <p className="text-xs font-medium">{formErrors.price}</p>
-                      </div>
-                    )}
+                  <div className="col-span-3">
+                    <InputField type="text" name="price" value={formatNumber(formData.price)} onChange={(e) => updateField("price", parseNumber(e.target.value))} label={t("modal.price")} required error={formErrors.price ? formErrors.price : null} />
                   </div>
-                  <div className="space-y-1 col-span-3">
-                    <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">{t("modal.stock")}</label>
-                    <input type="text" name="stock" value={formatNumber(formData.stock)} onChange={(e) => handleChange({ target: { name: "stock", value: parseNumber(e.target.value) } })} className="w-full p-3.5 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm" />
+                  <div className="col-span-3">
+                    <InputField 
+                      type="text" 
+                      name="stock" 
+                      value={formData.colors?.length > 0 
+                        ? formData.colors.reduce((sum, c) => sum + (Number(c.stock) || 0), 0)
+                        : formatNumber(formData.stock)} 
+                      onChange={(e) => updateField("stock", parseNumber(e.target.value))} 
+                      label={t("modal.stock")} 
+                      disabled={formData.colors?.length > 0} 
+                    />
                   </div>
+                </div>
+
+                {/* KHỐI MÀU SẮC */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductColorsInput
+                    colors={formData.colors}
+                    onChange={(newColors) => setFormData(prev => ({ ...prev, colors: newColors }))}
+                    galleryImages={allGalleryImages}
+                    error={formErrors.colors}
+                  />
+                </div>
+                
+                {/* KHỐI ADDONS */}
+                <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                  <ProductAddOnsInput
+                    addOns={formData.addOns}
+                    galleryImages={allGalleryImages}
+                    onChange={(newAddOns) => setFormData(prev => ({ ...prev, addOns: newAddOns }))}
+                  />
                 </div>
 
                 {/* KHỐI MỚI: CHƯƠNG TRÌNH SALE (VỚI TOGGLE) */}
@@ -880,15 +986,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
                   <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasSale ? "max-h-[700px] mt-5 opacity-100" : "max-h-0 opacity-0"}`}>
                     <div className="grid grid-cols-12 gap-4">
-                      <div className="space-y-1 col-span-4">
-                        <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.salePrice", "Giá Sale")}</label>
-                        <input type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.salePrice ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm`} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} />
-                        {formErrors.salePrice && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                            <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                            <p className="text-xs font-medium">{formErrors.salePrice}</p>
-                          </div>
-                        )}
+                      <div className="col-span-4">
+                        <InputField type="text" name="salePrice" value={formatNumber(formData.salePrice)} onChange={(e) => updateField("salePrice", parseNumber(e.target.value))} label={t("form.sale.salePrice", "Giá Sale")} placeholder={t("form.sale.salePricePlaceholder", "Nhập giá Sale...")} error={formErrors.salePrice ? formErrors.salePrice : null} />
                       </div>
                       <div className="space-y-1 col-span-4">
                         <label className="text-[10px] font-bold text-yellow-600 uppercase ml-1 block">{t("form.sale.startSale", "Bắt đầu Sale")}</label>
@@ -896,11 +995,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           value={formatFlatpickrDate(formData.saleStartDate)}
                           onChange={([date]) => updateField("saleStartDate", date)}
                           options={saleStartDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleStartDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleStartDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleStartDate}</p>
                           </div>
@@ -912,11 +1011,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           value={formatFlatpickrDate(formData.saleEndDate)}
                           onChange={([date]) => updateField("saleEndDate", date)}
                           options={saleEndDateOptions}
-                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-red-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
+                          className={`w-full p-3.5 bg-yellow-500/5 border ${formErrors.saleEndDate ? 'border-rose-500' : 'border-yellow-500/30 focus:border-yellow-500'} text-[var(--color-mkhe-text)] rounded-xl focus:outline-none transition-colors text-sm`}
                           placeholder="dd/mm/yyyy --:--"
                         />
                         {formErrors.saleEndDate && (
-                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                          <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                             <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                             <p className="text-xs font-medium">{formErrors.saleEndDate}</p>
                           </div>
@@ -946,12 +1045,39 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
                 {/* BẢNG GIÁ SỈ (CHỈ HIỂN THỊ NẾU LÀ SẢN PHẨM B2B) */}
                 {(formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard") && (
-                  <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
-                    <B2BTiersInput
-                      tiers={formData.b2bTiers}
-                      onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
-                      error={formErrors.b2bTiers}
-                    />
+                  <div className="space-y-4">
+                    <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                      <B2BTiersInput
+                        tiers={formData.b2bTiers}
+                        onChange={(newTiers) => setFormData(prev => ({ ...prev, b2bTiers: newTiers }))}
+                        error={formErrors.b2bTiers}
+                      />
+                    </div>
+                    
+                    {/* B2B SERVICE TOGGLE */}
+                    <div className="p-5 border border-mkhe-primary/30 bg-mkhe-primary/5 rounded-2xl relative">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-mkhe-primary/20 rounded-lg text-mkhe-primary">
+                            <Briefcase className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-mkhe-text text-sm">{t("modal.isService.title", "Gói Dịch Vụ B2B")}</h4>
+                            <p className="text-[11px] text-mkhe-text/60 mt-0.5">{t("modal.isService.desc", "Bật tính năng này nếu đây là Gói Dịch Vụ (Tư vấn, gia công...).")}</p>
+                            <p className="text-[11px] text-rose-500/80 italic mt-0.5">{t("modal.isService.note", "Lưu ý: Gói dịch vụ sẽ bị ẩn hoàn toàn khỏi trang Cửa Hàng.")}</p>
+                          </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.isService}
+                            onChange={(e) => setFormData(prev => ({ ...prev, isService: e.target.checked }))}
+                            className="sr-only peer"
+                          />
+                          <div className="w-11 h-6 bg-mkhe-border/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 )}
 
@@ -983,18 +1109,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
                 <div className={`transition-all duration-300 origin-top overflow-hidden ${formData.hasDPP ? "max-h-[700px] mt-4 opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.artisan_name")} <span className="text-red-500">*</span></label>
-                      <input type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.artisanName ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} placeholder={t("modal.dpp.artisan_placeholder_edit")} />
-                      {formErrors.artisanName && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
-                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                          <p className="text-xs font-medium">{formErrors.artisanName}</p>
-                        </div>
-                      )}
+                    <div>
+                      <InputField type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} label={t("modal.dpp.artisan_name")} placeholder={t("modal.dpp.artisan_placeholder_edit")} required error={formErrors.artisanName ? formErrors.artisanName : null} />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-red-500">*</span></label>
+                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-rose-500">*</span></label>
                       <input 
                         type="text" 
                         name="gpsLocation" 
@@ -1007,11 +1126,11 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                           }
                           handleChange(e);
                         }} 
-                        className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
+                        className={`w-full p-2.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-rose-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
                         placeholder={t("modal.dpp.location_placeholder_edit")} 
                       />
                       {formErrors.gpsLocation && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-red-500">
+                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
                           <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
                           <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
                         </div>
@@ -1076,17 +1195,17 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                     {/* HIỂN THỊ FILE 3D HIỆN TẠI (LÀM MỜ NẾU BỊ ĐÁNH DẤU XÓA HOẶC BỊ GHI ĐÈ BỞI FILE MỚI) */}
                     {product?.file3D && (
                       <div className={`mt-3 border rounded-lg p-3 flex items-center justify-between shadow-sm transition-all duration-300
-                        ${(isDeleted3D || file3D) ? 'bg-gray-50 border-gray-200 opacity-60 grayscale' : 'bg-green-50 border-green-200'}
+                        ${(isDeleted3D || file3D) ? 'bg-gray-50 border-gray-200 opacity-60 grayscale' : 'bg-emerald-50 border-emerald-200'}
                       `}>
                         <div className="flex items-center gap-3 text-mkhe-text">
-                          <div className={`p-2 rounded-md ${(isDeleted3D || file3D) ? 'bg-gray-200 text-gray-500' : 'bg-green-100 text-green-600'}`}>
+                          <div className={`p-2 rounded-md ${(isDeleted3D || file3D) ? 'bg-gray-200 text-gray-500' : 'bg-emerald-100 text-emerald-600'}`}>
                             <Box className="w-5 h-5" />
                           </div>
                           <div className="flex flex-col">
-                            <span className={`text-sm font-bold ${(isDeleted3D || file3D) ? 'text-gray-500 line-through' : 'text-green-700'}`}>
+                            <span className={`text-sm font-bold ${(isDeleted3D || file3D) ? 'text-gray-500 line-through' : 'text-emerald-700'}`}>
                               {t("modal.3d_file.has_file")}
                             </span>
-                            <a href={product.file3D} target="_blank" rel="noopener noreferrer" className={`text-[11px] hover:underline flex items-center gap-1 mt-0.5 pointer-events-auto ${(isDeleted3D || file3D) ? 'text-gray-400' : 'text-green-600 hover:text-green-800'}`}>
+                            <a href={product.file3D} target="_blank" rel="noopener noreferrer" className={`text-[11px] hover:underline flex items-center gap-1 mt-0.5 pointer-events-auto ${(isDeleted3D || file3D) ? 'text-gray-400' : 'text-emerald-600 hover:text-emerald-800'}`}>
                               {t("modal.3d_file.click_view")} <ExternalLink className="w-3 h-3"/>
                             </a>
                           </div>
@@ -1097,7 +1216,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
                             type="button"
                             onClick={(e) => { e.preventDefault(); setIsDeleted3D(!isDeleted3D); }}
                             className={`p-1.5 rounded-md transition-colors pointer-events-auto cursor-pointer
-                              ${isDeleted3D ? 'text-mkhe-primary hover:bg-mkhe-primary/10' : 'text-red-500 hover:bg-red-100'}
+                              ${isDeleted3D ? 'text-mkhe-primary hover:bg-mkhe-primary/10' : 'text-rose-500 hover:-rose-100'}
                             `}
                             title={isDeleted3D ? t("modal.3d_file.restore_btn") : t("modal.3d_file.delete_btn")}
                           >
@@ -1127,7 +1246,7 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
           <button
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-red-200 text-red-500 rounded-lg font-bold text-sm hover:bg-red-100 hover:border-red-300 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
           >
             <Trash2 className="w-4 h-4" /> {t("table.delete")}
           </button>
@@ -1144,8 +1263,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
             <Button
               type="submit"
               form="edit-product-form"
-              disabled={loading}
-              className="!w-auto px-8 py-2.5 rounded-xl text-sm whitespace-nowrap"
+              disabled={loading || !hasChanges}
+              className={`!w-auto px-8 py-2.5 rounded-xl text-sm whitespace-nowrap ${!hasChanges ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {loading ? t("modal.processing") : t("modal.save")}
             </Button>

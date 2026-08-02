@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import {  useState, useEffect, useRef  } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ChevronLeft, Image as ImageIcon, X, Check, Search } from "lucide-react";
@@ -8,6 +8,7 @@ import axiosClient from "@/api/axiosClient";
 import Button from "@/components/ui/Button";
 import RichTextEditor from "@/components/ui/RichTextEditor";
 import Dropdown from "@/components/ui/Dropdown";
+import imageCompression from "browser-image-compression";
 
 const BlogEditor = () => {
   const { id } = useParams();
@@ -16,14 +17,16 @@ const BlogEditor = () => {
   const [saving, setSaving] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   
-  const [formData, setFormData] = useState({
+  const initialData = {
     title: "",
     content: "",
     thumbnail: "",
     category: "Ký sự",
     status: "DRAFT",
     tags: []
-  });
+  };
+  const [formData, setFormData] = useState(initialData);
+  const [originalFormData, setOriginalFormData] = useState(initialData);
 
   const fileInputRef = useRef(null);
 
@@ -42,6 +45,7 @@ const BlogEditor = () => {
         try {
           const parsed = JSON.parse(savedDraft);
           setFormData(parsed);
+          setOriginalFormData(parsed);
           toast.success(t("editor.draft_restored"), { id: 'draft-restore-toast' });
         } catch(e) {}
       }
@@ -77,14 +81,16 @@ const BlogEditor = () => {
       const res = await axiosClient.get(`/blogs/${id}`);
       if (res.data && res.data.success) {
         const blogData = res.data.data;
-        setFormData({
+        const loadedData = {
           title: blogData.title || "",
           content: blogData.content || "",
           thumbnail: blogData.thumbnail || "",
           category: blogData.category || "Ký sự",
           status: blogData.status || "DRAFT",
           tags: blogData.tags ? blogData.tags.map(t => t._id) : []
-        });
+        };
+        setFormData(loadedData);
+        setOriginalFormData(loadedData);
       }
     } catch (error) {
       toast.error(t("editor.not_found"));
@@ -95,16 +101,33 @@ const BlogEditor = () => {
   };
 
   const uploadThumbnailFile = async (file) => {
+    const previousThumbnail = formData.thumbnail;
+    let tempUrl = null;
+    
     try {
-      toast.loading("Đang tải ảnh lên...", { id: "uploadThumbnail" });
-      const url = await uploadBlogImageApi(file);
+      tempUrl = URL.createObjectURL(file);
+      setFormData(prev => ({ ...prev, thumbnail: tempUrl }));
+      
+      toast.loading(t("editor.uploading_image", "Đang xử lý và tải ảnh lên..."), { id: "uploadThumbnail" });
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+      };
+      const compressedFile = await imageCompression(file, options);
+      
+      const url = await uploadBlogImageApi(compressedFile);
       if (url) {
         setFormData(prev => ({ ...prev, thumbnail: url }));
+        if (tempUrl) URL.revokeObjectURL(tempUrl);
         toast.success(t("editor.upload_success"), { id: "uploadThumbnail" });
       } else {
         throw new Error("Không lấy được URL ảnh");
       }
     } catch (error) {
+      console.error("Upload error:", error);
+      setFormData(prev => ({ ...prev, thumbnail: previousThumbnail }));
+      if (tempUrl) URL.revokeObjectURL(tempUrl);
       toast.error(t("editor.upload_error"), { id: "uploadThumbnail" });
     }
   };
@@ -138,9 +161,16 @@ const BlogEditor = () => {
 
   const handleEditorImageUpload = async (file) => {
     try {
-      const url = await uploadBlogImageApi(file);
+      const options = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+      };
+      const compressedFile = await imageCompression(file, options);
+      const url = await uploadBlogImageApi(compressedFile);
       return url;
     } catch (error) {
+      console.error("Content image upload error:", error);
       toast.error(t("editor.upload_to_content_error"));
       return null;
     }
@@ -176,12 +206,14 @@ const BlogEditor = () => {
       if (id) {
         await updateBlogApi(id, payload);
         toast.success(t("editor.update_success"));
+        localStorage.removeItem(`mkhe_blog_draft_${id || 'new'}`);
+        navigate(-1);
       } else {
         await createBlogApi(payload);
         toast.success(t("editor.create_success"));
+        localStorage.removeItem(`mkhe_blog_draft_${id || 'new'}`);
+        navigate("/admin/blogs");
       }
-      localStorage.removeItem(`mkhe_blog_draft_${id || 'new'}`);
-      navigate("/admin/blogs");
     } catch (error) {
       toast.error(t("editor.save_error"));
     } finally {
@@ -204,11 +236,13 @@ const BlogEditor = () => {
     return <div className="p-6 text-center">{t("common:loading", { defaultValue: "Đang tải dữ liệu..." })}</div>;
   }
 
+  const hasChanges = JSON.stringify(formData) !== JSON.stringify(originalFormData);
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex flex-col gap-4 mb-6">
         <button 
-          onClick={() => navigate("/admin/blogs")}
+          onClick={() => navigate(-1)}
           className="group inline-flex items-center gap-1 text-mkhe-text/80 hover:text-mkhe-primary transition-colors text-sm font-medium uppercase tracking-wider w-fit cursor-pointer"
         >
           <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
@@ -260,7 +294,7 @@ const BlogEditor = () => {
             
             <Button
               onClick={() => handleSubmit("PUBLISHED")}
-              disabled={saving}
+              disabled={saving || !hasChanges}
               className="w-full py-3"
             >
               {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : (!id ? t("admin.editor.btn_publish_now") : t("admin.editor.btn_update_publish"))}

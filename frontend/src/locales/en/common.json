@@ -17,5 +17,31 @@
   "back": "Back",
   "search": "Search",
   "actions": "Actions",
-  "view_details": "View details"
+  "view_details": "View details",
+  "B2B_ACCOUNT_CREATED": "The Business account has been created and the activation email has been sent successfully.",
+  "ACCOUNT_ACTIVATED_SUCCESS": "Activate account and set password successfully.",
+  "COMPANY_REQUIRED_FOR_B2B": "Please enter your Business Name and Tax ID for Business Account opening request.",
+  "CONTACT_CREATED_SUCCESSFULLY": "Contact request sent successfully! We will respond as soon as possible.",
+  "INVALID_OR_EXPIRED_TOKEN": "The activation link is invalid or has expired.",
+  "MISSING_REQUIRED_FIELDS": "Please fill in all required information.",
+  "user_menu": {
+    "staff_area": "Staff Area",
+    "admin_area": "Admin Area",
+    "profile": "My Profile",
+    "manage_users": "Manage Users",
+    "manage_contacts": "Manage Contacts",
+    "manage_orders": "Manage Orders",
+    "manage_products": "Manage Products",
+    "manage_vouchers": "Manage Vouchers",
+    "manage_blogs": "Manage Blogs",
+    "manage_reviews": "Manage Reviews",
+    "analytics": "Analytics & Reports",
+    "logout": "Log Out",
+    "b2b_dashboard": "B2B Dashboards"
+  },
+  "err_pass_min_length": "Password must have at least 8 characters.",
+  "err_pass_uppercase": "Password must contain at least 1 capital letter (A-Z).",
+  "err_pass_number": "Password must contain at least 1 digit (0-9).",
+  "err_pass_special": "Password must contain at least 1 special character (!@#...).",
+  "err_empty_password": "Please enter your password."
 }

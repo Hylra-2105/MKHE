@@ -1,6 +1,9 @@
 {
-  "title": "내 주문",
+  "title": "거래 내역",
   "desc": "주문 추적 및 관리",
+  "tx_title": "거래 내역",
+  "tx_desc": "결제 내역 관리",
+  "completed": "완료",
   "fetch_orders_error": "주문 내역을 불러오지 못했습니다",
   "no_orders": "아직 주문이 없습니다.",
   "fetch_order_error": "주문 상세 정보를 불러오지 못했습니다",
@@ -41,5 +44,42 @@
   "write_review": "리뷰 작성",
   "already_reviewed": "평가 완료",
   "receive_success": "수령 확인이 완료되었습니다!",
-  "receive_error": "수령 확인에 실패했습니다"
+  "receive_error": "수령 확인에 실패했습니다",
+  "request_return": "교환/반품 요청",
+  "returns": {
+    "title": "교환/반품 내역",
+    "desc": "제품 반품 요청을 추적하고 관리하세요.",
+    "status": {
+      "PENDING": "처리를 기다리는 중",
+      "APPROVED": "승인됨",
+      "REJECTED": "거절하다"
+    },
+    "order_code": "단일 코드:",
+    "fetch_error": "반품 내역을 로드하는 중에 오류가 발생했습니다.",
+    "fetch_detail_error": "반품 세부정보를 로드하는 중에 오류가 발생했습니다.",
+    "no_returns": "아직 교환/반품을 요청하지 않으셨습니다.",
+    "return_quantity": "필요한 수량",
+    "detail_title": "교환/반품 내역",
+    "detail_status": "상태",
+    "reason_label": "반품 사유",
+    "admin_note": "고객 서비스 부서의 피드백",
+    "items_title": "교환/반품이 필요한 상품입니다",
+    "create": {
+      "title": "교환/반품 요청",
+      "desc": "교환/반품을 원하시는 상품과 수량을 선택해주세요.",
+      "reason_placeholder": "교환/반품사유를 입력하세요. (예: 상품불량, 디자인잘못...)",
+      "upload_proof": "증명사진 다운로드",
+      "upload_desc": "드래그 앤 드롭하거나 클릭하여 최대 3개의 사진/비디오를 업로드하세요.",
+      "submit_btn": "요청 보내기",
+      "cancel_btn": "취소",
+      "item_qty": "지불 수량",
+      "error_select_item": "반품할 제품을 하나 이상 선택하세요.",
+      "error_reason": "반품사유를 입력해주세요",
+      "error_qty": "반품 수량은 0보다 커야 합니다.",
+      "error_upload": "사진을 업로드하는 중에 오류가 발생했습니다.",
+      "success": "교환/반품 요청이 성공적으로 접수되었습니다!"
+    },
+    "updated_toast": "반품 주문 {{orderCode}} 업데이트: {{status}}"
+  },
+  "returns_tab": "교환/반품"
 }

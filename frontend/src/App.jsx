@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
+import {  useEffect, Suspense  } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -24,39 +25,46 @@ import ScrollToTop from "./components/router/ScrollToTop";
 import AuthLayout from "./components/layout/AuthLayout";
 import MainLayout from "./components/layout/MainLayout";
 
-import LoginPage from "./pages/auth/LoginPage";
-import RegisterPage from "./pages/auth/RegisterPage";
-import VerifyOTPPage from "./pages/auth/VerifyOTPPage";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/auth/ResetPasswordPage";
-import B2BActivationPage from "./pages/auth/B2BActivationPage";
+import PageSkeleton from "./components/ui/PageSkeleton";
 
-import HomePage from "./pages/home/HomePage";
-import BlogList from "./features/blogs/components/Admin/BlogList";
-import BlogEditor from "./features/blogs/components/Admin/BlogEditor";
-import BlogPage from "./pages/blogs/BlogPage";
-import BlogDetail from "./pages/blogs/BlogDetail";
-import ShopPage from "./pages/shop/ShopPage";
-import ShopDetailPage from "./pages/shop/ShopDetailPage";
-import UserManagement from "./pages/users/UserManagementPage";
-import ProductManagementPage from "./pages/products/ProductManagementPage";
-import VoucherManagementPage from "./pages/vouchers/VoucherManagementPage";
-import ReviewManagementPage from "./pages/reviews/ReviewManagementPage";
-import DashboardPage from "./pages/admin/DashboardPage";
-import B2BDashboardPage from "./pages/b2b/B2BDashboardPage";
+const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
+const RegisterPage = React.lazy(() => import("./pages/auth/RegisterPage"));
+const VerifyOTPPage = React.lazy(() => import("./pages/auth/VerifyOTPPage"));
+const ForgotPasswordPage = React.lazy(() => import("./pages/auth/ForgotPasswordPage"));
+const ResetPasswordPage = React.lazy(() => import("./pages/auth/ResetPasswordPage"));
+const B2BActivationPage = React.lazy(() => import("./pages/auth/B2BActivationPage"));
 
-import ForbiddenPage from "./pages/errors/ForbiddenPage";
-import NotFoundPage from "./pages/errors/NotFoundPage";
+const HomePage = React.lazy(() => import("./pages/home/HomePage"));
+const BlogList = React.lazy(() => import("./features/blogs/components/Admin/BlogList"));
+const BlogEditor = React.lazy(() => import("./features/blogs/components/Admin/BlogEditor"));
+const BlogPage = React.lazy(() => import("./pages/blogs/BlogPage"));
+const BlogDetail = React.lazy(() => import("./pages/blogs/BlogDetail"));
+const ShopPage = React.lazy(() => import("./pages/shop/ShopPage"));
+const ShopDetailPage = React.lazy(() => import("./pages/shop/ShopDetailPage"));
+const UserManagement = React.lazy(() => import("./pages/users/UserManagementPage"));
+const ProductManagementPage = React.lazy(() => import("./pages/products/ProductManagementPage"));
+const VoucherManagementPage = React.lazy(() => import("./pages/vouchers/VoucherManagementPage"));
+const ContactManagementPage = React.lazy(() => import("./pages/contact/ContactManagementPage"));
 
-import ProfilePage from "@/pages/users/ProfilePage";
+const ReviewManagementPage = React.lazy(() => import("./pages/reviews/ReviewManagementPage"));
+const ReturnManagementPage = React.lazy(() => import("./pages/returns/ReturnManagementPage"));
+const DashboardPage = React.lazy(() => import("./pages/admin/DashboardPage"));
+const B2BDashboardPage = React.lazy(() => import("./pages/b2b/B2BDashboardPage"));
+const B2BOrderRequest = React.lazy(() => import("./pages/b2b/B2BOrderRequest"));
 
-import DPPPage from "@/pages/dpp/DPPPage";
-import AboutPage from "@/pages/about/AboutPage";
-import ContactPage from "@/pages/contact/ContactPage";
+const ForbiddenPage = React.lazy(() => import("./pages/errors/ForbiddenPage"));
+const NotFoundPage = React.lazy(() => import("./pages/errors/NotFoundPage"));
 
-import CheckoutPage from "./pages/orders/CheckoutPage";
-import CheckoutSuccessPage from "./pages/orders/CheckoutSuccessPage";
-import OrderManagementPage from "./pages/orders/OrderManagementPage";
+const ProfilePage = React.lazy(() => import("@/pages/users/ProfilePage"));
+
+const DPPPage = React.lazy(() => import("@/pages/dpp/DPPPage"));
+const AboutPage = React.lazy(() => import("@/pages/about/AboutPage"));
+const ContactPage = React.lazy(() => import("@/pages/contact/ContactPage"));
+
+const CheckoutPage = React.lazy(() => import("./pages/orders/CheckoutPage"));
+const CheckoutSuccessPage = React.lazy(() => import("./pages/orders/CheckoutSuccessPage"));
+const OrderManagementPage = React.lazy(() => import("./pages/orders/OrderManagementPage"));
+const AdminB2BOrdersPage = React.lazy(() => import("./pages/admin/AdminB2BOrdersPage"));
 
 function App() {
   const { t } = useTranslation(["header"]);
@@ -161,12 +169,29 @@ function App() {
         "VOUCHER_SAVED": "notifications.title.voucher_saved",
         "LUCKY_WHEEL_WON": "notifications.title.lucky_wheel_won",
         "FLASH_SALE_TITLE": "notifications.title.flash_sale",
-        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published"
+        "VOUCHER_PUBLISHED_TITLE": "notifications.title.voucher_published",
+        "USER_RETURN_CREATED": "notifications.title.USER_RETURN_CREATED",
+        "USER_RETURN_UPDATED": "notifications.title.USER_RETURN_UPDATED",
+        "USER_RETURN_UPDATED_APPROVED": "notifications.title.USER_RETURN_UPDATED_APPROVED",
+        "USER_RETURN_UPDATED_REJECTED": "notifications.title.USER_RETURN_UPDATED_REJECTED",
+        "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
+        "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED"
       };
       const currentT = tRef.current;
       const translatedTitle = map[notif.title] ? currentT(map[notif.title], { defaultValue: notif.title }) : notif.title;
 
-      toast(translatedTitle, {
+      let toastMessage = translatedTitle;
+      if (notif.title === "USER_RETURN_UPDATED_APPROVED" || notif.title === "USER_RETURN_UPDATED_REJECTED") {
+        const isApproved = notif.title === "USER_RETURN_UPDATED_APPROVED";
+        const statusStr = currentT(`notifications.title.return_status_${isApproved ? 'approved' : 'rejected'}`, { defaultValue: isApproved ? "Đã duyệt" : "Từ chối" });
+        toastMessage = currentT("notifications.title.return_updated_toast", {
+          defaultValue: `Cập nhật đổi trả đơn ${notif.orderCode || ''}: ${statusStr}`,
+          orderCode: notif.orderCode || '',
+          status: statusStr
+        });
+      }
+
+      toast(toastMessage, {
         icon: '🔔',
       });
     });
@@ -179,7 +204,9 @@ function App() {
           "ADMIN_ORDER_NEW": "notifications.title.admin_order_new",
           "ADMIN_ORDER_PAID": "notifications.title.admin_order_paid",
           "ADMIN_ORDER_COMPLETED": "notifications.title.admin_order_completed",
-          "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert"
+          "ADMIN_STOCK_ALERT": "notifications.title.admin_stock_alert",
+          "ADMIN_RETURN_NEW": "notifications.title.ADMIN_RETURN_NEW",
+          "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW"
         };
         const currentT = tRef.current;
         const translatedTitle = adminMap[notif.title] ? currentT(adminMap[notif.title], { defaultValue: notif.title }) : notif.title;
@@ -202,6 +229,17 @@ function App() {
       }
     });
 
+    socket.on("force_logout", (data) => {
+      const currentT = tRef.current;
+      toast.error(
+        data?.reason 
+          ? `${currentT("messages.account_blocked_reason", { defaultValue: "Tài khoản của bạn đã bị khóa:" })} ${data.reason}` 
+          : currentT("messages.account_blocked", { defaultValue: "Tài khoản của bạn đã bị khóa bởi Quản trị viên!" }),
+        { duration: 5000 }
+      );
+      useAuthStore.getState().logoutAction();
+    });
+
     return () => {
       if (socket) {
         socket.disconnect();
@@ -216,13 +254,15 @@ function App() {
       <Toaster 
         position="top-center" 
         reverseOrder={false} 
+        containerStyle={{
+          zIndex: 999999,
+        }}
         toastOptions={{
           className: '!bg-mkhe-bg !text-mkhe-text !border !border-mkhe-border !rounded-xl !shadow-lg',
           style: {
             padding: '12px 16px',
             fontSize: '14px',
             fontWeight: '500',
-            zIndex: 9999
           },
           success: {
             iconTheme: {
@@ -240,10 +280,8 @@ function App() {
       />
 
       <Routes>
-        <Route path="/" element={<Navigate to="/home" replace />} />
-
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/shop" element={<ShopPage />} />
@@ -301,6 +339,39 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin/contacts"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ContactManagementPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/b2b/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/b2b/request"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BOrderRequest />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/b2b-orders"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <AdminB2BOrdersPage />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/admin/orders"
@@ -319,6 +390,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin/returns"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <ReturnManagementPage />
+              </ProtectedRoute>
+            }
+          />
           
           <Route
             path="/admin/analysis"
@@ -334,6 +414,15 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Enterprise"]}>
                 <B2BDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/b2b/order-request"
+            element={
+              <ProtectedRoute allowedRoles={["Enterprise"]}>
+                <B2BOrderRequest />
               </ProtectedRoute>
             }
           />
@@ -415,10 +504,10 @@ function App() {
           />
         </Route>
 
-        <Route path="/dpp/:uid" element={<DPPPage />} />
+        <Route path="/dpp/:uid" element={<Suspense fallback={<PageSkeleton />}><DPPPage /></Suspense>} />
 
-        <Route path="/403" element={<ForbiddenPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/403" element={<Suspense fallback={<PageSkeleton />}><ForbiddenPage /></Suspense>} />
+        <Route path="*" element={<Suspense fallback={<PageSkeleton />}><NotFoundPage /></Suspense>} />
       </Routes>
     </Router>
   );

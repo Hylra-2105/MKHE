@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Buffer } from "buffer";
 import { getGmailClient } from "../config/nodemailer.js";
 import { loadTranslation, getTranslation } from "../config/i18n.js";
 
@@ -339,8 +340,8 @@ export const sendInvoiceEmail = async (toEmail, order, lang = "vi") => {
  * Gửi email thông báo cập nhật trạng thái đơn hàng
  */
 export const sendOrderStatusEmail = async (toEmail, order, status, lang = "vi") => {
-  let title = "";
-  let message = "";
+  let title;
+  let message;
   let color = "#bc9c6a"; // default primary color
 
   switch (status) {
@@ -431,6 +432,113 @@ export const sendB2BActivationEmail = async (toEmail, activationToken, lang = "v
         </div>
         <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
           ${getTranslation(trans, "verification.footer", { time: getFormattedTime(lang) }) || 'Nếu bạn cần hỗ trợ, vui lòng liên hệ CSKH.'}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email xác nhận đã nhận yêu cầu liên hệ cho khách hàng
+ */
+export const sendContactConfirmationEmail = async (toEmail, name, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const greeting = getTranslation(trans, "contactConfirmation.greeting", { name }) || `Xin chào ${name},`;
+
+  const mailOptions = {
+    from: `"MKHE Heritage" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: getTranslation(trans, "contactConfirmation.subject"),
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center; font-size: 24px;">${greeting}</h2>
+        <p style="text-align: center; color: #333; line-height: 1.6;">${getTranslation(trans, "contactConfirmation.instruction")}</p>
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px; margin-top: 30px;">
+          ${getTranslation(trans, "contactConfirmation.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email thông báo cho Admin về yêu cầu liên hệ mới
+ */
+export const sendAdminContactNotificationEmail = async (adminEmail, contactData, lang = "vi") => {
+  const trans = loadTranslation(lang, "email");
+  const subject = getTranslation(trans, "adminContactNotification.subject", { name: contactData.name }) || `Yêu cầu liên hệ mới từ ${contactData.name}`;
+
+  const mailOptions = {
+    from: `"MKHE System" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: subject,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #d97706; text-align: center;">${getTranslation(trans, "adminContactNotification.greeting")}</h2>
+        <p style="font-size: 16px; line-height: 1.6;">${getTranslation(trans, "adminContactNotification.instruction")}</p>
+        
+        <div style="background-color: #fff; border: 1px solid #eee; padding: 15px; margin: 20px 0; border-radius: 4px;">
+          <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">${getTranslation(trans, "adminContactNotification.details")}</h3>
+          <p><strong>${getTranslation(trans, "adminContactNotification.name")}</strong> ${contactData.name}</p>
+          <p><strong>${getTranslation(trans, "adminContactNotification.email")}</strong> ${contactData.email}</p>
+          <p><strong>${getTranslation(trans, "adminContactNotification.phone")}</strong> ${contactData.phone}</p>
+          ${contactData.company ? `<p><strong>${getTranslation(trans, "adminContactNotification.company")}</strong> ${contactData.company}</p>` : ''}
+          <p><strong>${getTranslation(trans, "adminContactNotification.interest")}</strong> ${contactData.interest}</p>
+          <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc;">
+            <strong>${getTranslation(trans, "adminContactNotification.message")}</strong>
+            <p style="white-space: pre-wrap; background-color: #fafafa; padding: 10px; border-radius: 4px; margin-top: 5px;">${contactData.message}</p>
+          </div>
+        </div>
+
+        <p style="color: #999; font-size: 12px; border-top: 1px solid #e5dcd3; padding-top: 20px; margin-top: 30px; text-align: center;">
+          ${getTranslation(trans, "adminContactNotification.footer", { time: getFormattedTime(lang) })}
+        </p>
+      </div>
+    `,
+  };
+  await sendEmail(mailOptions);
+};
+
+/**
+ * Gửi email thông báo tài khoản B2B đã được cấp kèm mật khẩu
+ * @param {string} toEmail - Email khách hàng
+ * @param {string} name - Tên khách hàng
+ * @param {string} password - Mật khẩu ngẫu nhiên
+ * @param {string} lang - Ngôn ngữ
+ */
+export const sendB2BAccountCreatedEmail = async (toEmail, name, password, lang = "vi") => {
+  const loginUrl = `${process.env.FRONTEND_URL}/login`;
+  
+  const mailOptions = {
+    from: `"MKHE Heritage B2B" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: lang === "vi" ? "Tài khoản Đối tác B2B MKHE của bạn đã được kích hoạt" : "Your MKHE B2B Partner Account has been activated",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5dcd3; border-radius: 8px; background-color: #fcfbfa;">
+        <h2 style="color: #bc9c6a; text-align: center;">${lang === "vi" ? "Chào mừng đối tác B2B" : "Welcome B2B Partner"}</h2>
+        <p>Chào ${name},</p>
+        <p>${lang === "vi" ? "Tài khoản đối tác B2B của bạn tại Mekong Culture đã được kích hoạt thành công." : "Your B2B partner account at Mekong Culture has been successfully activated."}</p>
+        <p>${lang === "vi" ? "Dưới đây là thông tin đăng nhập của bạn:" : "Here is your login information:"}</p>
+        
+        <div style="background-color: #e5dcd3; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;">
+          <p><strong>Email:</strong> ${toEmail}</p>
+          <p><strong>Password:</strong> <span style="font-size: 18px; font-weight: bold; color: #d97706;">${password}</span></p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginUrl}" style="background-color: #bc9c6a; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+            ${lang === "vi" ? "Đăng nhập ngay" : "Login Now"}
+          </a>
+        </div>
+        
+        <p style="color: #d97706; font-size: 14px; text-align: center;">
+          <em>* ${lang === "vi" ? "Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu để đảm bảo an toàn." : "Please change your password after your first login for security."}</em>
+        </p>
+
+        <p style="color: #999; font-size: 14px; text-align: center; border-top: 1px solid #e5dcd3; padding-top: 20px;">
+          ${lang === "vi" ? "Trân trọng," : "Best regards,"}<br>Mekong Culture
         </p>
       </div>
     `,

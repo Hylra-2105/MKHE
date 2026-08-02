@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, handleCheckout, handleSendOtp, isSubmitting, otpSending }) {
+export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, handleCheckout, handleSendOtp, isSubmitting, otpSending, lastOtpTime }) {
   const { t } = useTranslation("checkout");
   const [otpArray, setOtpArray] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
@@ -13,12 +13,19 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
     if (showOtpModal) {
       setOtpArray(["", "", "", "", "", ""]);
       setOtp("");
-      setCountdown(60);
+      
+      const elapsed = lastOtpTime ? Date.now() - lastOtpTime : 0;
+      let remaining = 60;
+      if (elapsed > 0 && elapsed < 60000) {
+        remaining = 60 - Math.floor(elapsed / 1000);
+      }
+      setCountdown(remaining);
+
       setTimeout(() => {
         if (inputRefs.current[0]) inputRefs.current[0].focus();
       }, 100);
     }
-  }, [showOtpModal, setOtp]);
+  }, [showOtpModal, setOtp, lastOtpTime]);
 
   // Sync với parent
   useEffect(() => {
@@ -91,7 +98,7 @@ export default function OtpModal({ user, setOtp, showOtpModal, setShowOtpModal, 
   if (!showOtpModal) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 px-4">
       <div className="bg-mkhe-bg p-8 rounded-xl shadow-xl border border-mkhe-border/20 w-full max-w-md relative animate-in fade-in zoom-in-95 duration-200 text-center">
         <h3 className="text-2xl font-serif text-mkhe-primary mb-2">
           {t("otp.title")}

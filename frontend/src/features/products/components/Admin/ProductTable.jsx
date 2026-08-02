@@ -1,4 +1,3 @@
-import React from "react";
 import { Edit2, Dna } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -88,10 +87,10 @@ const ProductTable = ({ products, loading, onEdit }) => {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${
                         product.status === "PUBLISHED"
-                          ? "bg-green-500/10 text-green-600 border-green-500/30"
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
                           : product.status === "DRAFT"
                             ? "bg-gray-500/10 text-gray-600 border-gray-500/30"
-                            : "bg-red-500/10 text-red-600 border-red-500/30"
+                            : "bg-rose-500/10 text-rose-600 border-rose-500/30"
                       }`}
                     >
                       {t(`statuses.${product.status}`, product.status)}

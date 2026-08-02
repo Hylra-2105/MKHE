@@ -1,4 +1,3 @@
-import React from "react";
 import { MapPin, Navigation, Globe } from "lucide-react";
 import { useTranslation } from "react-i18next";
 

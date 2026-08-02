@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import {  useState  } from "react";
 import { useTranslation } from "react-i18next";
 import { X, Star, Upload, Loader2, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -117,8 +117,14 @@ const ReviewModal = ({ isOpen, onClose, orderId, item, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
-      <div className="bg-[var(--color-mkhe-bg)] w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200">
+    <div 
+      className="fixed inset-0 z-[300] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-[var(--color-mkhe-bg)] w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-[var(--color-mkhe-border)]/20 animate-in zoom-in-95 duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-mkhe-border)]/10">

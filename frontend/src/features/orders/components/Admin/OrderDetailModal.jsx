@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { X, MapPin, Phone, User, Package, MessageSquare } from "lucide-react";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";
@@ -40,8 +40,8 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
       case "PENDING": return "!bg-yellow-500/10 !text-yellow-600 !border-yellow-500/30";
       case "CONFIRMED": return "!bg-blue-500/10 !text-blue-600 !border-blue-500/30";
       case "DELIVERING": return "!bg-indigo-500/10 !text-indigo-600 !border-indigo-500/30";
-      case "COMPLETED": return "!bg-green-500/10 !text-green-600 !border-green-500/30";
-      case "CANCELLED": return "!bg-red-500/10 !text-red-600 !border-red-500/30";
+      case "COMPLETED": return "!bg-emerald-500/10 !text-emerald-600 !border-emerald-500/30";
+      case "CANCELLED": return "!bg-rose-500/10 !text-rose-600 !border-rose-500/30";
       default: return "!bg-gray-500/10 !text-gray-600 !border-gray-500/30";
     }
   };
@@ -109,7 +109,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                       value={localPaymentStatus}
                       options={[
                         { value: "UNPAID", label: t("admin:orders.unpaid", { defaultValue: "Chưa thanh toán" }), color: "text-amber-500" },
-                        { value: "PAID", label: t("admin:orders.paid", { defaultValue: "Đã thanh toán" }), color: "text-green-600" }
+                        { value: "PAID", label: t("admin:orders.paid", { defaultValue: "Đã thanh toán" }), color: "text-emerald-600" }
                       ]}
                       onChange={(val) => {
                         setLocalPaymentStatus(val);
@@ -153,7 +153,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                     optionClassName="text-sm font-semibold"
                   />
                   {(order.orderStatus === "CANCELLED" || order.orderStatus === "COMPLETED") && (
-                    <p className="text-xs text-red-500/80 mt-1 italic">Trạng thái này không thể thay đổi nữa.</p>
+                    <p className="text-xs text-rose-500/80 mt-1 italic">Trạng thái này không thể thay đổi nữa.</p>
                   )}
                 </div>
               </div>
@@ -191,7 +191,24 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                         {item.image && (
                           <img src={item.image} alt={item.name} className="w-10 h-10 object-cover rounded border border-mkhe-border/30" />
                         )}
-                        <span className="line-clamp-2">{item.name}</span>
+                        <span className="line-clamp-2">
+                          {item.name}
+                          {item.color && (
+                            <span className="block text-xs text-mkhe-text/60 mt-0.5">
+                              {t("history:color", { defaultValue: "Màu sắc:" })} {item.color}
+                            </span>
+                          )}
+                          {item.addOns && item.addOns.length > 0 && (
+                            <div className="mt-1 flex flex-col gap-0.5">
+                              {item.addOns.map((addOn, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5">
+                                  <span className="text-[10px] bg-mkhe-primary/10 text-mkhe-primary px-1.5 py-0.5 rounded font-bold uppercase shrink-0">+ {addOn.price.toLocaleString()}đ</span>
+                                  <span className="text-xs text-mkhe-text/70 truncate">{addOn.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </span>
                       </div>
                     </td>
                     <td className="p-3 text-center">{item.quantity}</td>
@@ -218,7 +235,7 @@ export default function OrderDetailModal({ isOpen, onClose, order, onStatusChang
                   <span>{order.shippingFee.toLocaleString()}đ</span>
                 </div>
                 {order.discountAmount > 0 && (
-                  <div className="flex justify-between text-green-600">
+                  <div className="flex justify-between text-emerald-600">
                     <span>{t("history:discount", { defaultValue: "Giảm giá" })}:</span>
                     <span>-{order.discountAmount.toLocaleString()}đ</span>
                   </div>

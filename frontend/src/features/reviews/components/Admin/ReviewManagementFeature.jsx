@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import {  useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, Loader2, Eye, EyeOff, ShieldCheck, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import toast from "react-hot-toast";
@@ -182,14 +182,12 @@ const ReviewManagementFeature = () => {
                     </td>
                     <td className="px-4 py-2.5 max-w-[220px] whitespace-normal break-words">
                       <div className="line-clamp-2">{review.comment || "-"}</div>
-                      {review.comment && review.comment.length > 50 && (
-                        <button 
-                          onClick={() => setSelectedReview(review)}
-                          className="text-mkhe-primary text-xs mt-1 hover:underline cursor-pointer font-semibold"
-                        >
-                          {t("common:view_details", { defaultValue: "Xem chi tiết" })}
-                        </button>
-                      )}
+                      <button 
+                        onClick={() => setSelectedReview(review)}
+                        className="text-mkhe-primary text-xs mt-1 hover:underline cursor-pointer font-semibold block"
+                      >
+                        {t("common:view_details", { defaultValue: "Xem chi tiết" })}
+                      </button>
                       {review.images?.length > 0 && (
                         <div className="flex gap-1 mt-1">
                           {review.images.map((img, idx) => (
@@ -205,7 +203,7 @@ const ReviewManagementFeature = () => {
                       )}
                     </td>
                     <td className="px-4 py-2.5 text-center">
-                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${review.isHidden ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"}`}>
+                      <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${review.isHidden ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"}`}>
                         {review.isHidden ? t("reviews:hidden") : t("reviews:visible")}
                       </span>
                     </td>
@@ -215,8 +213,8 @@ const ReviewManagementFeature = () => {
                           onClick={() => handleToggleVisibility(review._id, review.isHidden)}
                           className={`p-2 rounded-full transition-colors cursor-pointer w-9 h-9 flex items-center justify-center shrink-0 ${
                             review.isHidden 
-                              ? "bg-green-500/10 text-green-600 hover:bg-green-500/20" 
-                              : "bg-red-500/10 text-red-600 hover:bg-red-500/20"
+                              ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20" 
+                              : "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20"
                           }`}
                           title={review.isHidden ? t("reviews:show") : t("reviews:hide")}
                         >
@@ -225,7 +223,7 @@ const ReviewManagementFeature = () => {
                         {user?.role === "Admin" && review.user && (
                           <button 
                             onClick={() => { setSelectedUser(review.user); setIsUserModalOpen(true); }}
-                            className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${review.user.isBlocked ? "text-green-600 hover:bg-green-500/20 bg-green-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
+                            className={`p-2 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center w-9 h-9 shrink-0 ${review.user.isBlocked ? "text-emerald-600 hover:bg-emerald-500/20 bg-emerald-500/10" : "text-orange-500 hover:bg-orange-500/20 bg-orange-500/10"}`}
                             title={review.user.isBlocked ? t("common:unlock_account", { defaultValue: "Mở Khóa Tài Khoản" }) : t("common:lock_account", { defaultValue: "Khóa Tài Khoản" })}
                           >
                             <FiLock size={16} />
@@ -253,7 +251,7 @@ const ReviewManagementFeature = () => {
       {/* Image Preview Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-4xl max-h-[90vh] w-full flex justify-center">
@@ -276,7 +274,7 @@ const ReviewManagementFeature = () => {
       {/* Review Detail Modal */}
       {selectedReview && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedReview(null)}
         >
           <div 
@@ -320,6 +318,23 @@ const ReviewManagementFeature = () => {
                   {selectedReview.comment}
                 </div>
               </div>
+              
+              {selectedReview.images?.length > 0 && (
+                <div>
+                  <span className="font-semibold opacity-70 text-xs uppercase tracking-wider">{t("reviews:modal_images", { defaultValue: "Hình ảnh đính kèm" })}</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {selectedReview.images.map((img, idx) => (
+                      <button 
+                        key={idx}
+                        onClick={() => setSelectedImage(getImageUrl(img))}
+                        className="focus:outline-none cursor-zoom-in hover:opacity-80 transition-opacity"
+                      >
+                        <img src={getImageUrl(img)} className="w-20 h-20 object-cover border border-mkhe-border/30 rounded-md shadow-sm" alt={`Review image ${idx + 1}`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

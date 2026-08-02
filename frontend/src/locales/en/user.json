@@ -10,14 +10,16 @@
     "pass_mismatch": "Passwords do not match",
     "invalid_file_type": "Please select a valid image or video file!",
     "video_too_large": "Video upload must not exceed 10MB!",
-    "image_too_large": "Image upload must not exceed 5MB!"
+    "image_too_large": "Image upload must not exceed 5MB!",
+    "name_required": "Please enter your full name",
+    "phone_required": "Please enter your phone number"
   },
   "messages": {
     "update_success": "Update successful!",
     "change_pass_success": "Password updated successfully!",
     "otp_sent_success": "OTP sent successfully!",
     "otp_send_error": "Error sending OTP",
-    "delete_success": "Đã xóa tài khoản thành công!"
+    "delete_success": "Account deleted successfully!"
   },
   "auth": {
     "new_password": "New Password",
@@ -26,6 +28,8 @@
   "profile": {
     "title": "Personal Profile",
     "general_info": "General Information",
+    "transactions": "Transaction History",
+    "vouchers": "My Vouchers",
     "change_password": "Change Password",
     "update_avatar": "Update Avatar",
     "drag_drop": "Drag and drop image/video here",
@@ -58,5 +62,13 @@
   "INVALID_OR_EXPIRED_OTP": "Invalid or expired OTP code.",
   "PASSWORD_MUST_BE_DIFFERENT": "New password must be different from the current password.",
   "USER_NOT_FOUND": "User account not found.",
-  "SERVER_ERROR": "An unexpected error occurred. Please try again later."
+  "SERVER_ERROR": "Internal server error.",
+  "vouchers_tab": {
+    "status_available": "Available",
+    "status_used": "Used",
+    "status_expired": "Expired",
+    "discount": "Discount",
+    "expiry": "EXP",
+    "no_vouchers": "You don't have any vouchers yet"
+  }
 }

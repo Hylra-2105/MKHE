@@ -1,0 +1,71 @@
+{
+  "title": "B2B ダッシュボード",
+  "request_title": "新しい B2B リクエストの作成",
+  "subtitle": "リクエスト情報をご記入ください。できるだけ早くご連絡させていただきます",
+  "admin_title": "B2B管理",
+  "status": {
+    "PENDING_QUOTE": "見積もり待ち",
+    "NEGOTIATING": "交渉",
+    "CONFIRMED": "閉店",
+    "PRODUCING": "生産中",
+    "DELIVERING": "配達",
+    "COMPLETED": "完了",
+    "CANCELLED": "キャンセル"
+  },
+  "download_quote": "見積書・契約書のダウンロード",
+  "confirm_order": "注文終了の確認",
+  "chat_placeholder": "メッセージを入力してください...",
+  "send": "送信",
+  "upload_quote": "PDFをアップロードする",
+  "update_status": "アップデート",
+  "no_orders": "まだ契約はありません。",
+  "confirm_msg": "この注文を閉じてもよろしいですか?",
+  "pdf_required": "PDFファイルを添付してください。",
+  "select_status": "ステータスの選択",
+  "consultingPackage": "コンサルティングと製品設計のパッケージをオンデマンドで提供",
+  "companyInfo": {
+    "title": "事業案内",
+    "desc1": "この情報は契約書と請求書の作成に使用されます",
+    "company": "会社",
+    "taxCode": "MST",
+    "notUpdated": "まだ更新されていません",
+    "note": "個人ページで再度更新できます"
+  },
+  "fields": {
+    "product": "サービスパッケージ・製品",
+    "productPlaceholder": "興味のあるサービス/製品を選択してください",
+    "quantity": "予定数量",
+    "budget": "推定予算 (VND)",
+    "budgetPlaceholder": "例: 50,000,000",
+    "deliveryDate": "お届け予定日",
+    "deliveryDatePlaceholder": "日付を選択してください...",
+    "packaging": "梱包仕様",
+    "packagingPlaceholder": "パッケージを選択してください",
+    "packagingOptions": {
+      "STANDARD_BOX": "MKHE標準ボックス",
+      "NO_PACKAGING": "箱は必要ありません"
+    },
+    "note": "追加の注意事項",
+    "notePlaceholder": "素材、香り、サイズなどに関する特別な要件",
+    "designFiles": "添付ファイル（設計・詳細要件）",
+    "dragDrop": "ここにファイルをドラッグ アンド ドロップするか、クリックして選択します",
+    "fileHint": ".pdf、.ai、.png、.jpg 形式をサポート (最大 5 ファイル)",
+    "fileNote": "最大5ファイル"
+  },
+  "validation": {
+    "productRequired": "製品/サービスを選択してください",
+    "quantityRequired": "数量を入力してください",
+    "deliveryDateRequired": "お届け日を選択してください"
+  },
+  "messages": {
+    "fetchProductsError": "製品リストを読み込めません",
+    "maxFiles": "アップロードできるファイルは最大 5 つまでです",
+    "success": "B2B リクエストは正常に送信されました。すぐにお見積りについてご連絡させていただきます。",
+    "error": "エラーが発生しました。後でもう一度お試しください"
+  },
+  "buttons": {
+    "back": "ダッシュボードに戻る",
+    "submit": "リクエストの送信",
+    "submitting": "送信中..."
+  }
+}
