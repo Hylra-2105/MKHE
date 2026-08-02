@@ -169,7 +169,8 @@ export const getProducts = async (req, res) => {
     const products = await Product.find(query)
       .sort(sortQuery)
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const totalPages = Math.ceil(totalProducts / limit);
 
@@ -196,12 +197,12 @@ export const getProductById = async (req, res) => {
     // Tìm kiếm bằng Mongoose ObjectId (nếu ID dài 24 ký tự hex) HOẶC bằng mã SKU
     let product;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      product = await Product.findById(id);
+      product = await Product.findById(id).lean();
     } 
     
     // Nếu không tìm thấy bằng ObjectId hoặc ID không phải định dạng hex, thử tìm theo SKU
     if (!product) {
-      product = await Product.findOne({ sku: id.toUpperCase() });
+      product = await Product.findOne({ sku: id.toUpperCase() }).lean();
     }
 
     if (!product) {
@@ -231,11 +232,11 @@ export const getShopProductById = async (req, res) => {
     // Tìm kiếm bằng Mongoose ObjectId hoặc bằng mã SKU
     let product;
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      product = await Product.findById(id);
+      product = await Product.findById(id).lean();
     } 
     
     if (!product) {
-      product = await Product.findOne({ sku: id.toUpperCase() });
+      product = await Product.findOne({ sku: id.toUpperCase() }).lean();
     }
 
     if (!product) {
@@ -368,7 +369,8 @@ export const getDeletedProducts = async (req, res) => {
     const trashedProducts = await Product.find({ status: "HIDDEN" })
       .sort({ updatedAt: -1, _id: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     return successResponse(res, 200, "GET_TRASHED_SUCCESS", {
       data: trashedProducts,
@@ -586,7 +588,8 @@ export const getShopProducts = async (req, res) => {
     const products = await Product.find(query)
       .sort({ status: -1, createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
 
     const totalPages = Math.ceil(totalProducts / limit);
 

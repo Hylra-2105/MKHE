@@ -15,6 +15,8 @@ dotenv.config({ path: envPath });
 
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
+import compression from "compression";
 import connectDB from "./src/config/db.js";
 import authRoutes from "./src/modules/auth/auth.routes.js";
 import userRoutes from "./src/modules/users/user.routes.js";
@@ -36,6 +38,7 @@ import returnRoutes from "./src/modules/returns/return.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 import { startSaleCron } from "./src/cron/saleCron.js";
 import { startVoucherCron } from "./src/cron/voucherCron.js";
+import { errorHandler } from "./src/middlewares/errorHandler.js";
 
 connectDB();
 startOrderCron();
@@ -61,6 +64,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(helmet());
+app.use(compression());
 app.use(express.json());
 
 // root route
@@ -118,6 +123,9 @@ app.use("/api/contacts", contactRoutes);
 
 // API Đổi/Trả (RMA)
 app.use("/api/returns", returnRoutes);
+
+// Global Error Handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
