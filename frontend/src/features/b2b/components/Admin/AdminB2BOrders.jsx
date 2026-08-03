@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { formatCurrency } from "@/utils/formatters";
+import Dropdown from "@/components/ui/Dropdown";
 
 const STATUS_LIST = ["PENDING_QUOTE", "NEGOTIATING", "CONFIRMED", "PRODUCING", "DELIVERING", "COMPLETED", "CANCELLED"];
 
@@ -162,13 +163,12 @@ const AdminB2BOrders = () => {
               </div>
               
               <div className="flex flex-col items-end gap-2">
-                <select 
+                <Dropdown 
                   value={selectedOrder.status}
-                  onChange={handleStatusChange}
-                  className="px-3 py-2 border rounded-lg text-sm bg-mkhe-primary/5 outline-none focus:border-mkhe-primary"
-                >
-                  {STATUS_LIST.map(s => <option key={s} value={s}>{t(`b2b:status.${s}`)}</option>)}
-                </select>
+                  onChange={(val) => handleStatusChange({ target: { value: val } })}
+                  options={STATUS_LIST.map(s => ({ value: s, label: t(`b2b:status.${s}`) }))}
+                  triggerClassName="w-48 bg-mkhe-primary/5"
+                />
 
                 {!selectedOrder.quotePdfUrl && (
                   <div className="flex gap-2 items-center mt-2">

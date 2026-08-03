@@ -18,6 +18,7 @@ import {
 import Button from '@/components/ui/Button';
 import TextAreaField from '@/components/ui/TextAreaField';
 import InputField from '@/components/ui/InputField';
+import SelectField from '@/components/ui/SelectField';
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -38,7 +39,6 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
   // Trạng thái bật/tắt các Popup con
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
-  const [isReasonDropdownOpen, setIsReasonDropdownOpen] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
 
   // Lý do khóa mặc định (sẽ lấy từ key i18n đầu tiên)
@@ -482,66 +482,19 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
           loading={isSaving}
           children={
             <div className="mb-6 relative">
-              <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1.5 text-left transition-colors">
-                {t("users.block_reason_label")}
-              </label>
-
-              {isReasonDropdownOpen && (
-                <div
-                  className="fixed inset-0 z-[120]"
-                  onClick={() => setIsReasonDropdownOpen(false)}
-                />
-              )}
-
-              <div className="relative w-full">
-                <button
-                  type="button"
-                  onClick={() => setIsReasonDropdownOpen(!isReasonDropdownOpen)}
-                  className="w-full p-3 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 cursor-pointer rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)]/50 text-sm font-medium flex justify-between items-center shadow-sm relative z-[121] transition-all"
-                >
-                  <span className="truncate pr-4">
-                    {t(`reasons.${blockReason}`)}
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-[var(--color-mkhe-primary)] shrink-0 transition-transform duration-300 ${
-                      isReasonDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {isReasonDropdownOpen && (
-                  <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 rounded-xl shadow-xl py-2 z-[122] max-h-56 overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-200 transition-colors">
-                    {[
-                      "spam_comments",
-                      "boom_orders",
-                      "fake_info",
-                      "policy_violation",
-                      "fraud_activity",
-                    ].map((reasonKey) => (
-                      <button
-                        key={reasonKey}
-                        type="button"
-                        onClick={() => {
-                          setBlockReason(reasonKey);
-                          setIsReasonDropdownOpen(false);
-                        }}
-                        className={`w-[calc(100%-16px)] mx-2 px-3 py-2.5 cursor-pointer rounded-lg text-sm text-left flex justify-between items-center transition-colors ${
-                          blockReason === reasonKey
-                            ? "bg-[var(--color-mkhe-primary)]/10 text-[var(--color-mkhe-primary)] font-bold"
-                            : "text-[var(--color-mkhe-text)]/80 hover:bg-[var(--color-mkhe-border)]/30 hover:text-[var(--color-mkhe-text)]"
-                        }`}
-                      >
-                        <span className="truncate pr-2">
-                          {t(`reasons.${reasonKey}`)}
-                        </span>
-                        {blockReason === reasonKey && (
-                          <Check className="w-4 h-4 shrink-0 text-[var(--color-mkhe-primary)] transition-colors" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <SelectField
+                label={t("users.block_reason_label")}
+                value={blockReason}
+                onChange={(e) => setBlockReason(e.target.value)}
+                options={[
+                  "spam_comments",
+                  "boom_orders",
+                  "fake_info",
+                  "policy_violation",
+                  "fraud_activity",
+                ].map(reason => ({ value: reason, label: t(`reasons.${reason}`) }))}
+                wrapperClassName="!mb-0"
+              />
             </div>
           }
         />
