@@ -45,5 +45,17 @@
   "err_pass_special": "パスワードには少なくとも 1 つの特殊文字 (!@#...) が含まれている必要があります。",
   "err_empty_password": "パスワードを入力してください。",
   "USERNAME_ALREADY_EXISTS": "このユーザー名は登録されました！",
-  "PHONE_ALREADY_EXISTS": "この電話番号は登録されています！"
+  "PHONE_ALREADY_EXISTS": "この電話番号は登録されています！",
+  "INVALID_USERNAME_FORMAT": "ユーザー名の形式が無効です!",
+  "MISSING_FIELDS": "すべてのフィールドに入力してください。",
+  "FAILED_TO_SEND_EMAIL": "メールの送信に失敗しました。後でもう一度試してください。",
+  "INVALID_OR_EXPIRED_OTP": "OTP コードが無効か期限切れです。",
+  "USE_SOCIAL_LOGIN": "このメールはソーシャル ネットワーク経由で登録されています。Google でログインしてください。",
+  "INVALID_OR_EXPIRED_SESSION": "セッションが無効か期限切れです。",
+  "USER_NOT_FOUND": "ユーザーが存在しません!",
+  "VALIDATION_ERROR": "無効な入力です!",
+  "ACCOUNT_NOT_FOUND": "アカウントが存在しません!",
+  "WRONG_PASSWORD": "パスワードが間違っています!",
+  "ACCOUNT_NOT_VERIFIED": "アカウントが認証されていません!",
+  "ACCOUNT_BLOCKED": "アカウントがロックされました!"
 }

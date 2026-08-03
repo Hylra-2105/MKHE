@@ -42,7 +42,8 @@
     "contact_shipping": "联系和送货",
     "default_address": "默认地址",
     "address_placeholder": "请输入您的地址...",
-    "no_address": "您尚未设置默认地址。单击编辑以更新。"
+    "no_address": "您尚未设置默认地址。单击编辑以更新。",
+    "general_info_desc": "管理您的个人信息和送货地址"
   },
   "buttons": {
     "verifying": "正在验证...",

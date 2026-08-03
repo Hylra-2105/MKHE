@@ -45,5 +45,17 @@
   "err_pass_special": "비밀번호에는 특수 문자(!@#...)가 1개 이상 포함되어야 합니다.",
   "err_empty_password": "비밀번호를 입력해주세요.",
   "USERNAME_ALREADY_EXISTS": "이 사용자 이름이 등록되었습니다!",
-  "PHONE_ALREADY_EXISTS": "등록된 전화번호입니다!"
+  "PHONE_ALREADY_EXISTS": "등록된 전화번호입니다!",
+  "INVALID_USERNAME_FORMAT": "사용자 이름 형식이 잘못되었습니다!",
+  "MISSING_FIELDS": "모든 항목을 작성해주세요!",
+  "FAILED_TO_SEND_EMAIL": "이메일 전송에 실패했습니다. 나중에 다시 시도해 주세요!",
+  "INVALID_OR_EXPIRED_OTP": "OTP 코드가 유효하지 않거나 만료되었습니다!",
+  "USE_SOCIAL_LOGIN": "이 이메일은 소셜 네트워크를 통해 등록되었습니다. Google로 로그인하세요!",
+  "INVALID_OR_EXPIRED_SESSION": "세션이 유효하지 않거나 만료되었습니다!",
+  "USER_NOT_FOUND": "사용자가 존재하지 않습니다!",
+  "VALIDATION_ERROR": "입력이 잘못되었습니다!",
+  "ACCOUNT_NOT_FOUND": "계정이 존재하지 않습니다!",
+  "WRONG_PASSWORD": "비밀번호가 틀렸습니다!",
+  "ACCOUNT_NOT_VERIFIED": "계정이 확인되지 않았습니다!",
+  "ACCOUNT_BLOCKED": "계정이 잠겼습니다!"
 }

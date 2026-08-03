@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
+import ToggleField from "@/components/ui/ToggleField";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -637,10 +638,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-mkhe-primary text-sm">{t("voucher.apply_o2o")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.apply_o2o_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isO2O" checked={formData.isO2O} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
-                </label>
+                <ToggleField name="isO2O" checked={formData.isO2O} onChange={handleChange} />
               </div>
 
               <div className="flex items-center justify-between p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mt-4">
@@ -648,10 +646,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-yellow-600 text-sm">{t("voucher.send_notification")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.send_notification_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
-                </label>
+                <ToggleField name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} />
               </div>
             </div>
 

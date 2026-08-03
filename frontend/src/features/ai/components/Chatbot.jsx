@@ -13,6 +13,11 @@ const Chatbot = () => {
   const [showGreeting, setShowGreeting] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -92,6 +97,8 @@ const Chatbot = () => {
       handleSend();
     }
   };
+
+  if (!mounted) return null;
 
   return (
     <>

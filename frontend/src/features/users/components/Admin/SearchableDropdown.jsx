@@ -1,4 +1,5 @@
-import {  useState, useEffect, useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
+import { cn } from "@/utils/cn";
 
 const SearchableDropdown = ({
   name,
@@ -7,6 +8,7 @@ const SearchableDropdown = ({
   options,
   placeholder,
   disabled,
+  error,
   t,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,11 +33,13 @@ const SearchableDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full p-2 bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-primary)]/50 rounded min-h-[32px] flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors ${
-          disabled
-            ? "bg-[var(--color-mkhe-border)]/30 cursor-not-allowed opacity-60"
-            : "hover:border-[var(--color-mkhe-primary)]"
-        }`}
+        className={cn(
+          "w-full p-2 bg-[var(--color-mkhe-bg)] border rounded min-h-[32px] flex items-center justify-between transition-colors text-sm",
+          disabled ? "bg-[var(--color-mkhe-border)]/30 cursor-not-allowed opacity-60" : "cursor-pointer",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+            : "border-[var(--color-mkhe-primary)]/50 focus:border-[var(--color-mkhe-primary)] focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 hover:border-[var(--color-mkhe-primary)]"
+        )}
       >
         <span
           className={

@@ -8,6 +8,8 @@ import { isValidPhoneInput } from "@/utils/validators";
 import EditableField from "@/features/users/components/Admin/EditableField";
 import AddressMap from "@/features/orders/components/Checkout/AddressMap";
 import Button from "@/components/ui/Button";
+import TextAreaField from "@/components/ui/TextAreaField";
+import InputField from "@/components/ui/InputField";
 
 const GeneralInfoTab = ({ user, isAdminView = false }) => {
   const { t } = useTranslation(["admin", "user"]);
@@ -192,22 +194,20 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               onChange={handleInputChange}
               error={errors.name}
             />
-            <div>
-              <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
-                {t("users.email_readonly")}
-              </label>
-              <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70">
-                {user.email}
-              </p>
-            </div>
-            <div>
-              <label className="text-[10px] uppercase font-bold text-mkhe-text/40 block mb-1 flex items-center gap-1">
-                {t("users.username_readonly", "Username (Chỉ đọc)")}
-              </label>
-              <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70">
-                {user.username}
-              </p>
-            </div>
+            <InputField
+              label={t("users.email_readonly")}
+              value={user.email}
+              disabled={true}
+              className="opacity-70 !mb-0"
+              wrapperClassName="!mb-0"
+            />
+            <InputField
+              label={t("users.username_readonly", { defaultValue: "Username (Chỉ đọc)" })}
+              value={user.username}
+              disabled={true}
+              className="opacity-70 !mb-0"
+              wrapperClassName="!mb-0"
+            />
           </div>
         </div>
 
@@ -235,7 +235,7 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
             
             {isEditing ? (
               <div className="relative">
-                <textarea
+                <TextAreaField
                   value={addressInput} 
                   onChange={(e) => {
                     setAddressInput(e.target.value);
@@ -244,9 +244,10 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
                   }}
                   onFocus={() => { if (suggestions.length > 0) setIsDropdownOpen(true); }}
                   onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
-                  className="w-full p-3 border border-mkhe-border/20 rounded-md focus:outline-none focus:ring-1 focus:ring-mkhe-primary bg-mkhe-bg"
                   placeholder={t("profile.address_placeholder", { ns: "user" })}
-                  rows="2"
+                  rows={2}
+                  className="!mb-0"
+                  wrapperClassName="!mb-0"
                 />
                 {isDropdownOpen && suggestions.length > 0 && (
                   <ul className="absolute z-50 w-full mt-1 max-h-60 overflow-auto bg-mkhe-bg border border-mkhe-border/20 rounded-md shadow-lg">
@@ -287,12 +288,13 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
             {t("users.bio")}
           </h4>
           {isEditing ? (
-            <textarea
+            <TextAreaField
               name="bio"
               value={editForm.bio}
               onChange={handleInputChange}
-              rows="3"
-              className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
+              rows={3}
+              className="!mb-0"
+              wrapperClassName="!mb-0"
               placeholder={
                 isAdminView
                   ? t("users.bio_admin_placeholder")
@@ -300,12 +302,18 @@ const GeneralInfoTab = ({ user, isAdminView = false }) => {
               }
             />
           ) : (
-            <div className="p-4 bg-[var(--color-mkhe-input)]/50 rounded-xl border border-[var(--color-mkhe-border)]/90 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">
-              {editForm.bio ||
+            <TextAreaField
+              value={
+                editForm.bio ||
                 (isAdminView
                   ? t("users.bio_empty_admin")
-                  : t("users.bio_empty_user"))}
-            </div>
+                  : t("users.bio_empty_user"))
+              }
+              disabled={true}
+              rows={3}
+              className="italic disabled:opacity-70 !mb-0"
+              wrapperClassName="!mb-0"
+            />
           )}
         </div>
       </div>

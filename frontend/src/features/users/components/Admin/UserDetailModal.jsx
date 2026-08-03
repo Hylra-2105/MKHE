@@ -16,6 +16,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Button from '@/components/ui/Button';
+import TextAreaField from '@/components/ui/TextAreaField';
+import InputField from '@/components/ui/InputField';
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -315,14 +317,13 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                     isEditing={isEditing}
                     onChange={handleInputChange}
                   />
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1 flex items-center gap-1 transition-colors">
-                      {t("users.email_readonly")}
-                    </label>
-                    <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70 transition-colors">
-                      {user.email}
-                    </p>
-                  </div>
+                  <InputField
+                    label={t("users.email_readonly")}
+                    value={user.email}
+                    disabled={true}
+                    className="opacity-70 !mb-0"
+                    wrapperClassName="!mb-0"
+                  />
                 </div>
               </div>
 
@@ -368,13 +369,13 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                   {t("users.bio")}
                 </h4>
                 {isEditing ? (
-                  <textarea
+                  <TextAreaField
                     name="bio"
                     value={editForm.bio}
                     onChange={handleInputChange}
-                    rows="3"
-                    className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
+                    rows={3}
                     placeholder={t("users.bio_placeholder")}
+                    className="!mb-0"
                   />
                 ) : (
                   <div className="p-4 bg-[var(--color-mkhe-bg)] rounded-xl border border-[var(--color-mkhe-border)]/20 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">

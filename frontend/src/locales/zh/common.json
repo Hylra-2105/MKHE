@@ -45,5 +45,17 @@
   "err_pass_special": "密码必须包含至少 1 个特殊字符 (!@#...)。",
   "err_empty_password": "请输入您的密码。",
   "USERNAME_ALREADY_EXISTS": "该用户名已被注册！",
-  "PHONE_ALREADY_EXISTS": "该电话号码已被注册！"
+  "PHONE_ALREADY_EXISTS": "该电话号码已被注册！",
+  "INVALID_USERNAME_FORMAT": "用户名格式无效！",
+  "MISSING_FIELDS": "请填写所有字段！",
+  "FAILED_TO_SEND_EMAIL": "邮件发送失败，请稍后重试！",
+  "INVALID_OR_EXPIRED_OTP": "OTP 代码无效或已过期！",
+  "USE_SOCIAL_LOGIN": "该邮箱已通过社交网络注册，请使用Google登录！",
+  "INVALID_OR_EXPIRED_SESSION": "会话无效或已过期！",
+  "USER_NOT_FOUND": "用户不存在！",
+  "VALIDATION_ERROR": "输入无效！",
+  "ACCOUNT_NOT_FOUND": "帐号不存在！",
+  "WRONG_PASSWORD": "密码不正确！",
+  "ACCOUNT_NOT_VERIFIED": "帐户未验证！",
+  "ACCOUNT_BLOCKED": "账户已被锁定！"
 }

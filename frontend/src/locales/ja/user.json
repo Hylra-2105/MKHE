@@ -42,7 +42,8 @@
     "contact_shipping": "連絡先と配送",
     "default_address": "デフォルトの住所",
     "address_placeholder": "住所を入力してください...",
-    "no_address": "デフォルトの住所が設定されていません。編集をクリックして更新してください。"
+    "no_address": "デフォルトの住所が設定されていません。編集をクリックして更新してください。",
+    "general_info_desc": "個人情報と配送先の管理"
   },
   "buttons": {
     "verifying": "確認中...",

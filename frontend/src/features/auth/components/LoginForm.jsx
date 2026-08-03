@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import InputField from "@/components/ui/InputField";
+import CheckboxField from "@/components/ui/CheckboxField";
 import Button from "@/components/ui/Button";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
@@ -183,18 +184,12 @@ export default function LoginForm() {
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <input
-            id="rememberMe"
-            type="checkbox"
-            className="magic-cb-input"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe" className="magic-cb-label text-sm">
-            <span></span> {t("remember_me")}
-          </label>
-        </div>
+        <CheckboxField
+          name="rememberMe"
+          label={t("remember_me")}
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
         <Link
           to="/forgot-password"
           className="text-sm text-mkhe-primary hover:underline"
