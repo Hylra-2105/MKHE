@@ -175,7 +175,9 @@ function App() {
         "USER_RETURN_UPDATED_APPROVED": "notifications.title.USER_RETURN_UPDATED_APPROVED",
         "USER_RETURN_UPDATED_REJECTED": "notifications.title.USER_RETURN_UPDATED_REJECTED",
         "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
-        "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED"
+        "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED",
+        "Cập nhật trạng thái B2B": "notifications.title.B2B_STATUS_UPDATED",
+        "B2B_QUOTE_UPLOADED": "notifications.title.B2B_QUOTE_UPLOADED"
       };
       const currentT = tRef.current;
       const translatedTitle = map[notif.title] ? currentT(map[notif.title], { defaultValue: notif.title }) : notif.title;

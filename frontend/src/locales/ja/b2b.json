@@ -10,7 +10,8 @@
     "PRODUCING": "生産中",
     "DELIVERING": "配達",
     "COMPLETED": "完了",
-    "CANCELLED": "キャンセル"
+    "CANCELLED": "キャンセル",
+    "PENDING": "処理を待っています"
   },
   "download_quote": "見積書・契約書のダウンロード",
   "confirm_order": "注文終了の確認",
@@ -67,5 +68,69 @@
     "back": "ダッシュボードに戻る",
     "submit": "リクエストの送信",
     "submitting": "送信中..."
+  },
+  "admin": {
+    "title": "B2B 要件管理",
+    "subtitle": "卸注文・カスタムデザイン一覧",
+    "table": {
+      "company": "企業",
+      "createdAt": "作成日",
+      "product_request": "製品・ご要望",
+      "quantity": "量",
+      "budget": "予算",
+      "status": "状態",
+      "actions": "活動",
+      "no_orders": "B2B からの問い合わせはまだありません。",
+      "custom_design": "デザインサービス",
+      "view_details": "詳細を見る"
+    },
+    "modal": {
+      "request_details": "リクエストの詳細",
+      "representative": "代表：",
+      "quote_pdf": "見積書（PDF）",
+      "click_to_select_pdf": "クリックして PDF ファイルを選択します",
+      "note_placeholder": "添付メモ...",
+      "send_quote": "見積書の送信",
+      "quote_contract_file": "見積書・契約書ファイル",
+      "sent_to_customer": "顧客に送信",
+      "negotiation": "交換・交渉",
+      "upload_success": "見積書が正常にアップロードされました。",
+      "upload_error": "見積のアップロード中にエラーが発生しました",
+      "error_updating_status": "ステータス更新エラー",
+      "error_sending_msg": "メッセージ送信エラー",
+      "product_service": "製品・サービス",
+      "quantity": "量",
+      "budget": "予想される予算",
+      "delivery_date": "配達予定日",
+      "guest_note": "ゲストのメモ:",
+      "change_status": "ステータスの変更:",
+      "admin_quote_note": "価格見積を含む管理者メモ:",
+      "chat_placeholder": "交換内容を入力してください...",
+      "drop_here": "ここにファイルをドロップします...",
+      "or_drag_drop": "または、PDF ファイルをここにドラッグ アンド ドロップします。",
+      "update_status_success": "B2B ステータスの更新が成功しました"
+    },
+    "pagination": {
+      "showing_page": "ページを表示"
+    },
+    "messages": {
+      "fetch_error": "注文データの読み込みエラー"
+    }
+  },
+  "user_dashboard": {
+    "subtitle": "進捗管理とB2B契約の交渉",
+    "create_new": "新しいリクエストを作成する",
+    "search_placeholder": "製品/サービスを検索...",
+    "all_status": "すべてのステータス",
+    "list_view": "リスト",
+    "grid_view": "グリッドビュー",
+    "no_orders_desc": "B2B 契約リクエストはまだありません。新しいリクエストを作成して、私たちとの交渉を開始してください。",
+    "product_service": "製品・サービス",
+    "quantity": "量",
+    "delivery_date": "配送日",
+    "status": "状態",
+    "updated_at": "アップデート",
+    "action": "活動",
+    "view_details": "詳細を見る"
   }
 }

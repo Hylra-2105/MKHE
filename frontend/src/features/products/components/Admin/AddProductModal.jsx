@@ -915,7 +915,6 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       name="hasDPP" 
                       checked={formData.hasDPP} 
                       onChange={handleChange} 
-                      label={t("modal.enable_dpp", { defaultValue: "Kích hoạt Digital Product Passport" })}
                     />
                   </div>
                 </div>
@@ -927,9 +926,8 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       <InputField type="text" name="artisanName" value={formData.artisanName} onChange={handleChange} label={t("modal.dpp.artisan_name")} placeholder={t("modal.dpp.artisan_placeholder_add")} required error={formErrors.artisanName ? formErrors.artisanName : null} />
                     </div>
                     
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-mkhe-text/70 uppercase ml-1">{t("modal.dpp.location")} <span className="text-rose-500">*</span></label>
-                      <input 
+                    <div>
+                      <InputField 
                         type="text" 
                         name="gpsLocation" 
                         value={formData.gpsLocation} 
@@ -941,15 +939,11 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                           }
                           updateField("gpsLocation", val);
                         }} 
-                        className={`w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${formErrors.gpsLocation ? "border-rose-500" : "border-mkhe-border/50 focus:border-mkhe-primary"}`} 
+                        label={t("modal.dpp.location")}
+                        required
+                        error={formErrors.gpsLocation ? formErrors.gpsLocation : null}
                         placeholder={t("modal.dpp.location_placeholder")} 
                       />
-                      {formErrors.gpsLocation && (
-                        <div className="flex items-start gap-1.5 mt-1.5 ml-1 text-rose-500">
-                          <AlertCircle className="w-4 h-4 shrink-0 mt-[2px]" />
-                          <p className="text-xs font-medium">{formErrors.gpsLocation}</p>
-                        </div>
-                      )}
                     </div>
 
                     <div className="space-y-1 col-span-2">

@@ -77,7 +77,9 @@
       "ADMIN_RETURN_NEW": "新たな交換/返品をリクエストする",
       "return_updated_toast": "注文 {{orderCode}} の返品の更新: {{status}}",
       "return_status_approved": "承認済み",
-      "return_status_rejected": "拒否されました"
+      "return_status_rejected": "拒否されました",
+      "B2B_STATUS_UPDATED": "B2B ステータスの更新",
+      "B2B_QUOTE_UPLOADED": "新しいB2B見積書"
     },
     "message": {
       "order_placed": "注文 {{orderCode}} が正常に行われました。処理を待っています。",
@@ -99,7 +101,9 @@
       "USER_RETURN_UPDATED": "注文 {{orderCode}} の返品リクエストが更新されました。",
       "USER_RETURN_UPDATED_APPROVED": "注文 {{orderCode}} の返品リクエストは受け入れられました。",
       "USER_RETURN_UPDATED_REJECTED": "注文 {{orderCode}} の返品リクエストは拒否されました。",
-      "ADMIN_RETURN_NEW": "お客様は注文 {{orderCode}} の交換/返品リクエストを送信しました。"
+      "ADMIN_RETURN_NEW": "お客様は注文 {{orderCode}} の交換/返品リクエストを送信しました。",
+      "B2B_STATUS_UPDATED": "B2B リクエストは新しいステータスに更新されました。",
+      "B2B_QUOTE_UPLOADED": "管理者はあなたのリクエストに対して新しい B2B 見積もりを送信しました。"
     },
     "header_title": "通知",
     "mark_all_read": "すべて既読にする",

@@ -6,6 +6,7 @@ import { Loader2, PackageSearch, Plus, LayoutGrid, List, Search, Filter, Eye, Pa
 import { Link } from "react-router-dom";
 import Dropdown from "@/components/ui/Dropdown";
 import Pagination from "@/components/ui/Pagination";
+import { useSocketStore } from "@/stores/useSocketStore";
 
 const B2BDashboard = () => {
   const { t } = useTranslation(["b2b", "common"]);
@@ -17,6 +18,7 @@ const B2BDashboard = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = viewMode === "grid" ? 8 : 5;
+  const { socket } = useSocketStore();
 
   useEffect(() => {
     fetchOrders();
@@ -26,6 +28,35 @@ const B2BDashboard = () => {
     setCurrentPage(1);
   }, [searchTerm, statusFilter, viewMode]);
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("b2b_order_updated", (updatedOrder) => {
+        setOrders(prev => prev.map(o => o._id === updatedOrder._id ? updatedOrder : o));
+        setSelectedOrder(prev => prev?._id === updatedOrder._id ? updatedOrder : prev);
+      });
+      socket.on("b2b_new_comment", (data) => {
+        setOrders((prev) => prev.map((o) => {
+          if (o._id === data.orderId) {
+            return { ...o, comments: [...o.comments, data.comment] };
+          }
+          return o;
+        }));
+        setSelectedOrder((prev) => {
+          if (prev && prev._id === data.orderId) {
+            return { ...prev, comments: [...prev.comments, data.comment] };
+          }
+          return prev;
+        });
+      });
+    }
+    return () => {
+      if (socket) {
+        socket.off("b2b_order_updated");
+        socket.off("b2b_new_comment");
+      }
+    };
+  }, [socket]);
+
   const fetchOrders = async () => {
     try {
       const res = await getMyB2BOrdersApi();
@@ -33,10 +64,24 @@ const B2BDashboard = () => {
         setOrders(res.data);
       }
     } catch (error) {
-      console.error(error);
+      toast.error(t("b2b:user_dashboard.error_fetching_orders", { defaultValue: "Lỗi tải danh sách" }));
     } finally {
       setLoading(false);
     }
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      PENDING: "bg-orange-500/10 text-orange-500 border-orange-500/30",
+      PENDING_QUOTE: "bg-orange-500/10 text-orange-500 border-orange-500/30",
+      NEGOTIATING: "bg-blue-500/10 text-blue-500 border-blue-500/30",
+      CONFIRMED: "bg-mkhe-primary/10 text-mkhe-primary border-mkhe-primary/30",
+      PRODUCING: "bg-purple-500/10 text-purple-500 border-purple-500/30",
+      DELIVERING: "bg-indigo-500/10 text-indigo-500 border-indigo-500/30",
+      COMPLETED: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+      CANCELLED: "bg-rose-500/10 text-rose-500 border-rose-500/30"
+    };
+    return colors[status] || "bg-gray-500/10 text-gray-500 border-gray-500/30";
   };
 
   const handleUpdateOrder = (orderId, updatedData) => {
@@ -48,7 +93,8 @@ const B2BDashboard = () => {
 
   const filteredOrders = orders.filter(order => {
     const matchSearch = order.productOrService?.name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchStatus = statusFilter ? order.status === statusFilter : true;
+    const normalizedStatus = order.status === "PENDING" ? "PENDING_QUOTE" : order.status;
+    const matchStatus = statusFilter ? normalizedStatus === statusFilter : true;
     return matchSearch && matchStatus;
   });
 
@@ -85,7 +131,7 @@ const B2BDashboard = () => {
               {t("b2b:title")}
             </h1>
             <p className="text-mkhe-text/60 text-sm mt-1">
-              Quản lý tiến độ và thương lượng hợp đồng B2B
+              {t("b2b:user_dashboard.subtitle", { defaultValue: "Quản lý tiến độ và thương lượng hợp đồng B2B" })}
             </p>
           </div>
         </div>
@@ -96,7 +142,7 @@ const B2BDashboard = () => {
             className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer flex items-center gap-2"
           >
             <span className="font-bold text-lg leading-none mt-[-2px]">+</span>
-            Tạo yêu cầu mới
+            {t("b2b:user_dashboard.create_new", { defaultValue: "Tạo yêu cầu mới" })}
           </Link>
         </div>
       </div>
@@ -107,7 +153,7 @@ const B2BDashboard = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40" />
               <input 
                 type="text" 
-                placeholder="Tìm kiếm sản phẩm/dịch vụ..." 
+                placeholder={t("b2b:user_dashboard.search_placeholder", { defaultValue: "Tìm kiếm sản phẩm/dịch vụ..." })} 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 h-10 bg-transparent border border-mkhe-border/50 text-mkhe-text rounded focus:outline-none focus:border-mkhe-primary transition-colors"
@@ -119,15 +165,15 @@ const B2BDashboard = () => {
           <Dropdown
             value={statusFilter}
             options={[
-              { value: "", label: "Tất cả trạng thái" },
-              { value: "pending_quote", label: "Chờ báo giá" },
-              { value: "negotiating", label: "Đang đàm phán" },
-              { value: "confirmed", label: "Đã chốt" },
-              { value: "in_production", label: "Đang sản xuất" },
-              { value: "delivered", label: "Đã giao" },
+              { value: "", label: t("b2b:user_dashboard.all_status", { defaultValue: "Tất cả trạng thái" }) },
+              { value: "PENDING_QUOTE", label: t("b2b:status.PENDING_QUOTE", { defaultValue: "Chờ báo giá" }) },
+              { value: "NEGOTIATING", label: t("b2b:status.NEGOTIATING", { defaultValue: "Đang đàm phán" }) },
+              { value: "CONFIRMED", label: t("b2b:status.CONFIRMED", { defaultValue: "Đã chốt" }) },
+              { value: "IN_PRODUCTION", label: t("b2b:status.IN_PRODUCTION", { defaultValue: "Đang sản xuất" }) },
+              { value: "DELIVERED", label: t("b2b:status.DELIVERED", { defaultValue: "Đã giao" }) },
             ]}
             onChange={(val) => setStatusFilter(val)}
-            placeholder="Tất cả trạng thái"
+            placeholder={t("b2b:user_dashboard.all_status", { defaultValue: "Tất cả trạng thái" })}
             className="w-full md:w-48 shrink-0"
             triggerClassName="h-10 px-3 rounded"
             optionClassName="text-sm"
@@ -138,7 +184,7 @@ const B2BDashboard = () => {
               type="button"
               onClick={() => setViewMode("table")}
               className={`p-1.5 rounded-md transition-colors cursor-pointer h-full aspect-square flex items-center justify-center ${viewMode === "table" ? "bg-mkhe-input shadow-sm text-mkhe-primary" : "text-mkhe-text/50 hover:text-mkhe-text"}`}
-              title="Danh sách"
+              title={t("b2b:user_dashboard.list_view", { defaultValue: "Danh sách" })}
             >
               <List className="w-5 h-5" />
             </button>
@@ -146,7 +192,7 @@ const B2BDashboard = () => {
               type="button"
               onClick={() => setViewMode("grid")}
               className={`p-1.5 rounded-md transition-colors cursor-pointer h-full aspect-square flex items-center justify-center ${viewMode === "grid" ? "bg-mkhe-input shadow-sm text-mkhe-primary" : "text-mkhe-text/50 hover:text-mkhe-text"}`}
-              title="Xem dạng lưới"
+              title={t("b2b:user_dashboard.grid_view", { defaultValue: "Xem dạng lưới" })}
             >
               <LayoutGrid className="w-5 h-5" />
             </button>
@@ -158,7 +204,7 @@ const B2BDashboard = () => {
           <PackageSearch className="w-12 h-12 text-mkhe-text/20 mb-4" />
           <h3 className="text-lg font-bold text-mkhe-text mb-2">{t("b2b:no_orders")}</h3>
           <p className="text-mkhe-text/60 mb-6 max-w-sm">
-            Bạn chưa có yêu cầu hợp đồng B2B nào. Hãy tạo một yêu cầu mới để bắt đầu quá trình đàm phán với chúng tôi.
+            {t("b2b:user_dashboard.no_orders_desc", { defaultValue: "Bạn chưa có yêu cầu hợp đồng B2B nào. Hãy tạo một yêu cầu mới để bắt đầu quá trình đàm phán với chúng tôi." })}
           </p>
         </div>
       ) : /* List/Grid View */
@@ -176,8 +222,8 @@ const B2BDashboard = () => {
                 <h3 className="font-bold text-mkhe-text text-lg line-clamp-2 pr-2">
                   {order.productOrService?.name}
                 </h3>
-                <span className="px-3 py-1 bg-mkhe-primary/10 text-mkhe-primary rounded-full text-xs font-bold whitespace-nowrap">
-                  {t(`b2b:status.${order.status}`)}
+                <span className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border ${getStatusColor(order.status === 'PENDING' ? 'PENDING_QUOTE' : order.status)}`}>
+                  {t(`b2b:status.${order.status === 'PENDING' ? 'PENDING_QUOTE' : order.status}`)}
                 </span>
               </div>
               
@@ -198,13 +244,13 @@ const B2BDashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-mkhe-text border-collapse">
               <thead>
-                <tr className="bg-mkhe-primary/5 border-b border-mkhe-border/30 text-mkhe-text/60 text-xs uppercase tracking-wider">
-                  <th className="p-4 font-bold border-b border-r border-mkhe-border/30">Sản phẩm / Dịch vụ</th>
-                  <th className="p-4 font-bold border-b border-mkhe-border/30">Số lượng</th>
-                  <th className="p-4 font-bold border-b border-mkhe-border/30">Ngày giao</th>
-                  <th className="p-4 font-bold border-b border-mkhe-border/30">Trạng thái</th>
-                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-right">Cập nhật</th>
-                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-center">Hành động</th>
+                <tr className="bg-mkhe-bg/50">
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-left uppercase text-xs tracking-wider">{t("b2b:user_dashboard.product_service", { defaultValue: "Sản phẩm / Dịch vụ" })}</th>
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-left uppercase text-xs tracking-wider">{t("b2b:user_dashboard.quantity", { defaultValue: "Số lượng" })}</th>
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-left uppercase text-xs tracking-wider">{t("b2b:user_dashboard.delivery_date", { defaultValue: "Ngày giao" })}</th>
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 uppercase text-xs tracking-wider">{t("b2b:user_dashboard.status", { defaultValue: "Trạng thái" })}</th>
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-right uppercase text-xs tracking-wider">{t("b2b:user_dashboard.updated_at", { defaultValue: "Cập nhật" })}</th>
+                  <th className="p-4 font-bold border-b border-mkhe-border/30 text-center uppercase text-xs tracking-wider">{t("b2b:user_dashboard.action", { defaultValue: "Hành động" })}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-mkhe-border/30">
@@ -225,8 +271,8 @@ const B2BDashboard = () => {
                     <td className="p-4 text-mkhe-text font-medium">{order.quantity}</td>
                     <td className="p-4 text-mkhe-text/80 text-sm">{new Date(order.deliveryDate).toLocaleDateString()}</td>
                     <td className="p-4">
-                      <span className="px-3 py-1 bg-mkhe-primary/10 text-mkhe-primary rounded-full text-xs font-bold whitespace-nowrap">
-                        {t(`b2b:status.${order.status}`)}
+                      <span className={`inline-flex items-center justify-center px-4 py-1.5 rounded-full text-xs font-bold border shadow-sm ${getStatusColor(order.status === 'PENDING' ? 'PENDING_QUOTE' : order.status)}`}>
+                        {t(`b2b:status.${order.status === 'PENDING' ? 'PENDING_QUOTE' : order.status}`)}
                       </span>
                     </td>
                     <td className="p-4 text-mkhe-text/80 text-sm text-right">{new Date(order.updatedAt).toLocaleDateString()}</td>
@@ -235,7 +281,7 @@ const B2BDashboard = () => {
                         <button 
                           onClick={() => setSelectedOrder(order)}
                           className="p-2 bg-mkhe-primary/10 text-mkhe-primary hover:bg-mkhe-primary/20 rounded-full transition-all duration-300 cursor-pointer"
-                          title="Xem chi tiết"
+                          title={t("b2b:user_dashboard.view_details", { defaultValue: "Xem chi tiết" })}
                         >
                           <Eye className="w-5 h-5" />
                         </button>

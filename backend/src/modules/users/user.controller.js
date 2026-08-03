@@ -235,36 +235,53 @@ export const uploadAvatar = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     // Lấy dữ liệu
-    let { name, email, password, role } = req.body;
+    let { name, email, phone, password, role } = req.body;
 
     // 2. Kiểm tra các trường bắt buộc
-    if (!name || !email || !password) {
+    if (!name || (!email && !phone) || !password) {
+      return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    if (role === "Staff" && !email) {
       return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
     // Chuẩn hóa dữ liệu
     name = name.trim();
+    if (email) email = email.trim().toLowerCase();
+    if (phone) phone = phone.trim();
 
     // Kiểm tra độ dài và độ mạnh mật khẩu
     if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(password)) {
       return errorResponse(res, 400, "PASSWORD_TOO_SHORT");
     }
 
-    // Kiểm tra định dạng email hợp lệ
-    if (!isValidEmail(email)) {
+    // Kiểm tra định dạng email hợp lệ nếu có truyền
+    if (email && !isValidEmail(email)) {
       return errorResponse(res, 400, "INVALID_EMAIL_FORMAT");
     }
 
     // Kiểm tra email đã tồn tại chưa
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
+    if (email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
+      }
+    }
+
+    // Kiểm tra phone đã tồn tại chưa
+    if (phone) {
+      const existingPhone = await User.findOne({ phone });
+      if (existingPhone) {
+        return errorResponse(res, 400, "PHONE_ALREADY_EXISTS");
+      }
     }
 
     // Tạo tài khoản mới
     const newUser = new User({
       name,
-      email,
+      email: email || undefined,
+      phone: phone || "",
       password,
       role: role || "Customer",
       isVerified: true,
@@ -423,7 +440,7 @@ import { sendB2BActivationEmail } from "../../utils/email.js";
 // Admin tạo tài khoản B2B Enterprise
 export const createB2BAccount = async (req, res) => {
   try {
-    const { name, email, companyName, taxCode } = req.body;
+    const { name, email, phone, companyName, taxCode } = req.body;
 
     if (!name || !email || !companyName || !taxCode) {
       return errorResponse(res, 400, "MISSING_FIELDS");
@@ -442,6 +459,13 @@ export const createB2BAccount = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
+    if (phone) {
+      const existingPhone = await User.findOne({ phone });
+      if (existingPhone) {
+        return errorResponse(res, 400, "PHONE_ALREADY_EXISTS");
+      }
+    }
+
     // Generate activation token
     const activationToken = crypto.randomBytes(20).toString("hex");
 
@@ -451,6 +475,7 @@ export const createB2BAccount = async (req, res) => {
     const newUser = new User({
       name,
       email,
+      phone: phone || "",
       password: dummyPassword,
       role: "Enterprise",
       companyName,

@@ -57,5 +57,6 @@
   "ACCOUNT_NOT_FOUND": "アカウントが存在しません!",
   "WRONG_PASSWORD": "パスワードが間違っています!",
   "ACCOUNT_NOT_VERIFIED": "アカウントが認証されていません!",
-  "ACCOUNT_BLOCKED": "アカウントがロックされました!"
+  "ACCOUNT_BLOCKED": "アカウントがロックされました!",
+  "save": "保存"
 }

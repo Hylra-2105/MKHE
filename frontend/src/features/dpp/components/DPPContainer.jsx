@@ -412,7 +412,7 @@ const DPPContainer = () => {
           {product.story && (
             <div 
               className="text-sm text-mkhe-text/60 leading-relaxed font-light [&>p]:mb-3 last:[&>p]:mb-0 [&>strong]:text-mkhe-text [&>strong]:font-bold [&>em]:italic"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.story) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.story, { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }) }}
             />
           )}
         </div>

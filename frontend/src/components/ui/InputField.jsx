@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { cn } from '@/utils/cn';
 
-const InputField = forwardRef(({ type, placeholder, value, onChange, leftElement, rightElement, label, required, error, className = "", wrapperClassName = "", ...props }, ref) => {
+const InputField = forwardRef(({ type, placeholder, value, onChange, leftElement, rightElement, label, required, error, className = "", wrapperClassName = "", disabled, ...props }, ref) => {
   return (
     <div className={cn("relative mb-4 w-full space-y-1", wrapperClassName)}>
       {label && (
@@ -24,11 +24,12 @@ const InputField = forwardRef(({ type, placeholder, value, onChange, leftElement
           onChange={onChange}
           className={cn(
             "w-full p-3.5 bg-transparent border text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm placeholder:text-mkhe-text/50",
-            error ? "border-red-500" : "border-mkhe-border/50 focus:border-mkhe-primary",
+            error ? "border-red-500" : `border-mkhe-border/50 focus:border-mkhe-primary ${!disabled ? "hover:border-mkhe-primary" : ""}`,
             leftElement && "pl-10",
             rightElement && "pr-10",
             className
           )}
+          disabled={disabled}
           {...props}
         />
         {rightElement && (

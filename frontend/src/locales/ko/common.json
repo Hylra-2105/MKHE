@@ -57,5 +57,6 @@
   "ACCOUNT_NOT_FOUND": "계정이 존재하지 않습니다!",
   "WRONG_PASSWORD": "비밀번호가 틀렸습니다!",
   "ACCOUNT_NOT_VERIFIED": "계정이 확인되지 않았습니다!",
-  "ACCOUNT_BLOCKED": "계정이 잠겼습니다!"
+  "ACCOUNT_BLOCKED": "계정이 잠겼습니다!",
+  "save": "구하다"
 }

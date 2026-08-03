@@ -52,8 +52,8 @@ const Dropdown = ({
           }
         }}
         className={cn(
-          "w-full bg-[var(--color-mkhe-bg)] border rounded-xl p-3.5 min-h-[32px] flex items-center justify-between transition-colors text-sm text-[var(--color-mkhe-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20",
-          disabled ? "bg-[var(--color-mkhe-border)]/30 cursor-not-allowed opacity-60" : "cursor-pointer hover:border-[var(--color-mkhe-primary)]",
+          "w-full bg-transparent border rounded-xl p-3.5 min-h-[32px] flex items-center justify-between transition-colors text-sm text-[var(--color-mkhe-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20",
+          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer hover:border-[var(--color-mkhe-primary)] bg-[var(--color-mkhe-bg)]",
           error
             ? "border-red-500 focus:border-red-500"
             : isOpen ? "border-[var(--color-mkhe-primary)]" : "border-[var(--color-mkhe-border)]/50 focus:border-[var(--color-mkhe-primary)]",
