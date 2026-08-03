@@ -10,7 +10,8 @@
     "PRODUCING": "In production",
     "DELIVERING": "Delivery",
     "COMPLETED": "Complete",
-    "CANCELLED": "Canceled"
+    "CANCELLED": "Canceled",
+    "PENDING": "Waiting for processing"
   },
   "download_quote": "Download Quote / Contract",
   "confirm_order": "Confirmation of order closing",
@@ -67,5 +68,69 @@
     "back": "Back to Dashboard",
     "submit": "Submit Request",
     "submitting": "Submitting..."
+  },
+  "admin": {
+    "title": "B2B Requirements Management",
+    "subtitle": "List of wholesale orders / custom designs",
+    "table": {
+      "company": "Enterprise",
+      "createdAt": "Creation date",
+      "product_request": "Products/Requests",
+      "quantity": "Quantity",
+      "budget": "Budget",
+      "status": "Status",
+      "actions": "Act",
+      "no_orders": "There are no B2B inquiries yet.",
+      "custom_design": "Design service",
+      "view_details": "See details"
+    },
+    "modal": {
+      "request_details": "Request Details",
+      "representative": "Representative:",
+      "quote_pdf": "Quotation (PDF)",
+      "click_to_select_pdf": "Click to select the PDF file",
+      "note_placeholder": "Attached notes...",
+      "send_quote": "Send Quote",
+      "quote_contract_file": "Quotation / Contract File",
+      "sent_to_customer": "Sent to customer",
+      "negotiation": "Exchange & Negotiation",
+      "upload_success": "Quote uploaded successfully!",
+      "upload_error": "Error uploading Quote",
+      "error_updating_status": "Status update error",
+      "error_sending_msg": "Error sending message",
+      "product_service": "Products/Services",
+      "quantity": "Quantity",
+      "budget": "Expected budget",
+      "delivery_date": "Expected delivery",
+      "guest_note": "Guest notes:",
+      "change_status": "Change status:",
+      "admin_quote_note": "Admin notes with Price Quote:",
+      "chat_placeholder": "Enter the exchange content...",
+      "drop_here": "Drop files here...",
+      "or_drag_drop": "Or drag and drop the PDF file here",
+      "update_status_success": "Successful B2B status update"
+    },
+    "pagination": {
+      "showing_page": "Show page"
+    },
+    "messages": {
+      "fetch_error": "Error loading order data"
+    }
+  },
+  "user_dashboard": {
+    "subtitle": "Manage progress and negotiate B2B contracts",
+    "create_new": "Create a new request",
+    "search_placeholder": "Search for products/services...",
+    "all_status": "All status",
+    "list_view": "List",
+    "grid_view": "Grid view",
+    "no_orders_desc": "You don't have any B2B contract requests yet. Create a new request to start negotiations with us.",
+    "product_service": "Products/Services",
+    "quantity": "Quantity",
+    "delivery_date": "Delivery date",
+    "status": "Status",
+    "updated_at": "Update",
+    "action": "Act",
+    "view_details": "See details"
   }
 }

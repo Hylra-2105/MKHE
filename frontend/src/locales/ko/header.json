@@ -77,7 +77,9 @@
       "ADMIN_RETURN_NEW": "신규 교환/반품 요청",
       "return_updated_toast": "주문 {{orderCode}} 반품 업데이트: {{status}}",
       "return_status_approved": "승인됨",
-      "return_status_rejected": "거절됨"
+      "return_status_rejected": "거절됨",
+      "B2B_STATUS_UPDATED": "B2B 상태 업데이트",
+      "B2B_QUOTE_UPLOADED": "새로운 B2B 견적"
     },
     "message": {
       "order_placed": "주문 {{orderCode}} 이(가) 성공적으로 완료되었습니다. 처리 대기 중입니다.",
@@ -99,7 +101,9 @@
       "USER_RETURN_UPDATED": "{{orderCode}} 주문에 대한 반품 요청이 업데이트되었습니다.",
       "USER_RETURN_UPDATED_APPROVED": "{{orderCode}} 주문에 대한 반품 요청이 승인되었습니다.",
       "USER_RETURN_UPDATED_REJECTED": "{{orderCode}} 주문에 대한 반품 요청이 거부되었습니다.",
-      "ADMIN_RETURN_NEW": "고객이 방금 {{orderCode}} 주문에 대한 교환/반품 요청을 보냈습니다."
+      "ADMIN_RETURN_NEW": "고객이 방금 {{orderCode}} 주문에 대한 교환/반품 요청을 보냈습니다.",
+      "B2B_STATUS_UPDATED": "귀하의 B2B 요청이 새로운 상태로 업데이트되었습니다.",
+      "B2B_QUOTE_UPLOADED": "관리자가 귀하의 요청에 대한 새로운 B2B 견적을 보냈습니다."
     },
     "header_title": "알림",
     "mark_all_read": "모두 읽음으로 표시",

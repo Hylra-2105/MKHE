@@ -110,7 +110,7 @@ const BlogDetail = () => {
         {/* Nội dung bài viết */}
         <div 
           className="prose dark:prose-invert prose-lg max-w-none text-mkhe-text/90 marker:text-mkhe-primary prose-a:text-mkhe-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-img:border prose-img:border-mkhe-border/30 dark:[&_[style]]:!text-mkhe-text dark:[&_a]:!text-mkhe-primary"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content) }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content, { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling'] }) }}
         />
 
         {/* Sản phẩm liên kết (Call to Action Mua Hàng) */}

@@ -43,7 +43,9 @@ const translateNotificationTitle = (title, t) => {
     "ADMIN_RETURN_NEW": "notifications.title.ADMIN_RETURN_NEW",
     "Yêu cầu Đổi/Trả thành công": "notifications.title.USER_RETURN_CREATED",
     "Cập nhật trạng thái Đổi/Trả": "notifications.title.USER_RETURN_UPDATED",
-    "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW"
+    "Yêu cầu Đổi/Trả mới": "notifications.title.ADMIN_RETURN_NEW",
+    "Cập nhật trạng thái B2B": "notifications.title.B2B_STATUS_UPDATED",
+    "B2B_QUOTE_UPLOADED": "notifications.title.B2B_QUOTE_UPLOADED"
   };
   return map[title] ? t(map[title], { defaultValue: title }) : title;
 };
@@ -117,7 +119,9 @@ const translateNotificationMessage = (message, title, t) => {
     "ADMIN_RETURN_NEW": "notifications.message.ADMIN_RETURN_NEW",
     "Yêu cầu Đổi/Trả thành công": "notifications.message.USER_RETURN_CREATED",
     "Cập nhật trạng thái Đổi/Trả": "notifications.message.USER_RETURN_UPDATED",
-    "Yêu cầu Đổi/Trả mới": "notifications.message.ADMIN_RETURN_NEW"
+    "Yêu cầu Đổi/Trả mới": "notifications.message.ADMIN_RETURN_NEW",
+    "Cập nhật trạng thái B2B": "notifications.message.B2B_STATUS_UPDATED",
+    "B2B_QUOTE_UPLOADED": "notifications.message.B2B_QUOTE_UPLOADED"
   };
 
   if (title === "ADMIN_CONTACT_NEW" || message.startsWith("ADMIN_CONTACT_NEW_MESSAGE::")) {

@@ -19,6 +19,7 @@
   "PASSWORD_MUST_BE_DIFFERENT": "Mật khẩu mới không được trùng với mật khẩu cũ.",
   "TOO_MANY_OTP_REQUESTS": "Bạn đã yêu cầu gửi mã quá nhiều lần. Vui lòng thử lại sau 15 phút.",
   "cancel": "Hủy",
+  "save": "Lưu",
   "back": "Trở lại",
   "search": "Tìm kiếm",
   "actions": "Hành động",

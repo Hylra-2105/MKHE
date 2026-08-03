@@ -10,7 +10,8 @@
     "PRODUCING": "생산 중",
     "DELIVERING": "배달",
     "COMPLETED": "완벽한",
-    "CANCELLED": "취소"
+    "CANCELLED": "취소",
+    "PENDING": "처리를 기다리는 중"
   },
   "download_quote": "견적/계약서 다운로드",
   "confirm_order": "주문 마감 확인",
@@ -67,5 +68,69 @@
     "back": "대시보드로 돌아가기",
     "submit": "요청 보내기",
     "submitting": "배상..."
+  },
+  "admin": {
+    "title": "B2B 요구사항 관리",
+    "subtitle": "도매 주문 목록 / 맞춤 디자인",
+    "table": {
+      "company": "기업",
+      "createdAt": "생성일",
+      "product_request": "제품/요청",
+      "quantity": "수량",
+      "budget": "예산",
+      "status": "상태",
+      "actions": "행동",
+      "no_orders": "아직 B2B 문의가 없습니다.",
+      "custom_design": "디자인 서비스",
+      "view_details": "세부정보 보기"
+    },
+    "modal": {
+      "request_details": "요청 세부정보",
+      "representative": "대표:",
+      "quote_pdf": "견적(PDF)",
+      "click_to_select_pdf": "PDF 파일을 선택하려면 클릭하세요.",
+      "note_placeholder": "첨부된 메모...",
+      "send_quote": "견적 보내기",
+      "quote_contract_file": "견적/계약 파일",
+      "sent_to_customer": "고객에게 전송됨",
+      "negotiation": "교류 및 협상",
+      "upload_success": "견적이 성공적으로 업로드되었습니다!",
+      "upload_error": "견적을 업로드하는 중 오류가 발생했습니다.",
+      "error_updating_status": "상태 업데이트 오류",
+      "error_sending_msg": "메시지를 보내는 중에 오류가 발생했습니다.",
+      "product_service": "제품/서비스",
+      "quantity": "수량",
+      "budget": "예상예산",
+      "delivery_date": "예상 배송",
+      "guest_note": "손님 메모:",
+      "change_status": "상태 변경:",
+      "admin_quote_note": "가격 견적이 포함된 관리자 메모:",
+      "chat_placeholder": "교환 내용을 입력하세요...",
+      "drop_here": "여기에 파일을 드롭하세요...",
+      "or_drag_drop": "또는 PDF 파일을 여기에 드래그 앤 드롭하세요.",
+      "update_status_success": "성공적인 B2B 상태 업데이트"
+    },
+    "pagination": {
+      "showing_page": "페이지 표시"
+    },
+    "messages": {
+      "fetch_error": "주문 데이터를 로드하는 중에 오류가 발생했습니다."
+    }
+  },
+  "user_dashboard": {
+    "subtitle": "진행 상황 관리 및 B2B 계약 협상",
+    "create_new": "새 요청 만들기",
+    "search_placeholder": "제품/서비스 검색...",
+    "all_status": "모든 상태",
+    "list_view": "목록",
+    "grid_view": "그리드 보기",
+    "no_orders_desc": "아직 B2B 계약 요청이 없습니다. 우리와 협상을 시작하려면 새로운 요청을 작성하세요.",
+    "product_service": "제품/서비스",
+    "quantity": "수량",
+    "delivery_date": "배송일",
+    "status": "상태",
+    "updated_at": "업데이트",
+    "action": "행동",
+    "view_details": "세부정보 보기"
   }
 }

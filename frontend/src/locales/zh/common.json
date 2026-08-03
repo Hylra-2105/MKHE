@@ -57,5 +57,6 @@
   "ACCOUNT_NOT_FOUND": "帐号不存在！",
   "WRONG_PASSWORD": "密码不正确！",
   "ACCOUNT_NOT_VERIFIED": "帐户未验证！",
-  "ACCOUNT_BLOCKED": "账户已被锁定！"
+  "ACCOUNT_BLOCKED": "账户已被锁定！",
+  "save": "节省"
 }

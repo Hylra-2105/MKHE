@@ -10,7 +10,8 @@
     "PRODUCING": "生产中",
     "DELIVERING": "送货",
     "COMPLETED": "完全的",
-    "CANCELLED": "取消"
+    "CANCELLED": "取消",
+    "PENDING": "等待处理"
   },
   "download_quote": "下载报价/合同",
   "confirm_order": "订单关闭确认",
@@ -67,5 +68,69 @@
     "back": "返回仪表板",
     "submit": "发送请求",
     "submitting": "正在发送..."
+  },
+  "admin": {
+    "title": "B2B 需求管理",
+    "subtitle": "批发订单/定制设计清单",
+    "table": {
+      "company": "企业",
+      "createdAt": "创建日期",
+      "product_request": "产品/要求",
+      "quantity": "数量",
+      "budget": "预算",
+      "status": "地位",
+      "actions": "行为",
+      "no_orders": "目前还没有 B2B 询盘。",
+      "custom_design": "设计服务",
+      "view_details": "查看详情"
+    },
+    "modal": {
+      "request_details": "请求详情",
+      "representative": "代表：",
+      "quote_pdf": "报价单 (PDF)",
+      "click_to_select_pdf": "单击以选择 PDF 文件",
+      "note_placeholder": "附注...",
+      "send_quote": "发送报价",
+      "quote_contract_file": "报价/合同文件",
+      "sent_to_customer": "发送给客户",
+      "negotiation": "交流洽谈",
+      "upload_success": "报价上传成功！",
+      "upload_error": "上传报价时出错",
+      "error_updating_status": "状态更新错误",
+      "error_sending_msg": "发送消息时出错",
+      "product_service": "产品/服务",
+      "quantity": "数量",
+      "budget": "预计预算",
+      "delivery_date": "预计交货期",
+      "guest_note": "嘉宾备注：",
+      "change_status": "更改状态：",
+      "admin_quote_note": "管理员备注及报价：",
+      "chat_placeholder": "输入兑换内容...",
+      "drop_here": "将文件拖放到此处...",
+      "or_drag_drop": "或者将 PDF 文件拖放到此处",
+      "update_status_success": "B2B 状态更新成功"
+    },
+    "pagination": {
+      "showing_page": "显示页面"
+    },
+    "messages": {
+      "fetch_error": "加载订单数据时出错"
+    }
+  },
+  "user_dashboard": {
+    "subtitle": "管理进度并谈判 B2B 合同",
+    "create_new": "创建一个新请求",
+    "search_placeholder": "搜索产品/服务...",
+    "all_status": "所有状态",
+    "list_view": "列表",
+    "grid_view": "网格视图",
+    "no_orders_desc": "您还没有任何 B2B 合同请求。创建一个新请求以开始与我们谈判。",
+    "product_service": "产品/服务",
+    "quantity": "数量",
+    "delivery_date": "交货日期",
+    "status": "地位",
+    "updated_at": "更新",
+    "action": "行为",
+    "view_details": "查看详情"
   }
 }

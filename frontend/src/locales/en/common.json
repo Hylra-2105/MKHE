@@ -57,5 +57,6 @@
   "ACCOUNT_NOT_FOUND": "Account not found!",
   "WRONG_PASSWORD": "Wrong password!",
   "ACCOUNT_NOT_VERIFIED": "Account not verified!",
-  "ACCOUNT_BLOCKED": "Account blocked!"
+  "ACCOUNT_BLOCKED": "Account blocked!",
+  "save": "Save"
 }

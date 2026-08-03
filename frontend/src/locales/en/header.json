@@ -77,7 +77,9 @@
       "return_updated_toast": "Return update for order {{orderCode}}: {{status}}",
       "return_status_approved": "Approved",
       "return_status_rejected": "Rejected",
-      "USER_RETURN_UPDATED_APPROVED": "Exchange/Return is accepted"
+      "USER_RETURN_UPDATED_APPROVED": "Exchange/Return is accepted",
+      "B2B_STATUS_UPDATED": "B2B status updates",
+      "B2B_QUOTE_UPLOADED": "New B2B quote"
     },
     "message": {
       "order_placed": "Order {{orderCode}} has been placed successfully. Awaiting processing.",
@@ -99,7 +101,9 @@
       "USER_RETURN_UPDATED": "The return request for order {{orderCode}} has been updated.",
       "ADMIN_RETURN_NEW": "The customer has just sent an exchange/return request for order {{orderCode}}.",
       "USER_RETURN_UPDATED_APPROVED": "The return request of order {{orderCode}} has been ACCEPTED.",
-      "USER_RETURN_UPDATED_REJECTED": "The return request for order {{orderCode}} has been REJECTED."
+      "USER_RETURN_UPDATED_REJECTED": "The return request for order {{orderCode}} has been REJECTED.",
+      "B2B_STATUS_UPDATED": "Your B2B request has been updated to a new status.",
+      "B2B_QUOTE_UPLOADED": "The admin has sent a new B2B quote for your request."
     },
     "header_title": "Notifications",
     "mark_all_read": "Mark all as read",
