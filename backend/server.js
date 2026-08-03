@@ -35,6 +35,7 @@ import aiRoutes from "./src/modules/ai/ai.routes.js";
 import b2bRoutes from "./src/modules/b2b/b2b.routes.js";
 import contactRoutes from "./src/modules/contacts/contacts.routes.js";
 import returnRoutes from "./src/modules/returns/return.routes.js";
+import policyRoutes from "./src/modules/policies/policy.routes.js";
 import { startOrderCron } from "./src/cron/orderCron.js";
 import { startSaleCron } from "./src/cron/saleCron.js";
 import { startVoucherCron } from "./src/cron/voucherCron.js";
@@ -99,6 +100,9 @@ app.use("/api/vouchers", voucherRoutes);
 
 // API liên quan đến Orders
 app.use("/api/orders", orderRoutes);
+
+// API liên quan đến Policies & FAQ
+app.use("/api/policies", policyRoutes);
 
 // API liên quan đến Blogs
 app.use("/api/blogs", blogRoutes);

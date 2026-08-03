@@ -59,7 +59,7 @@ const OrderHistoryTab = () => {
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gradient-gold flex items-center gap-3">
           <ShoppingBag className="w-7 h-7 text-mkhe-primary" />
-          {t("history:title", { defaultValue: "Lịch sử mua hàng" })}
+          {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
         </h2>
         <p className="text-[var(--color-mkhe-text)]/60 mt-2">
           {t("history:desc", { defaultValue: "Theo dõi và quản lý các đơn hàng của bạn" })}

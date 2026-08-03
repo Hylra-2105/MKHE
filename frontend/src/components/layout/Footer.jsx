@@ -23,12 +23,12 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-mkhe-bg dark:bg-[#110A06] pt-20 pb-8 px-6 text-mkhe-text dark:text-gray-300 relative overflow-hidden">
+    <footer className="bg-mkhe-bg border-t border-mkhe-border/30 pt-20 pb-8 px-6 text-mkhe-text dark:text-gray-300 relative overflow-hidden transition-colors duration-300">
       {/* Background Decorative Element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-mkhe-primary/5 rounded-full blur-[80px] -z-10"></div>
       
       <motion.div 
-        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-16"
+        className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 mb-16"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -71,61 +71,27 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link to="/shop?category=B2B" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
+              <Link to="/shop" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
                 <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.explore.b2b", "Bộ sưu tập B2B")}
+                {t("footer.explore.shop", "Cửa hàng")}
               </Link>
             </li>
             <li>
-              <Link to="/shop?category=B2C" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
-                <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.explore.b2c", "Thời trang B2C")}
-              </Link>
-            </li>
-            <li>
-              <Link to="/about" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
+              <Link to="/blogs" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
                 <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
                 {t("footer.explore.heritage", "Hành trình Di sản")}
               </Link>
             </li>
-          </ul>
-        </motion.div>
-
-        {/* Cột 3: Hỗ trợ */}
-        <motion.div variants={itemVariants}>
-          <h3 className="font-bold mb-8 text-mkhe-text dark:text-white uppercase tracking-[0.2em] text-sm flex items-center gap-2">
-            <span className="w-4 h-px bg-mkhe-primary"></span>
-            {t("footer.support.title")}
-          </h3>
-          <ul className="space-y-4 text-sm text-mkhe-text/70 dark:text-gray-400">
             <li>
-              <Link to="#" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
+              <Link to="/help" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
                 <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.support.privacy", "Chính sách bảo mật")}
-              </Link>
-            </li>
-            <li>
-              <Link to="#" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
-                <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.support.terms", "Điều khoản dịch vụ")}
-              </Link>
-            </li>
-            <li>
-              <Link to="/dpp" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
-                <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.support.nfc", "Hướng dẫn quét NFC")}
-              </Link>
-            </li>
-            <li>
-              <Link to="/profile?tab=history" className="hover:text-mkhe-primary transition-colors flex items-center gap-2 group">
-                <span className="w-0 h-[1px] bg-mkhe-primary group-hover:w-4 transition-all duration-300"></span>
-                {t("footer.support.tracking", "Theo dõi đơn hàng")}
+                {t("footer.support.help_center", "Trung tâm Trợ giúp")}
               </Link>
             </li>
           </ul>
         </motion.div>
 
-        {/* Cột 4: Liên hệ */}
+        {/* Cột 3: Liên hệ */}
         <motion.div variants={itemVariants}>
           <h3 className="font-bold mb-8 text-mkhe-text dark:text-white uppercase tracking-[0.2em] text-sm flex items-center gap-2">
             <span className="w-4 h-px bg-mkhe-primary"></span>
