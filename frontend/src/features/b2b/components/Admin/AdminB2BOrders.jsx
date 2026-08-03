@@ -54,11 +54,16 @@ const AdminB2BOrders = () => {
         setOrders(prev => prev.map(o => o._id === updatedOrder._id ? updatedOrder : o));
         setSelectedOrder(prev => prev?._id === updatedOrder._id ? updatedOrder : prev);
       });
+      socket.on("admin_b2b_new_order", (newOrder) => {
+        setOrders(prev => [newOrder, ...prev]);
+        toast.success(t("b2b:admin.messages.new_order_received", { defaultValue: "Có yêu cầu B2B mới!" }));
+      });
     }
     return () => {
       if (socket) {
         socket.off("admin_b2b_new_comment");
         socket.off("admin_b2b_order_updated");
+        socket.off("admin_b2b_new_order");
       }
     };
   }, [socket]);

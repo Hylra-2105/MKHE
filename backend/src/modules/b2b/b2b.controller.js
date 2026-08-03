@@ -92,7 +92,14 @@ export const createB2BOrder = async (req, res) => {
 
     await newOrder.save();
 
-    return successResponse(res, 201, "CREATE_B2B_ORDER_SUCCESS", newOrder);
+    const populatedOrder = await B2BOrder.findById(newOrder._id)
+      .populate("user", "name email")
+      .populate("productOrService", "name sku thumbnail");
+
+    const io = getIO();
+    io.emit("admin_b2b_new_order", populatedOrder);
+
+    return successResponse(res, 201, "CREATE_B2B_ORDER_SUCCESS", populatedOrder);
   } catch (error) {
     console.error("Error in createB2BOrder:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
