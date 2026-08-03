@@ -51,6 +51,20 @@ const Chatbot = () => {
     isOpenRef.current = isOpen;
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleOpenChatbot = () => {
+      setIsOpen(true);
+      if (isMinimized) {
+        setIsMinimized(false);
+      }
+    };
+
+    window.addEventListener("open-chatbot", handleOpenChatbot);
+    return () => {
+      window.removeEventListener("open-chatbot", handleOpenChatbot);
+    };
+  }, [isMinimized]);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };

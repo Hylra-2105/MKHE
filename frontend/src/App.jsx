@@ -48,6 +48,10 @@ const ContactManagementPage = React.lazy(() => import("./pages/contact/ContactMa
 
 const ReviewManagementPage = React.lazy(() => import("./pages/reviews/ReviewManagementPage"));
 const ReturnManagementPage = React.lazy(() => import("./pages/returns/ReturnManagementPage"));
+const PolicyManagement = React.lazy(() => import("./features/policies/components/Admin/PolicyManagement"));
+const PolicyEditor = React.lazy(() => import("./features/policies/components/Admin/PolicyEditor"));
+const HelpCenterPage = React.lazy(() => import("./pages/policies/HelpCenterPage"));
+
 const DashboardPage = React.lazy(() => import("./pages/admin/DashboardPage"));
 const B2BDashboardPage = React.lazy(() => import("./pages/b2b/B2BDashboardPage"));
 const B2BOrderRequest = React.lazy(() => import("./pages/b2b/B2BOrderRequest"));
@@ -286,6 +290,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/help" element={<HelpCenterPage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:id" element={<ShopDetailPage />} />
           <Route path="/storytelling" element={<BlogPage />} />
@@ -312,6 +317,30 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
                 <BlogEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/policies"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <PolicyManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/policies/create"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <PolicyEditor />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/policies/:id/edit"
+            element={
+              <ProtectedRoute allowedRoles={["Admin", "Staff"]}>
+                <PolicyEditor />
               </ProtectedRoute>
             }
           />
