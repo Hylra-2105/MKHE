@@ -1,6 +1,6 @@
 export const normalizeEmailMiddleware = (req, res, next) => {
   // Chỉ xử lý nếu Client có gửi trường "email" lên
-  if (req.body && req.body.email) {
+  if (req.body && req.body.email && req.body.email.includes("@")) {
     let email = req.body.email.toLowerCase().trim();
     let [localPart, domain] = email.split("@");
 

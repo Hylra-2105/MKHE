@@ -32,10 +32,16 @@ const generateTokens = async (user) => {
 // HÀM ĐĂNG KÝ
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, language } = req.body;
+    const { name, email, password, language, username, phone } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !username || !phone) {
       return errorResponse(res, 400, "MISSING_FIELDS");
+    }
+
+    // Validate username format (only lowercase letters, numbers, and underscores, 3-20 chars)
+    const usernameRegex = /^[a-z0-9_]{3,20}$/;
+    if (!usernameRegex.test(username.toLowerCase())) {
+      return errorResponse(res, 400, "INVALID_USERNAME_FORMAT");
     }
 
     const userExists = await User.findOne({ email });
@@ -43,11 +49,37 @@ export const registerUser = async (req, res) => {
       return errorResponse(res, 400, "EMAIL_ALREADY_EXISTS");
     }
 
+    const phoneExists = await User.findOne({ phone });
+    if (phoneExists) {
+      return errorResponse(res, 400, "PHONE_ALREADY_EXISTS");
+    }
+
+    const usernameExists = await User.findOne({ username: username.toLowerCase() });
+    if (usernameExists) {
+      const suggestions = [];
+      let i = 0;
+      while (suggestions.length < 3) {
+        const rand = Math.floor(Math.random() * 1000);
+        const suggestion = `${username.toLowerCase()}_${rand}`;
+        const check = await User.findOne({ username: suggestion });
+        if (!check) suggestions.push(suggestion);
+        i++;
+        if (i > 10) break; // Safeguard
+      }
+      return res.status(400).json({
+        success: false,
+        message: "USERNAME_ALREADY_EXISTS",
+        suggestions,
+      });
+    }
+
     const requestedLang = (language || "").toLowerCase();
     const userLang = requestedLang.startsWith("en") ? "en" : "vi";
 
     const user = await User.create({
       name: name.trim(),
+      username: username.trim().toLowerCase(),
+      phone: phone.trim(),
       email,
       password,
       language: userLang,
@@ -127,7 +159,14 @@ export const loginUser = async (req, res) => {
       return errorResponse(res, 400, "MISSING_FIELDS");
     }
 
-    const user = await User.findOne({ email });
+    const loginId = email.trim().toLowerCase();
+    const user = await User.findOne({ 
+      $or: [
+        { email: loginId },
+        { username: loginId }
+      ]
+    });
+    console.log("loginUser debug:", loginId, user ? user.email : "not found");
     if (!user) {
       return errorResponse(res, 404, "ACCOUNT_NOT_FOUND");
     }

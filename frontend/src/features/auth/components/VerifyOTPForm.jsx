@@ -203,27 +203,27 @@ export default function VerifyOTPForm() {
         ))}
       </div>
 
-      <Button type="submit" disabled={isLoading || otp.join("").length < 6}>
+      <Button type="submit" disabled={isLoading || otp.join("").length < 6} className="w-full">
         {isLoading ? t("btn_verifying") : t("btn_submit")}
       </Button>
 
-      <div className="text-center text-sm mt-6">
-        <span className="text-mkhe-text/60">{t("not_received")} </span>
-        <button
-          type="button"
+      <div className="flex items-center justify-center text-sm mt-6 flex-wrap gap-1">
+        <span className="text-mkhe-text/60">{t("not_received")}</span>
+        <Button
+          variant="link"
           onClick={handleResendOTP}
           disabled={countdown > 0 || isResending}
-          className={`font-bold ml-1 transition-colors ${
+          className={`!p-0 !min-w-0 !h-auto ${
             countdown > 0 || isResending
-              ? "text-mkhe-text/40 cursor-not-allowed"
-              : "text-mkhe-primary hover:underline cursor-pointer"
+              ? "!text-mkhe-text/40 !cursor-not-allowed !no-underline"
+              : ""
           }`}
         >
           {isResending ? t("btn_processing") || "Đang gửi..." : t("resend")}
-        </button>
+        </Button>
 
         {countdown > 0 && (
-          <span className="text-mkhe-text/60 ml-1">({countdown}s)</span>
+          <span className="text-mkhe-text/60">({countdown}s)</span>
         )}
       </div>
 

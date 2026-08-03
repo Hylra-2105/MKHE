@@ -37,7 +37,7 @@ const router = express.Router();
 router.post("/register", validate(registerSchema), normalizeEmailMiddleware, registerUser);
 
 // verify email route
-router.post("/verify-email", validate(verifyOtpSchema), verifyEmail);
+router.post("/verify-email", validate(verifyOtpSchema), normalizeEmailMiddleware, verifyEmail);
 
 // login route
 router.post("/login", validate(loginSchema), normalizeEmailMiddleware, loginUser);
@@ -52,7 +52,7 @@ router.post("/social-login", validate(socialLoginSchema), normalizeEmailMiddlewa
 router.post("/forgot-password", otpLimiter, validate(resendOtpSchema), normalizeEmailMiddleware, forgotPassword);
 
 // verify otp reset password route
-router.post("/verify-reset-otp", validate(verifyOtpSchema), verifyResetOtp);
+router.post("/verify-reset-otp", validate(verifyOtpSchema), normalizeEmailMiddleware, verifyResetOtp);
 
 // reset password route
 router.post("/reset-password", validate(resetPasswordSchema), normalizeEmailMiddleware, resetPassword);

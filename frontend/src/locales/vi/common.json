@@ -43,5 +43,19 @@
     "analytics": "Thống kê - Phân tích",
     "b2b_dashboard": "Dashboard B2B",
     "logout": "Đăng xuất"
-  }
+  },
+  "USERNAME_ALREADY_EXISTS": "Username này đã được đăng ký!",
+  "PHONE_ALREADY_EXISTS": "Số điện thoại này đã được đăng ký!",
+  "INVALID_USERNAME_FORMAT": "Định dạng Username không hợp lệ!",
+  "MISSING_FIELDS": "Vui lòng điền đầy đủ các trường!",
+  "FAILED_TO_SEND_EMAIL": "Gửi email thất bại, vui lòng thử lại sau!",
+  "INVALID_OR_EXPIRED_OTP": "Mã OTP không hợp lệ hoặc đã hết hạn!",
+  "USE_SOCIAL_LOGIN": "Email này đã đăng ký qua mạng xã hội, vui lòng đăng nhập bằng Google!",
+  "INVALID_OR_EXPIRED_SESSION": "Phiên làm việc không hợp lệ hoặc đã hết hạn!",
+  "USER_NOT_FOUND": "Người dùng không tồn tại!",
+  "VALIDATION_ERROR": "Dữ liệu đầu vào không hợp lệ!",
+  "ACCOUNT_NOT_FOUND": "Tài khoản không tồn tại!",
+  "WRONG_PASSWORD": "Mật khẩu không đúng!",
+  "ACCOUNT_NOT_VERIFIED": "Tài khoản chưa được xác minh!",
+  "ACCOUNT_BLOCKED": "Tài khoản đã bị khóa!"
 }

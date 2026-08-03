@@ -1,4 +1,6 @@
-import {  useState, useEffect, useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, Check } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 const SearchableDropdown = ({
   name,
@@ -7,6 +9,7 @@ const SearchableDropdown = ({
   options,
   placeholder,
   disabled,
+  error,
   t,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,28 +34,27 @@ const SearchableDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <div
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full p-2 bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-primary)]/50 rounded min-h-[32px] flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors ${
-          disabled
-            ? "bg-[var(--color-mkhe-border)]/30 cursor-not-allowed opacity-60"
-            : "hover:border-[var(--color-mkhe-primary)]"
-        }`}
+        className={cn(
+          "w-full p-2 bg-[var(--color-mkhe-bg)] border rounded min-h-[32px] flex items-center justify-between transition-colors text-sm",
+          disabled ? "bg-[var(--color-mkhe-border)]/30 cursor-not-allowed opacity-60" : "cursor-pointer",
+          error
+            ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+            : "border-[var(--color-mkhe-primary)]/50 focus:border-[var(--color-mkhe-primary)] focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 hover:border-[var(--color-mkhe-primary)]"
+        )}
       >
-        <span
-          className={
-            value
-              ? "text-[var(--color-mkhe-text)]"
-              : "text-[var(--color-mkhe-text)]/40"
-          }
-        >
+        <span className={cn("truncate", !value && "text-[var(--color-mkhe-text)]/50")}>
           {value || placeholder}
         </span>
-        <span className="text-[var(--color-mkhe-text)]/40 text-[10px] ml-2">
-          ▼
-        </span>
+        <ChevronDown
+          className={cn(
+            "w-4 h-4 transition-transform duration-300 shrink-0 text-[var(--color-mkhe-text)]/50",
+            isOpen && "rotate-180"
+          )}
+        />
       </div>
 
       {isOpen && (
-        <div className="absolute z-[150] top-full left-0 w-full mt-1 bg-[var(--color-mkhe-input)] border border-[var(--color-mkhe-border)]/50 rounded-lg shadow-xl flex flex-col overflow-hidden transition-colors">
+        <div className="absolute z-[150] top-full left-0 w-full mt-1 bg-[var(--color-mkhe-input)] border border-[var(--color-mkhe-border)]/50 rounded-xl shadow-xl flex flex-col overflow-hidden transition-colors">
           <div className="p-2 border-b border-[var(--color-mkhe-border)]/20 bg-[var(--color-mkhe-bg)]/50">
             <input
               type="text"
@@ -74,13 +76,15 @@ const SearchableDropdown = ({
                     setIsOpen(false);
                     setSearchTerm("");
                   }}
-                  className={`p-2.5 text-sm cursor-pointer hover:bg-[var(--color-mkhe-primary)]/10 transition-colors ${
+                  className={cn(
+                    "w-[calc(100%-16px)] mx-2 mb-1 px-3 py-2 rounded-lg text-left flex justify-between items-center transition-colors text-sm cursor-pointer",
                     value === opt
-                      ? "bg-[var(--color-mkhe-primary)]/5 font-bold text-[var(--color-mkhe-primary)]"
-                      : "text-[var(--color-mkhe-text)]"
-                  }`}
+                      ? "font-semibold text-[var(--color-mkhe-primary)] hover:bg-[var(--color-mkhe-primary)]/10"
+                      : "text-[var(--color-mkhe-text)] hover:bg-[var(--color-mkhe-primary)]/10"
+                  )}
                 >
-                  {opt}
+                  <span className="truncate">{opt}</span>
+                  {value === opt && <Check className="w-4 h-4 shrink-0 text-[var(--color-mkhe-primary)]" />}
                 </li>
               ))
             ) : (

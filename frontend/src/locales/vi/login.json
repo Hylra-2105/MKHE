@@ -10,7 +10,6 @@
   "or_continue_with": "Hoặc tiếp tục với",
   "slogan": "Nơi tinh hoa di sản hội tụ",
   "google": "Google",
-
   "msg_empty_fields": "Vui lòng nhập đầy đủ email và mật khẩu!",
   "msg_login_success": "Đăng nhập thành công!",
   "msg_login_error": "Đăng nhập thất bại! Vui lòng thử lại.",
@@ -26,5 +25,7 @@
   "LOGIN_SUCCESS": "Đăng nhập thành công!",
   "ACCOUNT_BLOCKED": "Tài khoản của bạn đã bị khóa bởi quản trị viên. Vui lòng liên hệ hỗ trợ.",
   "err_empty_email": "Vui lòng nhập email!",
-  "error_social_login": "Đăng nhập bằng mạng xã hội thất bại! Vui lòng thử lại."
+  "error_social_login": "Đăng nhập bằng mạng xã hội thất bại! Vui lòng thử lại.",
+  "email_or_username": "Email hoặc Username",
+  "ph_email_or_username": "Nhập email hoặc username"
 }

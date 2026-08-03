@@ -105,8 +105,8 @@ const ReturnHistoryTab = () => {
         </p>
       </div>
 
-      <div className="flex-1 pr-2">
-        {loading ? (
+      <div className="flex-1 pr-2 relative min-h-[400px]">
+        {loading && returns.length === 0 ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-[var(--color-mkhe-bg)] rounded-2xl p-5 border border-[var(--color-mkhe-border)]/10 animate-pulse h-32" />
@@ -118,7 +118,7 @@ const ReturnHistoryTab = () => {
             <p>{t("returns.no_returns")}</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className={`space-y-4 transition-opacity duration-300 ${loading ? "opacity-40 pointer-events-none" : "opacity-100"}`}>
             {returns.map((request) => {
               const status = STATUS_CONFIG[request.status] || STATUS_CONFIG.PENDING;
               return (

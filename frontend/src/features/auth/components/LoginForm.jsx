@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/stores/useAuthStore";
 
 import InputField from "@/components/ui/InputField";
+import CheckboxField from "@/components/ui/CheckboxField";
 import Button from "@/components/ui/Button";
 import GoogleIcon from "@/components/ui/icons/GoogleIcon";
 
@@ -92,7 +93,7 @@ export default function LoginForm() {
     e.preventDefault();
     setErrors({});
     const newErrors = {};
-    if (!email) newErrors.email = "err_empty_email";
+    if (!email) newErrors.email = "Vui lòng nhập Email hoặc Username";
     if (!password) newErrors.password = "err_empty_password";
 
     if (Object.keys(newErrors).length > 0) {
@@ -125,7 +126,7 @@ export default function LoginForm() {
         setErrors({ password: "err_wrong_password" });
       else if (msg === "ACCOUNT_NOT_VERIFIED") {
         setErrors({ email: "err_account_not_verified" });
-        setTimeout(() => navigate("/verify-otp", { state: { email } }), 1500);
+        setTimeout(() => navigate("/verify-otp", { state: { email: result.data?.email || email } }), 1500);
       } else if (msg === "ACCOUNT_BLOCKED") {
         setErrors({ email: "err_account_blocked" });
       } else {
@@ -146,14 +147,16 @@ export default function LoginForm() {
       <div className="space-y-4 mb-6">
         <div>
           <InputField
-            type="email"
-            label={t("email_placeholder")}
-            placeholder={t("email_placeholder")}
+            type="text"
+            label={t("email_or_username")}
+            placeholder={t("ph_email_or_username")}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (errors.email) setErrors((prev) => ({ ...prev, email: null }));
+            }}
             required
-            error={errors.email ? t(errors.email) : null}
+            error={errors.email ? (t(errors.email) !== errors.email ? t(errors.email) : errors.email) : null}
           />
         </div>
         
@@ -167,31 +170,26 @@ export default function LoginForm() {
             required
             error={errors.password ? t(errors.password) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             }
           />
         </div>
       </div>
 
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <input
-            id="rememberMe"
-            type="checkbox"
-            className="magic-cb-input"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe" className="magic-cb-label text-sm">
-            <span></span> {t("remember_me")}
-          </label>
-        </div>
+        <CheckboxField
+          name="rememberMe"
+          label={t("remember_me")}
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+        />
         <Link
           to="/forgot-password"
           className="text-sm text-mkhe-primary hover:underline"
@@ -200,7 +198,7 @@ export default function LoginForm() {
         </Link>
       </div>
 
-      <Button type="submit" disabled={isLoading}>
+      <Button type="submit" disabled={isLoading} className="w-full">
         {isLoading ? t("btn_processing") : t("submit_btn")}
       </Button>
 
@@ -212,21 +210,18 @@ export default function LoginForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        className="w-full"
         onClick={handleGoogleLogin}
         disabled={isLoading || isGoogleLoading}
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        isLoading={isGoogleLoading}
       >
-        {isGoogleLoading ? (
-          <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
-        ) : (
-          <GoogleIcon />
-        )}
+        {!isGoogleLoading && <GoogleIcon />}
         <span className="text-sm font-semibold text-mkhe-text">
           {isGoogleLoading ? t("btn_processing") : t("google")}
         </span>
-      </button>
+      </Button>
 
       <div className="text-center text-sm mt-6">
         <span className="text-mkhe-text/60">{t("no_account")} </span>

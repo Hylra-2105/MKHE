@@ -38,10 +38,13 @@ const ProductAddOnsInput = ({ addOns = [], onChange, galleryImages = [], error }
   };
 
   return (
-    <div className="bg-mkhe-primary/5 border border-mkhe-primary/20 rounded-2xl p-5 relative mt-6">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => setIsExpanded(!isExpanded)}>
-          <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 flex items-center justify-center">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div 
+          className="flex-1 cursor-pointer flex items-center gap-3" 
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="p-1.5 bg-mkhe-border/10 rounded-full hover:bg-mkhe-border/20 transition-colors">
             {isExpanded ? <ChevronUp className="w-4 h-4 text-mkhe-text/60" /> : <ChevronDown className="w-4 h-4 text-mkhe-text/60" />}
           </div>
           <div>

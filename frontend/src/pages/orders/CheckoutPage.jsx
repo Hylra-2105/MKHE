@@ -8,6 +8,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore, getCartItemId } from "@/stores/useCartStore";
 import { useSocketStore } from "@/stores/useSocketStore";
 import { ChevronLeft } from "lucide-react";
+import Button from "@/components/ui/Button";
 
 import CheckoutForm from "@/features/orders/components/Checkout/CheckoutForm";
 import OrderSummary from "@/features/orders/components/Checkout/OrderSummary";
@@ -287,10 +288,10 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <button onClick={() => navigate(-1)} className="flex items-center text-mkhe-text/60 hover:text-mkhe-primary mb-6 transition-colors w-fit cursor-pointer group">
+      <Button variant="link" onClick={() => navigate(-1)} className="!p-0 flex items-center text-mkhe-text/60 hover:text-mkhe-primary mb-6 transition-colors w-fit group">
         <ChevronLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
         {t("actions.back")}
-      </button>
+      </Button>
       
       <h1 className="text-3xl font-serif text-mkhe-primary mb-8">{t("title")}</h1>
 

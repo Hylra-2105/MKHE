@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
+import ToggleField from "@/components/ui/ToggleField";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -637,10 +638,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-mkhe-primary text-sm">{t("voucher.apply_o2o")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.apply_o2o_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isO2O" checked={formData.isO2O} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
-                </label>
+                <ToggleField name="isO2O" checked={formData.isO2O} onChange={handleChange} />
               </div>
 
               <div className="flex items-center justify-between p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mt-4">
@@ -648,10 +646,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-yellow-600 text-sm">{t("voucher.send_notification")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.send_notification_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
-                </label>
+                <ToggleField name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} />
               </div>
             </div>
 
@@ -660,16 +655,17 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
         {/* Footer */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-end items-center gap-3 bg-[var(--color-mkhe-border)]/10 shrink-0 z-20">
-          <button 
+          <Button 
             type="button"
             onClick={() => {
               localStorage.removeItem("mkhe_voucher_draft");
               onClose();
             }}
-            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+            variant="outline"
+            className="px-6 py-2.5 text-sm"
           >
             {t("common.cancel", { defaultValue: "Hủy" })}
-          </button>
+          </Button>
           {!editData ? (
             <Button 
               type="button"
@@ -681,14 +677,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
             </Button>
           ) : formData.status === "DRAFT" ? (
             <div className="flex items-center gap-2">
-              <button 
+              <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 disabled={loading}
-                className="px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                variant="outline"
+                className="px-6 py-2.5 text-sm"
               >
                 {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
-              </button>
+              </Button>
               <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "PUBLISHED")}
@@ -701,14 +698,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           ) : (
             <div className="flex items-center gap-2">
               {isScheduled && (
-                <button 
+                <Button 
                   type="button"
                   onClick={(e) => handleSubmit(e, "DRAFT")}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-transparent border border-rose-500/50 text-rose-500 rounded-xl hover:bg-rose-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                  variant="outline"
+                  className="px-6 py-2.5 text-sm border-rose-500/50 text-rose-500 hover:bg-rose-500/10"
                 >
                   {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
-                </button>
+                </Button>
               )}
               <Button 
                 type="button"

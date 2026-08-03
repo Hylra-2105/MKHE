@@ -28,6 +28,7 @@
   "profile": {
     "title": "Hồ sơ cá nhân",
     "general_info": "Thông tin chung",
+    "general_info_desc": "Quản lý thông tin cá nhân và địa chỉ giao hàng của bạn",
     "transactions": "Lịch sử giao dịch",
     "vouchers": "Ví Voucher",
     "change_password": "Đổi mật khẩu",

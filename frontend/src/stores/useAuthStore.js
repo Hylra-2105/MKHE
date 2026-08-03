@@ -87,7 +87,8 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       set({ isLoading: false });
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      return { success: false, message: errorMsg };
+      const suggestions = error.response?.data?.suggestions || [];
+      return { success: false, message: errorMsg, suggestions };
     }
   },
 
@@ -117,7 +118,8 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       set({ isLoading: false });
       const errorMsg = error.response?.data?.message || "SERVER_ERROR";
-      return { success: false, message: errorMsg };
+      const errorData = error.response?.data?.data;
+      return { success: false, message: errorMsg, data: errorData };
     }
   },
 

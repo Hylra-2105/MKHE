@@ -94,12 +94,13 @@ const BlogList = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <button 
+          <Button 
             onClick={() => navigate("/admin/blogs/create")}
-            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer whitespace-nowrap"
+            className="!w-auto"
           >
+            <Plus className="w-5 h-5" />
             {t("admin.add_new")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -194,12 +195,13 @@ const BlogList = () => {
           <p className="text-mkhe-text/60 mb-6 max-w-sm mx-auto">
             Hãy tạo bài viết đầu tiên để kể những câu chuyện di sản đầy tự hào của MKHE.
           </p>
-          <button 
+          <Button 
             onClick={() => navigate("/admin/blogs/create")}
-            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+            className="!w-auto mx-auto"
           >
-            Thêm bài viết mới
-          </button>
+            <Plus className="w-5 h-5" />
+            {t("admin.add_new", { defaultValue: "Thêm bài viết mới" })}
+          </Button>
         </div>
       ) : viewMode === "grid" ? (
         <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start min-h-[520px] transition-opacity duration-200 ${loading ? "opacity-50 pointer-events-none" : "opacity-100"}`}>

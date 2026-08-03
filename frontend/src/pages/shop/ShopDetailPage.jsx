@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Thumbs, EffectFade } from "swiper/modules";
 import ReviewList from "@/features/reviews/components/ReviewList";
 import DOMPurify from "dompurify";
+import Button from "@/components/ui/Button";
 
 // Swiper styles
 import "swiper/css";
@@ -148,12 +149,12 @@ export default function ShopDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-mkhe-bg">
         <p className="text-xl text-mkhe-text opacity-70">{error || t("common.not_found")}</p>
-        <button 
+        <Button 
           onClick={() => navigate("/shop")}
-          className="mt-6 px-8 py-3 bg-mkhe-primary text-white rounded-full hover:opacity-90 transition-opacity"
+          className="mt-6 px-8 py-3 rounded-full"
         >
           {t("common.back")}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -215,13 +216,14 @@ export default function ShopDetailPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         
         {/* Back button */}
-        <button 
+        <Button
+          variant="link"
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 cursor-pointer text-mkhe-text/60 hover:text-mkhe-primary transition-colors mb-8 group"
+          className="!p-0 flex items-center gap-2 text-mkhe-text/60 hover:text-mkhe-primary mb-8 group"
         >
           <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           <span>{t("shop.detail.back", "Trở về")}</span>
-        </button>
+        </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
           
@@ -573,30 +575,31 @@ export default function ShopDetailPage() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <button
+                <Button
+                  variant={isOutOfStock ? "ghost" : "outline"}
                   onClick={handleAddToCart}
                   disabled={isOutOfStock}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 md:py-5 rounded-full font-medium text-lg border-2 transition-all ${
+                  className={`flex-1 py-4 md:py-5 rounded-full font-medium text-lg border-2 transition-all ${
                     isOutOfStock 
-                      ? "bg-mkhe-primary/5 border-mkhe-primary/20 text-mkhe-primary/40 cursor-not-allowed" 
-                      : "border-mkhe-primary text-mkhe-primary hover:bg-mkhe-primary/10 active:scale-[0.99] cursor-pointer"
+                      ? "!bg-mkhe-primary/5 !border-mkhe-primary/20 !text-mkhe-primary/40 cursor-not-allowed" 
+                      : "!border-mkhe-primary !text-mkhe-primary hover:!bg-mkhe-primary/10 active:scale-[0.99]"
                   }`}
                 >
-                  <ShoppingCart className="w-6 h-6" />
+                  <ShoppingCart className="w-6 h-6 mr-3" />
                   <span>{isOutOfStock ? t("shop.detail.sold_out", { defaultValue: "Tạm hết" }) : t("shop.detail.add_to_cart", { defaultValue: "Thêm vào giỏ" })}</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleBuyNow}
                   disabled={isOutOfStock}
-                  className={`flex-1 flex items-center justify-center gap-3 py-4 md:py-5 rounded-full font-medium text-lg shadow-lg transition-all ${
+                  className={`flex-1 py-4 md:py-5 rounded-full font-medium text-lg shadow-lg transition-all ${
                     isOutOfStock 
-                      ? "bg-mkhe-primary/10 text-mkhe-primary/40 cursor-not-allowed shadow-none" 
-                      : "bg-mkhe-primary text-white shadow-mkhe-primary/30 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                      ? "!bg-mkhe-primary/10 !text-mkhe-primary/40 cursor-not-allowed shadow-none" 
+                      : "shadow-mkhe-primary/30 hover:scale-[1.01] active:scale-[0.99]"
                   }`}
                 >
-                  <CreditCard className="w-6 h-6" />
+                  <CreditCard className="w-6 h-6 mr-3" />
                   <span>{isOutOfStock ? t("shop.detail.sold_out", { defaultValue: "Tạm hết" }) : t("shop.detail.buy_now", { defaultValue: "Mua ngay" })}</span>
-                </button>
+                </Button>
               </div>
               
               {product.colors?.length > 0 && !selectedColor && !isOutOfStock && (

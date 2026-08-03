@@ -10,7 +10,6 @@
   "or_continue_with": "Or continue with",
   "slogan": "Where the essence of heritage converges",
   "google": "Google",
-
   "msg_empty_fields": "Please enter both email and password!",
   "msg_login_success": "Login successful!",
   "msg_login_error": "Login failed! Please check again.",
@@ -26,5 +25,7 @@
   "LOGIN_SUCCESS": "Login successful!",
   "ACCOUNT_BLOCKED": "Account has been locked by administrator. Please contact support.",
   "err_empty_email": "Please enter your email!",
-  "error_social_login": "Social login failed! Please try again."
+  "error_social_login": "Social login failed! Please try again.",
+  "email_or_username": "Email or Username",
+  "ph_email_or_username": "Enter email or username"
 }

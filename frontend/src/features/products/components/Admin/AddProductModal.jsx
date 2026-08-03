@@ -5,6 +5,7 @@ import { X, Package, Fingerprint, AlertCircle, ChevronDown, Tag, Briefcase } fro
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import Dropdown from "@/components/ui/Dropdown";
+import ToggleField from '@/components/ui/ToggleField';
 import { useTranslation } from "react-i18next";
 import { formatNumber, parseNumber } from "@/utils/formatters";
 import { draftDB } from "@/utils/db";
@@ -909,11 +910,14 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
                       <p className="text-[11px] text-mkhe-text/60">{t("modal.dpp.desc")}</p>
                     </div>
                   </div>
-                  {/* NÚT GẠT TOGGLE */}
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" name="hasDPP" checked={formData.hasDPP} onChange={handleChange} className="sr-only peer" />
-                    <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
-                  </label>
+                  <div className="pt-2">
+                    <ToggleField 
+                      name="hasDPP" 
+                      checked={formData.hasDPP} 
+                      onChange={handleChange} 
+                      label={t("modal.enable_dpp", { defaultValue: "Kích hoạt Digital Product Passport" })}
+                    />
+                  </div>
                 </div>
 
                 {/* FORM NHẬP LIỆU DPP */}
@@ -1010,9 +1014,9 @@ const AddProductModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* FOOTER BUTTONS */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-end items-center gap-3 bg-[var(--color-mkhe-border)]/10 shrink-0 rounded-b-2xl z-20">
-          <button type="button" onClick={handleCancel} disabled={loading} className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm">
+          <Button type="button" onClick={handleCancel} disabled={loading} variant="outline" className="px-6 py-2.5 text-sm">
             {t("modal.cancel")}
-          </button>
+          </Button>
           <Button type="submit" form="add-product-form" disabled={loading} className="!w-auto px-8 py-2.5 rounded-xl text-sm">
             {loading ? t("modal.processing") : t("modal.create")}
           </Button>
