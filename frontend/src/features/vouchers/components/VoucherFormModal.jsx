@@ -65,7 +65,7 @@ const MultiSelectDropdown = ({ options, value, onChange, placeholder, t }) => {
             }, 100);
           }
         }}
-        className="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm text-mkhe-text flex justify-between items-center focus:outline-none focus:border-mkhe-primary transition-colors cursor-pointer"
+        className="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm text-mkhe-text flex justify-between items-center focus:outline-none focus:border-mkhe-primary hover:border-mkhe-primary transition-colors cursor-pointer"
       >
         <span className={value.length > 0 ? "text-mkhe-primary font-medium" : "text-mkhe-text/60"}>{selectedText}</span>
         <svg className={`w-4 h-4 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -438,7 +438,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   disabled={isPublished}
                   required
                   error={formErrors.code ? formErrors.code : null}
-                  className={`uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  className={`uppercase ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                 />
               </div>
 
@@ -466,7 +466,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     disabled={isPublished}
                     required
                     error={formErrors.discountValue ? formErrors.discountValue : null}
-                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                     rightElement={<span className="font-medium">{formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}</span>}
                   />
                 </div>
@@ -482,7 +482,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     value={formatMoney(formData.maxDiscount)}
                     onChange={handleMoneyChange}
                     disabled={isPublished}
-                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                     rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
                   />
                   <p className="text-xs text-mkhe-text/50 mt-[-10px] ml-1 mb-4">{t("voucher.leave_empty_max_discount")}</p>
@@ -498,7 +498,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   value={formatMoney(formData.minOrderValue)}
                   onChange={handleMoneyChange}
                   disabled={isPublished}
-                  className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                   rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
                 />
               </div>
@@ -525,7 +525,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     }}
                     options={startDateOptions}
                     disabled={isPublished}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : `border-mkhe-border/50 focus:border-mkhe-primary ${!isPublished ? "hover:border-mkhe-primary" : ""}`} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${isPublished ? "opacity-50 !cursor-not-allowed" : "cursor-pointer"}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
                   {formErrors.startDate && (
@@ -548,7 +548,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                       if (formErrors.endDate) setFormErrors(prev => ({ ...prev, endDate: null }));
                     }}
                     options={endDateOptions}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50 focus:border-mkhe-primary hover:border-mkhe-primary'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm cursor-pointer`}
                     placeholder={t("voucher.end_date_placeholder")}
                   />
                   {formErrors.endDate && (
@@ -625,8 +625,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                         ]}
                         onChange={(val) => setFormData(prev => ({ ...prev, applicableCategories: val ? [val] : [] }))}
                         placeholder={t("voucher.select_category", { defaultValue: "Chọn phân khúc..." })}
-                        className="w-full"
-                        triggerClassName="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm"
+                        triggerClassName="w-full p-3.5 bg-transparent border border-mkhe-border/50 hover:border-mkhe-primary rounded-xl text-sm"
                       />
                     )}
                   </div>
