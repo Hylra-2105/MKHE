@@ -17,6 +17,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     role: "Customer",
     companyName: "",
@@ -29,6 +30,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
       setFormData({
         name: initialData.name || "",
         email: initialData.email || "",
+        phone: initialData.phone || "",
         password: "",
         role: initialData.role || "Customer",
         companyName: initialData.companyName || initialData.company || "",
@@ -38,6 +40,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
       setFormData({
         name: "",
         email: "",
+        phone: "",
         password: "",
         role: "Customer",
         companyName: "",
@@ -59,7 +62,16 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
 
     const errors = {};
     if (!formData.name) errors.name = t("users.errors.name_required", "Vui lòng điền họ và tên");
-    if (!formData.email) errors.email = t("users.errors.email_required", "Vui lòng điền email");
+    
+    if (formData.role === "Staff" || formData.role === "Enterprise") {
+      if (!formData.email) errors.email = t("users.errors.email_required", "Vui lòng điền email");
+    } else {
+      // Yêu cầu ít nhất 1 trong 2: Email hoặc SĐT (chỉ áp dụng cho Customer)
+      if (!formData.email && !formData.phone) {
+        errors.email = t("users.errors.contact_required", "Vui lòng nhập Email hoặc Số điện thoại");
+        errors.phone = t("users.errors.contact_required", "Vui lòng nhập Email hoặc Số điện thoại");
+      }
+    }
     
     if (formData.role !== "Enterprise") {
       if (!formData.password) errors.password = t("users.errors.pass_required", "Vui lòng điền mật khẩu");
@@ -94,7 +106,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
           t("messages.create_success", "Tạo tài khoản thành công!"),
         );
         if (onRefresh) onRefresh();
-        setFormData({ name: "", email: "", password: "", role: "Customer", companyName: "", taxCode: "" });
+        setFormData({ name: "", email: "", phone: "", password: "", role: "Customer", companyName: "", taxCode: "" });
         onClose();
       }
     } catch (error) {
@@ -160,8 +172,20 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder={t("users.email_placeholder", "example@gmail.com")}
-                required
+                required={formData.role === "Staff" || formData.role === "Enterprise"}
                 error={formErrors.email ? formErrors.email : null}
+              />
+            </div>
+
+            <div>
+              <InputField
+                type="text"
+                name="phone"
+                label={t("users.phone", "Số điện thoại")}
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder={t("users.phone_placeholder", "VD: 0912345678")}
+                error={formErrors.phone ? formErrors.phone : null}
               />
             </div>
 
@@ -196,7 +220,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
             
             {/* Các trường cho Enterprise */}
             {formData.role === "Enterprise" && (
-              <>
+              <div className="grid grid-cols-2 gap-5">
                 <div>
                   <InputField
                     type="text"
@@ -222,7 +246,7 @@ const AddUserModal = ({ isOpen, onClose, onRefresh, initialData }) => {
                     error={formErrors.taxCode ? formErrors.taxCode : null}
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {/* VAI TRÒ (DROPDOWN) */}

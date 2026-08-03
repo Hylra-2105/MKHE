@@ -163,7 +163,8 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ 
       $or: [
         { email: loginId },
-        { username: loginId }
+        { username: loginId },
+        { phone: loginId }
       ]
     });
     console.log("loginUser debug:", loginId, user ? user.email : "not found");

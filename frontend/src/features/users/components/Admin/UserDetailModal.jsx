@@ -309,7 +309,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-2 flex items-center gap-2 transition-colors">
                   <User className="w-4 h-4" /> {t("users.basic_info")}
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="mb-4">
                   <EditableField
                     label={t("users.fullname")}
                     name="name"
@@ -317,9 +317,18 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                     isEditing={isEditing}
                     onChange={handleInputChange}
                   />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <InputField
+                    label={t("users.username", { defaultValue: "Tên đăng nhập" })}
+                    value={user.username || t("common.not_updated", { defaultValue: "Chưa cập nhật" })}
+                    disabled={true}
+                    className="opacity-70 !mb-0"
+                    wrapperClassName="!mb-0"
+                  />
                   <InputField
                     label={t("users.email_readonly")}
-                    value={user.email}
+                    value={user.email || t("common.not_updated", { defaultValue: "Chưa cập nhật" })}
                     disabled={true}
                     className="opacity-70 !mb-0"
                     wrapperClassName="!mb-0"
