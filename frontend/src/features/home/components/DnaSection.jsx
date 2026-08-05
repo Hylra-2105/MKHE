@@ -260,7 +260,7 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
 
         {/* CASCADING CAROUSEL WRAPPER */}
         <div
-          className="relative w-full touch-pan-y pt-8 pb-16"
+          className="relative w-full touch-pan-y pt-4 pb-6"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => {
             setIsHovered(false);
