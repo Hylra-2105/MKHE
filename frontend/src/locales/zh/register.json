@@ -28,5 +28,16 @@
   "err_pass_min_length": "密码必须至少有 8 个字符。",
   "err_pass_uppercase": "密码必须包含至少 1 个大写字母 (A-Z)。",
   "err_pass_number": "密码必须至少包含 1 位数字 (0-9)。",
-  "err_pass_special": "密码必须包含至少 1 个特殊字符 (!@#...)。"
+  "err_pass_special": "密码必须包含至少 1 个特殊字符 (!@#...)。",
+  "username": "用户名",
+  "ph_username": "用户名（例如：mkhe_123）",
+  "err_invalid_username": "用户名无效（仅小写字母、数字、_）",
+  "err_empty_username": "请输入用户名！",
+  "username_exists_suggestions": "用户名已存在。尝试这些建议：",
+  "phone": "电话号码",
+  "ph_phone": "例如：0987654321",
+  "err_invalid_phone": "电话号码无效！",
+  "err_empty_phone": "请输入电话号码！",
+  "err_username_exists": "该用户名已被注册！",
+  "err_phone_exists": "该电话号码已被注册！"
 }

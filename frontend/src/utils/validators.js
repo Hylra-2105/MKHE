@@ -23,6 +23,8 @@ export const validateRegistration = (
   email,
   password,
   confirmPassword,
+  username,
+  phone
 ) => {
   const errors = {}; // Tạo một object chứa các lỗi
 
@@ -31,6 +33,21 @@ export const validateRegistration = (
     errors.name = "err_empty_name";
   } else if (name.trim().length < 2) {
     errors.name = "err_name_length";
+  }
+
+  // Kiểm tra Username
+  const usernameRegex = /^[a-z0-9_]{3,20}$/;
+  if (!username) {
+    errors.username = "err_empty_username";
+  } else if (!usernameRegex.test(username.toLowerCase())) {
+    errors.username = "err_invalid_username";
+  }
+
+  // Kiểm tra Phone
+  if (!phone) {
+    errors.phone = "err_empty_phone";
+  } else if (!isValidPhoneInput(phone) || phone.length < 9 || phone.length > 11) {
+    errors.phone = "err_invalid_phone";
   }
 
   // Kiểm tra Email

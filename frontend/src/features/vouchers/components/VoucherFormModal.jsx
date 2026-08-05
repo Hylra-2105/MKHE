@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Dropdown from "@/components/ui/Dropdown";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
+import ToggleField from "@/components/ui/ToggleField";
 import Flatpickr from "react-flatpickr";
 import "flatpickr/dist/flatpickr.css";
 import { Vietnamese } from "flatpickr/dist/l10n/vn.js";
@@ -64,7 +65,7 @@ const MultiSelectDropdown = ({ options, value, onChange, placeholder, t }) => {
             }, 100);
           }
         }}
-        className="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm text-mkhe-text flex justify-between items-center focus:outline-none focus:border-mkhe-primary transition-colors cursor-pointer"
+        className="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm text-mkhe-text flex justify-between items-center focus:outline-none focus:border-mkhe-primary hover:border-mkhe-primary transition-colors cursor-pointer"
       >
         <span className={value.length > 0 ? "text-mkhe-primary font-medium" : "text-mkhe-text/60"}>{selectedText}</span>
         <svg className={`w-4 h-4 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -437,7 +438,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   disabled={isPublished}
                   required
                   error={formErrors.code ? formErrors.code : null}
-                  className={`uppercase ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  className={`uppercase ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                 />
               </div>
 
@@ -465,7 +466,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     disabled={isPublished}
                     required
                     error={formErrors.discountValue ? formErrors.discountValue : null}
-                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                     rightElement={<span className="font-medium">{formData.type === "PERCENTAGE" ? "%" : t("voucher.currency_symbol")}</span>}
                   />
                 </div>
@@ -481,7 +482,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     value={formatMoney(formData.maxDiscount)}
                     onChange={handleMoneyChange}
                     disabled={isPublished}
-                    className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                     rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
                   />
                   <p className="text-xs text-mkhe-text/50 mt-[-10px] ml-1 mb-4">{t("voucher.leave_empty_max_discount")}</p>
@@ -497,7 +498,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   value={formatMoney(formData.minOrderValue)}
                   onChange={handleMoneyChange}
                   disabled={isPublished}
-                  className={`pr-10 ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                  className={`pr-10 ${isPublished ? "opacity-50 cursor-not-allowed" : ""}`}
                   rightElement={<span className="font-medium">{t("voucher.currency_symbol")}</span>}
                 />
               </div>
@@ -524,7 +525,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                     }}
                     options={startDateOptions}
                     disabled={isPublished}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm ${isPublished ? "opacity-60 bg-gray-100 cursor-not-allowed" : ""}`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.startDate ? 'border-rose-500' : `border-mkhe-border/50 focus:border-mkhe-primary ${!isPublished ? "hover:border-mkhe-primary" : ""}`} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm ${isPublished ? "opacity-50 !cursor-not-allowed" : "cursor-pointer"}`}
                     placeholder={t("voucher.start_date_placeholder")}
                   />
                   {formErrors.startDate && (
@@ -547,7 +548,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                       if (formErrors.endDate) setFormErrors(prev => ({ ...prev, endDate: null }));
                     }}
                     options={endDateOptions}
-                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50'} text-mkhe-text rounded-xl focus:outline-none focus:border-mkhe-primary transition-colors text-sm`}
+                    className={`w-full p-3.5 bg-transparent border ${formErrors.endDate ? 'border-rose-500' : 'border-mkhe-border/50 focus:border-mkhe-primary hover:border-mkhe-primary'} text-mkhe-text rounded-xl focus:outline-none transition-colors text-sm cursor-pointer`}
                     placeholder={t("voucher.end_date_placeholder")}
                   />
                   {formErrors.endDate && (
@@ -624,8 +625,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                         ]}
                         onChange={(val) => setFormData(prev => ({ ...prev, applicableCategories: val ? [val] : [] }))}
                         placeholder={t("voucher.select_category", { defaultValue: "Chọn phân khúc..." })}
-                        className="w-full"
-                        triggerClassName="w-full p-3.5 bg-transparent border border-mkhe-border/50 rounded-xl text-sm"
+                        triggerClassName="w-full p-3.5 bg-transparent border border-mkhe-border/50 hover:border-mkhe-primary rounded-xl text-sm"
                       />
                     )}
                   </div>
@@ -637,10 +637,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-mkhe-primary text-sm">{t("voucher.apply_o2o")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.apply_o2o_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isO2O" checked={formData.isO2O} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mkhe-primary"></div>
-                </label>
+                <ToggleField name="isO2O" checked={formData.isO2O} onChange={handleChange} />
               </div>
 
               <div className="flex items-center justify-between p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mt-4">
@@ -648,10 +645,7 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
                   <div className="font-semibold text-yellow-600 text-sm">{t("voucher.send_notification")}</div>
                   <div className="text-xs text-mkhe-text/60 mt-0.5">{t("voucher.send_notification_desc")}</div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} className="sr-only peer" />
-                  <div className="w-11 h-6 bg-mkhe-border/30 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
-                </label>
+                <ToggleField name="isPublicEvent" checked={formData.isPublicEvent} onChange={handleChange} />
               </div>
             </div>
 
@@ -660,16 +654,17 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
         {/* Footer */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-end items-center gap-3 bg-[var(--color-mkhe-border)]/10 shrink-0 z-20">
-          <button 
+          <Button 
             type="button"
             onClick={() => {
               localStorage.removeItem("mkhe_voucher_draft");
               onClose();
             }}
-            className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+            variant="outline"
+            className="px-6 py-2.5 text-sm"
           >
             {t("common.cancel", { defaultValue: "Hủy" })}
-          </button>
+          </Button>
           {!editData ? (
             <Button 
               type="button"
@@ -681,14 +676,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
             </Button>
           ) : formData.status === "DRAFT" ? (
             <div className="flex items-center gap-2">
-              <button 
+              <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "DRAFT")}
                 disabled={loading}
-                className="px-6 py-2.5 bg-transparent border border-mkhe-primary text-mkhe-primary rounded-xl hover:bg-mkhe-primary/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                variant="outline"
+                className="px-6 py-2.5 text-sm"
               >
                 {loading ? "..." : t("voucher.save_changes", { defaultValue: "Lưu Thay Đổi" })}
-              </button>
+              </Button>
               <Button 
                 type="button"
                 onClick={(e) => handleSubmit(e, "PUBLISHED")}
@@ -701,14 +697,15 @@ const VoucherFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
           ) : (
             <div className="flex items-center gap-2">
               {isScheduled && (
-                <button 
+                <Button 
                   type="button"
                   onClick={(e) => handleSubmit(e, "DRAFT")}
                   disabled={loading}
-                  className="px-6 py-2.5 bg-transparent border border-rose-500/50 text-rose-500 rounded-xl hover:bg-rose-500/10 text-sm font-bold cursor-pointer disabled:opacity-50 transition-colors"
+                  variant="outline"
+                  className="px-6 py-2.5 text-sm border-rose-500/50 text-rose-500 hover:bg-rose-500/10"
                 >
                   {loading ? "..." : "Hủy Lên Lịch (Về Nháp)"}
-                </button>
+                </Button>
               )}
               <Button 
                 type="button"

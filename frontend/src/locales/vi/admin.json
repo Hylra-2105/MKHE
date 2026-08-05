@@ -21,7 +21,7 @@
   "users": {
     "title": "Quản lý Người dùng",
     "subtitle": "Xem danh sách, tìm kiếm và phân quyền hệ thống",
-    "add_member": "+ Thêm thành viên",
+    "add_member": "Thêm thành viên",
     "add_new": "Thêm thành viên mới",
     "detail_title": "Hồ sơ Người dùng",
     "basic_info": "Thông tin cơ bản",
@@ -59,7 +59,8 @@
       "email_required": "Vui lòng điền email",
       "pass_required": "Vui lòng điền mật khẩu",
       "pass_short": "Mật khẩu phải có ít nhất 6 ký tự"
-    }
+    },
+    "username_readonly": "Username (Chỉ đọc)"
   },
   "pagination": {
     "showing_page": "Đang hiển thị trang",

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { getChatHistoryApi, sendChatMessageApi } from '@/api/aiApi';
+import logo from "@/assets/images/logo-mkhe.png";
 
 const Chatbot = () => {
   const { t, i18n } = useTranslation('chatbot');
@@ -13,6 +14,11 @@ const Chatbot = () => {
   const [showGreeting, setShowGreeting] = useState(true);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -44,6 +50,20 @@ const Chatbot = () => {
   useEffect(() => {
     isOpenRef.current = isOpen;
   }, [isOpen]);
+
+  useEffect(() => {
+    const handleOpenChatbot = () => {
+      setIsOpen(true);
+      if (isMinimized) {
+        setIsMinimized(false);
+      }
+    };
+
+    window.addEventListener("open-chatbot", handleOpenChatbot);
+    return () => {
+      window.removeEventListener("open-chatbot", handleOpenChatbot);
+    };
+  }, [isMinimized]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,6 +112,8 @@ const Chatbot = () => {
       handleSend();
     }
   };
+
+  if (!mounted) return null;
 
   return (
     <>
@@ -170,8 +192,8 @@ const Chatbot = () => {
           {/* Header */}
           <div className="bg-white dark:bg-transparent border-b border-black/5 dark:border-mkhe-border/50 p-5 flex justify-between items-center z-10 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="bg-mkhe-primary/10 dark:bg-mkhe-primary/20 p-2 rounded-full">
-                <MessageCircle size={20} className="text-mkhe-primary" />
+              <div className="bg-mkhe-primary/10 dark:bg-mkhe-primary/20 p-1.5 rounded-full border border-mkhe-primary/20 flex items-center justify-center">
+                <img src={logo} alt="Mekong AI" className="w-6 h-6 object-contain" />
               </div>
               <div>
                 <h3 className="font-bold text-lg tracking-wide leading-tight text-mkhe-primary">{t('title')}</h3>
@@ -186,31 +208,70 @@ const Chatbot = () => {
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-5 space-y-5 bg-[#faf8f5] dark:bg-[#20130d]">
             {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div 
-                  className={`max-w-[85%] p-3.5 px-4 rounded-2xl shadow-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-mkhe-primary text-white rounded-br-sm' 
-                      : 'bg-white dark:bg-[#2d1c15] text-gray-800 dark:text-mkhe-text rounded-bl-sm border border-black/5 dark:border-mkhe-border/30'
-                  }`}
-                >
-                  {msg.role === 'user' ? (
-                    <p className="whitespace-pre-wrap text-[15px] leading-relaxed">{msg.content}</p>
-                  ) : (
-                    <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-p:my-1 prose-strong:text-inherit prose-strong:font-bold prose-ul:my-1 prose-li:my-0.5">
-                      <ReactMarkdown>
-                        {msg.content}
-                      </ReactMarkdown>
-                    </div>
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end gap-2.5 items-end' : 'justify-start gap-2.5 items-end'}`}>
+                {/* AI AVATAR */}
+                {msg.role !== 'user' && (
+                  <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 dark:bg-mkhe-primary/20 flex items-center justify-center shrink-0 mb-1 border border-mkhe-primary/20 p-1">
+                    <img src={logo} alt="Mekong AI" className="w-full h-full object-contain" />
+                  </div>
+                )}
+                
+                <div className={`flex flex-col gap-1 max-w-[85%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                  {/* AI NAME */}
+                  {msg.role !== 'user' && (
+                    <span className="text-[10px] text-gray-500 dark:text-mkhe-text/50 px-1 text-left font-medium">
+                      Mekong AI
+                    </span>
                   )}
+                  
+                  <div 
+                    className={`p-3.5 px-4 rounded-2xl shadow-sm ${
+                      msg.role === 'user' 
+                        ? 'bg-mkhe-primary text-white' 
+                        : 'bg-white dark:bg-[#2d1c15] text-gray-800 dark:text-mkhe-text border border-black/5 dark:border-mkhe-border/30'
+                    }`}
+                  >
+                    {msg.role === 'user' ? (
+                      <p className="whitespace-pre-wrap text-[15px] leading-relaxed">{msg.content}</p>
+                    ) : (
+                      <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-relaxed prose-p:my-1 prose-strong:text-inherit prose-strong:font-bold prose-ul:my-1 prose-li:my-0.5">
+                        <ReactMarkdown>
+                          {msg.content}
+                        </ReactMarkdown>
+                      </div>
+                    )}
+                  </div>
                 </div>
+
+                {/* USER AVATAR */}
+                {msg.role === 'user' && (
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 mb-1 border border-mkhe-border/20">
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-mkhe-primary/10 flex items-center justify-center">
+                        <span className="text-mkhe-primary text-xs font-bold">
+                          {user?.name?.charAt(0) || "U"}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
             {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white dark:bg-[#2d1c15] border border-black/5 dark:border-mkhe-border/30 p-3 px-4 rounded-2xl rounded-bl-sm shadow-sm flex items-center gap-3">
-                  <Loader2 size={16} className="animate-spin text-mkhe-primary" />
-                  <span className="text-[14px] text-gray-500 dark:text-mkhe-text/70 font-medium">{t('thinking')}</span>
+              <div className="flex justify-start gap-2.5 items-end">
+                <div className="w-8 h-8 rounded-full bg-mkhe-primary/10 dark:bg-mkhe-primary/20 flex items-center justify-center shrink-0 mb-1 border border-mkhe-primary/20 p-1">
+                  <img src={logo} alt="Mekong AI" className="w-full h-full object-contain" />
+                </div>
+                <div className="flex flex-col gap-1 max-w-[85%] items-start">
+                  <span className="text-[10px] text-gray-500 dark:text-mkhe-text/50 px-1 text-left font-medium">
+                    Mekong AI
+                  </span>
+                  <div className="bg-white dark:bg-[#2d1c15] border border-black/5 dark:border-mkhe-border/30 p-3 px-4 rounded-2xl shadow-sm flex items-center gap-3">
+                    <Loader2 size={16} className="animate-spin text-mkhe-primary" />
+                    <span className="text-[14px] text-gray-500 dark:text-mkhe-text/70 font-medium">{t('thinking')}</span>
+                  </div>
                 </div>
               </div>
             )}

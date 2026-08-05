@@ -25,5 +25,7 @@
   "LOGIN_SUCCESS": "로그인 성공!",
   "ACCOUNT_BLOCKED": "관리자가 계정을 잠갔습니다. 지원팀에 문의하세요.",
   "err_empty_email": "이메일을 입력해주세요!",
-  "error_social_login": "소셜 로그인에 실패했습니다! 다시 시도해 주세요."
+  "error_social_login": "소셜 로그인에 실패했습니다! 다시 시도해 주세요.",
+  "email_or_username": "이메일 또는 사용자 이름",
+  "ph_email_or_username": "이메일 또는 사용자 이름을 입력하세요"
 }

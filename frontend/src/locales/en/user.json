@@ -28,6 +28,7 @@
   "profile": {
     "title": "Personal Profile",
     "general_info": "General Information",
+    "general_info_desc": "Manage your personal information and shipping address",
     "transactions": "Transaction History",
     "vouchers": "My Vouchers",
     "change_password": "Change Password",
@@ -42,7 +43,8 @@
     "contact_shipping": "Contact & Shipping",
     "default_address": "Default Address",
     "address_placeholder": "Enter your address...",
-    "no_address": "You have not set a default address. Click Edit to update."
+    "no_address": "You have not set a default address. Click Edit to update.",
+    "general_info_desc": "Manage your personal information and delivery addresses"
   },
   "buttons": {
     "verifying": "Verifying...",

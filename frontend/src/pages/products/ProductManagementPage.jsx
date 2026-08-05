@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { productApi } from "@/api/productApi";
@@ -12,6 +12,7 @@ import EditProductModal from "@/features/products/components/Admin/EditProductMo
 import TrashProductModal from "@/features/products/components/Admin/TrashProductModal";
 import ProductFilter from "@/features/products/components/Admin/ProductFilter";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import Button from "@/components/ui/Button";
 import { useSocketStore } from "@/stores/useSocketStore";
 
 const ProductManagementPage = () => {
@@ -144,20 +145,22 @@ const ProductManagementPage = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <button
+          <Button
+            variant="danger"
             onClick={() => setIsTrashModalOpen(true)}
-            className="flex items-center gap-2 bg-mkhe-primary text-white px-4 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+            className="flex items-center gap-2"
           >
             <Trash2 className="w-4 h-4 text-white" />
             {t("page.trash_btn")}
-          </button>
+          </Button>
 
-          <button
+          <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+            className="!w-auto"
           >
+            <Plus className="w-5 h-5" />
             {t("page.add_btn")}
-          </button>
+          </Button>
         </div>
       </div>
 

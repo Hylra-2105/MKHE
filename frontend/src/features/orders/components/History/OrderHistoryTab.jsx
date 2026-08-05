@@ -59,15 +59,15 @@ const OrderHistoryTab = () => {
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gradient-gold flex items-center gap-3">
           <ShoppingBag className="w-7 h-7 text-mkhe-primary" />
-          {t("history:title", { defaultValue: "Lịch sử mua hàng" })}
+          {t("history:title", { defaultValue: "Đơn hàng của tôi" })}
         </h2>
         <p className="text-[var(--color-mkhe-text)]/60 mt-2">
           {t("history:desc", { defaultValue: "Theo dõi và quản lý các đơn hàng của bạn" })}
         </p>
       </div>
 
-      <div className="flex-1 pr-2">
-        {isLoading ? (
+      <div className="flex-1 pr-2 relative min-h-[400px]">
+        {isLoading && orders.length === 0 ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-[var(--color-mkhe-bg)] rounded-2xl p-5 border border-[var(--color-mkhe-border)]/10 animate-pulse h-32" />
@@ -79,7 +79,7 @@ const OrderHistoryTab = () => {
             <p>{t("history:no_orders", { defaultValue: "Bạn chưa có đơn hàng nào." })}</p>
           </div>
         ) : (
-          <div>
+          <div className={`space-y-4 transition-opacity duration-300 ${isLoading ? "opacity-40 pointer-events-none" : "opacity-100"}`}>
             {orders.map((order) => (
               <OrderCard 
                 key={order._id} 

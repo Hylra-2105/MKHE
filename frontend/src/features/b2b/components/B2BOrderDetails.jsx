@@ -1,9 +1,10 @@
-import {  useState, useEffect  } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Download, CheckCircle, Clock, Check, Truck, Settings, Package, Loader2, ChevronLeft, PhoneCall, Mail, User, FileText, Image as ImageIcon, Wallet, Calendar, Hash } from "lucide-react";
-import { confirmB2BOrderApi } from "@/api/b2bApi";
+import { Download, CheckCircle, Clock, Check, Truck, Settings, Package, Loader2, ChevronLeft, PhoneCall, Mail, User, FileText, Image as ImageIcon, Wallet, Calendar, Hash, MessageSquare, Send } from "lucide-react";
+import { confirmB2BOrderApi, addB2BOrderCommentApi } from "@/api/b2bApi";
 import toast from "react-hot-toast";
 import { formatCurrency } from "@/utils/formatters";
+import logo from "@/assets/images/logo-mkhe.png";
 
 const STATUS_STEPS = [
   { id: "PENDING_QUOTE", icon: Clock },
@@ -17,10 +18,38 @@ const STATUS_STEPS = [
 const B2BOrderDetails = ({ order, onBack, onUpdateOrder }) => {
   const { t } = useTranslation(["b2b", "common"]);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const chatContainerRef = useRef(null);
   
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  useEffect(() => {
+    if (order && order.comments && chatContainerRef.current) {
+      setTimeout(() => {
+        chatContainerRef.current?.scrollTo({
+          top: chatContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
+  }, [order]);
+
+  const handleSendComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    setIsSending(true);
+    try {
+      await addB2BOrderCommentApi(order._id, commentText);
+      setCommentText("");
+    } catch (error) {
+      toast.error(t("b2b:admin.modal.error_sending_msg", { defaultValue: "Lỗi gửi tin nhắn" }));
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const handleConfirmOrder = async () => {
     if (!window.confirm(t("b2b:confirm_msg", { defaultValue: "Xác nhận chốt đơn hàng và đồng ý với báo giá này?" }))) return;
@@ -166,8 +195,80 @@ const B2BOrderDetails = ({ order, onBack, onUpdateOrder }) => {
           
         </div>
 
-        {/* Cột phải: Thông tin liên hệ + Note */}
-        <div className="space-y-6">
+        {/* Cột phải: Chat & Thương lượng + Contact Box */}
+        <div className="space-y-6 flex flex-col h-full">
+          
+          {/* RIGHT: CHAT */}
+          <div className="flex-1 flex flex-col bg-mkhe-bg border border-mkhe-border/20 rounded-xl overflow-hidden shadow-sm min-h-[400px]">
+            <div className="p-4 border-b border-mkhe-border/20 bg-mkhe-primary/5 flex items-center justify-center">
+               <h3 className="font-bold text-mkhe-text flex items-center gap-2 text-sm uppercase tracking-widest"><MessageSquare className="w-4 h-4"/> {t("b2b:admin.modal.negotiation", { defaultValue: "Trao đổi & Thương lượng" })}</h3>
+            </div>
+            
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar space-y-4 max-h-[500px]">
+              {order.comments && order.comments.map((c, i) => {
+                const isMe = c.sender?.role !== 'Admin' && c.sender?.role !== 'Staff';
+                const isSystem = c.text.startsWith('[SYSTEM_QUOTE_NOTE]:');
+                const displayText = isSystem ? c.text.replace('[SYSTEM_QUOTE_NOTE]:', '').trim() : c.text;
+
+                return (
+                  <div key={c._id || i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`flex max-w-[85%] ${isMe ? 'flex-row' : 'flex-row'} items-end gap-2`}>
+                      {!isMe && (
+                        <div className="w-8 h-8 rounded-full bg-mkhe-border/20 flex items-center justify-center shrink-0 overflow-hidden mb-1">
+                          <img src={logo} alt="MKHE Logo" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-col gap-1">
+                        {!isSystem && !isMe && (
+                          <span className="text-[10px] text-mkhe-text/50 px-1 text-left">
+                            MKHE Support
+                          </span>
+                        )}
+                        <div className={`px-4 py-3 rounded-2xl text-sm shadow-sm
+                          ${isSystem 
+                            ? 'bg-orange-500/10 border border-orange-500/30 text-mkhe-text italic'
+                            : isMe 
+                              ? 'bg-mkhe-primary text-white' 
+                              : 'bg-mkhe-border/10 border border-mkhe-border/20 text-mkhe-text'}
+                        `}>
+                          {isSystem && <div className="text-[10px] font-bold text-orange-500 mb-1 not-italic flex items-center gap-1"><FileText className="w-3 h-3"/> {t("b2b:admin.modal.admin_quote_note", { defaultValue: "Ghi chú báo giá:" })}</div>}
+                          <div className="leading-relaxed whitespace-pre-wrap break-words">{displayText}</div>
+                        </div>
+                      </div>
+
+                      {isMe && (
+                        <div className="w-8 h-8 rounded-full bg-mkhe-border/20 flex items-center justify-center shrink-0 overflow-hidden mb-1">
+                          {c.sender?.avatar ? (
+                            <img src={c.sender.avatar} alt="avatar" className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="font-bold text-xs text-mkhe-primary">{c.sender?.name?.charAt(0) || 'U'}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <form onSubmit={handleSendComment} className="p-4 border-t border-mkhe-border/20 bg-mkhe-bg flex gap-2">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder={t("b2b:admin.modal.chat_placeholder", { defaultValue: "Nhập nội dung trao đổi..." })}
+                className="flex-1 bg-transparent border border-mkhe-border/40 rounded-xl px-4 py-2.5 outline-none focus:border-mkhe-primary text-sm"
+              />
+              <button
+                type="submit"
+                disabled={isSending || !commentText.trim()}
+                className="w-11 h-11 rounded-xl bg-mkhe-primary text-white flex items-center justify-center disabled:opacity-50 hover:bg-opacity-80 transition-colors shrink-0 cursor-pointer"
+              >
+                {isSending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4 ml-0.5" />}
+              </button>
+            </form>
+          </div>
           {/* Contact Box */}
           <div className="bg-mkhe-bg border border-mkhe-border/20 rounded-xl p-5 shadow-sm">
             <h3 className="font-bold text-mkhe-text mb-4 text-base flex items-center gap-2">

@@ -43,5 +43,20 @@
   "err_pass_uppercase": "Password must contain at least 1 capital letter (A-Z).",
   "err_pass_number": "Password must contain at least 1 digit (0-9).",
   "err_pass_special": "Password must contain at least 1 special character (!@#...).",
-  "err_empty_password": "Please enter your password."
+  "err_empty_password": "Please enter your password.",
+  "USERNAME_ALREADY_EXISTS": "This username is already registered!",
+  "PHONE_ALREADY_EXISTS": "This phone number is already registered!",
+  "INVALID_USERNAME_FORMAT": "Invalid username format!",
+  "MISSING_FIELDS": "Please fill in all fields!",
+  "FAILED_TO_SEND_EMAIL": "Failed to send email, please try again later!",
+  "INVALID_OR_EXPIRED_OTP": "OTP is invalid or expired!",
+  "USE_SOCIAL_LOGIN": "This email is registered via social network, please login with Google!",
+  "INVALID_OR_EXPIRED_SESSION": "Invalid or expired session!",
+  "USER_NOT_FOUND": "User not found!",
+  "VALIDATION_ERROR": "Invalid input data!",
+  "ACCOUNT_NOT_FOUND": "Account not found!",
+  "WRONG_PASSWORD": "Wrong password!",
+  "ACCOUNT_NOT_VERIFIED": "Account not verified!",
+  "ACCOUNT_BLOCKED": "Account blocked!",
+  "save": "Save"
 }

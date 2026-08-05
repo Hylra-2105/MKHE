@@ -300,13 +300,14 @@ const BlogEditor = () => {
               {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : (!id ? t("admin.editor.btn_publish_now") : t("admin.editor.btn_update_publish"))}
             </Button>
             
-            <button
+            <Button
               onClick={() => handleSubmit("DRAFT")}
               disabled={saving}
-              className="w-full py-3 rounded-md font-bold text-mkhe-text/80 uppercase tracking-wide border border-mkhe-primary/30 bg-mkhe-primary/5 hover:bg-mkhe-primary/10 hover:text-mkhe-primary cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
+              variant="outline"
+              className="w-full py-3 tracking-wide"
             >
               {saving ? t("common:loading", { defaultValue: "Đang xử lý..." }) : t("admin.editor.btn_save_draft")}
-            </button>
+            </Button>
           </div>
 
           {/* Ảnh bìa */}

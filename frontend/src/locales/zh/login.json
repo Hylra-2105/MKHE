@@ -25,5 +25,7 @@
   "LOGIN_SUCCESS": "登录成功！",
   "ACCOUNT_BLOCKED": "帐户已被管理员锁定。请联系支持人员。",
   "err_empty_email": "请输入您的电子邮件！",
-  "error_social_login": "社交登录失败！请再试一次。"
+  "error_social_login": "社交登录失败！请再试一次。",
+  "email_or_username": "电子邮件或用户名",
+  "ph_email_or_username": "输入电子邮件或用户名"
 }

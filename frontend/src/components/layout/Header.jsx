@@ -23,6 +23,7 @@ import {
   User,
   Users,
   Package,
+  HelpCircle,
   ShoppingBag,
   Ticket,
   BarChart,
@@ -645,6 +646,10 @@ export default function Header() {
                     <Link to="/admin/blogs" onClick={() => setIsDropdownOpen(false)}
                       className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/blogs") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
                       <FileText className="w-4 h-4" /> {t("user_menu.manage_blogs", { defaultValue: "Quản lý Bài viết" })}
+                    </Link>
+                    <Link to="/admin/policies" onClick={() => setIsDropdownOpen(false)}
+                      className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/policies") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>
+                      <HelpCircle className="w-4 h-4" /> Chính sách & FAQ
                     </Link>
                     <Link to="/admin/contacts" onClick={() => setIsDropdownOpen(false)}
                       className={`mx-2 px-3 py-2 rounded-md text-sm cursor-pointer transition-colors flex items-center gap-3 ${location.pathname.startsWith("/admin/contacts") ? "text-mkhe-primary hover:bg-mkhe-primary/10" : "opacity-80 hover:opacity-100 hover:bg-mkhe-primary/10"}`}>

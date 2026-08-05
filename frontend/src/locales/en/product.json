@@ -2,7 +2,7 @@
   "page": {
     "title": "Product Management",
     "subtitle": "Build commercial catalogs and manage the B2B/B2C matrix",
-    "add_btn": "+ Add Product",
+    "add_btn": "Add Product",
     "page_text": "Page",
     "trash_btn": "Trash"
   },

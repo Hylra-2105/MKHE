@@ -21,12 +21,15 @@ export default function RegisterForm() {
   const { registerAction, socialLoginAction, isLoading } = useAuthStore();
 
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [suggestions, setSuggestions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
@@ -94,6 +97,8 @@ export default function RegisterForm() {
         email,
         password,
         confirmPassword,
+        username,
+        phone
       );
 
       if (validationErrors) {
@@ -104,6 +109,8 @@ export default function RegisterForm() {
       // Gửi request đăng ký
       const result = await registerAction({
         name: name.trim(),
+        username: username.trim().toLowerCase(),
+        phone: phone.trim(),
         email,
         password,
         language: i18n.language || "vi",
@@ -118,6 +125,11 @@ export default function RegisterForm() {
         const msg = result.message || "";
         if (msg === "EMAIL_ALREADY_EXISTS") {
           setErrors({ email: "err_email_exists" });
+        } else if (msg === "PHONE_ALREADY_EXISTS") {
+          setErrors({ phone: "Số điện thoại đã được đăng ký" });
+        } else if (msg === "USERNAME_ALREADY_EXISTS") {
+          setErrors({ username: "err_username_exists" });
+          setSuggestions(result.suggestions || []);
         } else {
           toast.error(
             t([msg, `common:${msg}`, "error_default"]),
@@ -155,6 +167,42 @@ export default function RegisterForm() {
 
         <div>
           <InputField
+            type="text"
+            label={t("username")}
+            placeholder={t("ph_username")}
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              if (errors.username) setErrors((prev) => ({ ...prev, username: null }));
+              setSuggestions([]);
+            }}
+            required
+            error={errors.username ? (t(errors.username) !== errors.username ? t(errors.username) : t("err_invalid_username")) : null}
+          />
+          {suggestions.length > 0 && (
+            <div className="mt-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg">
+              <p className="text-xs text-rose-500 mb-2 font-medium">{t("username_exists_suggestions")}</p>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map(s => (
+                  <span 
+                    key={s} 
+                    onClick={() => {
+                      setUsername(s);
+                      setSuggestions([]);
+                      setErrors((prev) => ({ ...prev, username: null }));
+                    }}
+                    className="text-xs bg-[var(--color-mkhe-bg)] border border-[var(--color-mkhe-border)]/30 px-3 py-1.5 rounded-full cursor-pointer hover:bg-mkhe-primary hover:text-white transition-colors"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <InputField
             type="email"
             label={t("email_placeholder")}
             placeholder={t("email_placeholder")}
@@ -165,6 +213,21 @@ export default function RegisterForm() {
             }}
             required
             error={errors.email ? t(errors.email) : null}
+          />
+        </div>
+
+        <div>
+          <InputField
+            type="text"
+            label={t("phone")}
+            placeholder={t("ph_phone")}
+            value={phone}
+            onChange={(e) => {
+              setPhone(e.target.value);
+              if (errors.phone) setErrors((prev) => ({ ...prev, phone: null }));
+            }}
+            required
+            error={errors.phone ? (t(errors.phone) !== errors.phone ? t(errors.phone) : "Số điện thoại không hợp lệ") : null}
           />
         </div>
 
@@ -182,13 +245,14 @@ export default function RegisterForm() {
             required
             error={errors.password ? t(errors.password) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             }
           />
         </div>
@@ -207,19 +271,20 @@ export default function RegisterForm() {
             required
             error={errors.confirmPassword ? t(errors.confirmPassword) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+              </Button>
             }
           />
         </div>
       </div>
 
-      <Button type="submit" disabled={isLoading || isSubmitting}>
+      <Button type="submit" disabled={isLoading || isSubmitting} className="w-full">
         {isLoading || isSubmitting ? t("btn_processing") : t("btn_submit")}
       </Button>
 
@@ -231,21 +296,18 @@ export default function RegisterForm() {
         <div className="flex-1 border-t border-mkhe-border/50"></div>
       </div>
 
-      <button
-        type="button"
+      <Button
+        variant="outline"
+        className="w-full"
         onClick={handleGoogleLogin}
         disabled={isLoading || isSubmitting || isGoogleLoading}
-        className="w-full flex items-center justify-center cursor-pointer gap-2 py-2.5 border border-mkhe-border/50 rounded hover:bg-mkhe-primary/10 transition-colors duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        isLoading={isGoogleLoading}
       >
-        {isGoogleLoading ? (
-          <span className="w-5 h-5 border-2 border-mkhe-text border-t-transparent rounded-full animate-spin"></span>
-        ) : (
-          <GoogleIcon />
-        )}
+        {!isGoogleLoading && <GoogleIcon />}
         <span className="text-sm font-semibold text-mkhe-text">
           {isGoogleLoading ? t("btn_processing") : t("google", { ns: "login" })}
         </span>
-      </button>
+      </Button>
 
       <div className="text-center text-sm mt-3">
         <span className="text-mkhe-text/60">{t("have_account")} </span>

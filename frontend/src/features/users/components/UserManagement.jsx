@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSocketStore } from "@/stores/useSocketStore";
+import { Plus } from "lucide-react";
 
 import UserFilter from "./Admin/UserFilter";
 import UserTable from "@/features/users/components/Admin/UserTable";
@@ -12,6 +13,7 @@ import UserGrid from "@/features/users/components/Admin/UserGrid";
 import UserDetailModal from "./Admin/UserDetailModal";
 import AddUserModal from "@/features/users/components/Admin/AddUserModal";
 import ForbiddenPage from "@/pages/errors/ForbiddenPage";
+import Button from "@/components/ui/Button";
 
 export default function UserManagementFeature() {
   const { t } = useTranslation(["admin", "common"]);
@@ -146,12 +148,13 @@ export default function UserManagementFeature() {
             {t("users.subtitle")}
           </p>
         </div>
-        <button
+        <Button
           onClick={() => setIsAddModalOpen(true)}
-          className="bg-mkhe-primary text-white px-5 py-2.5 rounded shadow hover:opacity-90 transition font-semibold cursor-pointer"
+          className="!w-auto"
         >
+          <Plus className="w-5 h-5" />
           {t("users.add_member")}
-        </button>
+        </Button>
       </div>
 
       {/* FILTER & TABLE */}

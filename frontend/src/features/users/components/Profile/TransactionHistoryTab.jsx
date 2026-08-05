@@ -74,8 +74,8 @@ const TransactionHistoryTab = () => {
         </p>
       </div>
 
-      <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar">
-        {isLoading ? (
+      <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar relative min-h-[400px]">
+        {isLoading && transactions.length === 0 ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-[var(--color-mkhe-bg)] rounded-2xl p-5 border border-[var(--color-mkhe-border)]/10 animate-pulse h-24" />
@@ -87,7 +87,7 @@ const TransactionHistoryTab = () => {
             <p>{t("history:no_orders")}</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className={`space-y-4 transition-opacity duration-300 ${isLoading ? "opacity-40 pointer-events-none" : "opacity-100"}`}>
             {transactions.map((tx) => (
               <div 
                 key={tx._id}

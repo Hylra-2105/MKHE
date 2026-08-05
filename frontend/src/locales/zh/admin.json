@@ -21,7 +21,7 @@
   "users": {
     "title": "用户管理",
     "subtitle": "查看列表、搜索和分配系统权限",
-    "add_member": "+ 添加会员",
+    "add_member": "添加会员",
     "add_new": "添加新会员",
     "detail_title": "用户资料",
     "basic_info": "基本信息",
@@ -59,7 +59,8 @@
       "email_required": "请输入电子邮件",
       "pass_required": "请输入密码",
       "pass_short": "密码长度至少为 6 个字符"
-    }
+    },
+    "username_readonly": "用户名 (只读)"
   },
   "pagination": {
     "showing_page": "显示页面",

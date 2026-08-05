@@ -1,6 +1,6 @@
 import {  useState, useEffect  } from "react";
 import toast from "react-hot-toast";
-import { Copy, Plus, Cpu, AlertCircle } from "lucide-react";
+import { Copy, Plus, Cpu, AlertCircle, Check } from "lucide-react";
 import { nfcApi } from "@/api/nfcApi";
 import { useTranslation } from "react-i18next";
 
@@ -10,6 +10,7 @@ const NFCManagement = ({ productId }) => {
   const [loading, setLoading] = useState(false);
   const [generateCount, setGenerateCount] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [copiedUid, setCopiedUid] = useState(null);
 
   const fetchTags = async () => {
     setLoading(true);
@@ -62,10 +63,12 @@ const NFCManagement = ({ productId }) => {
     }
   };
 
-  const copyToClipboard = async (text) => {
+  const copyToClipboard = async (text, uid) => {
     try {
       await navigator.clipboard.writeText(text);
       toast.success(t("messages.copy_link_success"));
+      setCopiedUid(uid);
+      setTimeout(() => setCopiedUid(null), 2000);
     } catch (error) {
       toast.error(t("messages.copy_link_error"));
     }
@@ -180,11 +183,15 @@ const NFCManagement = ({ productId }) => {
                         />
                         <button
                           type="button"
-                          onClick={() => copyToClipboard(url)}
+                          onClick={() => copyToClipboard(url, tag.uid)}
                           className="p-1.5 hover:bg-mkhe-primary/20 text-mkhe-primary cursor-pointer rounded transition-colors"
                           title="Copy URL"
                         >
-                          <Copy className="w-3.5 h-3.5" />
+                          {copiedUid === tag.uid ? (
+                            <Check className="w-3.5 h-3.5 text-emerald-500" />
+                          ) : (
+                            <Copy className="w-3.5 h-3.5" />
+                          )}
                         </button>
                       </div>
                     </td>

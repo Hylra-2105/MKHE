@@ -28,5 +28,16 @@
   "err_pass_min_length": "Password must have at least 8 characters.",
   "err_pass_uppercase": "Password must contain at least 1 capital letter (A-Z).",
   "err_pass_number": "Password must contain at least 1 digit (0-9).",
-  "err_pass_special": "Password must contain at least 1 special character (!@#...)."
+  "err_pass_special": "Password must contain at least 1 special character (!@#...).",
+  "username": "Username",
+  "ph_username": "Username (e.g. mkhe_123)",
+  "err_invalid_username": "Invalid username (lowercase, numbers, _ only)",
+  "err_empty_username": "Please enter a Username!",
+  "username_exists_suggestions": "Username already exists. Try these suggestions:",
+  "phone": "Phone Number",
+  "ph_phone": "E.g: 0987654321",
+  "err_invalid_phone": "Invalid phone number!",
+  "err_empty_phone": "Please enter phone number!",
+  "err_username_exists": "This username is already registered!",
+  "err_phone_exists": "This phone number is already registered!"
 }

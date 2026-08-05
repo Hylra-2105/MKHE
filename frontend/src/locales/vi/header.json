@@ -74,6 +74,8 @@
       "USER_RETURN_UPDATED_APPROVED": "Đổi/Trả được chấp nhận",
       "USER_RETURN_UPDATED_REJECTED": "Đổi/Trả bị từ chối",
       "ADMIN_RETURN_NEW": "Yêu cầu Đổi/Trả mới",
+      "B2B_STATUS_UPDATED": "Cập nhật trạng thái B2B",
+      "B2B_QUOTE_UPLOADED": "Báo giá B2B mới",
       "return_updated_toast": "Cập nhật đổi trả đơn {{orderCode}}: {{status}}",
       "return_status_approved": "Đã duyệt",
       "return_status_rejected": "Từ chối"
@@ -98,7 +100,9 @@
       "USER_RETURN_UPDATED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã được cập nhật.",
       "USER_RETURN_UPDATED_APPROVED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã được CHẤP NHẬN.",
       "USER_RETURN_UPDATED_REJECTED": "Yêu cầu đổi trả của đơn hàng {{orderCode}} đã bị TỪ CHỐI.",
-      "ADMIN_RETURN_NEW": "Khách hàng vừa gửi yêu cầu đổi/trả cho đơn hàng {{orderCode}}."
+      "ADMIN_RETURN_NEW": "Khách hàng vừa gửi yêu cầu đổi/trả cho đơn hàng {{orderCode}}.",
+      "B2B_STATUS_UPDATED": "Yêu cầu B2B của bạn đã được cập nhật sang trạng thái mới.",
+      "B2B_QUOTE_UPLOADED": "Quản trị viên đã gửi một báo giá B2B mới cho yêu cầu của bạn."
     },
     "header_title": "Thông báo",
     "mark_all_read": "Đánh dấu tất cả là đã đọc",

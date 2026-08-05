@@ -77,7 +77,9 @@
       "ADMIN_RETURN_NEW": "请求新的换货/退货",
       "return_updated_toast": "更新换货/退货订单 {{orderCode}}: {{status}}",
       "return_status_approved": "已批准",
-      "return_status_rejected": "已拒绝"
+      "return_status_rejected": "已拒绝",
+      "B2B_STATUS_UPDATED": "B2B状态更新",
+      "B2B_QUOTE_UPLOADED": "新的B2B报价"
     },
     "message": {
       "order_placed": "订单 {{orderCode}} 已成功提交。正在等待处理。",
@@ -99,7 +101,9 @@
       "USER_RETURN_UPDATED": "订单 {{orderCode}} 的退货请求已更新。",
       "USER_RETURN_UPDATED_APPROVED": "订单 {{orderCode}} 的退货请求已被接受。",
       "USER_RETURN_UPDATED_REJECTED": "订单 {{orderCode}} 的退货请求已被拒绝。",
-      "ADMIN_RETURN_NEW": "客户刚刚发送了订单 {{orderCode}} 的换货/退货请求。"
+      "ADMIN_RETURN_NEW": "客户刚刚发送了订单 {{orderCode}} 的换货/退货请求。",
+      "B2B_STATUS_UPDATED": "您的 B2B 请求已更新为新状态。",
+      "B2B_QUOTE_UPLOADED": "管理员已针对您的请求发送了新的 B2B 报价。"
     },
     "header_title": "通知",
     "mark_all_read": "全部标为已读",

@@ -2,7 +2,7 @@
   "page": {
     "title": "产品管理",
     "subtitle": "构建商业目录并管理 B2B/B2C 矩阵",
-    "add_btn": "+ 添加产品",
+    "add_btn": "添加产品",
     "tab_general": "一般信息",
     "tab_nfc": "数字护照（NFC）",
     "gallery_label": "产品图片/视频",

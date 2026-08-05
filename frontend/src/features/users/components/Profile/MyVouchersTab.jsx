@@ -91,8 +91,8 @@ const MyVouchersTab = () => {
         </h2>
       </div>
 
-      <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar">
-        {isLoading ? (
+      <div className="flex-1 pr-2 overflow-y-auto custom-scrollbar relative min-h-[400px]">
+        {isLoading && vouchers.length === 0 ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-[var(--color-mkhe-bg)] rounded-2xl p-5 border border-[var(--color-mkhe-border)]/10 animate-pulse h-32" />
@@ -104,7 +104,7 @@ const MyVouchersTab = () => {
             <p>{t("user:vouchers_tab.no_vouchers", { defaultValue: "Bạn chưa có voucher nào" })}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 px-3 py-1">
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 px-3 py-1 transition-opacity duration-300 ${isLoading ? "opacity-40 pointer-events-none" : "opacity-100"}`}>
             {paginatedVouchers.map((userVoucher) => {
               const v = userVoucher.voucher;
               if (!v) return null;

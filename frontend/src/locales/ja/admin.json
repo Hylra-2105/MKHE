@@ -21,7 +21,7 @@
   "users": {
     "title": "ユーザー管理",
     "subtitle": "リストの表示、検索、システム権限の割り当て",
-    "add_member": "+ メンバーを追加",
+    "add_member": "メンバーを追加",
     "add_new": "新しいメンバーを追加",
     "detail_title": "ユーザープロフィール",
     "basic_info": "基本情報",
@@ -59,7 +59,8 @@
       "email_required": "メールアドレスを入力してください",
       "pass_required": "パスワードを入力してください",
       "pass_short": "パスワードは6文字以上である必要があります"
-    }
+    },
+    "username_readonly": "ユーザー名 (読み取り専用)"
   },
   "pagination": {
     "showing_page": "表示中のページ",

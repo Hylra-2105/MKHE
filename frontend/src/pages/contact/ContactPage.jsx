@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 import useEffectsConfig from "@/hooks/useEffectsConfig";
 import InputField from '@/components/ui/InputField';
 import TextAreaField from '@/components/ui/TextAreaField';
+import SelectField from '@/components/ui/SelectField';
+import Button from "@/components/ui/Button";
 import { contactService } from '@/features/contact/contact.service';
 
 const ContactPage = () => {
@@ -28,19 +30,8 @@ const ContactPage = () => {
 
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
   }, []);
 
   const interests = [
@@ -363,48 +354,19 @@ const ContactPage = () => {
                   </div>
                 </div>
 
-                {/* Custom Dropdown using Modal style */}
-                <div ref={dropdownRef} className="relative group z-20 space-y-1 w-full">
-                  <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
-                    {t("contact:fields.interest")} <span className="ml-1 text-red-500">*</span>
-                  </label>
-                  <div 
-                    className={`w-full p-3.5 bg-transparent text-mkhe-text border ${formErrors.interest ? 'border-red-500' : 'border-mkhe-border/50'} rounded-xl outline-none focus:border-mkhe-primary transition-colors cursor-pointer relative text-sm`}
-                    onClick={() => {
-                      setIsDropdownOpen(!isDropdownOpen);
-                      if (formErrors.interest) setFormErrors(prev => ({ ...prev, interest: '' }));
-                    }}
-                  >
-                    <span className={formData.interest ? "text-mkhe-text" : "text-mkhe-text/50"}>
-                      {interests.find(i => i.value === formData.interest)?.label || t("contact:fields.interest")}
-                    </span>
-                    <ChevronDown className={`absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-mkhe-text/40 pointer-events-none transition-transform duration-500 ${isDropdownOpen ? 'rotate-180' : ''}`} />
-                  </div>
-                  {formErrors.interest && (
-                    <div className="flex items-center gap-1.5 mt-1.5 ml-1 text-red-500">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <p className="text-xs font-medium">{t(formErrors.interest)}</p>
-                    </div>
-                  )}
-                  
-                  {/* Dropdown Options */}
-                  <div className={`absolute top-full left-0 w-full mt-1 bg-[var(--color-mkhe-bg)] border border-mkhe-border/50 shadow-2xl overflow-hidden transition-all duration-300 origin-top rounded-xl z-50 ${isDropdownOpen ? 'opacity-100 scale-y-100 visible' : 'opacity-0 scale-y-95 invisible'}`}>
-                    <ul className="max-h-60 overflow-y-auto custom-scrollbar py-1">
-                      {interests.map((item) => (
-                        <li 
-                          key={item.value}
-                          className="px-4 py-3 hover:bg-mkhe-primary/20 cursor-pointer text-mkhe-text text-sm transition-colors"
-                          onClick={() => {
-                            setFormData(prev => ({ ...prev, interest: item.value }));
-                            setIsDropdownOpen(false);
-                          }}
-                        >
-                          {item.label}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                <SelectField
+                  label={t("contact:fields.interest")}
+                  required
+                  value={formData.interest}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, interest: e.target.value }));
+                    if (formErrors.interest) setFormErrors(prev => ({ ...prev, interest: '' }));
+                  }}
+                  options={interests}
+                  placeholder={t("contact:fields.interest")}
+                  error={formErrors.interest ? t(formErrors.interest) : ""}
+                  wrapperClassName="!mb-0"
+                />
 
                 <div className="space-y-1 pt-2">
                   <label className="text-[10px] font-bold text-mkhe-text/50 uppercase ml-1 block">
@@ -427,19 +389,15 @@ const ContactPage = () => {
                 </div>
 
                 <div className="pt-2">
-                  <button
+                  <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent overflow-hidden w-full md:w-auto cursor-pointer active:scale-[0.98] transition-transform"
+                    isLoading={isSubmitting}
+                    className="w-full md:w-auto px-12 py-4"
                   >
-                    <div className="absolute inset-0 w-full h-full border border-mkhe-primary transition-all duration-500 group-hover:bg-mkhe-primary"></div>
-                    <span className="relative z-10 text-mkhe-primary group-hover:text-mkhe-bg font-bold tracking-[0.2em] uppercase text-xs transition-colors duration-500">
-                      {isSubmitting ? t("contact:submitting") : t("contact:submit")}
-                    </span>
-                    {!isSubmitting && (
-                      <Send className="w-4 h-4 relative z-10 text-mkhe-primary group-hover:text-mkhe-bg transform group-hover:translate-x-2 transition-all duration-500" />
-                    )}
-                  </button>
+                    {t("contact:submit")}
+                    {!isSubmitting && <Send className="w-4 h-4 ml-2" />}
+                  </Button>
                 </div>
               </form>
             </div>

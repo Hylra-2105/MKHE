@@ -16,6 +16,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import Button from '@/components/ui/Button';
+import TextAreaField from '@/components/ui/TextAreaField';
+import InputField from '@/components/ui/InputField';
+import SelectField from '@/components/ui/SelectField';
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import ConfirmModal from "@/components/ui/ConfirmModal";
@@ -36,7 +39,6 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
   // Trạng thái bật/tắt các Popup con
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showBlockConfirm, setShowBlockConfirm] = useState(false);
-  const [isReasonDropdownOpen, setIsReasonDropdownOpen] = useState(false);
   const [showUnlockConfirm, setShowUnlockConfirm] = useState(false);
 
   // Lý do khóa mặc định (sẽ lấy từ key i18n đầu tiên)
@@ -307,7 +309,7 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                 <h4 className="text-sm font-bold text-[var(--color-mkhe-primary)] uppercase tracking-widest mb-2 flex items-center gap-2 transition-colors">
                   <User className="w-4 h-4" /> {t("users.basic_info")}
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="mb-4">
                   <EditableField
                     label={t("users.fullname")}
                     name="name"
@@ -315,14 +317,22 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                     isEditing={isEditing}
                     onChange={handleInputChange}
                   />
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1 flex items-center gap-1 transition-colors">
-                      {t("users.email_readonly")}
-                    </label>
-                    <p className="text-[var(--color-mkhe-text)] font-semibold border-b border-[var(--color-mkhe-border)]/10 pb-1 h-8 flex items-end opacity-70 transition-colors">
-                      {user.email}
-                    </p>
-                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <InputField
+                    label={t("users.username", { defaultValue: "Tên đăng nhập" })}
+                    value={user.username || t("common.not_updated", { defaultValue: "Chưa cập nhật" })}
+                    disabled={true}
+                    className="opacity-70 !mb-0"
+                    wrapperClassName="!mb-0"
+                  />
+                  <InputField
+                    label={t("users.email_readonly")}
+                    value={user.email || t("common.not_updated", { defaultValue: "Chưa cập nhật" })}
+                    disabled={true}
+                    className="opacity-70 !mb-0"
+                    wrapperClassName="!mb-0"
+                  />
                 </div>
               </div>
 
@@ -368,13 +378,13 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
                   {t("users.bio")}
                 </h4>
                 {isEditing ? (
-                  <textarea
+                  <TextAreaField
                     name="bio"
                     value={editForm.bio}
                     onChange={handleInputChange}
-                    rows="3"
-                    className="w-full p-3 bg-[var(--color-mkhe-bg)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-primary)]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-mkhe-primary)]/20 text-sm transition-colors"
+                    rows={3}
                     placeholder={t("users.bio_placeholder")}
+                    className="!mb-0"
                   />
                 ) : (
                   <div className="p-4 bg-[var(--color-mkhe-bg)] rounded-xl border border-[var(--color-mkhe-border)]/20 text-sm text-[var(--color-mkhe-text)]/70 italic leading-relaxed min-h-[80px] transition-colors">
@@ -391,45 +401,49 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
           <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/20 shrink-0 transition-colors">
           <div className="flex gap-3">
             {!lockOnly && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
+                className="!bg-rose-500/10 !text-rose-500 hover:!bg-rose-500/20"
               >
                 <Trash2 className="w-4 h-4 transition-colors" />{" "}
                 {t("common.delete_account")}
-              </button>
+              </Button>
             )}
             {editForm.isBlocked ? (
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 text-emerald-600 rounded-lg font-bold text-sm hover:bg-emerald-500/20 transition-all cursor-pointer disabled:opacity-50"
+                className="!bg-emerald-500/10 !text-emerald-600 hover:!bg-emerald-500/20"
               >
                 <Unlock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.unlock_account")}
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleBlockButtonClick}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg font-bold text-sm hover:bg-orange-500/20 transition-all cursor-pointer disabled:opacity-50"
+                className="!bg-orange-500/10 !text-orange-500 hover:!bg-orange-500/20"
               >
                 <Lock className="w-4 h-4 transition-colors" />{" "}
                 {t("common.lock_account")}
-              </button>
+              </Button>
             )}
           </div>
           {!lockOnly && (
             <div className="flex gap-3">
               {isEditing ? (
                 <>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleCancel}
                     disabled={isSaving}
-                    className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+                    className="!bg-[var(--color-mkhe-border)]/40 hover:!bg-[var(--color-mkhe-border)]/50 !text-[var(--color-mkhe-text)]"
                   >
                     {t("common.cancel", { defaultValue: "Hủy" })}
-                  </button>
+                  </Button>
                   <Button
                     onClick={handleSave}
                     disabled={isSaving || !hasChanges}
@@ -477,66 +491,19 @@ const UserDetailModal = ({ isOpen, onClose, user, onRefresh, lockOnly = false, v
           loading={isSaving}
           children={
             <div className="mb-6 relative">
-              <label className="text-[10px] uppercase font-bold text-[var(--color-mkhe-text)]/40 block mb-1.5 text-left transition-colors">
-                {t("users.block_reason_label")}
-              </label>
-
-              {isReasonDropdownOpen && (
-                <div
-                  className="fixed inset-0 z-[120]"
-                  onClick={() => setIsReasonDropdownOpen(false)}
-                />
-              )}
-
-              <div className="relative w-full">
-                <button
-                  type="button"
-                  onClick={() => setIsReasonDropdownOpen(!isReasonDropdownOpen)}
-                  className="w-full p-3 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 cursor-pointer rounded-xl focus:outline-none focus:border-[var(--color-mkhe-primary)]/50 text-sm font-medium flex justify-between items-center shadow-sm relative z-[121] transition-all"
-                >
-                  <span className="truncate pr-4">
-                    {t(`reasons.${blockReason}`)}
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-[var(--color-mkhe-primary)] shrink-0 transition-transform duration-300 ${
-                      isReasonDropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-
-                {isReasonDropdownOpen && (
-                  <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--color-mkhe-input)] text-[var(--color-mkhe-text)] border border-[var(--color-mkhe-border)]/50 rounded-xl shadow-xl py-2 z-[122] max-h-56 overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-200 transition-colors">
-                    {[
-                      "spam_comments",
-                      "boom_orders",
-                      "fake_info",
-                      "policy_violation",
-                      "fraud_activity",
-                    ].map((reasonKey) => (
-                      <button
-                        key={reasonKey}
-                        type="button"
-                        onClick={() => {
-                          setBlockReason(reasonKey);
-                          setIsReasonDropdownOpen(false);
-                        }}
-                        className={`w-[calc(100%-16px)] mx-2 px-3 py-2.5 cursor-pointer rounded-lg text-sm text-left flex justify-between items-center transition-colors ${
-                          blockReason === reasonKey
-                            ? "bg-[var(--color-mkhe-primary)]/10 text-[var(--color-mkhe-primary)] font-bold"
-                            : "text-[var(--color-mkhe-text)]/80 hover:bg-[var(--color-mkhe-border)]/30 hover:text-[var(--color-mkhe-text)]"
-                        }`}
-                      >
-                        <span className="truncate pr-2">
-                          {t(`reasons.${reasonKey}`)}
-                        </span>
-                        {blockReason === reasonKey && (
-                          <Check className="w-4 h-4 shrink-0 text-[var(--color-mkhe-primary)] transition-colors" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <SelectField
+                label={t("users.block_reason_label")}
+                value={blockReason}
+                onChange={(e) => setBlockReason(e.target.value)}
+                options={[
+                  "spam_comments",
+                  "boom_orders",
+                  "fake_info",
+                  "policy_violation",
+                  "fraud_activity",
+                ].map(reason => ({ value: reason, label: t(`reasons.${reason}`) }))}
+                wrapperClassName="!mb-0"
+              />
             </div>
           }
         />

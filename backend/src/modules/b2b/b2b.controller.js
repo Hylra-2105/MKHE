@@ -92,7 +92,14 @@ export const createB2BOrder = async (req, res) => {
 
     await newOrder.save();
 
-    return successResponse(res, 201, "CREATE_B2B_ORDER_SUCCESS", newOrder);
+    const populatedOrder = await B2BOrder.findById(newOrder._id)
+      .populate("user", "name email")
+      .populate("productOrService", "name sku thumbnail");
+
+    const io = getIO();
+    io.emit("admin_b2b_new_order", populatedOrder);
+
+    return successResponse(res, 201, "CREATE_B2B_ORDER_SUCCESS", populatedOrder);
   } catch (error) {
     console.error("Error in createB2BOrder:", error);
     return errorResponse(res, 500, "SERVER_ERROR");
@@ -107,7 +114,7 @@ export const getMyB2BOrders = async (req, res) => {
     const userId = req.user._id;
     const orders = await B2BOrder.find({ user: userId })
       .populate("productOrService", "name sku thumbnail")
-      .populate("comments.sender", "firstName lastName avatar role")
+      .populate("comments.sender", "name avatar role")
       .sort({ createdAt: -1 });
     
     return successResponse(res, 200, "GET_MY_B2B_ORDERS_SUCCESS", orders);
@@ -121,9 +128,9 @@ export const getMyB2BOrders = async (req, res) => {
 export const getAllB2BOrders = async (req, res) => {
   try {
     const orders = await B2BOrder.find()
-      .populate("user", "firstName lastName email")
+      .populate("user", "name email")
       .populate("productOrService", "name sku thumbnail")
-      .populate("comments.sender", "firstName lastName avatar role")
+      .populate("comments.sender", "name avatar role")
       .sort({ createdAt: -1 });
     
     return successResponse(res, 200, "GET_ALL_B2B_ORDERS_SUCCESS", orders);
@@ -218,11 +225,20 @@ export const updateB2BOrderStatus = async (req, res) => {
 
     const order = await B2BOrder.findByIdAndUpdate(id, { status }, { new: true })
       .populate("productOrService", "name sku thumbnail")
-      .populate("comments.sender", "firstName lastName avatar role");
+      .populate("comments.sender", "name avatar role");
       
     if (!order) return errorResponse(res, 404, "ORDER_NOT_FOUND");
 
+    const notif = await Notification.create({
+      user: order.user,
+      title: "Cập nhật trạng thái B2B",
+      message: `Yêu cầu B2B của bạn đã được cập nhật sang trạng thái mới.`,
+      type: "SYSTEM",
+      link: "/profile?tab=b2b_orders"
+    });
+
     const io = getIO();
+    io.to(`user_${order.user}`).emit("new_notification", notif);
     io.to(`user_${order.user}`).emit("b2b_order_updated", order);
 
     return successResponse(res, 200, "UPDATE_STATUS_SUCCESS", order);
@@ -252,7 +268,7 @@ export const addB2BOrderComment = async (req, res) => {
     await order.save();
     
     const updatedOrder = await B2BOrder.findById(id)
-      .populate("comments.sender", "firstName lastName avatar role");
+      .populate("comments.sender", "name avatar role");
     
     const newComment = updatedOrder.comments[updatedOrder.comments.length - 1];
 

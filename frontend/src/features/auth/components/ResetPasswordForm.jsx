@@ -93,17 +93,18 @@ export default function ResetPasswordForm() {
             required
             error={error.password ? t(`common:${error.password}`) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowPassword(!showPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
                 ) : (
                   <Eye className="w-5 h-5" />
                 )}
-              </button>
+              </Button>
             }
           />
         </div>
@@ -122,23 +123,24 @@ export default function ResetPasswordForm() {
             required
             error={error.confirmPassword ? t(error.confirmPassword) : null}
             rightElement={
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="cursor-pointer p-1"
+                className="!p-1"
               >
                 {showConfirmPassword ? (
                   <EyeOff className="w-5 h-5" />
                 ) : (
                   <Eye className="w-5 h-5" />
                 )}
-              </button>
+              </Button>
             }
           />
         </div>
       </div>
 
-      <Button type="submit" disabled={isLoading || isProcessing}>
+      <Button type="submit" disabled={isLoading || isProcessing} className="w-full">
         {isLoading || isProcessing ? t("btn_updating") : t("btn_reset")}
       </Button>
 

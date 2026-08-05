@@ -1243,23 +1243,25 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
         {/* FOOTER BUTTONS */}
         <div className="p-5 border-t border-[var(--color-mkhe-border)]/20 flex justify-between items-center bg-[var(--color-mkhe-border)]/10 shrink-0 rounded-b-2xl">
-          <button
+          <Button
             type="button"
             onClick={() => setShowDeleteConfirm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-500 rounded-lg font-bold text-sm hover:bg-rose-500/20 transition-all cursor-pointer"
+            variant="danger"
+            className="flex items-center gap-2 px-4 py-2 text-sm"
           >
             <Trash2 className="w-4 h-4" /> {t("table.delete")}
-          </button>
+          </Button>
 
           <div className="flex gap-3">
-            <button
+            <Button
               type="button"
               onClick={handleCancel}
               disabled={loading}
-              className="px-6 py-2.5 bg-[var(--color-mkhe-border)]/40 text-[var(--color-mkhe-text)] font-bold rounded-lg hover:bg-[var(--color-mkhe-border)]/50 transition-all disabled:opacity-50 text-sm cursor-pointer"
+              variant="outline"
+              className="px-6 py-2.5 text-sm"
             >
               {t("modal.cancel")}
-            </button>
+            </Button>
             <Button
               type="submit"
               form="edit-product-form"

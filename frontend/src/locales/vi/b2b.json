@@ -4,6 +4,7 @@
   "subtitle": "Điền thông tin yêu cầu của bạn, chúng tôi sẽ liên hệ sớm nhất",
   "admin_title": "Quản lý B2B",
   "status": {
+    "PENDING": "Chờ xử lý",
     "PENDING_QUOTE": "Chờ báo giá",
     "NEGOTIATING": "Đang đàm phán",
     "CONFIRMED": "Đã chốt",
@@ -67,5 +68,69 @@
     "back": "Quay lại Bảng điều khiển",
     "submit": "Gửi Yêu Cầu",
     "submitting": "Đang gửi..."
+  },
+  "admin": {
+    "title": "Quản lý Yêu cầu B2B",
+    "subtitle": "Danh sách đơn đặt hàng sỉ / thiết kế riêng",
+    "table": {
+      "company": "Doanh nghiệp",
+      "createdAt": "Ngày tạo",
+      "product_request": "Sản phẩm / Yêu cầu",
+      "quantity": "Số lượng",
+      "budget": "Ngân sách",
+      "status": "Trạng Thái",
+      "actions": "Hành Động",
+      "no_orders": "Chưa có yêu cầu B2B nào.",
+      "custom_design": "Dịch vụ thiết kế",
+      "view_details": "Xem chi tiết"
+    },
+    "modal": {
+      "request_details": "Chi tiết Yêu cầu",
+      "representative": "Người đại diện:",
+      "quote_pdf": "Báo giá (PDF)",
+      "click_to_select_pdf": "Click chọn file PDF",
+      "drop_here": "Thả file vào đây...",
+      "or_drag_drop": "Hoặc kéo thả file PDF vào đây",
+      "note_placeholder": "Ghi chú đính kèm...",
+      "send_quote": "Gửi Báo Giá",
+      "quote_contract_file": "File Báo Giá / Hợp Đồng",
+      "sent_to_customer": "Đã gửi cho khách hàng",
+      "negotiation": "Trao đổi & Thương lượng",
+      "upload_success": "Đã upload Báo giá thành công!",
+      "upload_error": "Lỗi upload Báo giá",
+      "update_status_success": "Cập nhật trạng thái B2B thành công",
+      "error_updating_status": "Lỗi cập nhật trạng thái",
+      "error_sending_msg": "Lỗi gửi tin nhắn",
+      "product_service": "Sản phẩm / Dịch vụ",
+      "quantity": "Số lượng",
+      "budget": "Ngân sách dự kiến",
+      "delivery_date": "Giao hàng dự kiến",
+      "guest_note": "Ghi chú của khách:",
+      "change_status": "Đổi trạng thái:",
+      "admin_quote_note": "Ghi chú Admin kèm Báo Giá:",
+      "chat_placeholder": "Nhập nội dung trao đổi..."
+    },
+    "pagination": {
+      "showing_page": "Hiển thị trang"
+    },
+    "messages": {
+      "fetch_error": "Lỗi tải dữ liệu đơn hàng"
+    }
+  },
+  "user_dashboard": {
+    "subtitle": "Quản lý tiến độ và thương lượng hợp đồng B2B",
+    "create_new": "Tạo yêu cầu mới",
+    "search_placeholder": "Tìm kiếm sản phẩm/dịch vụ...",
+    "all_status": "Tất cả trạng thái",
+    "list_view": "Danh sách",
+    "grid_view": "Xem dạng lưới",
+    "no_orders_desc": "Bạn chưa có yêu cầu hợp đồng B2B nào. Hãy tạo một yêu cầu mới để bắt đầu quá trình đàm phán với chúng tôi.",
+    "product_service": "Sản phẩm / Dịch vụ",
+    "quantity": "Số lượng",
+    "delivery_date": "Ngày giao",
+    "status": "Trạng thái",
+    "updated_at": "Cập nhật",
+    "action": "Hành động",
+    "view_details": "Xem chi tiết"
   }
 }

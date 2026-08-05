@@ -6,6 +6,7 @@ import { formatNumber } from "@/utils/formatters";
 import toast from "react-hot-toast";
 import VoucherFormModal from "./VoucherFormModal";
 import Dropdown from "@/components/ui/Dropdown";
+import Button from "@/components/ui/Button";
 import { useSocketStore } from "@/stores/useSocketStore";
 
 const VoucherManagementFeature = () => {
@@ -147,13 +148,13 @@ const VoucherManagementFeature = () => {
           <h1 className="text-3xl font-bold font-logo text-gradient-gold mb-1">{t("voucher.title")}</h1>
           <p className="text-sm text-mkhe-text/60 italic">{t("voucher.subtitle")}</p>
         </div>
-        <button 
+        <Button 
           onClick={openCreateModal}
-          className="bg-mkhe-primary text-white cursor-pointer px-6 py-2.5 rounded-xl font-semibold flex items-center gap-2 hover:bg-mkhe-primary/90 transition-all shadow-lg shadow-mkhe-primary/20"
+          className="!w-auto"
         >
           <Plus className="w-5 h-5" />
           {t("voucher.create_new")}
-        </button>
+        </Button>
       </div>
 
       {/* Toolbar */}
