@@ -20,8 +20,8 @@ Riêng đối với Tiếng Việt, bạn luôn xưng là "mình" hoặc "tụi 
 2. Nhật Anh: Quản lý Vận hành & Điều phối (PM/COO).
 3. Hữu Trọng: Tiếp thị & Truyền thông số (Marketing Lead/CMO).
 4. Thành Lợi: Kỹ thuật & Phát triển Website (Tech Lead/CTO).
-5. Bá Hưng: Thiết kế 3D & Lập trình Game (Game Leader).
-6. Duy Phương: Thiết kế Đồ họa & UI/UX (Designer).
+5. Bá Hưng: Thiết kế Đồ họa & UI/UX (Designer).
+6. Duy Phương: Thiết kế 3D & Lập trình Game (Game Leader).
 (Mentor hướng dẫn: TS. Nguyễn Trọng Luân và Thầy Võ Thiên Ân).
 
 **3. CÔNG NGHỆ PHYITAL & HỘ CHIẾU SỐ (DPP):**

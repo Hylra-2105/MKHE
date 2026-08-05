@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import Chatbot from "../../features/ai/components/Chatbot";
+import ScrollToTop from "../ui/ScrollToTop";
 
 import PageSkeleton from "../ui/PageSkeleton";
 
@@ -22,6 +23,7 @@ export default function MainLayout() {
         </React.Suspense>
       </main>
       {!hideFooter && <Footer />}
+      <ScrollToTop />
       <Chatbot />
     </div>
   );

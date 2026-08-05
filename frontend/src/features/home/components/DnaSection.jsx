@@ -194,12 +194,14 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
           <div className={`hidden md:flex items-center gap-6 ${isReverse ? "justify-start" : "justify-end"}`}>
             <button
               onClick={handlePrev}
-              className="group relative w-16 h-12 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
+              className="group relative w-[50px] h-[50px] rounded-full border border-black/10 dark:border-white/20 hover:border-mkhe-primary/50 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
             >
               {/* Vòng sáng tỏa ra khi hover */}
-              <div className="absolute inset-0 bg-mkhe-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {enableEffects && (
+                <div className="absolute inset-1 bg-mkhe-primary/30 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              )}
               
-              <svg viewBox="0 0 60 60" className="w-12 h-12 fill-none stroke-current transform transition-transform duration-500 group-hover:-translate-x-3" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 60 60" className={`w-8 h-8 fill-none stroke-current transform ${enableEffects ? 'transition-transform duration-500 group-hover:-translate-x-1' : ''}`} xmlns="http://www.w3.org/2000/svg">
                 {/* Trục mũi tên đứt đoạn mờ ảo */}
                 <path d="M 55,30 L 45,30" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.5"/>
                 <path d="M 45,30 L 20,30" strokeWidth="1.5" opacity="0.8" />
@@ -224,12 +226,14 @@ const DnaSection = ({ title, data, isReverse = false, dnaType }) => {
             
             <button
               onClick={handleNext}
-              className="group relative w-16 h-12 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
+              className="group relative w-[50px] h-[50px] rounded-full border border-black/10 dark:border-white/20 hover:border-mkhe-primary/50 flex items-center justify-center text-mkhe-text/40 hover:text-mkhe-primary transition-colors cursor-pointer"
             >
               {/* Vòng sáng tỏa ra khi hover */}
-              <div className="absolute inset-0 bg-mkhe-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {enableEffects && (
+                <div className="absolute inset-1 bg-mkhe-primary/30 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              )}
               
-              <svg viewBox="0 0 60 60" className="w-12 h-12 fill-none stroke-current transform rotate-180 transition-transform duration-500 group-hover:translate-x-3" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 60 60" className={`w-8 h-8 fill-none stroke-current transform rotate-180 ${enableEffects ? 'transition-transform duration-500 group-hover:translate-x-1' : ''}`} xmlns="http://www.w3.org/2000/svg">
                 {/* Trục mũi tên đứt đoạn mờ ảo */}
                 <path d="M 55,30 L 45,30" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.5"/>
                 <path d="M 45,30 L 20,30" strokeWidth="1.5" opacity="0.8" />

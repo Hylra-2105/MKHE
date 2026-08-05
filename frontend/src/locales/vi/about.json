@@ -1,6 +1,6 @@
 {
   "hero": {
-    "tag": "Mekong Culture",
+    "tag": "Văn hóa Mekong",
     "title_1": "Giao thoa văn hóa",
     "title_2": "và Di sản",
     "desc": "Nơi những tinh hoa thủ công truyền thống được đánh thức và tái sinh qua lăng kính của nghệ thuật đương đại và công nghệ."
@@ -80,11 +80,11 @@
       },
       {
         "name": "Bá Hưng",
-        "role": "Trưởng Nhóm 3D & Game"
+        "role": "Trưởng Nhóm UI/UX & Thiết Kế"
       },
       {
         "name": "Duy Phương",
-        "role": "Trưởng Nhóm UI/UX & Thiết Kế"
+        "role": "Trưởng Nhóm 3D & Game"
       }
     ],
     "mentor_tag": "Bảo trợ chuyên môn",

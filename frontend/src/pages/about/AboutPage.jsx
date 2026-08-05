@@ -35,9 +35,9 @@ const AboutPage = () => {
               <span className="w-16 h-[1px] bg-mkhe-primary"></span>
               <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t('hero.tag')}</span>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative z-10">
+            <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-logo leading-[1.1] mb-8 relative z-10">
               {t('hero.title_1')} <br/>
-              <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t('hero.title_2')}</span>
+              <span className="text-mkhe-primary font-logo italic text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t('hero.title_2')}</span>
             </h1>
             <p className="text-mkhe-text/70 text-lg max-w-md leading-relaxed border-l-[1px] border-mkhe-primary/40 pl-8 ml-4 font-light">
               {t('hero.desc')}
@@ -125,7 +125,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">01</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">{t('vision.title_1')} <span className="font-logo italic text-mkhe-primary font-normal">{t('vision.title_2')}</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-logo tracking-tight">{t('vision.title_1')} <span className="font-logo italic text-mkhe-primary">{t('vision.title_2')}</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <p className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed">
@@ -141,7 +141,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">02</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">{t('mission.title_1')} <span className="font-logo italic text-mkhe-primary font-normal">{t('mission.title_2')}</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-logo tracking-tight">{t('mission.title_1')} <span className="font-logo italic text-mkhe-primary">{t('mission.title_2')}</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <p className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed">
@@ -157,7 +157,7 @@ const AboutPage = () => {
               >
                 <div className="text-[120px] md:text-[180px] font-logo italic leading-none text-mkhe-primary/20 absolute -left-4 md:left-0 -top-10 md:-top-20 select-none z-0">03</div>
                 <div className="md:w-1/3 relative z-10 pl-4 md:pl-24">
-                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-bold tracking-tight">{t('core_values.title_1')} <span className="font-logo italic text-mkhe-primary font-normal">{t('core_values.title_2')}</span></h3>
+                  <h3 className="text-4xl md:text-5xl text-mkhe-text font-logo tracking-tight">{t('core_values.title_1')} <br/><span className="font-logo italic text-mkhe-primary">{t('core_values.title_2')}</span></h3>
                 </div>
                 <div className="md:w-2/3 relative z-10 pl-4 md:pl-0">
                   <ul className="text-xl md:text-2xl text-mkhe-text/80 font-light leading-relaxed space-y-3">

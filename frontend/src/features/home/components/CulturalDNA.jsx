@@ -54,9 +54,9 @@ const CulturalDNA = () => {
             <span className="w-16 h-[1px] bg-mkhe-primary"></span>
             <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("dna.subtitle", "Khám phá những tinh hoa")}</span>
           </div>
-          <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
+          <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-logo leading-[1.1] mb-8 relative">
             {t("dna.header_title_1", "Sản phẩm ")} <br/>
-            <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("dna.header_title_2", "Văn hóa")}</span>
+            <span className="text-mkhe-primary font-logo italic text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("dna.header_title_2", "Văn hóa")}</span>
           </h2>
         </motion.div>
         <motion.div 
