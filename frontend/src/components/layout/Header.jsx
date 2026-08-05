@@ -207,7 +207,7 @@ export default function Header() {
   };
 
   return (
-    <header className={`h-20 border-b flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] transition-colors duration-300 ${headerClasses}`}>
+    <header className={`h-20 border-b flex items-center justify-between px-4 md:px-10 shrink-0 fixed top-0 left-0 w-full z-[60] ${headerClasses}`}>
       {/* LOGO AND MOBILE MENU */}
       <div className="flex-shrink-0 lg:w-1/4 flex items-center gap-3">
         {/* Hamburger Menu cho Mobile */}
@@ -680,7 +680,7 @@ export default function Header() {
         ) : (
           /* TRƯỜNG HỢP CHƯA ĐĂNG NHẬP */
           <div className="flex items-center gap-2 md:gap-3 ml-1 md:ml-2 border-l border-mkhe-border pl-2 md:pl-4">
-            <div className="relative hidden md:block" ref={guestLangRef}>
+            <div className="relative" ref={guestLangRef}>
               <button
                 onClick={() => setIsGuestLangOpen(!isGuestLangOpen)}
                 className="opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors flex items-center gap-1 text-xs font-semibold uppercase"
@@ -719,7 +719,7 @@ export default function Header() {
 
             <button
               onClick={() => setIsDark(!isDark)}
-              className="hidden md:block opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors"
+              className="opacity-60 hover:opacity-100 hover:text-mkhe-primary cursor-pointer transition-colors"
             >
               {isDark ? (
                 <Moon className="w-4 h-4" />
