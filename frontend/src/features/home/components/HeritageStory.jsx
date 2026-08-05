@@ -153,11 +153,11 @@ const HeritageStory = () => {
           >
             <div className="inline-flex items-center gap-4 mb-8">
               <span className="w-16 h-[1px] bg-mkhe-primary"></span>
-              <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("heritage.journey_tag", "The Journey")}</span>
+              <span className="text-mkhe-primary tracking-[0.4em] text-xs uppercase font-bold">{t("heritage.journey_tag", "Hành trình của chúng tôi")}</span>
             </div>
-            <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-bold leading-[1.1] mb-8 relative">
+            <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] text-mkhe-text font-logo leading-[1.1] mb-8 relative">
               {t("heritage.title_1", "Hành trình ")} <br/>
-              <span className="text-mkhe-primary font-logo italic font-normal text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("heritage.title_2", "Di sản")}</span>
+              <span className="text-mkhe-primary font-logo italic text-6xl md:text-8xl lg:text-[7.5rem] leading-none block mt-2 ml-12">{t("heritage.title_2", "Di sản")}</span>
             </h2>
           </motion.div>
           <motion.div 

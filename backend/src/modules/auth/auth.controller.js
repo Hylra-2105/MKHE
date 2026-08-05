@@ -201,6 +201,7 @@ export const loginUser = async (req, res) => {
       user: {
         _id: user._id,
         email: user.email,
+        username: user.username,
         name: user.name,
         avatar: user.avatar,
         role: user.role,
@@ -314,6 +315,7 @@ export const socialLogin = async (req, res) => {
       user: {
         _id: user._id,
         email: user.email,
+        username: user.username,
         name: user.name,
         avatar: user.avatar,
         role: user.role,
