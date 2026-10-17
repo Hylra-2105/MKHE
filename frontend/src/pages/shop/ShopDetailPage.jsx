@@ -211,6 +211,12 @@ export default function ShopDetailPage() {
     ? finalBasePrice * (1 - currentDiscountPercent / 100) 
     : finalBasePrice) + addOnsCost;
 
+  const isDemo = Boolean(
+    product.isDemo || 
+    (product.images && product.images.some(img => typeof img === 'string' && (img.includes('mkhe_products') || img.includes('placehold.co'))))
+  );
+  const hasOverlayBadge = isDemo || product.status === "OUT_OF_STOCK";
+
   return (
     <div className="min-h-screen bg-mkhe-bg font-sans pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
@@ -230,6 +236,13 @@ export default function ShopDetailPage() {
           {/* CỘT TRÁI: Gallery Hình ảnh */}
           <div className="flex flex-col gap-4">
             <div className="rounded-3xl overflow-hidden bg-mkhe-border/5 border border-mkhe-border/10 relative">
+              {hasOverlayBadge && (
+                <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
+                  <div className="bg-black/75 text-red-500 px-8 py-3 shadow-2xl backdrop-blur-md text-sm md:text-base font-black uppercase tracking-[0.25em] border-2 border-red-500 transform -rotate-12 rounded">
+                    DEMO
+                  </div>
+                </div>
+              )}
               {(!product.images || product.images.length === 0) ? (
                 <div className="w-full aspect-square">
                   <img 

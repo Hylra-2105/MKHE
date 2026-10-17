@@ -55,6 +55,12 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
         const isSaleValid = product.salePrice > 0 && product.saleStartDate && product.saleEndDate 
                             && new Date(product.saleStartDate) <= now && new Date(product.saleEndDate) >= now;
 
+        const isDemo = Boolean(
+          product.isDemo || 
+          (product.images && product.images.some(img => typeof img === 'string' && (img.includes('mkhe_products') || img.includes('placehold.co'))))
+        );
+        const hasOverlayBadge = isDemo || product.status === "OUT_OF_STOCK";
+
         return (
           <div 
             key={product._id}
@@ -62,16 +68,16 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
             className="group relative flex flex-col gap-4 cursor-pointer transform transition-all duration-500 hover:scale-[1.03] hover:-translate-y-2 hover:z-10"
           >
             {/* Image/Video container */}
-            <div className={`relative w-full overflow-hidden rounded-3xl bg-mkhe-border/10 shadow-sm transition-shadow duration-500 aspect-[4/5] ${product.status !== 'OUT_OF_STOCK' ? 'group-hover:shadow-xl' : ''}`}>
+            <div className={`relative w-full overflow-hidden rounded-3xl bg-mkhe-border/10 shadow-sm transition-shadow duration-500 aspect-[4/5] ${!hasOverlayBadge ? 'group-hover:shadow-xl' : ''}`}>
               {mediaUrl ? (
                 isVideo ? (
                   <video 
-                    src={mediaUrl}
+                    src={mediaUrl} 
                     autoPlay 
                     muted 
                     loop 
                     playsInline
-                    className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out ${product.status === 'OUT_OF_STOCK' ? 'opacity-80' : ''}`}
+                    className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out ${hasOverlayBadge ? 'opacity-85' : ''}`}
                   />
                 ) : (
                   <img 
@@ -81,7 +87,7 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
                       e.target.onerror = null; 
                       e.target.src = DEFAULT_FALLBACK_IMAGE; 
                     }}
-                    className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out ${product.status === 'OUT_OF_STOCK' ? 'opacity-80' : ''}`}
+                    className={`w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 ease-out ${hasOverlayBadge ? 'opacity-85' : ''}`}
                   />
                 )
               ) : (
@@ -94,11 +100,11 @@ const ProductGrid = ({ products, loading, isDesktopFilterOpen }) => {
 
 
 
-              {/* Central Badge for OUT_OF_STOCK */}
-              {product.status === "OUT_OF_STOCK" && (
+              {/* Central Badge for DEMO (Sản phẩm demo có viền đỏ chữ màu đỏ) */}
+              {hasOverlayBadge && (
                 <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                  <div className="bg-gray-800/90 text-white px-6 py-2 shadow-2xl backdrop-blur-md text-xs md:text-sm font-black uppercase tracking-[0.2em] border border-white/20 transform -rotate-12">
-                    {t("shop.detail.out_of_stock", { defaultValue: "Tạm hết" })}
+                  <div className="bg-black/75 text-red-500 px-6 py-2 shadow-2xl backdrop-blur-md text-xs md:text-sm font-black uppercase tracking-[0.25em] border-2 border-red-500 transform -rotate-12 rounded">
+                    DEMO
                   </div>
                 </div>
               )}

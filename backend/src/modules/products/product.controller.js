@@ -319,14 +319,12 @@ export const updateProduct = async (req, res) => {
     }
 
     try {
-      getIO().emit("product_updated", updatedProduct);
+      const io = getIO();
+      io.emit("admin_product_updated", updatedProduct);
+      io.emit("product_updated", updatedProduct);
     } catch (err) {
       console.error("[Socket] Emit product_updated error:", err);
     }
-
-    const io = getIO();
-    io.emit("admin_product_updated", updatedProduct);
-    io.emit("product_updated", updatedProduct);
     clearProductCache();
     return successResponse(res, 200, "PRODUCT_UPDATED_SUCCESS", updatedProduct);
   } catch (error) {
