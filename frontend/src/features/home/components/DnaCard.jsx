@@ -43,6 +43,14 @@ const DnaCard = ({
   const cardZIndex = isHoveredCard ? 50 : 1;
   const cardOpacity = isDimmed && !isMobile ? 0.4 : 1;  
 
+  const isDemo = Boolean(
+    item.isDemo || 
+    item.status === "OUT_OF_STOCK" ||
+    (item.images && item.images.some(img => typeof img === 'string' && (img.includes('mkhe_products') || img.includes('placehold.co')))) ||
+    (typeof item.image === 'string' && (item.image.includes('mkhe_products') || item.image.includes('placehold.co'))) ||
+    (typeof item.thumbnail === 'string' && (item.thumbnail.includes('mkhe_products') || item.thumbnail.includes('placehold.co')))
+  );
+
   return (
     <div
       className="flex-shrink-0 px-2 sm:px-3 lg:px-4 group cursor-pointer"
@@ -85,7 +93,7 @@ const DnaCard = ({
                 return (
                   <video
                     src={srcUrl}
-                    className="w-full h-full object-cover transition-transform duration-700"
+                    className={`w-full h-full object-cover transition-transform duration-700 ${isDemo ? 'opacity-85' : ''}`}
                     autoPlay
                     muted
                     loop
@@ -98,7 +106,7 @@ const DnaCard = ({
                   src={srcUrl}
                   alt={item.name}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-700"
+                  className={`w-full h-full object-cover transition-transform duration-700 ${isDemo ? 'opacity-85' : ''}`}
                   onError={(e) => {
                     e.target.onerror = null; // Prevent infinite loop if fallback also fails
                     const fallbackName = item.name ? encodeURIComponent(item.name.substring(0, 15)) : "No+Image";
@@ -107,6 +115,15 @@ const DnaCard = ({
                 />
               );
             })()}
+
+            {/* Central Badge for DEMO (Đóng khung viền đỏ chữ màu đỏ) */}
+            {isDemo && (
+              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <div className="bg-black/75 text-red-500 px-5 py-2 shadow-2xl backdrop-blur-md text-xs sm:text-sm font-black uppercase tracking-[0.25em] border-2 border-red-500 transform -rotate-12 rounded">
+                  DEMO
+                </div>
+              </div>
+            )}
 
             {/* MINI POPUP PANEL (CHỈ HIỆN KHI HOVER TRÊN DESKTOP) */}
             {!isMobile && (

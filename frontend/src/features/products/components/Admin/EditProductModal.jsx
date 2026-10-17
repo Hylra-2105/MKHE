@@ -486,75 +486,79 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
     if (!formData.name) errors.name = t("products.errors.name_required", "Vui lòng điền tên sản phẩm");
     if (!formData.sku) errors.sku = t("products.errors.sku_required", "Vui lòng điền mã SKU");
     if (!formData.vendor) errors.vendor = t("products.errors.vendor_required", "Vui lòng chọn nhà cung cấp");
-    if (!formData.isService && (!formData.price || Number(formData.price) <= 0)) {
-      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
-    } else if (formData.isService && (formData.price === "" || formData.price === null || formData.price === undefined)) {
-      errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
-    }
 
-    if (formData.hasDPP) {
-      if (!formData.artisanName) errors.artisanName = t("products.errors.artisan_required", "Vui lòng điền tên nghệ nhân");
-      if (!formData.gpsLocation) errors.gpsLocation = t("products.errors.gps_required", "Vui lòng điền vị trí GPS");
-    }
+    const isDraft = formData.status === "DRAFT";
 
-    if (formData.hasSale && formData.salePrice && Number(formData.salePrice) > 0) {
-      if (Number(formData.salePrice) >= Number(formData.price)) {
-        errors.salePrice = t("products.errors.sale_price_invalid", "Giá Sale phải nhỏ hơn giá gốc");
+    if (!isDraft) {
+      if (!formData.isService && (!formData.price || Number(formData.price) <= 0)) {
+        errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
+      } else if (formData.isService && (formData.price === "" || formData.price === null || formData.price === undefined)) {
+        errors.price = t("products.errors.price_required", "Vui lòng điền giá bán");
       }
-      if (!formData.saleStartDate) {
-        errors.saleStartDate = t("products.errors.sale_start_required", "Vui lòng chọn ngày bắt đầu Sale");
+
+      if (formData.hasDPP) {
+        if (!formData.artisanName) errors.artisanName = t("products.errors.artisan_required", "Vui lòng điền tên nghệ nhân");
+        if (!formData.gpsLocation) errors.gpsLocation = t("products.errors.gps_required", "Vui lòng điền vị trí GPS");
       }
-      if (!formData.saleEndDate) {
-        errors.saleEndDate = t("products.errors.sale_end_required", "Vui lòng chọn ngày kết thúc Sale");
-      }
-      if (formData.saleStartDate && formData.saleEndDate) {
-        if (new Date(formData.saleEndDate) <= new Date(formData.saleStartDate)) {
-          errors.saleEndDate = t("products.errors.sale_end_invalid", "Kết thúc phải sau thời gian bắt đầu");
+
+      if (formData.hasSale && formData.salePrice && Number(formData.salePrice) > 0) {
+        if (Number(formData.salePrice) >= Number(formData.price)) {
+          errors.salePrice = t("products.errors.sale_price_invalid", "Giá Sale phải nhỏ hơn giá gốc");
         }
-        if (new Date(formData.saleEndDate) <= new Date()) {
-          errors.saleEndDate = t("products.errors.sale_end_future", "Kết thúc phải ở tương lai");
+        if (!formData.saleStartDate) {
+          errors.saleStartDate = t("products.errors.sale_start_required", "Vui lòng chọn ngày bắt đầu Sale");
         }
-        
-        const start = new Date(formData.saleStartDate);
-        start.setSeconds(0, 0);
-        const now = new Date();
-        now.setSeconds(0, 0);
-        
-        const isUnchanged = product && new Date(product.saleStartDate).getTime() === start.getTime();
-
-        if (!isUnchanged && start < now) {
-          errors.saleStartDate = t("products.errors.sale_start_past", "Thời gian bắt đầu không được trong quá khứ");
+        if (!formData.saleEndDate) {
+          errors.saleEndDate = t("products.errors.sale_end_required", "Vui lòng chọn ngày kết thúc Sale");
         }
-      }
-    }
-
-    if (!formData.isService && (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard")) {
-      if (!formData.b2bTiers || formData.b2bTiers.length === 0) {
-        errors.b2bTiers = t("products.errors.b2b_min_tiers", "Vui lòng cấu hình ít nhất 1 mốc chiết khấu cho sản phẩm B2B.");
-      } else {
-        for (let i = 0; i < formData.b2bTiers.length; i++) {
-          const q = parseInt(formData.b2bTiers[i].minQuantity);
-          const d = parseInt(formData.b2bTiers[i].discountPercent);
-
-          if (!formData.b2bTiers[i].minQuantity || !formData.b2bTiers[i].discountPercent) {
-            errors.b2bTiers = t("products.errors.b2b_missing_fields", "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.");
-            break;
+        if (formData.saleStartDate && formData.saleEndDate) {
+          if (new Date(formData.saleEndDate) <= new Date(formData.saleStartDate)) {
+            errors.saleEndDate = t("products.errors.sale_end_invalid", "Kết thúc phải sau thời gian bắt đầu");
           }
-          if (q <= 0 || d < 0 || d > 100) {
-            errors.b2bTiers = t("products.errors.b2b_invalid_values", "Số lượng phải > 0 và % giảm giá từ 0 - 100.");
-            break;
+          if (new Date(formData.saleEndDate) <= new Date()) {
+            errors.saleEndDate = t("products.errors.sale_end_future", "Kết thúc phải ở tương lai");
           }
           
-          if (i > 0) {
-            const prevQ = parseInt(formData.b2bTiers[i - 1].minQuantity);
-            const prevD = parseInt(formData.b2bTiers[i - 1].discountPercent);
-            if (q <= prevQ) {
-              errors.b2bTiers = t("products.errors.b2b_quantity_order", { current: i + 1, prev: i, prevQ });
+          const start = new Date(formData.saleStartDate);
+          start.setSeconds(0, 0);
+          const now = new Date();
+          now.setSeconds(0, 0);
+          
+          const isUnchanged = product && new Date(product.saleStartDate).getTime() === start.getTime();
+
+          if (!isUnchanged && start < now) {
+            errors.saleStartDate = t("products.errors.sale_start_past", "Thời gian bắt đầu không được trong quá khứ");
+          }
+        }
+      }
+
+      if (!formData.isService && (formData.categoryMatrix === "B2B_Luxury" || formData.categoryMatrix === "B2B_Standard")) {
+        // Chỉ bắt buộc validate b2bTiers nếu mảng tiers có phần tử
+        if (formData.b2bTiers && formData.b2bTiers.length > 0) {
+          for (let i = 0; i < formData.b2bTiers.length; i++) {
+            const q = parseInt(formData.b2bTiers[i].minQuantity);
+            const d = parseInt(formData.b2bTiers[i].discountPercent);
+
+            if (!formData.b2bTiers[i].minQuantity || !formData.b2bTiers[i].discountPercent) {
+              errors.b2bTiers = t("products.errors.b2b_missing_fields", "Vui lòng nhập đầy đủ Số lượng và % Giảm giá cho tất cả các mốc.");
               break;
             }
-            if (d <= prevD) {
-              errors.b2bTiers = t("products.errors.b2b_discount_order", { current: i + 1, prev: i, prevD });
+            if (q <= 0 || d < 0 || d > 100) {
+              errors.b2bTiers = t("products.errors.b2b_invalid_values", "Số lượng phải > 0 và % giảm giá từ 0 - 100.");
               break;
+            }
+            
+            if (i > 0) {
+              const prevQ = parseInt(formData.b2bTiers[i - 1].minQuantity);
+              const prevD = parseInt(formData.b2bTiers[i - 1].discountPercent);
+              if (q <= prevQ) {
+                errors.b2bTiers = t("products.errors.b2b_quantity_order", { current: i + 1, prev: i, prevQ });
+                break;
+              }
+              if (d <= prevD) {
+                errors.b2bTiers = t("products.errors.b2b_discount_order", { current: i + 1, prev: i, prevD });
+                break;
+              }
             }
           }
         }
@@ -563,6 +567,8 @@ const EditProductModal = ({ isOpen, onClose, onSuccess, product }) => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
+      const firstError = Object.values(errors)[0];
+      toast.error(firstError || t("messages.form_error", "Vui lòng kiểm tra lại thông tin!"));
       return;
     }
 

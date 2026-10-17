@@ -171,7 +171,7 @@ productSchema.pre("save", async function () {
   }
 
   // Logic Validate bắt buộc cho Hộ chiếu số
-  if (this.hasDPP) {
+  if (this.hasDPP && this.status === "PUBLISHED") {
     if (!this.artisanName) {
       throw new Error("ARTISAN_NAME_REQUIRED");
     }
